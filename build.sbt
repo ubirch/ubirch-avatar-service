@@ -95,10 +95,6 @@ lazy val depCore = Seq(
 
 val akkaV = "2.4.9-RC2"
 val scalaTestV = "3.0.0"
-val configV = "1.3.0"
-val notaryServiceV = "0.3.0-SNAPSHOT"
-val storageServiceV = "0.0.1-SNAPSHOT"
-val ubirchUtilCryptoV = "0.2-SNAPSHOT"
 val ubirchUtilJsonAutoConvertV = "0.1-SNAPSHOT"
 
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
