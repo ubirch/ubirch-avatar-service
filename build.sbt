@@ -47,7 +47,7 @@ lazy val server = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config)
+  .dependsOn(config, model)
   .settings(
     libraryDependencies ++= depCore
   )
@@ -56,6 +56,12 @@ lazy val config = project
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies += ubirchUtilConfig
+  )
+
+lazy val model = project
+  .settings(commonSettings: _*)
+  .settings(
+
   )
 
 /*

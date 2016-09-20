@@ -14,7 +14,7 @@ TODO
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.chain" %% "config" % "0.0.1-SNAPSHOT"
+      "com.ubirch.avatar" %% "config" % "0.0.1-SNAPSHOT"
     )
 
 ### `core`
@@ -23,7 +23,7 @@ TODO
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.chain" %% "core" % "0.0-1-SNAPSHOT"
+      "com.ubirch.avatar" %% "core" % "0.0-1-SNAPSHOT"
     )
         
 ### `server`
@@ -33,7 +33,16 @@ TODO
       Resolver.bintrayRepo("hseeberger", "maven")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.chain" %% "server" % "0.0.1-SNAPSHOT"
+      "com.ubirch.avatar" %% "server" % "0.0.1-SNAPSHOT"
+    )
+        
+### `server`
+
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots")
+    )
+    libraryDependencies ++= Seq(
+      "com.ubirch.avatar" %% "model" % "0.0.1-SNAPSHOT"
     )
 
 ## REST Methods
