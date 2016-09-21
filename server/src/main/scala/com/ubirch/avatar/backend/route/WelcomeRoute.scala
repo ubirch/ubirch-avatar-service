@@ -19,6 +19,7 @@ trait WelcomeRoute extends MyJsonProtocol {
         WelcomeRouteUtil.welcome
       }
     }
+
   }
 
 }
