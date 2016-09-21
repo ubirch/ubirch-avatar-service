@@ -55,9 +55,29 @@ If server is healthy response is:
 
     200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchChainServer"}
 
-### TODO
+### TODO: title
 
-TODO
+TODO: description
+
+    curl -XGET localhost:8080/api/v1/avatarService/device
+
+    curl -XPOST localhost:8080/api/v1/avatarService/device
+
+### TODO: title
+
+TODO: description
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
+
+    curl -XPOST localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
+
+    curl -XDELETE localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
+
+### TODO: title
+
+TODO: description
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/stub/<DEVICE_ID>
 
 ## Configuration
 
