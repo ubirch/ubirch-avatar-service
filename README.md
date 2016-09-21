@@ -47,6 +47,16 @@ TODO
 
 ## REST Methods
 
+### Welcome / Health
+
+    curl localhost:8080/
+
+If server is healthy response is:
+
+    200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchChainServer"}
+
+### TODO
+
 TODO
 
 ## Configuration
