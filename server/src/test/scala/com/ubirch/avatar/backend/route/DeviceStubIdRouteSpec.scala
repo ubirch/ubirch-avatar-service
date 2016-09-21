@@ -11,7 +11,7 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceStubIdRoute extends RouteSpec {
+class DeviceStubIdRouteSpec extends RouteSpec {
 
   private val routes = (new MainRoute).myRoute
 
