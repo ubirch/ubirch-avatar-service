@@ -2,7 +2,6 @@ package com.ubirch.avatar.backend.route
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.model.Welcome
 import com.ubirch.avatar.test.base.RouteSpec
@@ -19,15 +18,15 @@ class DeviceIdRouteSpec extends RouteSpec {
   feature(s"GET ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
 
     scenario("without deviceId") {
-      Get(RouteConstants.urlDeviceWithId("")) ~> Route.seal(routes) ~> check {
-        status shouldEqual MethodNotAllowed
+      Get(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
+        handled shouldEqual false
       }
     }
 
     scenario("with deviceId") {
-      val deviceId = "1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff"
+      val deviceId = "232343"
       Get(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
-        status shouldEqual NotFound
+        status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"GET ${RouteConstants.urlDeviceWithId(deviceId)}"
       }
@@ -38,15 +37,15 @@ class DeviceIdRouteSpec extends RouteSpec {
   feature(s"POST ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
 
     scenario("without deviceId") {
-      Post(RouteConstants.urlDeviceWithId("")) ~> Route.seal(routes) ~> check {
-        status shouldEqual MethodNotAllowed
+      Post(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
+        handled shouldEqual false
       }
     }
 
     scenario("with deviceId") {
-      val deviceId = "1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff"
-      Post(RouteConstants.urlDeviceWithId(deviceId)) ~> Route.seal(routes) ~> check {
-        status shouldEqual NotFound
+      val deviceId = "232343"
+      Post(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+        status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"POST ${RouteConstants.urlDeviceWithId(deviceId)}"
       }
@@ -57,15 +56,15 @@ class DeviceIdRouteSpec extends RouteSpec {
   feature(s"DELETE ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
 
     scenario("without deviceId") {
-      Delete(RouteConstants.urlDeviceWithId("")) ~> Route.seal(routes) ~> check {
-        status shouldEqual MethodNotAllowed
+      Delete(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
+        handled shouldEqual false
       }
     }
 
     scenario("with deviceId") {
-      val deviceId = "1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff"
-      Delete(RouteConstants.urlDeviceWithId(deviceId)) ~> Route.seal(routes) ~> check {
-        status shouldEqual NotFound
+      val deviceId = "232343"
+      Delete(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+        status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"DELETE ${RouteConstants.urlDeviceWithId(deviceId)}"
       }
