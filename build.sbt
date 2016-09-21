@@ -99,7 +99,7 @@ lazy val depCore = Seq(
  * DEPENDENCIES
  ********************************************************/
 
-val akkaV = "2.4.9-RC2"
+val akkaV = "2.4.10"
 val scalaTestV = "3.0.0"
 val ubirchUtilJsonAutoConvertV = "0.1-SNAPSHOT"
 
