@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
+import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import com.ubirch.avatar.backend.route.MainRoute
@@ -21,6 +22,7 @@ import scala.language.postfixOps
 object Boot extends App with LazyLogging {
 
   implicit val system = ActorSystem()
+  implicit val materializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
   logger.info("ubirchAvatarService started")
