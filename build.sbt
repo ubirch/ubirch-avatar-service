@@ -30,12 +30,12 @@ lazy val commonSettings = Seq(
 
 lazy val avatarService = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(server, core, config)
+  .aggregate(server, core, config, testBase)
 
 lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
-  .dependsOn(core, config)
+  .dependsOn(core, config, testBase % "test")
   .settings(
     libraryDependencies ++= depServer,
     fork in run := true,
@@ -62,6 +62,13 @@ lazy val model = project
   .settings(commonSettings: _*)
   .settings(
 
+  )
+
+lazy val testBase = (project in file("test-base"))
+  .settings(commonSettings: _*)
+  .settings(
+    name := "test-base",
+    libraryDependencies ++= depTestBase
   )
 
 /*
@@ -93,6 +100,12 @@ lazy val depServer = Seq(
 lazy val depCore = Seq(
   typesafeScalaLogging,
   scalatest % "test"
+)
+
+lazy val depTestBase = Seq(
+  scalatest,
+  akkaHttpTestkit,
+  ubirchUtilJsonAutoConvert
 )
 
 /*
