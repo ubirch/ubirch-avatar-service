@@ -19,6 +19,7 @@ lazy val commonSettings = Seq(
   version := "0.0.1-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
+    Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots")
   )
 
