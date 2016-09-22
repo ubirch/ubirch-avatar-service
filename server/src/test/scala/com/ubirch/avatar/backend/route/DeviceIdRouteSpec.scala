@@ -34,17 +34,17 @@ class DeviceIdRouteSpec extends RouteSpec {
 
   }
 
-  feature(s"POST ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
+  feature(s"PUT ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
 
     scenario("without deviceId") {
-      Post(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
+      Put(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
         handled shouldEqual false
       }
     }
 
     scenario("with deviceId") {
       val deviceId = "232343"
-      Post(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+      Put(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"POST ${RouteConstants.urlDeviceWithId(deviceId)}"

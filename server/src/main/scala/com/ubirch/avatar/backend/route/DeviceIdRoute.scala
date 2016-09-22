@@ -24,7 +24,7 @@ trait DeviceIdRoute extends MyJsonProtocol
           // TODO actual implementation: call DeviceIdRouteUtil (in module core)
           complete(Welcome(message = s"GET ${RouteConstants.urlDeviceWithId(deviceId)}"))
         } ~
-          post {
+          put {
             // TODO actual implementation: call DeviceIdRouteUtil (in module core)
             complete(Welcome(message = s"POST ${RouteConstants.urlDeviceWithId(deviceId)}"))
           } ~
