@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server._
-import com.ubirch.avatar.core.server.routes.WelcomeRouteUtil
+import com.ubirch.avatar.model.Welcome
 import com.ubirch.util.json.MyJsonProtocol
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -16,7 +16,7 @@ trait WelcomeRoute extends MyJsonProtocol {
 
     get {
       complete {
-        WelcomeRouteUtil.welcome
+        Welcome(message = "Welcome to the ubirchChainServer")
       }
     }
 
