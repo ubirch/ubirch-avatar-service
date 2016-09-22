@@ -19,7 +19,7 @@ class DeviceStubIdRouteSpec extends RouteSpec {
 
     scenario("without deviceId") {
       Get(RouteConstants.urlDeviceStubWithId("")) ~> routes ~> check {
-        status shouldEqual MethodNotAllowed
+        handled shouldEqual false
       }
     }
 
