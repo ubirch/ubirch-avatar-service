@@ -31,7 +31,7 @@ lazy val commonSettings = Seq(
 
 lazy val avatarService = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(server, core, config, testBase)
+  .aggregate(server, core, config, modelRest, modelDb, testBase)
 
 lazy val server = project
   .settings(commonSettings: _*)
@@ -48,7 +48,7 @@ lazy val server = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model)
+  .dependsOn(config, modelRest, modelDb)
   .settings(
     libraryDependencies ++= depCore
   )
@@ -59,10 +59,18 @@ lazy val config = project
     libraryDependencies += ubirchUtilConfig
   )
 
-lazy val model = project
+lazy val modelRest = (project in file("model-rest"))
   .settings(commonSettings: _*)
   .settings(
-    libraryDependencies ++= depModel
+    name := "model-rest",
+    libraryDependencies ++= depModelRest
+  )
+
+lazy val modelDb = (project in file("model-db"))
+  .settings(commonSettings: _*)
+  .settings(
+    name := "model-db",
+    libraryDependencies ++= depModelDb
   )
 
 lazy val testBase = (project in file("test-base"))
@@ -103,7 +111,9 @@ lazy val depCore = Seq(
   scalatest % "test"
 )
 
-lazy val depModel = joda ++ json4s
+lazy val depModelRest = joda ++ json4s
+
+lazy val depModelDb = Seq()
 
 lazy val depTestBase = Seq(
   scalatest,

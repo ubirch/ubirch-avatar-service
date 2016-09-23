@@ -25,6 +25,24 @@ TODO
     libraryDependencies ++= Seq(
       "com.ubirch.avatar" %% "core" % "0.0-1-SNAPSHOT"
     )
+
+### `model-rest`
+
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots")
+    )
+    libraryDependencies ++= Seq(
+      "com.ubirch.avatar" %% "model-rest" % "0.0-1-SNAPSHOT"
+    )
+
+### `model-db`
+
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots")
+    )
+    libraryDependencies ++= Seq(
+      "com.ubirch.avatar" %% "model-db" % "0.0-1-SNAPSHOT"
+    )
         
 ### `server`
 
