@@ -20,7 +20,7 @@ trait DeviceStubIdRoute extends MyJsonProtocol
     respondWithCORS {
       path(device / stub / Segment) { deviceId =>
         get {
-          // TODO actual implementation: call DeviceStubIdRouteUtil (in module core)
+          // TODO call DeviceManager.shortInfo(deviceId)
           complete(Welcome(message = s"GET ${RouteConstants.urlDeviceStubWithId(deviceId)}"))
         }
       }

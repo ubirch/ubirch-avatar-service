@@ -62,7 +62,7 @@ lazy val config = project
 lazy val model = project
   .settings(commonSettings: _*)
   .settings(
-
+    libraryDependencies ++= depModel
   )
 
 lazy val testBase = (project in file("test-base"))
@@ -103,6 +103,8 @@ lazy val depCore = Seq(
   scalatest % "test"
 )
 
+lazy val depModel = joda ++ json4s
+
 lazy val depTestBase = Seq(
   scalatest,
   akkaHttpTestkit,
@@ -113,13 +115,22 @@ lazy val depTestBase = Seq(
  * DEPENDENCIES
  ********************************************************/
 
-val akkaV = "2.4.10"
-val scalaTestV = "3.0.0"
+lazy val akkaV = "2.4.10"
+lazy val json4sV = "3.4.0"
+lazy val scalaTestV = "3.0.0"
 
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
 lazy val akkaHttpTestkit = "com.typesafe.akka" %% "akka-http-testkit" % akkaV
 
 lazy val typesafeScalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0"
+
+lazy val joda = Seq(jodaTime, jodaConvert)
+lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
+lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8"
+
+lazy val json4s = Seq(json4sNative, json4sExt)
+lazy val json4sNative = "org.json4s" %% "json4s-native" % json4sV
+lazy val json4sExt = "org.json4s" %% "json4s-ext" % json4sV
 
 lazy val ubirchUtilConfig = "com.ubirch.util" %% "config" % "0.1"
 lazy val ubirchUtilRestAkkaHttp = "com.ubirch.util" %% "rest-akka-http" % "0.2"

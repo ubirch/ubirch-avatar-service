@@ -21,11 +21,11 @@ trait DeviceRoute extends MyJsonProtocol
       path(device) {
 
         get {
-          // TODO actual implementation: call DeviceRouteUtil (in module core)
+          // TODO call DeviceManager.all()
           complete(Welcome(message = s"GET ${RouteConstants.urlDevice}"))
         } ~
           post {
-            // TODO actual implementation: call DeviceRouteUtil (in module core)
+            // TODO DeviceManager.create()
             complete(Welcome(message = s"POST ${RouteConstants.urlDevice}"))
           }
 

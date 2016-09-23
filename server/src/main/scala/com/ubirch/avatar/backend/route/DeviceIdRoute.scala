@@ -21,15 +21,15 @@ trait DeviceIdRoute extends MyJsonProtocol
       path(device / Segment) { deviceId =>
 
         get {
-          // TODO actual implementation: call DeviceIdRouteUtil (in module core)
+          // TODO call DeviceManager.info(deviceId)
           complete(Welcome(message = s"GET ${RouteConstants.urlDeviceWithId(deviceId)}"))
         } ~
           put {
-            // TODO actual implementation: call DeviceIdRouteUtil (in module core)
+            // TODO call DeviceManager.update(deviceId, device)
             complete(Welcome(message = s"POST ${RouteConstants.urlDeviceWithId(deviceId)}"))
           } ~
           delete {
-            // TODO actual implementation: call DeviceIdRouteUtil (in module core)
+            // TODO call DeviceManager.delete(deviceId)
             complete(Welcome(message = s"DELETE ${RouteConstants.urlDeviceWithId(deviceId)}"))
           }
 
