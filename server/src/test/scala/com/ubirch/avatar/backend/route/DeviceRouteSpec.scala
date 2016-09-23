@@ -31,7 +31,7 @@ class DeviceRouteSpec extends RouteSpec {
 
   feature(s"POST ${RouteConstants.urlDevice}") {
 
-    scenario("call") {
+    scenario("with device json") {
 
       val deviceInput = DummyDevices.device1
 
@@ -42,6 +42,21 @@ class DeviceRouteSpec extends RouteSpec {
         verifyCORSHeader()
       }
     }
+
+    scenario("without device json") {
+
+      Post(RouteConstants.urlDevice) ~> routes ~> check {
+
+        // TODO finalize test
+        status shouldEqual BadRequest
+        responseEntity.contentType should be(`application/json`)
+
+        verifyCORSHeader()
+
+      }
+    }
+
+    // TODO test case: fail to create device
 
   }
 

@@ -111,7 +111,7 @@ lazy val depCore = Seq(
   scalatest % "test"
 )
 
-lazy val depModelRest = joda ++ json4s
+lazy val depModelRest = joda ++ json4s :+ ubirchUtilJsonAutoConvert
 
 lazy val depModelDb = Seq()
 
