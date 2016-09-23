@@ -1,0 +1,239 @@
+package com.ubirch.avatar.model
+
+import org.joda.time.DateTime
+import org.json4s.native.JsonMethods._
+
+/**
+  * author: cvandrei
+  * since: 2016-09-23
+  */
+object DummyDevices {
+
+  lazy val all: Seq[Device] = Seq(device1, device2, device3, device4)
+
+  lazy val deviceMap: Map[String, Device] = Map(
+    device1Id -> device1,
+    device2Id -> device2,
+    device3Id -> device3,
+    device4Id -> device4
+  )
+
+  lazy val device1Id = "0c5a19bf-194c-40ea-bf46-0416a176aedb"
+  lazy val device2Id = "0c5a19bf-194c-40ea-bf46-0416a176aedc"
+  lazy val device3Id = "0c5a19bf-194c-40ea-bf46-0416a176aedd"
+  lazy val device4Id = "0c5a19bf-194c-40ea-bf46-0416a176aede"
+
+  lazy val device1 = Device(
+    deviceId = device1Id,
+    deviceType = Some("lightsSensor"),
+    deviceName = Some("lightsSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11"),
+    hwDeviceId = Some("860719022152999"),
+    syncState = None,
+    tags = Some(Seq("ubirch#0", "sensor")),
+    deviceConfig = Some(device1Config),
+    deviceProperties = Some(device1Properties),
+    subscriptions = None,
+    avatarState = Some(AvatarState(Some(avatar1Desired), Some(avatar1Reported))),
+    avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
+    created = Some(DateTime.now.minusDays(60)),
+    updated = Some(DateTime.now.minusDays(2)),
+    deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
+  )
+
+  lazy val device2 = Device(
+    deviceId = device2Id,
+    deviceType = Some("temperaturesSensor"),
+    deviceName = Some("temperaturesSensor_TU_8caa2520-d8f0-4c85-9705-4707054f4e11"),
+    hwDeviceId = Some("860719022152999"),
+    syncState = Some("outofsync"),
+    tags = Some(Seq("ubirch#2")),
+    deviceConfig = Some(device2Config),
+    deviceProperties = Some(device2Properties),
+    subscriptions = None,
+    avatarState = Some(AvatarState(Some(avatar2Desired), Some(avatar2Reported))),
+    avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
+    created = Some(DateTime.now.minusDays(60)),
+    updated = Some(DateTime.now.minusDays(2)),
+    deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
+  )
+
+  lazy val device3 = Device(
+    deviceId = device3Id,
+    deviceType = Some("machineSensor"),
+    deviceName = Some("machineSensor_WM_8caa2520-d8f0-4c85-9705-4707054f4e11"),
+    hwDeviceId = Some("860719022152999"),
+    syncState = Some("outofsync"),
+    tags = Some(Seq("ubirch#0", "sensor")),
+    deviceConfig = Some(device3Config),
+    deviceProperties = Some(device3Properties),
+    subscriptions = None,
+    avatarState = Some(AvatarState(Some(avatar3Desired), Some(avatar3Reported))),
+    avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
+    created = Some(DateTime.now.minusDays(60)),
+    updated = Some(DateTime.now.minusDays(2)),
+    deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
+  )
+
+  lazy val device4 = Device(
+    deviceId = device4Id,
+    deviceType = Some("trackleSensor"),
+    deviceName = Some("trackleSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11"),
+    hwDeviceId = Some("860719022152999"),
+    syncState = Some("insync"),
+    tags = Some(Seq("ubirch#0", "sensor")),
+    deviceConfig = Some(device4Config),
+    deviceProperties = Some(device4Properties),
+    subscriptions = None,
+    avatarState = Some(AvatarState(Some(avatar4Desired), Some(avatar4Reported))),
+    avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
+    created = Some(DateTime.now.minusDays(60)),
+    updated = Some(DateTime.now.minusDays(2)),
+    deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
+  )
+
+  lazy val device1Config = parse(
+    """{
+      |  "i": 3600,
+      |  "ir": 191,
+      |  "s": 0
+      |}""".stripMargin)
+
+  lazy val device1Properties = parse(
+    """{
+      |  "countryCode": "LU"
+      |}""".stripMargin)
+
+  lazy val avatar1Desired = parse(
+    """{
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+  lazy val avatar1Reported = parse(
+    """{
+      |  "la": "52.502769",
+      |  "lo": "13.477947",
+      |  "ba": 13,
+      |  "lp": 55,
+      |  "e": 0,
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+  lazy val device2Config = parse(
+    """{
+      |  "i": 3600,
+      |  "ir": 191,
+      |  "s": 0
+      |}""".stripMargin)
+
+  lazy val device2Properties = parse(
+    """{
+      |  "countryCode": "LU"
+      |}""".stripMargin)
+
+  lazy val avatar2Desired = parse(
+    """{
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+  lazy val avatar2Reported = parse(
+    """{
+      |  "la": "52.502769",
+      |  "lo": "13.477947",
+      |  "ba": 13,
+      |  "lp": 55,
+      |  "e": 0,
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+  lazy val device3Config = parse(
+    """{
+      |  "i": 3600,
+      |  "ir": 191,
+      |  "s": 0
+      |}""".stripMargin)
+
+  lazy val device3Properties = parse(
+    """{
+      |  "countryCode": "LU"
+      |}""".stripMargin)
+
+  lazy val avatar3Desired = parse(
+    """{
+      |  "la": "52.502769",
+      |  "lo": "13.477947",
+      |  "ba": 13,
+      |  "lp": 55,
+      |  "e": 0,
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+  lazy val avatar3Reported = parse(
+    """{
+      |  "la": "52.502769",
+      |  "lo": "13.477947",
+      |  "ba": 13,
+      |  "lp": 55,
+      |  "e": 0,
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+  lazy val device4Config = parse(
+    """{
+      |  "i": 3600,
+      |  "ir": 191,
+      |  "s": 0
+      |}""".stripMargin)
+
+  lazy val device4Properties = parse(
+    """{
+      |  "countryCode": "LU"
+      |}""".stripMargin)
+
+  lazy val avatar4Desired = parse(
+    """{
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+  lazy val avatar4Reported = parse(
+    """{
+      |  "la": "52.502769",
+      |  "lo": "13.477947",
+      |  "ba": 13,
+      |  "lp": 55,
+      |  "e": 0,
+      |  "i": 1800,
+      |  "bf": 1,
+      |  "r": 13944,
+      |  "g": 21696,
+      |  "b": 17840
+      |}""".stripMargin)
+
+}

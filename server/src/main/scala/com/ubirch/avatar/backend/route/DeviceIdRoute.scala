@@ -1,9 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.core.server.util.RouteConstants
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
-import com.ubirch.avatar.model.Welcome
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
@@ -20,17 +20,31 @@ trait DeviceIdRoute extends MyJsonProtocol
     respondWithCORS {
       path(device / Segment) { deviceId =>
 
+        // TODO authentication for all three methods
+
         get {
-          // TODO call DeviceManager.info(deviceId)
-          complete(Welcome(message = s"GET ${RouteConstants.urlDeviceWithId(deviceId)}"))
+          complete {
+            DeviceManager.info(deviceId) match {
+              case None => BadRequest // TODO add error json to response
+              case Some(deviceObject) => Some(deviceObject)
+            }
+          }
         } ~
           put {
-            // TODO call DeviceManager.update(deviceId, device)
-            complete(Welcome(message = s"POST ${RouteConstants.urlDeviceWithId(deviceId)}"))
+            complete {
+              DeviceManager.update(deviceId) match {
+                case None => BadRequest // TODO add error json to response
+                case Some(deviceObject) => Some(deviceObject)
+              }
+            }
           } ~
           delete {
-            // TODO call DeviceManager.delete(deviceId)
-            complete(Welcome(message = s"DELETE ${RouteConstants.urlDeviceWithId(deviceId)}"))
+            complete {
+              DeviceManager.delete(deviceId) match {
+                case None => BadRequest // TODO add error json to response
+                case Some(deviceObject) => Some(deviceObject)
+              }
+            }
           }
 
       }

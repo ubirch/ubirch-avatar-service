@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.device
 
-import com.ubirch.avatar.model.Device
+import com.ubirch.avatar.model.{DummyDevices, Device}
 
 /**
   * author: cvandrei
@@ -8,16 +8,16 @@ import com.ubirch.avatar.model.Device
   */
 object DeviceManager {
 
-  def all(): Seq[Device] = ??? // TODO implement
+  def all(): Seq[Device] = DummyDevices.all // TODO implement
 
-  def create(device: Device): Device = ??? // TODO implement
+  def create(device: Device): Option[Device] = Some(device) // TODO implement
 
-  def update(device: Device): Device = ??? // TODO implement
+  def update(deviceId: String): Option[Device] = DummyDevices.deviceMap.get(deviceId) // TODO implement
 
-  def delete(device: Device): Device = ??? // TODO implement
+  def delete(deviceId: String): Option[Device] = DummyDevices.deviceMap.get(deviceId) // TODO implement
 
-  def info(deviceId: String): Device = ??? // TODO implement
+  def info(deviceId: String): Option[Device] = DummyDevices.deviceMap.get(deviceId) // TODO implement
 
-  def shortInfo(deviceId: String): Device = ??? // TODO implement
+  def shortInfo(deviceId: String): Option[Device] = DummyDevices.deviceMap.get(deviceId) // TODO implement
 
 }

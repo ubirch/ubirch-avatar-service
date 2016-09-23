@@ -3,7 +3,7 @@ package com.ubirch.avatar.backend.route
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.model.Welcome
+import com.ubirch.avatar.model.{Device, DummyDevices}
 import com.ubirch.avatar.test.base.RouteSpec
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -24,14 +24,20 @@ class DeviceStubIdRouteSpec extends RouteSpec {
     }
 
     scenario("with deviceId") {
-      val deviceId = "232343"
+
+      val device = DummyDevices.device1
+      val deviceId = device.deviceId
+
       Get(RouteConstants.urlDeviceStubWithId(deviceId)) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
-        responseAs[Welcome].message shouldEqual s"GET ${RouteConstants.urlDeviceStubWithId(deviceId)}"
+        responseAs[Device] shouldEqual device
         verifyCORSHeader()
       }
+
     }
+
+    // TODO test case: deviceId doesn't exist
 
   }
 

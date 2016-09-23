@@ -3,7 +3,7 @@ package com.ubirch.avatar.backend.route
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.model.Welcome
+import com.ubirch.avatar.model.{Device, DummyDevices}
 import com.ubirch.avatar.test.base.RouteSpec
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -21,7 +21,8 @@ class DeviceRouteSpec extends RouteSpec {
       Get(RouteConstants.urlDevice) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
-        responseAs[Welcome].message shouldEqual s"GET ${RouteConstants.urlDevice}"
+        val deviceList = responseAs[Seq[Device]]
+        deviceList shouldEqual DummyDevices.all
         verifyCORSHeader()
       }
     }
@@ -31,10 +32,13 @@ class DeviceRouteSpec extends RouteSpec {
   feature(s"POST ${RouteConstants.urlDevice}") {
 
     scenario("call") {
-      Post(RouteConstants.urlDevice) ~> routes ~> check {
+
+      val deviceInput = DummyDevices.device1
+
+      Post(RouteConstants.urlDevice, deviceInput) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
-        responseAs[Welcome].message shouldEqual s"POST ${RouteConstants.urlDevice}"
+        responseAs[Device] should be(deviceInput)
         verifyCORSHeader()
       }
     }
