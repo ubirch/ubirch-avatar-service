@@ -21,6 +21,7 @@ class WelcomeRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome] shouldEqual Welcome(message = "Welcome to the ubirchAvatarService")
+        verifyCORSHeader(false)
       }
     }
 

@@ -1,7 +1,7 @@
 package com.ubirch.avatar.test.base
 
 import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.headers.{`Access-Control-Allow-Credentials`, `Access-Control-Allow-Headers`, `Access-Control-Allow-Methods`, HttpOriginRange, `Access-Control-Allow-Origin`}
+import akka.http.scaladsl.model.headers.{HttpOriginRange, `Access-Control-Allow-Credentials`, `Access-Control-Allow-Headers`, `Access-Control-Allow-Methods`, `Access-Control-Allow-Origin`}
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import com.ubirch.util.json.MyJsonProtocol
 
@@ -18,11 +18,24 @@ trait RouteSpec extends UnitSpec
 
   implicit val timeout = RouteTestTimeout(10 seconds)
 
-  def verifyCORSHeader(): Unit = {
-    header("Access-Control-Allow-Origin") should be(Some(`Access-Control-Allow-Origin`(HttpOriginRange.*)))
-    header("Access-Control-Allow-Methods") should be(Some(`Access-Control-Allow-Methods`(GET, POST, PUT, DELETE, OPTIONS)))
-    header("Access-Control-Allow-Headers") should be(Some(`Access-Control-Allow-Headers`("Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Accept-Language, Host, Referer, User-Agent")))
-    header("Access-Control-Allow-Credentials") should be(Some(`Access-Control-Allow-Credentials`(true)))
+  def verifyCORSHeader(exist: Boolean = true): Unit = {
+
+    exist match {
+
+      case true =>
+        header("Access-Control-Allow-Origin") should be(Some(`Access-Control-Allow-Origin`(HttpOriginRange.*)))
+        header("Access-Control-Allow-Methods") should be(Some(`Access-Control-Allow-Methods`(GET, POST, PUT, DELETE, OPTIONS)))
+        header("Access-Control-Allow-Headers") should be(Some(`Access-Control-Allow-Headers`("Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Accept-Language, Host, Referer, User-Agent")))
+        header("Access-Control-Allow-Credentials") should be(Some(`Access-Control-Allow-Credentials`(true)))
+
+      case false =>
+        header("Access-Control-Allow-Origin") should be(None)
+        header("Access-Control-Allow-Methods") should be(None)
+        header("Access-Control-Allow-Headers") should be(None)
+        header("Access-Control-Allow-Credentials") should be(None)
+
+    }
+
   }
 
 }
