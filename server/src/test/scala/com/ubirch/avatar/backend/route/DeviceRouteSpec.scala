@@ -22,6 +22,7 @@ class DeviceRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"GET ${RouteConstants.urlDevice}"
+        verifyCORSHeader()
       }
     }
 
@@ -34,6 +35,7 @@ class DeviceRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"POST ${RouteConstants.urlDevice}"
+        verifyCORSHeader()
       }
     }
 

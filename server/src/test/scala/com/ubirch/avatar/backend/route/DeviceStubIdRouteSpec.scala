@@ -29,6 +29,7 @@ class DeviceStubIdRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"GET ${RouteConstants.urlDeviceStubWithId(deviceId)}"
+        verifyCORSHeader()
       }
     }
 

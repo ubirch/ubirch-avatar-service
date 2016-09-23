@@ -29,6 +29,7 @@ class DeviceIdRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"GET ${RouteConstants.urlDeviceWithId(deviceId)}"
+        verifyCORSHeader()
       }
     }
 
@@ -48,6 +49,7 @@ class DeviceIdRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"POST ${RouteConstants.urlDeviceWithId(deviceId)}"
+        verifyCORSHeader()
       }
     }
 
@@ -67,6 +69,7 @@ class DeviceIdRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Welcome].message shouldEqual s"DELETE ${RouteConstants.urlDeviceWithId(deviceId)}"
+        verifyCORSHeader()
       }
     }
 
