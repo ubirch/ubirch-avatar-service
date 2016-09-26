@@ -71,7 +71,7 @@ TODO
 
 If server is healthy response is:
 
-    200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchChainServer"}
+    200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService"}
 
 ### TODO: title
 
