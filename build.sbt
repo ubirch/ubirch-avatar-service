@@ -38,6 +38,7 @@ lazy val server = project
   .settings(mergeStrategy: _*)
   .dependsOn(core, config, testBase % "test")
   .settings(
+    description := "REST interface and Akka HTTP specific code",
     libraryDependencies ++= depServer,
     fork in run := true,
     resolvers ++= Seq(
@@ -50,12 +51,14 @@ lazy val core = project
   .settings(commonSettings: _*)
   .dependsOn(config, modelRest, modelDb)
   .settings(
+    description := "business logic",
     libraryDependencies ++= depCore
   )
 
 lazy val config = project
   .settings(commonSettings: _*)
   .settings(
+    description := "config code",
     libraryDependencies += ubirchUtilConfig
   )
 
@@ -63,6 +66,7 @@ lazy val modelRest = (project in file("model-rest"))
   .settings(commonSettings: _*)
   .settings(
     name := "model-rest",
+    description := "JSON models",
     libraryDependencies ++= depModelRest
   )
 
@@ -70,6 +74,7 @@ lazy val modelDb = (project in file("model-db"))
   .settings(commonSettings: _*)
   .settings(
     name := "model-db",
+    description := "DB models",
     libraryDependencies ++= depModelDb
   )
 
@@ -77,6 +82,7 @@ lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
   .settings(
     name := "test-base",
+    description := "test tools",
     libraryDependencies ++= depTestBase
   )
 
