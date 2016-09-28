@@ -93,18 +93,18 @@ lazy val testBase = (project in file("test-base"))
 lazy val depServer = Seq(
 
   //akka
-  "com.typesafe.akka" %% "akka-actor" % akkaV,
-  "com.typesafe.akka" %% "akka-http-experimental" % akkaV,
+  akkaG %% "akka-actor" % akkaV,
+  akkaG %% "akka-http-experimental" % akkaV,
 
   //testing
   scalatest % "test",
-  "com.typesafe.akka" %% "akka-testkit" % akkaV % "test",
+  akkaG %% "akka-testkit" % akkaV % "test",
   akkaHttpTestkit % "test",
 
   // logging
   typesafeScalaLogging,
-  "ch.qos.logback" % "logback-classic" % "1.1.7",
-  "ch.qos.logback" % "logback-core" % "1.1.7",
+  logbackG % "logback-classic" % "1.1.7",
+  logbackG % "logback-core" % "1.1.7",
   "org.slf4j" % "slf4j-api" % "1.7.12",
 
   ubirchUtilJsonAutoConvert,
@@ -131,12 +131,22 @@ lazy val depTestBase = Seq(
  * DEPENDENCIES
  ********************************************************/
 
+// VERSIONS
 lazy val akkaV = "2.4.10"
 lazy val json4sV = "3.4.0"
+lazy val awsSdkV = "1.11.37"
 lazy val scalaTestV = "3.0.0"
 
+// GROUP NAMES
+lazy val akkaG = "com.typesafe.akka"
+lazy val logbackG = "ch.qos.logback"
+lazy val json4sG = "org.json4s"
+lazy val awsG = "com.amazonaws"
+lazy val ubirchUtilG = "com.ubirch.util"
+
+
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
-lazy val akkaHttpTestkit = "com.typesafe.akka" %% "akka-http-testkit" % akkaV
+lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaV
 
 lazy val typesafeScalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0"
 
@@ -145,12 +155,16 @@ lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
 lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8"
 
 lazy val json4s = Seq(json4sNative, json4sExt)
-lazy val json4sNative = "org.json4s" %% "json4s-native" % json4sV
-lazy val json4sExt = "org.json4s" %% "json4s-ext" % json4sV
+lazy val json4sNative = json4sG %% "json4s-native" % json4sV
+lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
 
-lazy val ubirchUtilConfig = "com.ubirch.util" %% "config" % "0.1"
-lazy val ubirchUtilRestAkkaHttp = "com.ubirch.util" %% "rest-akka-http" % "0.2"
-lazy val ubirchUtilJsonAutoConvert = "com.ubirch.util" %% "json-auto-convert" % "0.1"
+// seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
+lazy val awsDynamoDb = awsG %% "aws-java-skd-dynamodb" % awsSdkV
+lazy val awsIoT = awsG %% "aws-java-skd-iot" % awsSdkV
+
+lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
+lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.1"
 
 /*
  * RESOLVER
