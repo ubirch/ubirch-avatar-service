@@ -10,6 +10,7 @@ import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.server.util.ESClient
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -33,6 +34,7 @@ object Boot extends App with LazyLogging {
 
   Runtime.getRuntime.addShutdownHook(new Thread() {
     override def run() = {
+      ESClient.shutdown()
       bindingFuture
         .flatMap(_.unbind())
         .onComplete(_ => system.terminate())

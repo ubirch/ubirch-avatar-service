@@ -8,6 +8,10 @@ import com.ubirch.util.config.ConfigBase
   */
 object Config extends ConfigBase {
 
+  /*
+   * SERVER RELATED
+   ****************************************************************/
+
   /**
     * The interface the server runs on.
     *
@@ -21,5 +25,39 @@ object Config extends ConfigBase {
     * @return port number
     */
   def port: Int = config.getInt(ConfigKeys.PORT)
+
+  /*
+   * ELASTIC SEARCH
+   ****************************************************************/
+
+  /**
+    * @return ElasticSearch protocol
+    */
+  def esProtocol: String = config.getString(ConfigKeys.ES_PROTOCOL)
+
+  /**
+    * @return ElasticSearch host
+    */
+  def esHost: String = config.getString(ConfigKeys.ES_HOST)
+
+  /**
+    * @return ElasticSearch port
+    */
+  def esPort: Int = config.getInt(ConfigKeys.ES_PORT)
+
+  /**
+    * @return ElasticSearch user
+    */
+  def esUser: String = config.getString(ConfigKeys.ES_PORT)
+
+  /**
+    * @return ElasticSearch password
+    */
+  def esPassword: String = config.getString(ConfigKeys.ES_PASSWORD)
+
+  /**
+    * @return ElasticSearch index
+    */
+  def esIndex: String = config.getString(ConfigKeys.ES_INDEX)
 
 }

@@ -11,4 +11,12 @@ object ConfigKeys {
   final val INTERFACE = s"$prefix.interface"
   final val PORT = s"$prefix.port"
 
+  final val esPrefix = s"$prefix.device.elastic"
+  final val ES_PROTOCOL = s"$esPrefix.protocol"
+  final val ES_HOST = s"$esPrefix.host"
+  final val ES_PORT = s"$esPrefix.port"
+  final val ES_INDEX = s"$esPrefix.index"
+  final val ES_USER = s"$esPrefix.user"
+  final val ES_PASSWORD = s"$esPrefix.password"
+
 }
