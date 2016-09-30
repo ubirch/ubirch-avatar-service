@@ -11,15 +11,20 @@ object RouteConstants {
   val avatarService = "avatarService"
   val device = "device"
   val stub = "stub"
+  val history = "history"
 
   val urlPrefix = s"/$api/$v1/$avatarService"
 
   val urlDevice = s"$urlPrefix/$device"
 
-  val urlDeviceWithIdPrefix = s"$urlPrefix/$device"
-  def urlDeviceWithId(id: String): String = s"$urlDeviceWithIdPrefix/$id"
+  def urlDeviceWithId(id: String): String = s"$urlDevice/$id"
 
-  val urlDeviceStubWithIdPrefix = s"$urlPrefix/$device/$stub"
+  val urlDeviceStubWithIdPrefix = s"$urlDevice/$stub"
   def urlDeviceStubWithId(id: String): String = s"$urlDeviceStubWithIdPrefix/$id"
+
+  def urlDeviceHistory(id: String): String = s"${urlDeviceWithId(id)}/$history"
+  def urlDeviceHistoryFrom(id: String, from: Long): String = s"${urlDeviceHistory(id)}/$from"
+  def urlDeviceHistoryFromSize(id: String, from: Long, size: Long): String = s"${urlDeviceHistory(id)}/$from/$size"
+
 
 }

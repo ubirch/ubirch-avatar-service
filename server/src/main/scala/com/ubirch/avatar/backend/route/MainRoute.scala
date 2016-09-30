@@ -15,6 +15,7 @@ class MainRoute {
   val device = new DeviceRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
+  val deviceDataHistory = new DeviceDataHistoryRoute {}
 
   val myRoute: Route = {
 
@@ -24,7 +25,8 @@ class MainRoute {
 
           device.route ~
             deviceId.route ~
-            deviceStubId.route
+            deviceStubId.route ~
+            deviceDataHistory.route
 
         }
       }

@@ -1,6 +1,7 @@
 package com.ubirch.avatar.backend.route
 
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.device.DeviceManager
@@ -30,7 +31,7 @@ trait DeviceIdRoute extends MyJsonProtocol
 
               case None =>
                 val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId")
-                HttpResponse(status = BadRequest, entity = HttpEntity(ContentTypes.`application/json`, error))
+                HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
 
               case Some(deviceObject) => Some(deviceObject)
 
@@ -44,7 +45,7 @@ trait DeviceIdRoute extends MyJsonProtocol
 
                 case None =>
                   val error = ErrorFactory.createString("UpdateError", s"failed to update device: deviceId=$deviceId")
-                  HttpResponse(status = BadRequest, entity = HttpEntity(ContentTypes.`application/json`, error))
+                  HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
 
                 case Some(deviceObject) => Some(deviceObject)
               }
@@ -58,7 +59,7 @@ trait DeviceIdRoute extends MyJsonProtocol
 
                 case None =>
                   val error = ErrorFactory.createString("DeleteError", s"failed to delete device: deviceId=$deviceId")
-                  HttpResponse(status = BadRequest, entity = HttpEntity(ContentTypes.`application/json`, error))
+                  HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
 
                 case Some(deviceObject) => Some(deviceObject)
 

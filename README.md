@@ -73,7 +73,9 @@ If server is healthy response is:
 
     200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService"}
 
-### TODO: title
+### Device Information
+
+#### TODO: title
 
 TODO: description
 
@@ -81,7 +83,7 @@ TODO: description
 
     curl -XPOST localhost:8080/api/v1/avatarService/device
 
-### TODO: title
+#### TODO: title
 
 TODO: description
 
@@ -91,11 +93,23 @@ TODO: description
 
     curl -XDELETE localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
 
-### TODO: title
+#### TODO: title
 
 TODO: description
 
     curl -XGET localhost:8080/api/v1/avatarService/device/stub/<DEVICE_ID>
+
+### Device Data
+
+#### TODO: title
+
+TODO: description
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history/<FROM>
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history/<FROM>/<PAGE_SIZE>
 
 ## Configuration
 
