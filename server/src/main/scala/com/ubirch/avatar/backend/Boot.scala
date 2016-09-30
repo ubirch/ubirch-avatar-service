@@ -10,7 +10,7 @@ import akka.util.Timeout
 import com.typesafe.scalalogging.LazyLogging
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.server.util.ESClient
+import com.ubirch.avatar.core.elasticsearch.ESClient
 
 import scala.concurrent.Future
 import scala.concurrent.duration._

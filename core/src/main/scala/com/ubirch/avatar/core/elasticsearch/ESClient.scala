@@ -1,4 +1,4 @@
-package com.ubirch.avatar.core.server.util
+package com.ubirch.avatar.core.elasticsearch
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -44,6 +44,12 @@ class ESClient(val host: String,
   def get(index: String, esType: String, id: String): Future[(Try[HttpResponse], Int)] = {
     val uri = s"/$index/$esType/$id"
     val req = HttpRequest(uri = uri, method = GET)
+    call(req)
+  }
+
+  def search(indexSet: Set[String], typeSet: Set[String], query: String): Future[(Try[HttpResponse], Int)] = {
+    val uri = ESClientUtil.searchPath(indexSet, typeSet)
+    val req = HttpRequest(uri = uri, entity = jsonEntity(query), method = GET)
     call(req)
   }
 
