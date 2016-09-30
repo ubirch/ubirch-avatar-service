@@ -3,11 +3,11 @@ package com.ubirch.avatar.core.server.util
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.HostConnectionPool
+import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse, RequestEntity}
+import akka.http.scaladsl.model.{HttpEntity, HttpRequest, HttpResponse, RequestEntity}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Flow, Sink, Source}
-import com.ubirch.avatar.config.Config
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -19,21 +19,26 @@ import scala.util.Try
   * author: cvandrei
   * since: 2016-09-29
   */
-object ESClient {
+// TODO extract ESClient to ubirch-scala-utils project
+class ESClient(val host: String,
+               val port: Int,
+               val protocol: String = "https",
+               systemIn: ActorSystem = ActorSystem(),
+               materializerIn: Option[ActorMaterializer] = None
+              ) {
 
-  // TODO extract ESClient to ubirch-scala-utils project
-
-  implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
+  implicit val system = systemIn
+  implicit val materializer = materializerIn match {
+    case None => ActorMaterializer()
+    case Some(someMaterializer) => someMaterializer
+  }
 
   private val connectionPool: Flow[(HttpRequest, Int), (Try[HttpResponse], Int), HostConnectionPool] = {
-
     // TODO pool should be configurable
-    Config.esProtocol match {
-      case "https" => Http().cachedHostConnectionPoolHttps(Config.esHost, Config.esPort)
-      case _ => Http().cachedHostConnectionPool[Int](Config.esHost, Config.esPort)
+    protocol match {
+      case "https" => Http().cachedHostConnectionPoolHttps(host, port)
+      case _ => Http().cachedHostConnectionPool[Int](host, port)
     }
-
   }
 
   def get(index: String, esType: String, id: String): Future[(Try[HttpResponse], Int)] = {
@@ -42,22 +47,21 @@ object ESClient {
     call(req)
   }
 
-  def insert(index: String, esType: String, id: String, entity: RequestEntity): Future[(Try[HttpResponse], Int)] = {
+  def insert(index: String, esType: String, id: String, json: String): Future[(Try[HttpResponse], Int)] = {
     val uri = s"$index/$esType"
-//    val entity = HttpEntity(`application/json`, data)
-    val req = HttpRequest(uri = uri, entity = entity, method = POST)
+    val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = POST)
     call(req)
   }
 
-  def update(index: String, esType: String, id: String, entity: RequestEntity) = {
+  def update(index: String, esType: String, id: String, json: String) = {
     val uri = s"$index/$esType/$id"
-    val req = HttpRequest(uri = uri, entity = entity, method = POST)
+    val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = POST)
     call(req)
   }
 
-  def upsert(index: String, esType: String, id: String, entity: RequestEntity) = {
+  def upsert(index: String, esType: String, id: String, json: String) = {
     val uri = s"$index/$esType/$id"
-    val req = HttpRequest(uri = uri, entity = entity, method = PUT)
+    val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = PUT)
     call(req)
   }
 
@@ -79,5 +83,9 @@ object ESClient {
       Await.result(system.terminate(), 20 seconds)
     }
   }
+
+  private def jsonEntity(data: String): RequestEntity = HttpEntity(`application/json`, data)
+
+  private def callSimple(req: HttpRequest): Future[HttpResponse] = Http().singleRequest(request = req)
 
 }
