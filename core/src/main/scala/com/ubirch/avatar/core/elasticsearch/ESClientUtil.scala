@@ -51,4 +51,6 @@ object ESClientUtil {
 
   }
 
+  // TODO add query generator
+
 }
