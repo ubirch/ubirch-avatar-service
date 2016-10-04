@@ -9,6 +9,7 @@ import akka.http.scaladsl.model.{HttpEntity, HttpRequest, HttpResponse, RequestE
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Flow, Sink, Source}
 
+import scala.Predef._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -48,33 +49,68 @@ class ESClient(val host: String,
   }
 
   def search(indexSet: Set[String], typeSet: Set[String], query: String): Future[(Try[HttpResponse], Int)] = {
+
+    assert(query != "")
+
     val uri = ESClientUtil.searchPath(indexSet, typeSet)
     val req = HttpRequest(uri = uri, entity = jsonEntity(query), method = GET)
+
     call(req)
+
   }
 
-  def insert(index: String, esType: String, id: String, json: String): Future[(Try[HttpResponse], Int)] = {
+  def insert(index: String, esType: String, json: String): Future[(Try[HttpResponse], Int)] = {
+
+    assert(index != "")
+    assert(esType != "")
+    assert(json != "")
+
     val uri = s"$index/$esType"
     val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = POST)
+
     call(req)
+
   }
 
   def update(index: String, esType: String, id: String, json: String) = {
+
+    assert(index != "")
+    assert(esType != "")
+    assert(id != "")
+    assert(json != "")
+
     val uri = s"$index/$esType/$id"
     val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = POST)
+
     call(req)
+
   }
 
   def upsert(index: String, esType: String, id: String, json: String) = {
+
+    assert(index != "")
+    assert(esType != "")
+    assert(id != "")
+    assert(json != "")
+
     val uri = s"$index/$esType/$id"
     val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = PUT)
+
     call(req)
+
   }
 
   def delete(index: String, esType: String, id: String): Future[(Try[HttpResponse], Int)] = {
+
+    assert(index != "")
+    assert(esType != "")
+    assert(id != "")
+
     val uri = s"/$index/$esType/$id"
     val req = HttpRequest(uri = uri, method = DELETE)
+
     call(req)
+
   }
 
   private def call(req: HttpRequest): Future[(Try[HttpResponse], Int)] = {
