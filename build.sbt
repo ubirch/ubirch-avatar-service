@@ -154,9 +154,10 @@ lazy val joda = Seq(jodaTime, jodaConvert)
 lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
 lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8"
 
-lazy val json4s = Seq(json4sNative, json4sExt)
+lazy val json4s = Seq(json4sNative, json4sExt, json4sJackson)
 lazy val json4sNative = json4sG %% "json4s-native" % json4sV
 lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
+lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 lazy val awsDynamoDb = awsG %% "aws-java-skd-dynamodb" % awsSdkV

@@ -1,10 +1,18 @@
 package com.ubirch.avatar.core.elasticsearch
 
+import org.json4s.DefaultFormats
+import org.json4s.JsonAST.JValue
+import org.json4s.ext.JodaTimeSerializers
+import org.json4s.jackson.JsonMethods._
+import org.json4s.jackson.Serialization._
+
 /**
   * author: cvandrei
   * since: 2016-09-30
   */
 object ESClientUtil {
+
+  implicit val formats = DefaultFormats.lossless ++ JodaTimeSerializers.all
 
   /**
     * Creates the path section of a search URI.
@@ -51,6 +59,91 @@ object ESClientUtil {
 
   }
 
-  // TODO add query generator
+  def simpleQuery(searchOpt: Option[SearchField] = None,
+                  sortOpt: Option[SortSearch] = None,
+                  limitOpt: Option[Int] = None
+                 ): JValue = {
+
+    val search: JValue = searchQuery(searchOpt)
+    val sort: JValue = sortQuery(sortOpt)
+    val limit: JValue = limitQuery(limitOpt)
+
+    render(search merge sort merge limit)
+
+  }
+
+  def simpleQueryString(searchOpt: Option[SearchField] = None,
+                        sortOpt: Option[SortSearch] = None,
+                        limitOpt: Option[Int] = None): String = {
+
+    val jvalue = simpleQuery(searchOpt, sortOpt, limitOpt)
+    compact(jvalue).stripMargin
+
+  }
+
+  def searchQuery(searchFieldOpt: Option[SearchField]): JValue = {
+
+    searchFieldOpt match {
+
+      case None => emptyJValue
+
+      case Some(searchField) => parse(
+        s"""{
+            |  "query" :
+            |  {
+            |    "term" :
+            |    { "${searchField.field}" : "${searchField.value}" }
+            |  }
+            |}""".stripMargin
+      )
+
+    }
+
+  }
+
+  def sortQuery(sortOpt: Option[SortSearch]): JValue = {
+
+    sortOpt match {
+
+      case None => emptyJValue
+
+      case Some(sort) => parse(
+        s"""
+           |{
+           | "sort" :
+           | {
+           |   "${sort.by}":
+           |   {
+           |     "order" : "${sort.order}"
+           |   }
+           | }
+           |}
+         """.stripMargin
+      )
+
+    }
+
+  }
+
+  def limitQuery(limitOpt: Option[Int]): JValue = {
+
+    limitOpt match {
+
+      case None => emptyJValue
+
+      case Some(limit) =>
+        parse(
+          s"""{ "size" : $limit }""".stripMargin
+        )
+
+    }
+
+  }
+
+  def emptyJValue: JValue = read[JValue]("{}")
 
 }
+
+case class SearchField(field: String, value: String)
+
+case class SortSearch(by: String, order: String = "asc")
