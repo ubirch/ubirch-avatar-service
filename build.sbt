@@ -101,23 +101,18 @@ lazy val depServer = Seq(
   akkaG %% "akka-testkit" % akkaV % "test",
   akkaHttpTestkit % "test",
 
-  // logging
-  typesafeScalaLogging,
-  logbackG % "logback-classic" % "1.1.7",
-  logbackG % "logback-core" % "1.1.7",
-  "org.slf4j" % "slf4j-api" % "1.7.12",
-
   ubirchUtilJsonAutoConvert,
   ubirchUtilRestAkkaHttp
 
-)
+) ++ scalaLogging
 
 lazy val depCore = Seq(
-  typesafeScalaLogging,
+  ubirchUtilJson,
+  elasticSearch,
   scalatest % "test"
-)
+) ++ scalaLogging
 
-lazy val depModelRest = joda ++ json4s :+ ubirchUtilJsonAutoConvert
+lazy val depModelRest = joda ++ json4s ++ scalaLogging :+ ubirchUtilJsonAutoConvert
 
 lazy val depModelDb = Seq()
 
@@ -136,6 +131,7 @@ lazy val akkaV = "2.4.10"
 lazy val json4sV = "3.4.0"
 lazy val awsSdkV = "1.11.37"
 lazy val scalaTestV = "3.0.0"
+lazy val elasticsearchV = "2.4.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -144,11 +140,16 @@ lazy val json4sG = "org.json4s"
 lazy val awsG = "com.amazonaws"
 lazy val ubirchUtilG = "com.ubirch.util"
 
-
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
 lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaV
 
-lazy val typesafeScalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0"
+lazy val scalaLogging = Seq(
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
+  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
+  "ch.qos.logback" % "logback-classic" % "1.1.7",
+  "ch.qos.logback" % "logback-core" % "1.1.7"
+  , "org.slf4j" % "slf4j-api" % "1.7.21"
+)
 
 lazy val joda = Seq(jodaTime, jodaConvert)
 lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
@@ -165,6 +166,10 @@ lazy val awsIoT = awsG %% "aws-java-skd-iot" % awsSdkV
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.1"
+lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.1"
+
+// Elasticsearch
+lazy val elasticSearch = "org.elasticsearch" % "elasticsearch" % elasticsearchV
 
 /*
  * RESOLVER

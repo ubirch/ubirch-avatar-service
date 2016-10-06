@@ -8,7 +8,10 @@ object ConfigKeys {
 
   private final val prefix = "ubirchAvatarService"
 
-  final val INTERFACE = s"$prefix.interface"
-  final val PORT = s"$prefix.port"
+  final val HTTPINTERFACE = s"$prefix.interface"
+  final val HTTPPORT = s"$prefix.port"
+
+  final val ESHOST = s"$prefix.es.host"
+  final val ESPORT = s"$prefix.es.port"
 
 }

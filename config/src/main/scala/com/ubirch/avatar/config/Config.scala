@@ -13,13 +13,25 @@ object Config extends ConfigBase {
     *
     * @return interface
     */
-  def interface: String = config.getString(ConfigKeys.INTERFACE)
+  def interface: String = config.getString(ConfigKeys.HTTPINTERFACE)
 
   /**
     * Port the server listens on.
     *
     * @return port number
     */
-  def port: Int = config.getInt(ConfigKeys.PORT)
+  def port: Int = config.getInt(ConfigKeys.HTTPPORT)
+
+  /**
+    *
+    * @return
+    */
+  def esHost: String = config.getString(ConfigKeys.ESHOST)
+
+  /**
+    *
+    * @return
+    */
+  def esPort: Int = config.getInt(ConfigKeys.ESPORT)
 
 }
