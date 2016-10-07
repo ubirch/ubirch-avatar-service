@@ -62,16 +62,14 @@ class ElasticsearchStorageTest extends FeatureSpec
       }
     }
 
-//    scenario("getAll") {
-//
-//      ElasticsearchStorage.getDocs(docIndex, docType) match {
-//        case Some(jval) =>
-//          val rTestDoc = jval.extract[TestDoc]
-//          rTestDoc.id shouldBe testDoc.id
-//          rTestDoc.hello shouldBe testDoc.hello
-//        case _ => fail("could not reag stored document")
-//      }
-//    }
+    scenario("getAll") {
+
+      ElasticsearchStorage.getDocs(docIndex, docType) match {
+        case jvals =>
+          jvals.size shouldBe 1
+        case _ => fail("could not reag stored document")
+      }
+    }
 
     scenario("delete") {
       ElasticsearchStorage.deleteDoc(docIndex, docType, testDoc.id) shouldBe true
