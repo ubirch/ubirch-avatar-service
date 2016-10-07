@@ -7,12 +7,14 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.util.json.Json4sUtil
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
-import org.json4s.JValue
+import org.json4s.{DefaultFormats, JValue}
 
 /**
   * Created by derMicha on 06/10/16.
   */
 object ElasticsearchStorage extends LazyLogging {
+
+  implicit val formats = DefaultFormats.lossless ++ org.json4s.ext.JodaTimeSerializers.all
 
   private val esclient: TransportClient = TransportClient.builder().build()
     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPort))
@@ -82,10 +84,36 @@ object ElasticsearchStorage extends LazyLogging {
   }
 
   /**
+    *
+    * @param docIndex name of the ElasticSeatch index
+    * @param docType  name of the type of document
+    * @return
+    */
+  def getDocs(docIndex: String, docType: String): List[JValue] = {
+    if (docIndex.isEmpty || docType.isEmpty) {
+      List()
+    }
+    else {
+      esclient.prepareSearch(docIndex)
+        .setTypes(docType)
+        .execute()
+        .get() match {
+        case srs if srs.getHits.getTotalHits > 0 =>
+          srs.getHits.getHits.map { hit =>
+            Json4sUtil.string2JValue(hit.getSourceAsString)
+          }.filter(_.isDefined).map(_.get.extract[JValue]).toList
+        case _ =>
+          List()
+      }
+    }
+  }
+
+  /**
     * removes a document from it's index
+    *
     * @param docIndex name of the index
-    * @param docType name of the doc type
-    * @param docId unique id
+    * @param docType  name of the doc type
+    * @param docId    unique id
     * @return
     */
   def deleteDoc(docIndex: String, docType: String, docId: String): Boolean = {
