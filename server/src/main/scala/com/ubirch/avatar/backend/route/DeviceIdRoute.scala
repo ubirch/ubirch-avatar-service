@@ -1,21 +1,24 @@
 package com.ubirch.avatar.backend.route
 
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
 import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.ErrorFactory
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
   * author: cvandrei
   * since: 2016-09-21
   */
-trait DeviceIdRoute extends MyJsonProtocol
-  with CORSDirective {
+trait DeviceIdRoute extends CORSDirective
+  with MyJsonProtocol {
+
+  implicit val ec = scala.concurrent.ExecutionContext.global
 
   val route: Route = {
 
@@ -23,17 +26,17 @@ trait DeviceIdRoute extends MyJsonProtocol
       path(device / Segment) { deviceId =>
 
         // TODO authentication for all three methods
-
         get {
           complete {
-            DeviceManager.info(deviceId) match {
-
-              case None =>
-                val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId")
-                HttpResponse(status = BadRequest, entity = HttpEntity(ContentTypes.`application/json`, error))
-
-              case Some(deviceObject) => Some(deviceObject)
-
+            DeviceManager.info(deviceId).map {
+              case Some(deviceObject) =>
+                deviceObject
+              case _ =>
+                val error: String = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId")
+                HttpResponse(
+                  status = BadRequest,
+                  entity = HttpEntity(ContentTypes.`application/json`, error)
+                )
             }
           }
         } ~

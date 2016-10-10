@@ -7,7 +7,9 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.typesafe.scalalogging.LazyLogging
+
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
 
@@ -39,16 +41,15 @@ object Boot extends App with LazyLogging {
     }
   })
 
-
-
   def start(): Future[ServerBinding] = {
 
     val interface = Config.interface
     val port = Config.port
     implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
-    Http().bindAndHandle((new MainRoute).myRoute, interface, port)
+    logger.info(s"start http server on $interface:$port")
 
+    Http().bindAndHandle((new MainRoute).myRoute, interface, port)
   }
 
 }

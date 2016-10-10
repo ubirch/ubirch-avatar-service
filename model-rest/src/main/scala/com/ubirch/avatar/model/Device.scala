@@ -22,7 +22,25 @@ case class Device(deviceId: String,
                   created: Option[DateTime],
                   updated: Option[DateTime],
                   deviceLastUpdated: Option[DateTime]
-                 )
+                 ) {
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj match {
+      case dev: Device =>
+        if (
+          dev.deviceId == this.deviceId &&
+            dev.deviceName == this.deviceName &&
+            dev.hwDeviceId == this.hwDeviceId
+        )
+          true
+        else
+          false
+      case _ => false
+    }
+  }
+}
+
+
 
 case class AvatarState(desired: Option[JValue],
                        reported: Option[JValue]

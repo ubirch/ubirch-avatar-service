@@ -2,16 +2,20 @@ package com.ubirch.avatar.backend.route
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.model.{ErrorFactory, ErrorResponse, Device, DummyDevices}
+import com.ubirch.avatar.model.{Device, DummyDevices, ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.RouteSpec
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import org.scalatest.{BeforeAndAfterAll, Matchers}
 
 /**
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceIdRouteSpec extends RouteSpec {
+class DeviceIdRouteSpec extends RouteSpec
+  with Matchers
+  with BeforeAndAfterAll {
 
   private val routes = (new MainRoute).myRoute
 
@@ -43,7 +47,9 @@ class DeviceIdRouteSpec extends RouteSpec {
 
       Get(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
 
-        status shouldEqual BadRequest
+        val s = status
+        val r = response
+        s shouldEqual BadRequest
 
         val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId")
         responseEntity.contentType should be(`application/json`)
@@ -141,4 +147,7 @@ class DeviceIdRouteSpec extends RouteSpec {
 
   }
 
+  override protected def beforeAll(): Unit = {
+    DeviceManager.create(DummyDevices.device1)
+  }
 }

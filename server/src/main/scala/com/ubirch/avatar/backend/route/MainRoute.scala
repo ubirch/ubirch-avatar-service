@@ -18,9 +18,9 @@ class MainRoute {
 
   val myRoute: Route = {
 
-    pathPrefix(api) {
-      pathPrefix(v1) {
-        pathPrefix(avatarService) {
+    pathPrefix(apiPrefix) {
+      pathPrefix(serviceName) {
+        pathPrefix(currentVersion) {
 
           device.route ~
             deviceId.route ~

@@ -17,6 +17,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 trait DeviceRoute extends MyJsonProtocol
   with CORSDirective {
 
+  implicit val ec = scala.concurrent.ExecutionContext.global
+
   val route: Route = {
 
     respondWithCORS {
@@ -33,7 +35,7 @@ trait DeviceRoute extends MyJsonProtocol
             entity(as[Device]) { device =>
               complete {
 
-                DeviceManager.create(device) match {
+                DeviceManager.create(device).map {
 
                   case None =>
                     val error = ErrorFactory.createString("CreationError", s"failed to create device: ${entity(as[String])}")

@@ -95,6 +95,9 @@ lazy val depServer = Seq(
   //akka
   akkaG %% "akka-actor" % akkaV,
   akkaG %% "akka-http-experimental" % akkaV,
+  akkaG %% "akka-slf4j" % akkaV,
+  "de.heikoseeberger" %% "akka-http-Json4sSupport" % "1.10.1",
+  //akkaG %% "akka-http-spray-json-experimental" % akkaV,
 
   //testing
   scalatest % "test",
@@ -127,8 +130,8 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-lazy val akkaV = "2.4.10"
-lazy val json4sV = "3.4.0"
+lazy val akkaV = "2.4.11"
+lazy val json4sV = "3.4.1"
 lazy val awsSdkV = "1.11.37"
 lazy val scalaTestV = "3.0.0"
 lazy val elasticsearchV = "2.4.0"

@@ -2,14 +2,17 @@ package com.ubirch.services.storage
 
 import java.net.InetAddress
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import com.ubirch.avatar.config.Config
 import com.ubirch.util.json.Json4sUtil
+
 import org.elasticsearch.action.bulk.{BackoffPolicy, BulkProcessor, BulkRequest, BulkResponse}
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.unit.{ByteSizeUnit, ByteSizeValue, TimeValue}
+
 import org.json4s.JValue
 
 /**
