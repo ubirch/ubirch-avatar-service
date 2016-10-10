@@ -146,7 +146,7 @@ lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
 lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
   "ch.qos.logback" % "logback-classic" % "1.1.7",
   "ch.qos.logback" % "logback-core" % "1.1.7"
