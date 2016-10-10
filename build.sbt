@@ -96,7 +96,6 @@ lazy val depServer = Seq(
   akkaG %% "akka-actor" % akkaV,
   akkaG %% "akka-http-experimental" % akkaV,
   akkaG %% "akka-slf4j" % akkaV,
-  "de.heikoseeberger" %% "akka-http-Json4sSupport" % "1.10.1",
   //akkaG %% "akka-http-spray-json-experimental" % akkaV,
 
   //testing
