@@ -6,14 +6,14 @@ package com.ubirch.avatar.core.server.util
   */
 object RouteConstants {
 
-  val api = "api"
-  val v1 = "v1"
-  val avatarService = "avatarService"
+  val apiPrefix = "api"
+  val currentVersion = "v1"
+  val serviceName = "avatarService"
   val device = "device"
   val stub = "stub"
   val history = "history"
 
-  val urlPrefix = s"/$api/$v1/$avatarService"
+  val urlPrefix = s"/$apiPrefix/$currentVersion/$serviceName"
 
   val urlDevice = s"$urlPrefix/$device"
 

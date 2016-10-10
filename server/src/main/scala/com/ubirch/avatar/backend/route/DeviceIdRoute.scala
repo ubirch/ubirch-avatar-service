@@ -15,8 +15,10 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   * author: cvandrei
   * since: 2016-09-21
   */
-trait DeviceIdRoute extends MyJsonProtocol
-  with CORSDirective {
+trait DeviceIdRoute extends CORSDirective
+  with MyJsonProtocol {
+
+  implicit val ec = scala.concurrent.ExecutionContext.global
 
   val route: Route = {
 
@@ -27,7 +29,7 @@ trait DeviceIdRoute extends MyJsonProtocol
 
         get {
           complete {
-            DeviceManager.info(deviceId) match {
+            DeviceManager.info(deviceId).map {
 
               case None =>
                 val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId")
