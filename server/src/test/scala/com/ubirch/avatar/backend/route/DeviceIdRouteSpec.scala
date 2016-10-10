@@ -19,7 +19,7 @@ class DeviceIdRouteSpec extends RouteSpec
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
+  feature(s"GET ${RouteConstants.urlDevice}/:deviceId") {
 
     scenario("without deviceId") {
       Get(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
@@ -63,7 +63,7 @@ class DeviceIdRouteSpec extends RouteSpec
 
   }
 
-  feature(s"PUT ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
+  feature(s"PUT ${RouteConstants.urlDevice}/:deviceId") {
 
     scenario("without deviceId") {
       Put(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
@@ -105,7 +105,7 @@ class DeviceIdRouteSpec extends RouteSpec
 
   }
 
-  feature(s"DELETE ${RouteConstants.urlDeviceWithIdPrefix}/:deviceId") {
+  feature(s"DELETE ${RouteConstants.urlDevice}/:deviceId") {
 
     scenario("without deviceId") {
       Delete(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {

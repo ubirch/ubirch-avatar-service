@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.1.0",
+  version := "0.2.0-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -49,7 +49,7 @@ lazy val server = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, modelRest, modelDb)
+  .dependsOn(config, modelRest, modelDb, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore
@@ -157,9 +157,10 @@ lazy val joda = Seq(jodaTime, jodaConvert)
 lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
 lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8"
 
-lazy val json4s = Seq(json4sNative, json4sExt)
+lazy val json4s = Seq(json4sNative, json4sExt, json4sJackson)
 lazy val json4sNative = json4sG %% "json4s-native" % json4sV
 lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
+lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 lazy val awsDynamoDb = awsG %% "aws-java-skd-dynamodb" % awsSdkV

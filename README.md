@@ -14,7 +14,7 @@ TODO
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "config" % "0.1.0"
+      "com.ubirch.avatar" %% "config" % "0.2.0-SNAPSHOT"
     )
 
 ### `core`
@@ -23,7 +23,7 @@ TODO
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "core" % "0.1.0"
+      "com.ubirch.avatar" %% "core" % "0.2.0-SNAPSHOT"
     )
 
 ### `model-rest`
@@ -32,7 +32,7 @@ TODO
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "model-rest" % "0.1.0"
+      "com.ubirch.avatar" %% "model-rest" % "0.2.0-SNAPSHOT"
     )
 
 ### `model-db`
@@ -41,7 +41,7 @@ TODO
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "model-db" % "0.1.0"
+      "com.ubirch.avatar" %% "model-db" % "0.2.0-SNAPSHOT"
     )
         
 ### `server`
@@ -51,7 +51,7 @@ TODO
       Resolver.bintrayRepo("hseeberger", "maven")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "server" % "0.1.0"
+      "com.ubirch.avatar" %% "server" % "0.2.0-SNAPSHOT"
     )
         
 ### `server`
@@ -60,7 +60,7 @@ TODO
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "model" % "0.1.0"
+      "com.ubirch.avatar" %% "model" % "0.2.0-SNAPSHOT"
     )
 
 ## REST Methods
@@ -73,7 +73,9 @@ If server is healthy response is:
 
     200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService"}
 
-### TODO: title
+### Device Information
+
+#### TODO: title
 
 TODO: description
 
@@ -81,7 +83,7 @@ TODO: description
 
     curl -XPOST localhost:8080/api/v1/avatarService/device
 
-### TODO: title
+#### TODO: title
 
 TODO: description
 
@@ -91,11 +93,23 @@ TODO: description
 
     curl -XDELETE localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
 
-### TODO: title
+#### TODO: title
 
 TODO: description
 
     curl -XGET localhost:8080/api/v1/avatarService/device/stub/<DEVICE_ID>
+
+### Device Data
+
+#### TODO: title
+
+TODO: description
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history/<FROM>
+
+    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history/<FROM>/<PAGE_SIZE>
 
 ## Configuration
 

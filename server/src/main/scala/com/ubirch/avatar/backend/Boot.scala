@@ -12,6 +12,7 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.elasticsearch.ESClient
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -24,17 +25,20 @@ import scala.language.postfixOps
 object Boot extends App with LazyLogging {
 
   implicit val system = ActorSystem()
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
   logger.info("ubirchAvatarService started")
 
   implicit val timeout = Timeout(15 seconds)
 
+  val esClient = new ESClient(Config.esHost, Config.esPort, Config.esProtocol, system, Some(materializer))
+
   val bindingFuture = start()
 
   Runtime.getRuntime.addShutdownHook(new Thread() {
     override def run() = {
+      esClient.shutdown()
       bindingFuture
         .flatMap(_.unbind())
         .onComplete(_ => system.terminate())
