@@ -50,7 +50,7 @@ class ESClient(val host: String,
 
   def search(indexSet: Set[String], typeSet: Set[String], query: String): Future[(Try[HttpResponse], Int)] = {
 
-    assert(query != "")
+    require(query != "")
 
     val uri = ESClientUtil.searchPath(indexSet, typeSet)
     val req = HttpRequest(uri = uri, entity = jsonEntity(query), method = GET)
@@ -61,9 +61,7 @@ class ESClient(val host: String,
 
   def insert(index: String, esType: String, json: String): Future[(Try[HttpResponse], Int)] = {
 
-    assert(index != "")
-    assert(esType != "")
-    assert(json != "")
+    require(index != "" && esType != "" && json != "")
 
     val uri = s"$index/$esType"
     val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = POST)
@@ -74,10 +72,7 @@ class ESClient(val host: String,
 
   def update(index: String, esType: String, id: String, json: String) = {
 
-    assert(index != "")
-    assert(esType != "")
-    assert(id != "")
-    assert(json != "")
+    require(index != "" && esType != "" && id != "" && json != "")
 
     val uri = s"$index/$esType/$id"
     val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = POST)
@@ -88,10 +83,7 @@ class ESClient(val host: String,
 
   def upsert(index: String, esType: String, id: String, json: String) = {
 
-    assert(index != "")
-    assert(esType != "")
-    assert(id != "")
-    assert(json != "")
+    require(index != "" && esType != "" && id != "" && json != "")
 
     val uri = s"$index/$esType/$id"
     val req = HttpRequest(uri = uri, entity = jsonEntity(json), method = PUT)
@@ -102,9 +94,7 @@ class ESClient(val host: String,
 
   def delete(index: String, esType: String, id: String): Future[(Try[HttpResponse], Int)] = {
 
-    assert(index != "")
-    assert(esType != "")
-    assert(id != "")
+    require(index != "" && esType != "" && id != "")
 
     val uri = s"/$index/$esType/$id"
     val req = HttpRequest(uri = uri, method = DELETE)
