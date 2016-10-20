@@ -19,6 +19,7 @@ import scala.concurrent.Future
   *
   * Created by derMicha on 06/10/16.
   */
+// TODO extract to ubirch-scala-utils/elasticsearch-binary-client project
 object ElasticsearchStorage extends LazyLogging {
 
   implicit val formats = DefaultFormats.lossless ++ org.json4s.ext.JodaTimeSerializers.all

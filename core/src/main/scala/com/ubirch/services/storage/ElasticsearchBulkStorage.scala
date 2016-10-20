@@ -19,6 +19,7 @@ import org.json4s.JValue
   *
   * Created by derMicha on 02/10/16.
   */
+// TODO extract to ubirch-scala-utils/elasticsearch-binary-client project
 object ElasticsearchBulkStorage extends LazyLogging {
 
   private val esClient: TransportClient = TransportClient.builder().build()
