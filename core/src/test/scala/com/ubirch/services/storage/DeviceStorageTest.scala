@@ -12,7 +12,7 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 06/10/16.
   */
-class DeviceDataStorageTest extends AsyncFeatureSpec
+class DeviceStorageTest extends AsyncFeatureSpec
   with Matchers
   with BeforeAndAfterAll
   with LazyLogging {
@@ -34,19 +34,19 @@ class DeviceDataStorageTest extends AsyncFeatureSpec
     scenario("store") {
       val jval = Json4sUtil.any2jvalue(testDoc).get
 
-      DeviceDataStorage.storeDoc(docIndex, docType, testDoc.id, jval).map { rjval =>
+      DeviceStorage.storeDoc(docIndex, docType, testDoc.id, jval).map { rjval =>
         val rTestDoc = rjval.extract[TestDoc]
         rTestDoc.hello shouldBe testDoc.hello
       }
     }
 
     ignore("failed get") {
-      val f = Await.result(DeviceDataStorage.getDoc("", "", ""), 5 seconds)
+      val f = Await.result(DeviceStorage.getDoc("", "", ""), 5 seconds)
       f.isDefined shouldBe true
     }
 
     scenario("get") {
-      DeviceDataStorage.getDoc(docIndex, docType, testDoc.id).map {
+      DeviceStorage.getDoc(docIndex, docType, testDoc.id).map {
         case Some(jval) =>
           val rTestDoc = jval.extract[TestDoc]
           rTestDoc.id shouldBe testDoc.id
@@ -58,8 +58,8 @@ class DeviceDataStorageTest extends AsyncFeatureSpec
 
     scenario("update") {
       val jval = Json4sUtil.any2jvalue(testDoc2).get
-      Await.ready(DeviceDataStorage.storeDoc(docIndex, docType, testDoc2.id, jval), 2 seconds)
-      DeviceDataStorage.getDoc(docIndex, docType, testDoc2.id).map {
+      Await.ready(DeviceStorage.storeDoc(docIndex, docType, testDoc2.id, jval), 2 seconds)
+      DeviceStorage.getDoc(docIndex, docType, testDoc2.id).map {
         case Some(jValue) =>
           val rTestDoc = jValue.extract[TestDoc]
           rTestDoc.id shouldBe testDoc2.id
@@ -70,7 +70,7 @@ class DeviceDataStorageTest extends AsyncFeatureSpec
 
     scenario("getAll") {
       Thread.sleep(500)
-      DeviceDataStorage.getDocs(docIndex, docType).map {
+      DeviceStorage.getDocs(docIndex, docType).map {
         case jvals: List[JValue] =>
           jvals.size shouldBe 1
         case _ => fail("could not reag stored document")
@@ -78,7 +78,7 @@ class DeviceDataStorageTest extends AsyncFeatureSpec
     }
 
     scenario("delete") {
-      DeviceDataStorage.deleteDoc(docIndex, docType, testDoc.id).map { res =>
+      DeviceStorage.deleteDoc(docIndex, docType, testDoc.id).map { res =>
         res shouldBe true
       }
     }

@@ -11,7 +11,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress
   * author: cvandrei
   * since: 2016-10-20
   */
-object DeviceDataBulkStorage extends ElasticsearchBulkStorage {
+object DeviceBulkStorage extends ElasticsearchBulkStorage {
 
   private val address = new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPort)
 
