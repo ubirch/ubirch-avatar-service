@@ -15,7 +15,7 @@ import scala.Predef._
 import scala.concurrent.Future
 
 /**
-  * Using the Elasticearch TransportClient to access the database: https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html
+  * Using the Elasticsearch TransportClient to access the database: https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html
   *
   * Created by derMicha on 06/10/16.
   */

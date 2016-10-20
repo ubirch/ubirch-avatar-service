@@ -15,7 +15,7 @@ import org.elasticsearch.common.unit.{ByteSizeUnit, ByteSizeValue, TimeValue}
 import org.json4s.JValue
 
 /**
-  * Using the Elasticearch TransportClient to access the database: https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html
+  * Using the Elasticsearch TransportClient to access the database: https://www.elastic.co/guide/en/elasticsearch/client/java-api/current/index.html
   *
   * Created by derMicha on 02/10/16.
   */
