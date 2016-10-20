@@ -12,7 +12,6 @@ import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.unit.{ByteSizeUnit, ByteSizeValue, TimeValue}
-
 import org.json4s.JValue
 
 /**
@@ -20,10 +19,10 @@ import org.json4s.JValue
   */
 object ElasticsearchBulkStorage extends LazyLogging {
 
-  private val esclient: TransportClient = TransportClient.builder().build()
+  private val esClient: TransportClient = TransportClient.builder().build()
     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPort))
 
-  private val bulkProcessor = BulkProcessor.builder(esclient, new BulkProcessor.Listener() {
+  private val bulkProcessor = BulkProcessor.builder(esClient, new BulkProcessor.Listener() {
 
     @Override
     def beforeBulk(executionId: Long, request: BulkRequest): Unit = {
