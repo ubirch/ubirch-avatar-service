@@ -1,16 +1,12 @@
 package com.ubirch.services.storage
 
-import java.net.InetAddress
-
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
-import com.ubirch.avatar.config.Config
 import com.ubirch.util.json.Json4sUtil
 
 import org.elasticsearch.action.bulk.{BackoffPolicy, BulkProcessor, BulkRequest, BulkResponse}
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.elasticsearch.common.unit.{ByteSizeUnit, ByteSizeValue, TimeValue}
 import org.json4s.JValue
 
@@ -20,10 +16,9 @@ import org.json4s.JValue
   * Created by derMicha on 02/10/16.
   */
 // TODO extract to ubirch-scala-utils/elasticsearch-binary-client project
-object ElasticsearchBulkStorage extends LazyLogging {
+trait ElasticsearchBulkStorage extends LazyLogging {
 
-  private val esClient: TransportClient = TransportClient.builder().build()
-    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPort))
+  protected val esClient: TransportClient
 
   private val bulkProcessor = BulkProcessor.builder(esClient, new BulkProcessor.Listener() {
 
@@ -67,4 +62,5 @@ object ElasticsearchBulkStorage extends LazyLogging {
   def closeConnection(): Unit = {
     bulkProcessor.close()
   }
+
 }

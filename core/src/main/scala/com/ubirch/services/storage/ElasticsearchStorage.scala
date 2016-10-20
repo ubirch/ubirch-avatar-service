@@ -1,14 +1,10 @@
 package com.ubirch.services.storage
 
-import java.net.InetAddress
-
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
-import com.ubirch.avatar.config.Config
 import com.ubirch.util.json.Json4sUtil
 
 import org.elasticsearch.client.transport.TransportClient
-import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.json4s.{DefaultFormats, JValue}
 
 import scala.Predef._
@@ -20,13 +16,12 @@ import scala.concurrent.Future
   * Created by derMicha on 06/10/16.
   */
 // TODO extract to ubirch-scala-utils/elasticsearch-binary-client project
-object ElasticsearchStorage extends LazyLogging {
+trait ElasticsearchStorage extends LazyLogging {
 
   implicit val formats = DefaultFormats.lossless ++ org.json4s.ext.JodaTimeSerializers.all
   implicit val ec = scala.concurrent.ExecutionContext.global
 
-  private val esClient: TransportClient = TransportClient.builder().build()
-    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPort))
+  protected val esClient: TransportClient
 
   /**
     *
@@ -49,7 +44,7 @@ object ElasticsearchStorage extends LazyLogging {
     */
   def storeDoc(docIndex: String, docType: String, docId: String, ttl: Long, doc: JValue): Future[JValue] = Future {
 
-    require(docIndex.isEmpty || docType.isEmpty || docId.isEmpty, "json invalid arguments")
+    require(docIndex.nonEmpty && docType.nonEmpty && docId.nonEmpty, "json invalid arguments")
 
     Json4sUtil.jvalue2String(doc) match {
       case docStr if docStr.nonEmpty =>
@@ -80,7 +75,7 @@ object ElasticsearchStorage extends LazyLogging {
     */
   def getDoc(docIndex: String, docType: String, docId: String): Future[Option[JValue]] = Future {
 
-    require(docIndex.isEmpty || docType.isEmpty || docId.isEmpty, "json invalid arguments")
+    require(docIndex.nonEmpty && docType.nonEmpty && docId.nonEmpty, "json invalid arguments")
 
     esClient.prepareGet(docIndex, docType, docId).get() match {
       case rs if rs.isExists => Json4sUtil.string2JValue(rs.getSourceAsString)
@@ -97,7 +92,7 @@ object ElasticsearchStorage extends LazyLogging {
     */
   def getDocs(docIndex: String, docType: String): Future[List[JValue]] = {
 
-    require(docIndex.isEmpty || docType.isEmpty, "json invalid arguments")
+    require(docIndex.nonEmpty && docType.nonEmpty, "json invalid arguments")
 
     Future {
       esClient.prepareSearch(docIndex)
@@ -126,7 +121,7 @@ object ElasticsearchStorage extends LazyLogging {
     */
   def deleteDoc(docIndex: String, docType: String, docId: String): Future[Boolean] = Future {
 
-    require(docIndex.isEmpty || docType.isEmpty || docId.isEmpty, "json invalid arguments")
+    require(docIndex.nonEmpty && docType.nonEmpty && docId.nonEmpty, "json invalid arguments")
 
     val res = esClient.prepareDelete(docIndex, docType, docId).get()
     res.isFound
