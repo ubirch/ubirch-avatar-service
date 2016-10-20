@@ -79,25 +79,25 @@ If server is healthy response is:
 
 TODO: description
 
-    curl -XGET localhost:8080/api/v1/avatarService/device
+    curl -XGET localhost:8080/api/avatarService/v1/device
 
-    curl -XPOST localhost:8080/api/v1/avatarService/device
-
-#### TODO: title
-
-TODO: description
-
-    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
-
-    curl -XPOST localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
-
-    curl -XDELETE localhost:8080/api/v1/avatarService/device/<DEVICE_ID>
+    curl -XPOST localhost:8080/api/avatarService/v1/device
 
 #### TODO: title
 
 TODO: description
 
-    curl -XGET localhost:8080/api/v1/avatarService/device/stub/<DEVICE_ID>
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
+
+    curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
+
+#### TODO: title
+
+TODO: description
+
+    curl -XGET localhost:8080/api/avatarService/v1/device/stub/<DEVICE_ID>
 
 ### Device Data
 
@@ -105,11 +105,11 @@ TODO: description
 
 TODO: description
 
-    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history
 
-    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history/<FROM>
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history/<FROM>
 
-    curl -XGET localhost:8080/api/v1/avatarService/device/<DEVICE_ID>/history/<FROM>/<PAGE_SIZE>
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history/<FROM>/<PAGE_SIZE>
 
 ## Configuration
 
