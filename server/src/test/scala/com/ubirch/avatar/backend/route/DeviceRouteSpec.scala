@@ -22,7 +22,7 @@ class DeviceRouteSpec extends RouteSpec {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         val deviceList = responseAs[Seq[Device]]
-        deviceList shouldEqual DummyDevices.all
+        deviceList should be('nonEmpty)
         verifyCORSHeader()
       }
     }
