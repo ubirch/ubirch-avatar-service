@@ -5,6 +5,7 @@ import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.model.{Device, DummyDevices}
 import com.ubirch.avatar.test.base.RouteSpec
+import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
@@ -45,12 +46,12 @@ class DeviceRouteSpec extends RouteSpec {
 
     scenario("without device json") {
 
-      Post(RouteConstants.urlDevice) ~> routes ~> check {
+      Post(RouteConstants.urlDevice) ~> Route.seal(routes) ~> check {
 
         status shouldEqual BadRequest
-        responseEntity.contentType should be(`application/json`)
+        responseEntity.contentType should be(`text/plain(UTF-8)`)
 
-        verifyCORSHeader()
+        verifyCORSHeader(false)
 
       }
     }
