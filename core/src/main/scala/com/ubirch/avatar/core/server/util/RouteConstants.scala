@@ -13,7 +13,7 @@ object RouteConstants {
   val stub = "stub"
   val history = "history"
 
-  val urlPrefix = s"/$apiPrefix/$currentVersion/$serviceName"
+  val urlPrefix = s"/$apiPrefix/$serviceName/$currentVersion"
 
   val urlDevice = s"$urlPrefix/$device"
 
