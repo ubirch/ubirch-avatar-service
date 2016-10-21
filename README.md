@@ -101,9 +101,9 @@ TODO: description
 
 ### Device Data
 
-#### TODO: title
+#### History
 
-TODO: description
+Query historic device data.
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history
 
