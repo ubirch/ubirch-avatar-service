@@ -16,7 +16,10 @@ import scala.concurrent.Future
   */
 object DeviceDataManager extends MyJsonProtocol {
 
-  def history(deviceId: String, from: Int = 0, size: Int = Config.deviceDataDbDefaultPageSize): Future[Seq[DeviceData]] = {
+  def history(deviceId: String,
+              from: Int = 0,
+              size: Int = Config.deviceDataDbDefaultPageSize
+             ): Future[Seq[DeviceData]] = {
 
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     val index = Config.deviceDataDbIndex
