@@ -167,8 +167,8 @@ lazy val awsDynamoDb = awsG %% "aws-java-skd-dynamodb" % awsSdkV
 lazy val awsIoT = awsG %% "aws-java-skd-iot" % awsSdkV
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
-lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.1"
+lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2"
 lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.1"
 
 // Elasticsearch
