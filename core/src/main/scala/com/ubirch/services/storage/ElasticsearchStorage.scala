@@ -1,10 +1,14 @@
 package com.ubirch.services.storage
 
+import java.util.concurrent.ExecutionException
+
 import com.typesafe.scalalogging.slf4j.LazyLogging
 
 import com.ubirch.util.json.Json4sUtil
 
 import org.elasticsearch.client.transport.TransportClient
+import org.elasticsearch.index.IndexNotFoundException
+import org.elasticsearch.index.query.QueryBuilder
 import org.json4s.{DefaultFormats, JValue}
 
 import scala.Predef._
@@ -68,7 +72,7 @@ trait ElasticsearchStorage extends LazyLogging {
 
   /**
     *
-    * @param docIndex name of the ElasticSeatch index
+    * @param docIndex name of the ElasticSearch index
     * @param docType  name of the type of document
     * @param docId    unique Id per Document
     * @return
@@ -85,27 +89,53 @@ trait ElasticsearchStorage extends LazyLogging {
   }
 
   /**
-    *
-    * @param docIndex name of the ElasticSeatch index
+    * @param docIndex name of the ElasticSearch index
     * @param docType  name of the type of document
+    * @param query    search query as created with [[org.elasticsearch.index.query.QueryBuilders]]
+    * @param from     pagination from
+    * @param size     maximum number of results
     * @return
     */
-  def getDocs(docIndex: String, docType: String): Future[List[JValue]] = {
+  def getDocs(docIndex: String,
+              docType: String,
+              query: Option[QueryBuilder] = None,
+              from: Option[Int] = None,
+              size: Option[Int] = None
+             ): Future[List[JValue]] = {
 
     require(docIndex.nonEmpty && docType.nonEmpty, "json invalid arguments")
 
     Future {
-      esClient.prepareSearch(docIndex)
+      var requestBuilder = esClient.prepareSearch(docIndex)
         .setTypes(docType)
-        .execute()
-        .get() match {
 
-        case srs if srs.getHits.getTotalHits > 0 =>
-          srs.getHits.getHits.map { hit =>
-            Json4sUtil.string2JValue(hit.getSourceAsString)
-          }.filter(_.isDefined).map(_.get.extract[JValue]).toList
-        case _ =>
-          List()
+      if (query.isDefined) {
+        requestBuilder = requestBuilder.setQuery(query.get)
+      }
+
+      if (from.isDefined) {
+        requestBuilder = requestBuilder.setFrom(from.get)
+      }
+
+      if (size.isDefined) {
+        requestBuilder = requestBuilder.setSize(size.get)
+      }
+
+      try {
+
+        requestBuilder.execute()
+          .get() match {
+
+          case srs if srs.getHits.getTotalHits > 0 =>
+            srs.getHits.getHits.map { hit =>
+              Json4sUtil.string2JValue(hit.getSourceAsString)
+            }.filter(_.isDefined).map(_.get.extract[JValue]).toList
+          case _ =>
+            List()
+        }
+
+      } catch {
+        case execExc: ExecutionException if execExc.getCause.getCause.isInstanceOf[IndexNotFoundException] => List()
       }
     }
 
