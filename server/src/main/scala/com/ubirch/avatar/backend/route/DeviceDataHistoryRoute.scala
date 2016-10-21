@@ -1,17 +1,18 @@
 package com.ubirch.avatar.backend.route
 
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
-import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.device.DeviceDataManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.{DeviceData, ErrorFactory}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
-import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import scala.concurrent.ExecutionContext.Implicits.global
 
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.server.Route
+import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -28,11 +29,9 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
       path(device / Segment / history) { deviceId =>
         get {
-          complete {
-            queryHistory(deviceId) map {
-              case None => errorResponse(deviceId)
-              case Some(deviceData) => deviceData
-            }
+          onSuccess(queryHistory(deviceId)) {
+            case None => complete(errorResponse(deviceId))
+            case Some(deviceData) => complete(deviceData)
           }
         }
 
@@ -40,21 +39,17 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
         path(IntNumber) { from =>
           get {
-            complete {
-              queryHistory(deviceId, Some(from)) map {
-                case None => errorResponse(deviceId, Some(from))
-                case Some(deviceData) => deviceData
-              }
+            onSuccess(queryHistory(deviceId, Some(from))) {
+              case None => complete(errorResponse(deviceId, Some(from)))
+              case Some(deviceData) => complete(deviceData)
             }
           }
 
         } ~ path(IntNumber / IntNumber) { (from, size) =>
           get {
-            complete {
-              queryHistory(deviceId, Some(from), Some(size)) map {
-                case None => errorResponse(deviceId, Some(from), Some(size))
-                case Some(deviceData) => deviceData
-              }
+            onSuccess(queryHistory(deviceId, Some(from), Some(size))) {
+              case None => complete(errorResponse(deviceId, Some(from), Some(size)))
+              case Some(deviceData) => complete(deviceData)
             }
           }
 
