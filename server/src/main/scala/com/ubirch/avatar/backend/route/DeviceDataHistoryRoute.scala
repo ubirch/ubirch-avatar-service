@@ -10,6 +10,9 @@ import com.ubirch.avatar.model.{DeviceData, ErrorFactory}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.Future
 
 /**
   * author: cvandrei
@@ -26,8 +29,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
       path(device / Segment / history) { deviceId =>
         get {
           complete {
-            val deviceDataOpt = queryHistory(deviceId)
-            deviceDataOpt match {
+            queryHistory(deviceId) map {
               case None => errorResponse(deviceId)
               case Some(deviceData) => deviceData
             }
@@ -36,22 +38,20 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
       } ~ pathPrefix(device / Segment / history) { deviceId =>
 
-        path(LongNumber) { from =>
+        path(IntNumber) { from =>
           get {
             complete {
-              val deviceDataOpt = queryHistory(deviceId, Some(from))
-              deviceDataOpt match {
+              queryHistory(deviceId, Some(from)) map {
                 case None => errorResponse(deviceId, Some(from))
                 case Some(deviceData) => deviceData
               }
             }
           }
 
-        } ~ path(LongNumber / LongNumber) { (from, size) =>
+        } ~ path(IntNumber / IntNumber) { (from, size) =>
           get {
             complete {
-              val deviceDataOpt = queryHistory(deviceId, Some(from), Some(size))
-              deviceDataOpt match {
+              queryHistory(deviceId, Some(from), Some(size)) map {
                 case None => errorResponse(deviceId, Some(from), Some(size))
                 case Some(deviceData) => deviceData
               }
@@ -67,11 +67,11 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
   }
 
   private def queryHistory(deviceId: String,
-                           fromOpt: Option[Long] = None,
-                           sizeOpt: Option[Long] = None
-                          ): Option[Seq[DeviceData]] = {
+                           fromOpt: Option[Int] = None,
+                           sizeOpt: Option[Int] = None
+                          ): Future[Option[Seq[DeviceData]]] = {
 
-    val deviceData = fromOpt match {
+    val deviceData: Future[Seq[DeviceData]] = fromOpt match {
 
       case Some(from) =>
         sizeOpt match {
@@ -83,9 +83,9 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
     }
 
-    deviceData.isEmpty match {
-      case true => None
-      case false => Some(deviceData)
+    deviceData map {
+      case seq if seq.isEmpty => None
+      case seq => Some(seq)
     }
 
   }

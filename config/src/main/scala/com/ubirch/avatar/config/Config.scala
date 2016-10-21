@@ -41,6 +41,6 @@ object Config extends ConfigBase {
   /**
     * @return ElasticSearch default size in regards to pagination
     */
-  def esDefaultSize: Long = config.getLong(ConfigKeys.ES_DEFAULT_SIZE)
+  def esDefaultSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_SIZE)
 
 }
