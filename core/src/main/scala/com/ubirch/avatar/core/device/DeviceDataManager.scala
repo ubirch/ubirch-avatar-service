@@ -16,10 +16,13 @@ import scala.concurrent.Future
   */
 object DeviceDataManager extends MyJsonProtocol {
 
-  def history(deviceId: String, from: Int = 0, size: Int = Config.esDefaultSize): Future[Seq[DeviceData]] = {
+  def history(deviceId: String, from: Int = 0, size: Int = Config.deviceDataDbDefaultPageSize): Future[Seq[DeviceData]] = {
 
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
-    DeviceDataStorage.getDocs("ubirch-device-data", deviceId, query, Some(from), Some(size)).map { res =>
+    val index = Config.deviceDataDbIndex
+    val esType = deviceId
+
+    DeviceDataStorage.getDocs(index, esType, query, Some(from), Some(size)).map { res =>
       res.map { jv =>
         jv.extract[DeviceData]
       }
