@@ -109,8 +109,7 @@ lazy val depServer = Seq(
 ) ++ scalaLogging
 
 lazy val depCore = Seq(
-  ubirchUtilJson,
-  elasticSearch,
+  ubirchElasticsearchClientBinary,
   scalatest % "test"
 ) ++ scalaLogging
 
@@ -133,7 +132,6 @@ lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.1"
 lazy val awsSdkV = "1.11.37"
 lazy val scalaTestV = "3.0.0"
-lazy val elasticsearchV = "2.4.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -150,7 +148,6 @@ lazy val scalaLogging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
   "ch.qos.logback" % "logback-classic" % "1.1.7",
   "ch.qos.logback" % "logback-core" % "1.1.7"
-  , "org.slf4j" % "slf4j-api" % "1.7.21"
 )
 
 lazy val joda = Seq(jodaTime, jodaConvert)
@@ -169,10 +166,7 @@ lazy val awsIoT = awsG %% "aws-java-skd-iot" % awsSdkV
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2"
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.1"
-
-// Elasticsearch
-lazy val elasticSearch = "org.elasticsearch" % "elasticsearch" % elasticsearchV
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.1"
 
 /*
  * RESOLVER

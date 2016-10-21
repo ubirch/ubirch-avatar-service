@@ -3,6 +3,7 @@ package com.ubirch.services.storage
 import java.net.InetAddress
 
 import com.ubirch.avatar.config.Config
+import com.ubirch.util.elasticsearch.client.binary.ElasticsearchStorage
 
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.common.transport.InetSocketTransportAddress
