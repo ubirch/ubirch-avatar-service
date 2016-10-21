@@ -47,7 +47,6 @@ class DeviceRouteSpec extends RouteSpec {
 
       Post(RouteConstants.urlDevice) ~> routes ~> check {
 
-        // TODO finalize test
         status shouldEqual BadRequest
         responseEntity.contentType should be(`application/json`)
 
