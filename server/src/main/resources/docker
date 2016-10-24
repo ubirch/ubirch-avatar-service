@@ -1,3 +1,0 @@
-FROM java
-ADD 0/avatarService-${name}-assembly-${version} /app/avatarService-${name}-assembly-${version}
-ENTRYPOINT ["java", "-jar", "avatarService-${name}-assembly-${version}"]
