@@ -113,6 +113,7 @@ lazy val depServer = Seq(
 
 lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
+  ubirchUtilUUID % "test",
   scalatest % "test"
 ) ++ scalaLogging
 
@@ -167,6 +168,7 @@ lazy val awsDynamoDb = awsG %% "aws-java-skd-dynamodb" % awsSdkV
 lazy val awsIoT = awsG %% "aws-java-skd-iot" % awsSdkV
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
+lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2"
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.1"
