@@ -83,6 +83,7 @@ lazy val modelDb = (project in file("model-db"))
 
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
+  .dependsOn(modelRest)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -124,7 +125,7 @@ lazy val depModelDb = Seq()
 lazy val depTestBase = Seq(
   scalatest,
   akkaHttpTestkit,
-  ubirchUtilJsonAutoConvert
+  ubirchUtilUUID
 )
 
 /*
@@ -171,7 +172,7 @@ lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2"
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.1"
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2"
 
 /*
  * RESOLVER
