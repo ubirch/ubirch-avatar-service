@@ -1,15 +1,19 @@
 package com.ubirch.avatar.backend.route
 
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
-import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.device.DeviceDataManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.{DeviceData, ErrorFactory}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * author: cvandrei
@@ -25,36 +29,27 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
       path(device / Segment / history) { deviceId =>
         get {
-          complete {
-            val deviceDataOpt = queryHistory(deviceId)
-            deviceDataOpt match {
-              case None => errorResponse(deviceId)
-              case Some(deviceData) => deviceData
-            }
+          onSuccess(queryHistory(deviceId)) {
+            case None => complete(errorResponse(deviceId))
+            case Some(deviceData) => complete(deviceData)
           }
         }
 
       } ~ pathPrefix(device / Segment / history) { deviceId =>
 
-        path(LongNumber) { from =>
+        path(IntNumber) { from =>
           get {
-            complete {
-              val deviceDataOpt = queryHistory(deviceId, Some(from))
-              deviceDataOpt match {
-                case None => errorResponse(deviceId, Some(from))
-                case Some(deviceData) => deviceData
-              }
+            onSuccess(queryHistory(deviceId, Some(from))) {
+              case None => complete(errorResponse(deviceId, Some(from)))
+              case Some(deviceData) => complete(deviceData)
             }
           }
 
-        } ~ path(LongNumber / LongNumber) { (from, size) =>
+        } ~ path(IntNumber / IntNumber) { (from, size) =>
           get {
-            complete {
-              val deviceDataOpt = queryHistory(deviceId, Some(from), Some(size))
-              deviceDataOpt match {
-                case None => errorResponse(deviceId, Some(from), Some(size))
-                case Some(deviceData) => deviceData
-              }
+            onSuccess(queryHistory(deviceId, Some(from), Some(size))) {
+              case None => complete(errorResponse(deviceId, Some(from), Some(size)))
+              case Some(deviceData) => complete(deviceData)
             }
           }
 
@@ -67,11 +62,11 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
   }
 
   private def queryHistory(deviceId: String,
-                           fromOpt: Option[Long] = None,
-                           sizeOpt: Option[Long] = None
-                          ): Option[Seq[DeviceData]] = {
+                           fromOpt: Option[Int] = None,
+                           sizeOpt: Option[Int] = None
+                          ): Future[Option[Seq[DeviceData]]] = {
 
-    val deviceData = fromOpt match {
+    val deviceData: Future[Seq[DeviceData]] = fromOpt match {
 
       case Some(from) =>
         sizeOpt match {
@@ -83,9 +78,9 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
     }
 
-    deviceData.isEmpty match {
-      case true => None
-      case false => Some(deviceData)
+    deviceData map {
+      case seq if seq.isEmpty => None
+      case seq => Some(seq)
     }
 
   }

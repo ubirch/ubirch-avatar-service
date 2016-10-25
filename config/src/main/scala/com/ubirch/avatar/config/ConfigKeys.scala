@@ -14,13 +14,12 @@ object ConfigKeys {
   final val ESHOST = s"$prefix.es.host"
   final val ESPORT = s"$prefix.es.port"
 
-  final val esPrefix = s"$prefix.deviceData.elastic"
-  final val ES_PROTOCOL = s"$esPrefix.protocol"
-  final val ES_HOST = s"$esPrefix.host"
-  final val ES_PORT = s"$esPrefix.port"
-  final val ES_INDEX = s"$esPrefix.index"
-  final val ES_USER = s"$esPrefix.user"
-  final val ES_PASSWORD = s"$esPrefix.password"
-  final val ES_DEFAULT_SIZE = s"$esPrefix.defaultSize"
+  final val deviceDataDbPrefix = s"$prefix.deviceData.db"
+  final val DEVICE_DATA_DB_HOST = s"$deviceDataDbPrefix.host"
+  final val DEVICE_DATA_DB_PORT = s"$deviceDataDbPrefix.port"
+  final val DEVICE_DATA_DB_INDEX = s"$deviceDataDbPrefix.index"
+  final val DEVICE_DATA_DB_USER = s"$deviceDataDbPrefix.user"
+  final val DEVICE_DATA_DB_PASSWORD = s"$deviceDataDbPrefix.password"
+  final val DEVICE_DATA_DB_DEFAULT_PAGE_SIZE = s"$deviceDataDbPrefix.defaultPageSize"
 
 }

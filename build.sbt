@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.2.0-SNAPSHOT",
+  version := "0.3.0-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -44,7 +44,10 @@ lazy val server = project
     resolvers ++= Seq(
       resolverSeebergerJson
     ),
-    mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot")
+    mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
+    resourceGenerators in Compile += Def.task {
+      generateDockerFile(baseDirectory.value / ".." / "Dockerfile", name.value, version.value)
+    }.taskValue
   )
 
 lazy val core = project
@@ -109,8 +112,8 @@ lazy val depServer = Seq(
 ) ++ scalaLogging
 
 lazy val depCore = Seq(
-  ubirchUtilJson,
-  elasticSearch,
+  ubirchElasticsearchClientBinary,
+  ubirchUtilUUID % "test",
   scalatest % "test"
 ) ++ scalaLogging
 
@@ -133,7 +136,6 @@ lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.1"
 lazy val awsSdkV = "1.11.37"
 lazy val scalaTestV = "3.0.0"
-lazy val elasticsearchV = "2.4.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -150,7 +152,6 @@ lazy val scalaLogging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
   "ch.qos.logback" % "logback-classic" % "1.1.7",
   "ch.qos.logback" % "logback-core" % "1.1.7"
-  , "org.slf4j" % "slf4j-api" % "1.7.21"
 )
 
 lazy val joda = Seq(jodaTime, jodaConvert)
@@ -167,12 +168,10 @@ lazy val awsDynamoDb = awsG %% "aws-java-skd-dynamodb" % awsSdkV
 lazy val awsIoT = awsG %% "aws-java-skd-iot" % awsSdkV
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
-lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.1"
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.1"
-
-// Elasticsearch
-lazy val elasticSearch = "org.elasticsearch" % "elasticsearch" % elasticsearchV
+lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
+lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2"
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.1"
 
 /*
  * RESOLVER
@@ -197,3 +196,16 @@ lazy val mergeStrategy = Seq(
     case _ => MergeStrategy.first
   }
 )
+
+def generateDockerFile(file: File, nameString: String, versionString: String): Seq[File] = {
+
+  val jar = "avatarService-%s-assembly-%s.jar".format(nameString, versionString)
+  val contents =
+    s"""FROM java
+        |ADD 0/$jar /app/$jar
+        |ENTRYPOINT ["java", "-jar", "$jar"]
+        |""".stripMargin
+  IO.write(file, contents)
+  Seq(file)
+
+}

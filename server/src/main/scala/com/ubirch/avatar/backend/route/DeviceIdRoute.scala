@@ -28,17 +28,15 @@ trait DeviceIdRoute extends CORSDirective
         // TODO authentication for all three methods
 
         get {
-          complete {
-            DeviceManager.info(deviceId).map {
+            onSuccess(DeviceManager.info(deviceId)) {
 
               case None =>
                 val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId")
-                HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
+                complete(HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error)))
 
-              case Some(deviceObject) => Some(deviceObject)
+              case Some(deviceObject) => complete(Some(deviceObject))
 
             }
-          }
         } ~
           put {
             complete {

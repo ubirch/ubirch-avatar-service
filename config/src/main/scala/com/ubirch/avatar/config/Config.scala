@@ -38,9 +38,19 @@ object Config extends ConfigBase {
     */
   def esPort: Int = config.getInt(ConfigKeys.ESPORT)
 
+  def deviceDataDbHost:String = config.getString(ConfigKeys.DEVICE_DATA_DB_HOST)
+
+  def deviceDataDbPort: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_PORT)
+
+  def deviceDataDbIndex:String = config.getString(ConfigKeys.DEVICE_DATA_DB_INDEX)
+
+  def deviceDataDbUser:String = config.getString(ConfigKeys.DEVICE_DATA_DB_USER)
+
+  def deviceDataDbPassword:String = config.getString(ConfigKeys.DEVICE_DATA_DB_PASSWORD)
+
   /**
     * @return ElasticSearch default size in regards to pagination
     */
-  def esDefaultSize: Long = config.getLong(ConfigKeys.ES_DEFAULT_SIZE)
+  def deviceDataDbDefaultPageSize: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_DEFAULT_PAGE_SIZE)
 
 }
