@@ -207,10 +207,12 @@ lazy val mergeStrategy = Seq(
 
 def generateDockerFile(file: File, nameString: String, versionString: String): Seq[File] = {
 
-  val jar = "avatarService-%s-assembly-%s.jar".format(nameString, versionString)
+  //  val jar = "avatarService-%s-assembly-%s.jar".format(nameString, versionString)
+  //assembleArtifact.
+  val jar = "./server/target/scala-2.11/server-assembly-0.3.0-SNAPSHOT.jar"
   val contents =
     s"""FROM java
-        |ADD 0/$jar /app/$jar
+        |ADD $jar /app/$jar
         |ENTRYPOINT ["java", "-jar", "$jar"]
         |""".stripMargin
   IO.write(file, contents)
