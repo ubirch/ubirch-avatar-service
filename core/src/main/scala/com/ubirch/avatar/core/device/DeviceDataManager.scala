@@ -21,9 +21,11 @@ object DeviceDataManager extends MyJsonProtocol {
               size: Int = Config.deviceDataDbDefaultPageSize
              ): Future[Seq[DeviceData]] = {
 
-    val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
+    require(deviceId.nonEmpty, "deviceId may not be empty")
+
     val index = Config.deviceDataDbIndex
-    val esType = deviceId
+    val esType = Config.deviceDataDbType
+    val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
 
     DeviceDataStorage.getDocs(index, esType, query, Some(from), Some(size)).map { res =>
       res.map { jv =>
@@ -39,8 +41,9 @@ object DeviceDataManager extends MyJsonProtocol {
 
       case Some(doc) =>
         val index = Config.deviceDataDbIndex
-        val esType = data.deviceId
-        DeviceDataStorage.storeDoc(docIndex = index, docType = esType, doc = doc) map { jv =>
+        val esType = Config.deviceDataDbType
+        val id = Some(data.messageId)
+        DeviceDataStorage.storeDoc(index, esType, id, doc) map { jv =>
           Some(jv.extract[DeviceData])
         }
 

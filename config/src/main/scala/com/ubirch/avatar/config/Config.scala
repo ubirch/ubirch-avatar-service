@@ -46,6 +46,8 @@ object Config extends ConfigBase {
 
   def deviceDataDbIndex:String = config.getString(ConfigKeys.DEVICE_DATA_DB_INDEX)
 
+  def deviceDataDbType:String = config.getString(ConfigKeys.DEVICE_DATA_DB_TYPE)
+
   def deviceDataDbUser:String = config.getString(ConfigKeys.DEVICE_DATA_DB_USER)
 
   def deviceDataDbPassword:String = config.getString(ConfigKeys.DEVICE_DATA_DB_PASSWORD)
