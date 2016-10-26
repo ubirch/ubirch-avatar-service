@@ -40,7 +40,9 @@ object Config extends ConfigBase {
 
   def deviceDataDbHost:String = config.getString(ConfigKeys.DEVICE_DATA_DB_HOST)
 
-  def deviceDataDbPort: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_PORT)
+  def deviceDataDbPortBinary: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_PORT_BINARY)
+
+  def deviceDataDbPortHttp: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_PORT_HTTP)
 
   def deviceDataDbIndex:String = config.getString(ConfigKeys.DEVICE_DATA_DB_INDEX)
 

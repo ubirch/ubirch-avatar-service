@@ -25,7 +25,7 @@ object DeviceManager extends MyJsonProtocol {
   def create(device: Device): Future[Option[Device]] = {
     Json4sUtil.any2jvalue(device) match {
       case Some(devJval) =>
-        DeviceStorage.storeDoc("devices", "device", device.deviceId, devJval).map { resJval =>
+        DeviceStorage.storeDoc("devices", "device", Some(device.deviceId), devJval).map { resJval =>
           Some(resJval.extract[Device])
         }
       case None =>

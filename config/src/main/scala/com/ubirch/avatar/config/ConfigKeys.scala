@@ -16,7 +16,9 @@ object ConfigKeys {
 
   final val deviceDataDbPrefix = s"$prefix.deviceData.db"
   final val DEVICE_DATA_DB_HOST = s"$deviceDataDbPrefix.host"
-  final val DEVICE_DATA_DB_PORT = s"$deviceDataDbPrefix.port"
+  final val deviceDataPortPrefix = s"$deviceDataDbPrefix.port"
+  final val DEVICE_DATA_DB_PORT_BINARY = s"$deviceDataPortPrefix.binary"
+  final val DEVICE_DATA_DB_PORT_HTTP = s"$deviceDataPortPrefix.http"
   final val DEVICE_DATA_DB_INDEX = s"$deviceDataDbPrefix.index"
   final val DEVICE_DATA_DB_USER = s"$deviceDataDbPrefix.user"
   final val DEVICE_DATA_DB_PASSWORD = s"$deviceDataDbPrefix.password"
