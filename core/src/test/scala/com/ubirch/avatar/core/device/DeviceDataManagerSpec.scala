@@ -6,7 +6,6 @@ import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 
 import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -28,8 +27,52 @@ class DeviceDataManagerSpec extends ElasticsearchSpec
       Await.result(DeviceDataManager.history(deviceId), 1 seconds) should be(Seq.empty)
     }
 
-    ignore("3 records exist: from = -1; size > 3") {
-      // TODO write test
+    scenario("3 records exist: from = -1; size > 3") {
+
+      // prepare
+      val elementCount = 3
+      val from = -1
+      val size = elementCount + 1
+      val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = elementCount)
+      val deviceId: String = dataSeries.head.deviceId
+      store(dataSeries)
+
+      // test && verify
+      an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataManager.history(deviceId, from, size), 1 seconds)
+
+    }
+
+    scenario("3 records exist: from = 0; size = -1") {
+
+      // prepare
+      val elementCount = 3
+      val from = 0
+      val size = -1
+      val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = elementCount)
+      val deviceId: String = dataSeries.head.deviceId
+      store(dataSeries)
+
+      // test && verify
+      an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataManager.history(deviceId, from, size), 1 seconds)
+
+    }
+
+    scenario("3 records exist: from = 0; size = 0") {
+
+      // prepare
+      val elementCount = 3
+      val from = 0
+      val size = 0
+      val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = elementCount)
+      val deviceId: String = dataSeries.head.deviceId
+      store(dataSeries)
+
+      // test
+      val result: Seq[DeviceData] = Await.result(DeviceDataManager.history(deviceId, from, size), 2 seconds)
+
+      // verify
+      result should be('isEmpty)
+
     }
 
     scenario("3 records exist: from = 0; size > 3") {
@@ -49,12 +92,7 @@ class DeviceDataManagerSpec extends ElasticsearchSpec
       result.size should be(3)
       result should be('nonEmpty)
       // TODO check order of elements
-      // TODO finish and fix test
 
-    }
-
-    ignore("3 records exist: from = 0; size = 0") {
-      // TODO write test
     }
 
     ignore("3 records exist: from = 1; size > 3") {
@@ -70,7 +108,7 @@ class DeviceDataManagerSpec extends ElasticsearchSpec
   private def store(dataSeries: List[DeviceData]) = {
 
     dataSeries foreach { deviceData =>
-      DeviceDataManager.store(deviceData) map println
+      DeviceDataManager.store(deviceData)
     }
     Thread.sleep(3000)
 
