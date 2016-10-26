@@ -1,15 +1,9 @@
 package com.ubirch.avatar.core.device
 
-import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.{DeviceData, DummyDeviceData}
-import com.ubirch.avatar.test.base.UnitSpec
-import com.ubirch.services.storage.DeviceDataStorage
+import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
-
-import org.json4s.JsonAST.JValue
-import org.json4s.native.JsonMethods._
-import org.json4s.native.Serialization.write
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,7 +14,7 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-10-25
   */
-class DeviceDataManagerSpec extends UnitSpec
+class DeviceDataManagerSpec extends ElasticsearchSpec
   with MyJsonProtocol {
 
   feature("history()") {
@@ -34,24 +28,29 @@ class DeviceDataManagerSpec extends UnitSpec
       Await.result(DeviceDataManager.history(deviceId), 1 seconds) should be(Seq.empty)
     }
 
-    scenario("3 records exist: from = -1; size > 3") {
+    ignore("3 records exist: from = -1; size > 3") {
+      // TODO write test
+    }
+
+    scenario("3 records exist: from = 0; size > 3") {
 
       // prepare
-      val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = 3)
+      val elementCount = 3
+      val from = 0
+      val size = elementCount + 1
+      val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = elementCount)
       val deviceId: String = dataSeries.head.deviceId
       store(dataSeries)
 
       // test
-      val result: Seq[DeviceData] = Await.result(DeviceDataManager.history(deviceId), 2 seconds)
+      val result: Seq[DeviceData] = Await.result(DeviceDataManager.history(deviceId, from, size), 2 seconds)
 
       // verify
+      result.size should be(3)
       result should be('nonEmpty)
+      // TODO check order of elements
       // TODO finish and fix test
 
-    }
-
-    ignore("3 records exist: from = 0; size > 3") {
-      // TODO write test
     }
 
     ignore("3 records exist: from = 0; size = 0") {
@@ -71,10 +70,8 @@ class DeviceDataManagerSpec extends UnitSpec
   private def store(dataSeries: List[DeviceData]) = {
 
     dataSeries foreach { deviceData =>
-      val doc: JValue = parse(write[DeviceData](deviceData))
-      DeviceDataStorage.storeDoc(docIndex = Config.deviceDataDbIndex, docType = deviceData.deviceId, doc = doc) map println
+      DeviceDataManager.store(deviceData) map println
     }
-
     Thread.sleep(3000)
 
   }
