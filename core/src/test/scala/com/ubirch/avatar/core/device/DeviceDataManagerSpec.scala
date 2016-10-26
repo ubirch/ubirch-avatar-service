@@ -28,33 +28,11 @@ class DeviceDataManagerSpec extends ElasticsearchSpec
     }
 
     scenario("3 records exist: from = -1; size > 3") {
-
-      // prepare
-      val elementCount = 3
-      val from = -1
-      val size = elementCount + 1
-      val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = elementCount)
-      val deviceId: String = dataSeries.head.deviceId
-      store(dataSeries)
-
-      // test && verify
-      an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataManager.history(deviceId, from, size), 1 seconds)
-
+      testWithInvalidFromOrSize(elementCount = 3, from = -1, size = 4)
     }
 
     scenario("3 records exist: from = 0; size = -1") {
-
-      // prepare
-      val elementCount = 3
-      val from = 0
-      val size = -1
-      val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = elementCount)
-      val deviceId: String = dataSeries.head.deviceId
-      store(dataSeries)
-
-      // test && verify
-      an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataManager.history(deviceId, from, size), 1 seconds)
-
+      testWithInvalidFromOrSize(elementCount = 3, from = 0, size = -1)
     }
 
     scenario("3 records exist: from = 0; size = 0") {
@@ -111,6 +89,18 @@ class DeviceDataManagerSpec extends ElasticsearchSpec
       DeviceDataManager.store(deviceData)
     }
     Thread.sleep(3000)
+
+  }
+
+  private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
+
+    // prepare
+    val dataSeries: List[DeviceData] = DummyDeviceData.dataSeries(elementCount = elementCount)
+    val deviceId: String = dataSeries.head.deviceId
+    store(dataSeries)
+
+    // test && verify
+    an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataManager.history(deviceId, from, size), 1 seconds)
 
   }
 
