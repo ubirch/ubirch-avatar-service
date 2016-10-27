@@ -113,6 +113,21 @@ TODO: description
 
 Query historic device data.
 
+    curl -XPOST localhost:8080/api/avatarService/v1/device/history -d '{
+      "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
+      "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+      "deviceType": "lightsLamp",
+      "timestamp": "2016-06-30T11:39:51Z",
+      "deviceTags": [
+        "ubirch#0",
+        "actor"
+      ],
+      "deviceMessage": {
+        "foo": 23,
+        "bar": "ubirch-sensor-data"
+      }
+    }'
+    
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history/<FROM>

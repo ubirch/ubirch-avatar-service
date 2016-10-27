@@ -12,7 +12,7 @@ import scala.collection.mutable.ListBuffer
   * author: cvandrei
   * since: 2016-10-25
   */
-object DummyDeviceData {
+object DummyDeviceMessage {
 
   def data(deviceId: String = UUIDUtil.uuidStr,
            messageId: String = UUIDUtil.uuidStr,
@@ -20,8 +20,8 @@ object DummyDeviceData {
            timestamp: DateTime = DateTime.now,
            deviceTags: Seq[String] = Seq("ubirch#0", "actor"),
            deviceMessage: JValue = parse("""{"foo": 23, "bar": 42}""")
-          ): DeviceData = {
-    DeviceData(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
+          ): DeviceMessage = {
+    DeviceMessage(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
   }
 
   def dataSeries(id: String = UUIDUtil.uuidStr,
@@ -31,9 +31,9 @@ object DummyDeviceData {
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
                  elementCount: Int = 5
-                ): List[DeviceData] = {
+                ): List[DeviceMessage] = {
 
-    val deviceDataList: ListBuffer[DeviceData] = ListBuffer()
+    val deviceDataList: ListBuffer[DeviceMessage] = ListBuffer()
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
 
     val range = 0 until elementCount

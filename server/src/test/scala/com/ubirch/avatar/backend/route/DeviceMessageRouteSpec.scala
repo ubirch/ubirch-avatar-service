@@ -11,7 +11,7 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   * author: cvandrei
   * since: 2016-09-30
   */
-class DeviceDataHistoryRouteSpec extends RouteSpec
+class DeviceMessageRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
   private val routes = (new MainRoute).myRoute
@@ -76,7 +76,19 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
       // TODO write test
     }
 
-    scenario("deviceId does not exists") {
+    ignore("deviceId exists but from is negative") {
+      // TODO write test
+    }
+
+    ignore("deviceId exists but size is negative") {
+      // TODO write test
+    }
+
+    ignore("deviceId exists but from and size are negative") {
+      // TODO write test
+    }
+
+    scenario("deviceId does not exist") {
 
       val deviceId = "1234asdf"
       val from = 5L
@@ -93,6 +105,18 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
         verifyCORSHeader()
 
       }
+    }
+
+  }
+
+  feature(s"POST ${RouteConstants.urlDeviceHistory}") {
+
+    ignore("insert message (messageId does not exist yet)") {
+      // TODO write test
+    }
+
+    ignore("update message (messageId already exists)") {
+      // TODO write test
     }
 
   }
