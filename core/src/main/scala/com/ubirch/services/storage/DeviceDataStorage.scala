@@ -14,7 +14,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress
   */
 object DeviceDataStorage extends ElasticsearchStorage {
 
-  private val address = new InetSocketTransportAddress(InetAddress.getByName(Config.deviceDataDbHost), Config.deviceDataDbPortBinary)
+  private val address = new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPortBinary)
 
   override protected val esClient: TransportClient = TransportClient.builder()
     .build()

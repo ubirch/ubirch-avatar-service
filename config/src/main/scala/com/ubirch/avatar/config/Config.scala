@@ -27,34 +27,43 @@ object Config extends ConfigBase {
   def port: Int = config.getInt(ConfigKeys.HTTPPORT)
 
   /**
-    *
-    * @return
+    * @return Elasticsearch host
     */
   def esHost: String = config.getString(ConfigKeys.ESHOST)
 
   /**
-    *
-    * @return
+    * @return Elasticsearch binary client port
     */
-  def esPort: Int = config.getInt(ConfigKeys.ESPORT)
+  def esPortBinary: Int = config.getInt(ConfigKeys.ESPORT_BINARY)
 
-  def deviceDataDbHost:String = config.getString(ConfigKeys.DEVICE_DATA_DB_HOST)
+  /**
+    * @return Elasticsearch REST client port
+    */
+  def esPortHttp: Int = config.getInt(ConfigKeys.ESPORT_REST)
 
-  def deviceDataDbPortBinary: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_PORT_BINARY)
+  /**
+    * @return Elasticsearch login user (not yet implemented)
+    */
+  def esUser: String = config.getString(ConfigKeys.DEVICE_DATA_DB_USER)
 
-  def deviceDataDbPortHttp: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_PORT_HTTP)
+  /**
+    * @return Elasticsearch login password (not yet implemented)
+    */
+  def esPassword: String = config.getString(ConfigKeys.DEVICE_DATA_DB_PASSWORD)
 
-  def deviceDataDbIndex:String = config.getString(ConfigKeys.DEVICE_DATA_DB_INDEX)
+  /**
+    * @return Elasticsearch DeviceData index
+    */
+  def esDeviceDataIndex: String = config.getString(ConfigKeys.DEVICE_DATA_DB_INDEX)
 
-  def deviceDataDbType:String = config.getString(ConfigKeys.DEVICE_DATA_DB_TYPE)
-
-  def deviceDataDbUser:String = config.getString(ConfigKeys.DEVICE_DATA_DB_USER)
-
-  def deviceDataDbPassword:String = config.getString(ConfigKeys.DEVICE_DATA_DB_PASSWORD)
+  /**
+    * @return Elasticsearch DeviceData type
+    */
+  def esDeviceDataType: String = config.getString(ConfigKeys.DEVICE_DATA_DB_TYPE)
 
   /**
     * @return ElasticSearch default size in regards to pagination
     */
-  def deviceDataDbDefaultPageSize: Int = config.getInt(ConfigKeys.DEVICE_DATA_DB_DEFAULT_PAGE_SIZE)
+  def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
 }

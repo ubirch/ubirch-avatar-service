@@ -11,18 +11,26 @@ object ConfigKeys {
   final val HTTPINTERFACE = s"$prefix.interface"
   final val HTTPPORT = s"$prefix.port"
 
-  final val ESHOST = s"$prefix.es.host"
-  final val ESPORT = s"$prefix.es.port"
+  /* Elasticsearch Config Keys
+   **********************************************************************/
 
-  final val deviceDataDbPrefix = s"$prefix.deviceData.db"
-  final val DEVICE_DATA_DB_HOST = s"$deviceDataDbPrefix.host"
-  final val deviceDataPortPrefix = s"$deviceDataDbPrefix.port"
-  final val DEVICE_DATA_DB_PORT_BINARY = s"$deviceDataPortPrefix.binary"
-  final val DEVICE_DATA_DB_PORT_HTTP = s"$deviceDataPortPrefix.http"
-  final val DEVICE_DATA_DB_INDEX = s"$deviceDataDbPrefix.index"
-  final val DEVICE_DATA_DB_TYPE = s"$deviceDataDbPrefix.type"
-  final val DEVICE_DATA_DB_USER = s"$deviceDataDbPrefix.user"
-  final val DEVICE_DATA_DB_PASSWORD = s"$deviceDataDbPrefix.password"
-  final val DEVICE_DATA_DB_DEFAULT_PAGE_SIZE = s"$deviceDataDbPrefix.defaultPageSize"
+  // Prefixes
+  final val esPrefix = s"$prefix.es"
+  final val esPortPrefix = s"$esPrefix.port"
+  final val deviceDataPrefix = s"$esPrefix.deviceData"
+
+  // Connection
+  final val ESHOST = s"$esPrefix.host"
+  final val ESPORT_BINARY = s"$esPortPrefix.binary"
+  final val ESPORT_REST = s"$esPortPrefix.rest"
+  final val DEVICE_DATA_DB_USER = s"$esPrefix.user"
+  final val DEVICE_DATA_DB_PASSWORD = s"$esPrefix.password"
+
+  // DeviceData Index & Type
+  final val DEVICE_DATA_DB_INDEX = s"$deviceDataPrefix.index"
+  final val DEVICE_DATA_DB_TYPE = s"$deviceDataPrefix.type"
+
+  // Misc
+  final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
 
 }

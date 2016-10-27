@@ -27,30 +27,34 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
     // TODO authentication
     respondWithCORS {
 
-      path(device / Segment / history) { deviceId =>
-        get {
-          onSuccess(queryHistory(deviceId)) {
-            case None => complete(errorResponse(deviceId))
-            case Some(deviceData) => complete(deviceData)
-          }
-        }
+      pathPrefix(device / Segment) { deviceId =>
 
-      } ~ pathPrefix(device / Segment / history) { deviceId =>
-
-        path(IntNumber) { from =>
+        path(history) {
           get {
-            onSuccess(queryHistory(deviceId, Some(from))) {
-              case None => complete(errorResponse(deviceId, Some(from)))
+            onSuccess(queryHistory(deviceId)) {
+              case None => complete(errorResponse(deviceId))
               case Some(deviceData) => complete(deviceData)
             }
           }
 
-        } ~ path(IntNumber / IntNumber) { (from, size) =>
-          get {
-            onSuccess(queryHistory(deviceId, Some(from), Some(size))) {
-              case None => complete(errorResponse(deviceId, Some(from), Some(size)))
-              case Some(deviceData) => complete(deviceData)
+        } ~ pathPrefix(history) {
+
+          path(IntNumber) { from =>
+            get {
+              onSuccess(queryHistory(deviceId, Some(from))) {
+                case None => complete(errorResponse(deviceId, Some(from)))
+                case Some(deviceData) => complete(deviceData)
+              }
             }
+
+          } ~ path(IntNumber / IntNumber) { (from, size) =>
+            get {
+              onSuccess(queryHistory(deviceId, Some(from), Some(size))) {
+                case None => complete(errorResponse(deviceId, Some(from), Some(size)))
+                case Some(deviceData) => complete(deviceData)
+              }
+            }
+
           }
 
         }
