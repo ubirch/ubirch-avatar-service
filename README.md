@@ -138,6 +138,29 @@ Query historic device data.
 
 TODO
 
+## Deployment Notes
+
+### Elasticsearch
+
+The service requires the following mappings for things to work as expected:
+
+    curl -XPOST 'localhost:9200/ubirch-device-data' -H "Content-Type: application/json" -d '{
+      "mappings": {
+        "message" : {
+          "properties" : {
+            "deviceId" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            },
+            "messageId" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            }
+          }
+        }
+      }
+    }'
+
 ## Automated Tests
 
 TODO

@@ -13,7 +13,7 @@ trait ElasticsearchSpec extends UnitSpec
   with StorageCleanup {
 
   override protected def beforeEach(): Unit = {
-    resetStorage()
+    cleanElasticsearch()
     Thread.sleep(100)
   }
 

@@ -26,7 +26,7 @@ object RouteConstants {
   def urlDeviceState(id: String): String = s"${urlDeviceWithId(id)}/$state"
   def urlDeviceHistory(id: String): String = s"${urlDeviceWithId(id)}/$history"
   val urlDeviceHistory: String = s"$urlDevice/$history"
-  def urlDeviceHistoryFrom(id: String, from: Long): String = s"${urlDeviceHistory(id)}/$from"
-  def urlDeviceHistoryFromSize(id: String, from: Long, size: Long): String = s"${urlDeviceHistory(id)}/$from/$size"
+  def urlDeviceHistoryFrom(id: String, from: Int): String = s"${urlDeviceHistory(id)}/$from"
+  def urlDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${urlDeviceHistory(id)}/$from/$size"
 
 }

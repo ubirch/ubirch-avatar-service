@@ -5,6 +5,9 @@ import java.net.URL
 import com.ubirch.avatar.config.Config
 
 import uk.co.bigbeeconsultants.http.HttpClient
+import uk.co.bigbeeconsultants.http.header.MediaType._
+import uk.co.bigbeeconsultants.http.response.Status._
+import uk.co.bigbeeconsultants.http.request.RequestBody
 
 /**
   * author: cvandrei
@@ -12,16 +15,62 @@ import uk.co.bigbeeconsultants.http.HttpClient
   */
 trait StorageCleanup {
 
-  private val indexInfos: Seq[IndexInfo] = Seq(IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceHistoryIndex))
+  private val indexInfoDeviceMessage = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataIndex)
+  private val indexInfos: Seq[IndexInfo] = Seq(indexInfoDeviceMessage)
+
+  /**
+    * Clean Elasticsearch instance by running the following operations:
+    *
+    *   * delete indexes
+    *   * create mappings
+    */
+  final def cleanElasticsearch(): Unit = {
+    deleteIndexes()
+    createMappings()
+  }
 
   /**
     * Delete all indexes.
     */
-  final def resetStorage(): Unit = {
+  private def deleteIndexes(): Unit = {
 
     val httpClient = new HttpClient
     indexInfos foreach { indexTuple =>
       httpClient.delete(indexTuple.url)
+    }
+
+  }
+
+  /**
+    * Create all mappings.
+    */
+  private def createMappings() = {
+
+    val httpClient = new HttpClient
+
+    val deviceMessageMapping =
+      s"""{
+          |  "mappings": {
+          |    "${Config.esDeviceDataType}" : {
+          |      "properties" : {
+          |        "deviceId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        },
+          |        "messageId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        }
+          |      }
+          |    }
+          |  }
+          |}""".stripMargin
+    val url = indexInfoDeviceMessage.url
+    val body = Some(RequestBody(deviceMessageMapping, APPLICATION_JSON))
+    val res = httpClient.post(url, body)
+
+    if (res.status != S200_OK) {
+      throw new IllegalArgumentException(s"creating Elasticsearch mappings failed: ${res.body.asString}")
     }
 
   }
