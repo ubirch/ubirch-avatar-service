@@ -1,10 +1,14 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.server.util.RouteConstants
+import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
+import com.ubirch.avatar.model.{DeviceMessage, ErrorFactory, ErrorResponse}
+import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.util.uuid.UUIDUtil
+
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.model.{ErrorFactory, ErrorResponse}
-import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
@@ -18,8 +22,30 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}") {
 
-    ignore("deviceId exists") {
-      // TODO write test
+    scenario("deviceId exists") {
+
+      // prepare
+      val elementCount = Config.esDefaultPageSize
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+      val deviceId = dataSeries.head.deviceId
+
+      // test
+      Get(RouteConstants.urlDeviceHistory(deviceId)) ~> routes ~> check {
+
+        // verify
+        status shouldEqual OK
+
+        responseEntity.contentType should be(`application/json`)
+        val resultSeq = responseAs[Seq[DeviceMessage]]
+        resultSeq.size should be(elementCount)
+        for (i <- 0 until elementCount) {
+          resultSeq(i) shouldEqual dataSeries(i)
+        }
+
+        verifyCORSHeader()
+
+      }
+
     }
 
     scenario("deviceId does not exists") {
@@ -45,14 +71,58 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from") {
 
-    ignore("deviceId exists") {
-      // TODO write test
+    scenario("deviceId exists") {
+
+      // prepare
+      val elementCount = 3
+      val from = 1
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+      val deviceId = dataSeries.head.deviceId
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> routes ~> check {
+
+        // verify
+        status shouldEqual OK
+
+        responseEntity.contentType should be(`application/json`)
+        val resultSeq = responseAs[Seq[DeviceMessage]]
+        resultSeq.size shouldBe 2
+        for (i <- 0 until 2) {
+          resultSeq(i) shouldEqual dataSeries(i + from)
+        }
+
+        verifyCORSHeader()
+
+      }
+
+    }
+
+    scenario("from is negative") {
+
+      // prepare
+      val from = -1
+      val deviceId = UUIDUtil.uuidStr
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> routes ~> check {
+
+        // verify
+        status shouldEqual BadRequest
+
+        responseEntity.contentType should be(`application/json`)
+        // TODO further verification
+
+        verifyCORSHeader()
+
+      }
+
     }
 
     scenario("deviceId does not exists") {
 
       val deviceId = "1234asdf"
-      val from = 5L
+      val from = 5
       val size = None
 
       Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> routes ~> check {
@@ -72,8 +142,16 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from/:size") {
 
-    ignore("deviceId exists") {
-      // TODO write test
+    scenario("deviceId exists; from = 0; size = elementCount") {
+      val elementCount = 3
+      val size = 3
+      historyWithFromSizeFindAll(elementCount, size)
+    }
+
+    scenario("deviceId exists; from = 0; size > elementCount") {
+      val elementCount = 3
+      val size = 4
+      historyWithFromSizeFindAll(elementCount, size)
     }
 
     ignore("deviceId exists but from is negative") {
@@ -91,8 +169,8 @@ class DeviceMessageRouteSpec extends RouteSpec
     scenario("deviceId does not exist") {
 
       val deviceId = "1234asdf"
-      val from = 5L
-      val size = 7L
+      val from = 5
+      val size = 7
 
       Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> routes ~> check {
 
@@ -117,6 +195,32 @@ class DeviceMessageRouteSpec extends RouteSpec
 
     ignore("update message (messageId already exists)") {
       // TODO write test
+    }
+
+  }
+
+  private def historyWithFromSizeFindAll(elementCount: Int, size: Int) = {
+
+    // prepare
+    val from = 0
+    val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+    val deviceId = dataSeries.head.deviceId
+
+    // test
+    Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> routes ~> check {
+
+      // verify
+      status shouldEqual OK
+
+      responseEntity.contentType should be(`application/json`)
+      val resultSeq = responseAs[Seq[DeviceMessage]]
+      resultSeq.size shouldBe dataSeries.size
+      for (i <- dataSeries.indices) {
+        resultSeq(i) shouldEqual dataSeries(i)
+      }
+
+      verifyCORSHeader()
+
     }
 
   }
