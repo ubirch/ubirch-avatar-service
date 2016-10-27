@@ -24,11 +24,10 @@ object DummyDeviceData {
     DeviceData(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
   }
 
-  def dataSeries(deviceId: String = UUIDUtil.uuidStr,
-                 messageId: String = UUIDUtil.uuidStr,
-                 deviceType: String = "lightsLamp",
-                 deviceTags: Seq[String] = Seq("ubirch#0", "actor"),
-                 deviceMessage: JValue = parse("""{"foo": 23, "bar": 42}"""),
+  def dataSeries(id: String = UUIDUtil.uuidStr,
+                 dType: String = "lightsLamp",
+                 tags: Seq[String] = Seq("ubirch#0", "actor"),
+                 message: JValue = parse("""{"foo": 23, "bar": 42}"""),
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
                  elementCount: Int = 5
@@ -40,7 +39,7 @@ object DummyDeviceData {
     val range = 0 until elementCount
     for (i <- range) {
       val timestamp = newestDateTime.minus(i * intervalMillis)
-      val deviceData = data(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
+      val deviceData = data(deviceId = id, deviceType = dType, timestamp = timestamp, deviceTags = tags, deviceMessage = message)
       deviceDataList.+=:(deviceData)
     }
 

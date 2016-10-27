@@ -20,6 +20,7 @@ object ConfigKeys {
   final val DEVICE_DATA_DB_PORT_BINARY = s"$deviceDataPortPrefix.binary"
   final val DEVICE_DATA_DB_PORT_HTTP = s"$deviceDataPortPrefix.http"
   final val DEVICE_DATA_DB_INDEX = s"$deviceDataDbPrefix.index"
+  final val DEVICE_DATA_DB_TYPE = s"$deviceDataDbPrefix.type"
   final val DEVICE_DATA_DB_USER = s"$deviceDataDbPrefix.user"
   final val DEVICE_DATA_DB_PASSWORD = s"$deviceDataDbPrefix.password"
   final val DEVICE_DATA_DB_DEFAULT_PAGE_SIZE = s"$deviceDataDbPrefix.defaultPageSize"

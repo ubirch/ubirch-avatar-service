@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.device
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.DeviceData
 import com.ubirch.services.storage.DeviceDataStorage
+import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import org.elasticsearch.index.query.QueryBuilders
@@ -21,11 +22,14 @@ object DeviceDataManager extends MyJsonProtocol {
               size: Int = Config.deviceDataDbDefaultPageSize
              ): Future[Seq[DeviceData]] = {
 
-    val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
-    val index = Config.deviceDataDbIndex
-    val esType = deviceId
+    require(deviceId.nonEmpty, "deviceId may not be empty")
 
-    DeviceDataStorage.getDocs(index, esType, query, Some(from), Some(size)).map { res =>
+    val index = Config.deviceDataDbIndex
+    val esType = Config.deviceDataDbType
+    val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
+
+    DeviceDataStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
       res.map { jv =>
         jv.extract[DeviceData]
       }
@@ -39,8 +43,9 @@ object DeviceDataManager extends MyJsonProtocol {
 
       case Some(doc) =>
         val index = Config.deviceDataDbIndex
-        val esType = data.deviceId
-        DeviceDataStorage.storeDoc(docIndex = index, docType = esType, doc = doc) map { jv =>
+        val esType = Config.deviceDataDbType
+        val id = Some(data.messageId)
+        DeviceDataStorage.storeDoc(index, esType, id, doc) map { jv =>
           Some(jv.extract[DeviceData])
         }
 
