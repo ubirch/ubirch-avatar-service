@@ -1,8 +1,8 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.core.device.DeviceDataManager
+import com.ubirch.avatar.core.device.DeviceMessageManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
-import com.ubirch.avatar.model.{DeviceData, ErrorFactory}
+import com.ubirch.avatar.model.{DeviceMessage, ErrorFactory}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
@@ -68,17 +68,17 @@ trait DeviceMessageRoute extends MyJsonProtocol
   private def queryHistory(deviceId: String,
                            fromOpt: Option[Int] = None,
                            sizeOpt: Option[Int] = None
-                          ): Future[Option[Seq[DeviceData]]] = {
+                          ): Future[Option[Seq[DeviceMessage]]] = {
 
-    val deviceData: Future[Seq[DeviceData]] = fromOpt match {
+    val deviceData: Future[Seq[DeviceMessage]] = fromOpt match {
 
       case Some(from) =>
         sizeOpt match {
-          case Some(size) => DeviceDataManager.history(deviceId, from, size)
-          case None => DeviceDataManager.history(deviceId, from)
+          case Some(size) => DeviceMessageManager.history(deviceId, from, size)
+          case None => DeviceMessageManager.history(deviceId, from)
         }
 
-      case None => DeviceDataManager.history(deviceId)
+      case None => DeviceMessageManager.history(deviceId)
 
     }
 
