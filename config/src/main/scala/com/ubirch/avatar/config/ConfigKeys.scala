@@ -11,7 +11,7 @@ object ConfigKeys {
   final val HTTPINTERFACE = s"$prefix.interface"
   final val HTTPPORT = s"$prefix.port"
 
-  /* Elasticsearch Config Keys
+  /* Elasticsearch Related Config Keys
    **********************************************************************/
 
   // Prefixes
@@ -32,6 +32,9 @@ object ConfigKeys {
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
+
+  /* AWS Related Config Keys
+   **********************************************************************/
 
   // AWS local mode defines whether app is running on a locally or at AWS
   final val AWS_LOCAL_MODE = s"$esPrefix.aws.localmode"
