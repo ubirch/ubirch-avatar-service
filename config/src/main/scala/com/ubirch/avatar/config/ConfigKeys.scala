@@ -17,7 +17,8 @@ object ConfigKeys {
   // Prefixes
   final val esPrefix = s"$prefix.es"
   final val esPortPrefix = s"$esPrefix.port"
-  final val deviceDataPrefix = s"$esPrefix.deviceData"
+  final val esDevicePrefix = s"$esPrefix.device"
+  final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
 
   // Connection
   final val ESHOST = s"$esPrefix.host"
@@ -26,9 +27,13 @@ object ConfigKeys {
   final val DEVICE_DATA_DB_USER = s"$esPrefix.user"
   final val DEVICE_DATA_DB_PASSWORD = s"$esPrefix.password"
 
-  // DeviceData Index & Type
-  final val DEVICE_DATA_DB_INDEX = s"$deviceDataPrefix.index"
-  final val DEVICE_DATA_DB_TYPE = s"$deviceDataPrefix.type"
+  // Device Index & Type
+  final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
+  final val ES_DEVICE_TYPE = s"$esDevicePrefix.type"
+
+  // DeviceHistory Index & Type
+  final val ES_DEVICE_HISTORY_INDEX = s"$esDeviceHistoryPrefix.index"
+  final val ES_DEVICE_HISTORY_TYPE = s"$esDeviceHistoryPrefix.type"
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"

@@ -25,68 +25,68 @@ object DummyDevices {
 
   lazy val device1 = Device(
     deviceId = device1Id,
-    deviceType = Some("lightsSensor"),
-    deviceName = Some("lightsSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11"),
-    hwDeviceId = Some("860719022152999"),
+    deviceType = "lightsSensor",
+    deviceName = "lightsSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
+    hwDeviceId = "860719022152999",
     syncState = None,
-    tags = Some(Seq("ubirch#0", "sensor")),
+    tags = Set("ubirch#0", "sensor"),
     deviceConfig = Some(device1Config),
     deviceProperties = Some(device1Properties),
     subscriptions = None,
     avatarState = Some(AvatarState(Some(avatar1Desired), Some(avatar1Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
-    created = Some(DateTime.now.minusDays(60)),
+    created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
   lazy val device2 = Device(
     deviceId = device2Id,
-    deviceType = Some("temperaturesSensor"),
-    deviceName = Some("temperaturesSensor_TU_8caa2520-d8f0-4c85-9705-4707054f4e11"),
-    hwDeviceId = Some("860719022152999"),
+    deviceType = "temperaturesSensor",
+    deviceName = "temperaturesSensor_TU_8caa2520-d8f0-4c85-9705-4707054f4e11",
+    hwDeviceId = "860719022152999",
     syncState = Some("outofsync"),
-    tags = Some(Seq("ubirch#2")),
+    tags = Set("ubirch#2"),
     deviceConfig = Some(device2Config),
     deviceProperties = Some(device2Properties),
     subscriptions = None,
     avatarState = Some(AvatarState(Some(avatar2Desired), Some(avatar2Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
-    created = Some(DateTime.now.minusDays(60)),
+    created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
   lazy val device3 = Device(
     deviceId = device3Id,
-    deviceType = Some("machineSensor"),
-    deviceName = Some("machineSensor_WM_8caa2520-d8f0-4c85-9705-4707054f4e11"),
-    hwDeviceId = Some("860719022152999"),
+    deviceType = "machineSensor",
+    deviceName = "machineSensor_WM_8caa2520-d8f0-4c85-9705-4707054f4e11",
+    hwDeviceId = "860719022152999",
     syncState = Some("outofsync"),
-    tags = Some(Seq("ubirch#0", "sensor")),
+    tags = Set("ubirch#0", "sensor"),
     deviceConfig = Some(device3Config),
     deviceProperties = Some(device3Properties),
     subscriptions = None,
     avatarState = Some(AvatarState(Some(avatar3Desired), Some(avatar3Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
-    created = Some(DateTime.now.minusDays(60)),
+    created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
   lazy val device4 = Device(
     deviceId = device4Id,
-    deviceType = Some("trackleSensor"),
-    deviceName = Some("trackleSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11"),
-    hwDeviceId = Some("860719022152999"),
+    deviceType = "trackleSensor",
+    deviceName = "trackleSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
+    hwDeviceId = "860719022152999",
     syncState = Some("insync"),
-    tags = Some(Seq("ubirch#0", "sensor")),
+    tags = Set("ubirch#0", "sensor"),
     deviceConfig = Some(device4Config),
     deviceProperties = Some(device4Properties),
     subscriptions = None,
     avatarState = Some(AvatarState(Some(avatar4Desired), Some(avatar4Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
-    created = Some(DateTime.now.minusDays(60)),
+    created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )

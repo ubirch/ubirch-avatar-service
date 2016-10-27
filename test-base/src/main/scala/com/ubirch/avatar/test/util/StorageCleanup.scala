@@ -12,7 +12,7 @@ import uk.co.bigbeeconsultants.http.HttpClient
   */
 trait StorageCleanup {
 
-  private val indexInfos: Seq[IndexInfo] = Seq(IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataIndex))
+  private val indexInfos: Seq[IndexInfo] = Seq(IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceHistoryIndex))
 
   /**
     * Delete all indexes.

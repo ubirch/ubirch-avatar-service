@@ -54,12 +54,22 @@ object Config extends ConfigBase {
   /**
     * @return Elasticsearch DeviceData index
     */
-  def esDeviceDataIndex: String = config.getString(ConfigKeys.DEVICE_DATA_DB_INDEX)
+  def esDeviceIndex: String = config.getString(ConfigKeys.ES_DEVICE_INDEX)
 
   /**
     * @return Elasticsearch DeviceData type
     */
-  def esDeviceDataType: String = config.getString(ConfigKeys.DEVICE_DATA_DB_TYPE)
+  def esDeviceType: String = config.getString(ConfigKeys.ES_DEVICE_TYPE)
+
+  /**
+    * @return Elasticsearch DeviceData index
+    */
+  def esDeviceHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
+
+  /**
+    * @return Elasticsearch DeviceData type
+    */
+  def esDeviceHistoryType: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_TYPE)
 
   /**
     * @return ElasticSearch default size in regards to pagination

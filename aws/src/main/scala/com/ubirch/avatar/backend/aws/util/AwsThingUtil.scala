@@ -34,15 +34,15 @@ object AwsThingUtil {
   //    iotDataClient.publish(republishRequest)
   //  }
 
-  def createThing(name: String) = {
+  def createShadow(awsDeviceShadowId: String) = {
     val createSensorRequest = new CreateThingRequest()
-    createSensorRequest.setThingName(name)
+    createSensorRequest.setThingName(awsDeviceShadowId)
     iotClient.createThing(createSensorRequest)
   }
 
-  def deleteThing(name: String) = {
+  def deleteShadow(awsDeviceShadowId: String) = {
     val deleteSensorRequest = new DeleteThingRequest()
-    deleteSensorRequest.setThingName(name)
+    deleteSensorRequest.setThingName(awsDeviceShadowId)
     iotClient.deleteThing(deleteSensorRequest)
   }
 }

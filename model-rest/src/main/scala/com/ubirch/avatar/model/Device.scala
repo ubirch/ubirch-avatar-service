@@ -9,17 +9,17 @@ import org.json4s.JValue
   */
 
 case class Device(deviceId: String,
-                  deviceType: Option[String],
-                  deviceName: Option[String],
-                  hwDeviceId: Option[String],
+                  deviceType: String = "unknownDeviceType",
+                  deviceName: String = "unnamedDevice",
+                  hwDeviceId: String = "unknownHwDeviceId",
                   syncState: Option[String],
-                  tags: Option[Seq[String]],
+                  tags: Set[String] = Set(),
                   deviceConfig: Option[JValue],
                   deviceProperties: Option[JValue],
                   subscriptions: Option[Seq[String]],
                   avatarState: Option[AvatarState],
                   avatarLastUpdated: Option[DateTime],
-                  created: Option[DateTime],
+                  created: DateTime = DateTime.now(),
                   updated: Option[DateTime],
                   deviceLastUpdated: Option[DateTime]
                  ) {
@@ -41,7 +41,6 @@ case class Device(deviceId: String,
 
   def awsDeviceThingId = this.deviceId
 }
-
 
 
 case class AvatarState(desired: Option[JValue],
