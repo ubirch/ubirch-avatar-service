@@ -6,7 +6,7 @@ import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 
-import scala.concurrent.Await
+import scala.concurrent.{ExecutionException, Await}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -25,7 +25,7 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
 
     scenario("deviceId does not exist") {
       val deviceId = UUIDUtil.uuidStr
-      Await.result(DeviceMessageManager.history(deviceId), 1 seconds) should be(Seq.empty)
+      an[ExecutionException] should be thrownBy Await.result(DeviceMessageManager.history(deviceId), 1 seconds)
     }
 
     scenario("3 records exist: from = -1; size > 3") {
@@ -59,14 +59,13 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = elementCount + 1
-      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
       val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
 
       // verify
-      // TODO fix test
       result.size should be(3)
       for (i <- dataSeries.indices) {
         result(i) shouldEqual dataSeries(i)
@@ -80,14 +79,13 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 1
       val size = elementCount + 1
-      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
       val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
 
       // verify
-      // TODO fix test
       result.size should be(2)
       result.head shouldEqual dataSeries(1)
       result(1) shouldEqual dataSeries(2)
