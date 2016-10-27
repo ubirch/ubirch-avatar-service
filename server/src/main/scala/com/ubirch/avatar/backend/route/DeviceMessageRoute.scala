@@ -32,7 +32,7 @@ trait DeviceMessageRoute extends MyJsonProtocol
         path(history) {
           get {
             onSuccess(queryHistory(deviceId)) {
-              case None => complete(errorResponse(deviceId))
+              case None => complete(errorResponseHistory(deviceId))
               case Some(deviceData) => complete(deviceData)
             }
           }
@@ -42,7 +42,7 @@ trait DeviceMessageRoute extends MyJsonProtocol
           path(IntNumber) { from =>
             get {
               onSuccess(queryHistory(deviceId, Some(from))) {
-                case None => complete(errorResponse(deviceId, Some(from)))
+                case None => complete(errorResponseHistory(deviceId, Some(from)))
                 case Some(deviceData) => complete(deviceData)
               }
             }
@@ -50,13 +50,24 @@ trait DeviceMessageRoute extends MyJsonProtocol
           } ~ path(IntNumber / IntNumber) { (from, size) =>
             get {
               onSuccess(queryHistory(deviceId, Some(from), Some(size))) {
-                case None => complete(errorResponse(deviceId, Some(from), Some(size)))
+                case None => complete(errorResponseHistory(deviceId, Some(from), Some(size)))
                 case Some(deviceData) => complete(deviceData)
               }
             }
 
           }
 
+        }
+
+      } ~ path(device / history) {
+
+        post {
+          entity(as[DeviceMessage]) { deviceMessage =>
+            onSuccess(DeviceMessageManager.store(deviceMessage)) {
+              case None => complete(errorResponseMessage(deviceMessage))
+              case Some(storedMessage) => complete(storedMessage)
+            }
+          }
         }
 
       }
@@ -89,11 +100,16 @@ trait DeviceMessageRoute extends MyJsonProtocol
 
   }
 
-  private def errorResponse(deviceId: String,
-                            fromOpt: Option[Long] = None,
-                            sizeOpt: Option[Long] = None
-                           ): HttpResponse = {
+  private def errorResponseHistory(deviceId: String,
+                                   fromOpt: Option[Long] = None,
+                                   sizeOpt: Option[Long] = None
+                                  ): HttpResponse = {
     val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
+    HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
+  }
+
+  private def errorResponseMessage(deviceMessage: DeviceMessage): HttpResponse = {
+    val error = ErrorFactory.createString("CreateError", s"failed to persist message")
     HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
   }
 

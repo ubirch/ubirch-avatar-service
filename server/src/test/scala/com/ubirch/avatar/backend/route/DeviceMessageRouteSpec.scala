@@ -97,4 +97,16 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   }
 
+  feature(s"POST ${RouteConstants.urlDeviceHistory}") {
+
+    ignore("insert message (messageId does not exist yet)") {
+      // TODO write test
+    }
+
+    ignore("update message (messageId already exists)") {
+      // TODO write test
+    }
+
+  }
+
 }
