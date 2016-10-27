@@ -93,6 +93,14 @@ TODO: description
 
     curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
 
+#### Device State
+
+TODO: description
+
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
+
 #### TODO: title
 
 TODO: description
