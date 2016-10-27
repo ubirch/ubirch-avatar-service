@@ -76,7 +76,19 @@ class DeviceMessageRouteSpec extends RouteSpec
       // TODO write test
     }
 
-    scenario("deviceId does not exists") {
+    ignore("deviceId exists but from is negative") {
+      // TODO write test
+    }
+
+    ignore("deviceId exists but size is negative") {
+      // TODO write test
+    }
+
+    ignore("deviceId exists but from and size are negative") {
+      // TODO write test
+    }
+
+    scenario("deviceId does not exist") {
 
       val deviceId = "1234asdf"
       val from = 5L
