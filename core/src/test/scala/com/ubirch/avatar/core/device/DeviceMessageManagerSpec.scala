@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.device
 
-import com.ubirch.avatar.model.{DeviceMessage, DummyDeviceMessage}
+import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
+import com.ubirch.avatar.model.DeviceMessage
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
@@ -41,9 +42,8 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = 0
-      val dataSeries: List[DeviceMessage] = DummyDeviceMessage.dataSeries(elementCount = elementCount)
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
-      store(dataSeries)
 
       // test
       val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
@@ -59,9 +59,8 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = elementCount + 1
-      val dataSeries: List[DeviceMessage] = DummyDeviceMessage.dataSeries(elementCount = elementCount)
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
-      store(dataSeries)
 
       // test
       val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
@@ -83,21 +82,11 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
 
   }
 
-  private def store(dataSeries: List[DeviceMessage]) = {
-
-    dataSeries foreach { deviceData =>
-      DeviceMessageManager.store(deviceData)
-    }
-    Thread.sleep(3000)
-
-  }
-
   private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
 
     // prepare
-    val dataSeries: List[DeviceMessage] = DummyDeviceMessage.dataSeries(elementCount = elementCount)
+    val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
     val deviceId: String = dataSeries.head.deviceId
-    store(dataSeries)
 
     // test && verify
     an[IllegalArgumentException] should be thrownBy Await.result(DeviceMessageManager.history(deviceId, from, size), 1 seconds)
