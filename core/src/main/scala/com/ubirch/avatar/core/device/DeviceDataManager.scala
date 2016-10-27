@@ -3,10 +3,10 @@ package com.ubirch.avatar.core.device
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.DeviceData
 import com.ubirch.services.storage.DeviceDataStorage
+import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import org.elasticsearch.index.query.QueryBuilders
-import org.elasticsearch.search.sort.SortBuilders
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -27,7 +27,7 @@ object DeviceDataManager extends MyJsonProtocol {
     val index = Config.deviceDataDbIndex
     val esType = Config.deviceDataDbType
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
-    val sort = Some(SortBuilders.fieldSort("timestamp:desc"))
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
     DeviceDataStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
       res.map { jv =>
