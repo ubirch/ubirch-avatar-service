@@ -13,7 +13,7 @@ object DeviceMessageTestUtil {
     * Creates a series of device message and stores them. All messages are from the same device.
     *
     * @param elementCount number of elements to create and store
-    * @return list of stored messages
+    * @return list of stored messages (ordered by: timestamp ASC)
     */
   def storeSeries(elementCount: Int): List[DeviceMessage] = {
 
