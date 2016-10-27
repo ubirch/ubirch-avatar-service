@@ -1,8 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.core.server.util.RouteConstants._
+
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.core.server.util.RouteConstants._
 
 /**
   * author: cvandrei
@@ -15,6 +16,7 @@ class MainRoute {
   val device = new DeviceRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
+  val deviceState = new DeviceStateRoute {}
   val deviceDataHistory = new DeviceDataHistoryRoute {}
 
   val myRoute: Route = {
@@ -26,6 +28,7 @@ class MainRoute {
           device.route ~
             deviceId.route ~
             deviceStubId.route ~
+            deviceState.route ~
             deviceDataHistory.route
 
         }

@@ -4,18 +4,19 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.model.{ErrorFactory, ErrorResponse}
-import com.ubirch.avatar.test.base.RouteSpec
+import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
   * author: cvandrei
   * since: 2016-09-30
   */
-class DeviceDataHistoryRouteSpec extends RouteSpec {
+class DeviceDataHistoryRouteSpec extends RouteSpec
+  with ElasticsearchSpec {
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDevice}/:deviceId/${RouteConstants.history}") {
+  feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}") {
 
     ignore("deviceId exists") {
       // TODO write test
@@ -42,7 +43,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec {
 
   }
 
-  feature(s"GET ${RouteConstants.urlDevice}/:deviceId/${RouteConstants.history}/:from") {
+  feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from") {
 
     ignore("deviceId exists") {
       // TODO write test
@@ -69,7 +70,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec {
 
   }
 
-  feature(s"GET ${RouteConstants.urlDevice}/:deviceId/${RouteConstants.history}/:from/:size") {
+  feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from/:size") {
 
     ignore("deviceId exists") {
       // TODO write test
