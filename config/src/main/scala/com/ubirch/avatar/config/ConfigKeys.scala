@@ -33,4 +33,15 @@ object ConfigKeys {
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
 
+  // AWS local mode defines whether app is running on a locally or at AWS
+  final val AWS_LOCAL_MODE = s"$esPrefix.aws.localmode"
+
+  // AWS base MQTT topic name for all AWS IoT Things
+  final val AWS_TOPICS_BASENAME = s"$esPrefix.aws.topics.basename"
+
+  // AWS IoT desired state name
+  final val AWS_STATES_DESIRED = s"$esPrefix.aws.states.desired"
+
+  // AWS IoT reported state name
+  final val AWS_STATES_REPORTED = s"$esPrefix.aws.states.reported"
 }
