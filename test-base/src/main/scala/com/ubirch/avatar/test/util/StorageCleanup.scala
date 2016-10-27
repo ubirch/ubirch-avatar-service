@@ -3,11 +3,10 @@ package com.ubirch.avatar.test.util
 import java.net.URL
 
 import com.ubirch.avatar.config.Config
-
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
-import uk.co.bigbeeconsultants.http.response.Status._
 import uk.co.bigbeeconsultants.http.request.RequestBody
+import uk.co.bigbeeconsultants.http.response.Status._
 
 /**
   * author: cvandrei
@@ -15,14 +14,14 @@ import uk.co.bigbeeconsultants.http.request.RequestBody
   */
 trait StorageCleanup {
 
-  private val indexInfoDeviceMessage = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataIndex)
+  private val indexInfoDeviceMessage = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
   private val indexInfos: Seq[IndexInfo] = Seq(indexInfoDeviceMessage)
 
   /**
     * Clean Elasticsearch instance by running the following operations:
     *
-    *   * delete indexes
-    *   * create mappings
+    * * delete indexes
+    * * create mappings
     */
   final def cleanElasticsearch(): Unit = {
     deleteIndexes()
@@ -51,7 +50,7 @@ trait StorageCleanup {
     val deviceMessageMapping =
       s"""{
           |  "mappings": {
-          |    "${Config.esDeviceDataType}" : {
+          |    "${Config.esDeviceType}" : {
           |      "properties" : {
           |        "deviceId" : {
           |          "type" : "string",

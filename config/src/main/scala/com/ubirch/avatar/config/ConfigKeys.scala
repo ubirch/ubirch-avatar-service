@@ -19,7 +19,7 @@ object ConfigKeys {
   final val esPortPrefix = s"$esPrefix.port"
   final val esDevicePrefix = s"$esPrefix.device"
   final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
-
+  final val awsPrefix = s"$prefix.aws"
   // Connection
   final val ESHOST = s"$esPrefix.host"
   final val ESPORT_BINARY = s"$esPortPrefix.binary"
@@ -42,14 +42,14 @@ object ConfigKeys {
    **********************************************************************/
 
   // AWS local mode defines whether app is running on a locally or at AWS
-  final val AWS_LOCAL_MODE = s"$esPrefix.aws.localmode"
+  final val AWS_LOCAL_MODE = s"$awsPrefix.localmode"
 
   // AWS base MQTT topic name for all AWS IoT Things
-  final val AWS_TOPICS_BASENAME = s"$esPrefix.aws.topics.basename"
+  final val AWS_TOPICS_BASENAME = s"$awsPrefix.topics.basename"
 
   // AWS IoT desired state name
-  final val AWS_STATES_DESIRED = s"$esPrefix.aws.states.desired"
+  final val AWS_STATES_DESIRED = s"$awsPrefix.states.desired"
 
   // AWS IoT reported state name
-  final val AWS_STATES_REPORTED = s"$esPrefix.aws.states.reported"
+  final val AWS_STATES_REPORTED = s"$awsPrefix.states.reported"
 }
