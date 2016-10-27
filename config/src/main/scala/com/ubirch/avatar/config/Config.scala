@@ -66,4 +66,32 @@ object Config extends ConfigBase {
     */
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
+  /**
+    * AWS local mode defines whether app is running on a locally or at AWS
+    *
+    * @return boolean value
+    */
+  def awsLocalMode: Boolean = config.getBoolean(ConfigKeys.AWS_LOCAL_MODE)
+
+  /**
+    * AWS base MQTT topic name for all AWS IoT Things
+    *
+    * @return boolean value
+    */
+  def awsTopicsBasename: String = config.getString(ConfigKeys.AWS_TOPICS_BASENAME)
+
+  /**
+    * AWS base MQTT topic name for all AWS IoT Things
+    *
+    * @return boolean value
+    */
+  def awsStatesDesired: String = config.getString(ConfigKeys.AWS_STATES_DESIRED)
+
+  /**
+    * AWS base MQTT topic name for all AWS IoT Things
+    *
+    * @return boolean value
+    */
+  def awsStatesReported: String = config.getString(ConfigKeys.AWS_STATES_REPORTED)
+
 }

@@ -58,6 +58,14 @@ lazy val core = project
     libraryDependencies ++= depCore
   )
 
+lazy val aws = project
+  .settings(commonSettings: _*)
+  .dependsOn(config, modelRest, modelDb, testBase % "test")
+  .settings(
+    description := "aws related stuff",
+    libraryDependencies ++= depAws
+  )
+
 lazy val config = project
   .settings(commonSettings: _*)
   .settings(
@@ -121,6 +129,13 @@ lazy val depCore = Seq(
   scalatest % "test"
 ) ++ scalaLogging
 
+lazy val depAws = Seq(
+  awsIoT,
+  ubirchUtilJson,
+  ubirchUtilUUID % "test",
+  scalatest % "test"
+) ++ scalaLogging
+
 lazy val depModelRest = joda ++ json4s ++ scalaLogging :+ ubirchUtilJsonAutoConvert
 
 lazy val depModelDb = Seq()
@@ -146,7 +161,7 @@ lazy val scalaTestV = "3.0.0"
 lazy val akkaG = "com.typesafe.akka"
 lazy val logbackG = "ch.qos.logback"
 lazy val json4sG = "org.json4s"
-lazy val awsG = "com.amazonaws"
+lazy val awsIot = "com.amazonaws"
 lazy val ubirchUtilG = "com.ubirch.util"
 
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
@@ -169,13 +184,13 @@ lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
 lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
-lazy val awsDynamoDb = awsG %% "aws-java-skd-dynamodb" % awsSdkV
-lazy val awsIoT = awsG %% "aws-java-skd-iot" % awsSdkV
+lazy val awsIoT = awsIot % "aws-java-sdk-iot" % awsSdkV
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
+lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.1"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2"
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.3"

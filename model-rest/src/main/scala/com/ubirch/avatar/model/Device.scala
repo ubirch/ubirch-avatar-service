@@ -28,9 +28,7 @@ case class Device(deviceId: String,
     obj match {
       case dev: Device =>
         if (
-          dev.deviceId == this.deviceId &&
-            dev.deviceName == this.deviceName &&
-            dev.hwDeviceId == this.hwDeviceId
+          dev.deviceId == this.deviceId
         )
           true
         else
@@ -38,6 +36,10 @@ case class Device(deviceId: String,
       case _ => false
     }
   }
+
+  override def hashCode(): Int = this.deviceId.hashCode
+
+  def awsDeviceThingId = this.deviceId
 }
 
 
