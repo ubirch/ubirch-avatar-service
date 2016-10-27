@@ -66,18 +66,49 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
 
       // verify
+      // TODO fix test
       result.size should be(3)
-      result should be('nonEmpty)
-      // TODO check order of elements
+      for (i <- dataSeries.indices) {
+        result(i) shouldEqual dataSeries(i)
+      }
 
     }
 
-    ignore("3 records exist: from = 1; size > 3") {
-      // TODO write test
+    scenario("3 records exist: from = 1; size > 3") {
+
+      // prepare
+      val elementCount = 3
+      val from = 1
+      val size = elementCount + 1
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val deviceId: String = dataSeries.head.deviceId
+
+      // test
+      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
+
+      // verify
+      // TODO fix test
+      result.size should be(2)
+      result.head shouldEqual dataSeries(1)
+      result(1) shouldEqual dataSeries(2)
+
     }
 
-    ignore("3 records exist: from = 3; size > 3") {
-      // TODO write test
+    scenario("3 records exist: from = 3; size > 3") {
+
+      // prepare
+      val elementCount = 3
+      val from = elementCount
+      val size = elementCount + 1
+      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val deviceId: String = dataSeries.head.deviceId
+
+      // test
+      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
+
+      // verify
+      result should be('isEmpty)
+
     }
 
   }
