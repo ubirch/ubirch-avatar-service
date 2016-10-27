@@ -19,7 +19,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-30
   */
-trait DeviceDataHistoryRoute extends MyJsonProtocol
+trait DeviceMessageRoute extends MyJsonProtocol
   with CORSDirective {
 
   val route: Route = {
