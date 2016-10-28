@@ -6,7 +6,6 @@ import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
 import com.ubirch.avatar.model.device.DeviceMessage
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
-import com.ubirch.util.uuid.UUIDUtil
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
@@ -84,41 +83,6 @@ class DeviceMessageRouteSpec extends RouteSpec
         }
 
         verifyCORSHeader()
-
-      }
-
-    }
-
-    scenario("from is negative; Elasticsearch index does not exist") {
-
-      // prepare
-      val from = -1
-      val deviceId = UUIDUtil.uuidStr
-
-      // test
-      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual MethodNotAllowed
-        verifyCORSHeader(exist = false)
-
-      }
-
-    }
-
-    scenario("from is negative; Elasticsearch index exists") {
-
-      // prepare
-      val messageSeries = DeviceMessageTestUtil.storeSeries(1)
-      val from = -1
-      val deviceId = messageSeries.head.deviceId
-
-      // test
-      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual MethodNotAllowed
-        verifyCORSHeader(exist = false)
 
       }
 
