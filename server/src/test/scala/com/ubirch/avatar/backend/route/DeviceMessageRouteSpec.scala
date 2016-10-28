@@ -417,7 +417,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
     status shouldEqual BadRequest
 
-    val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId, from=$from}, size=$size}")
+    val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId, from=$from, size=$size")
     responseEntity.contentType should be(`application/json`)
     responseAs[ErrorResponse] shouldEqual expectedError
 
