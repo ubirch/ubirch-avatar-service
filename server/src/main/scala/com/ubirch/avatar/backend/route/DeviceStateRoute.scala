@@ -1,5 +1,6 @@
 package com.ubirch.avatar.backend.route
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
@@ -13,7 +14,6 @@ import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -22,6 +22,10 @@ import scala.concurrent.Future
   */
 trait DeviceStateRoute extends MyJsonProtocol
   with CORSDirective {
+
+  implicit val system = ActorSystem()
+
+  import system.dispatcher
 
   val route: Route = {
 
@@ -46,11 +50,11 @@ trait DeviceStateRoute extends MyJsonProtocol
   }
 
   private def queryState(deviceId: String): Future[Option[ThingShadowState]] = {
-    DeviceManager.shortInfo(deviceId) match {
+    DeviceManager.shortInfo(deviceId).map {
       case Some(device) =>
-        Future(Some(ShadowService.getCurrentDeviceState(device.awsDeviceThingId)))
+        Some(ShadowService.getCurrentDeviceState(device.awsDeviceThingId))
       case None =>
-        Future(None)
+        None
     }
   }
 

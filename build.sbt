@@ -119,7 +119,8 @@ lazy val depServer = Seq(
   akkaHttpTestkit % "test",
 
   ubirchUtilJsonAutoConvert,
-  ubirchUtilRestAkkaHttp
+  ubirchUtilRestAkkaHttp,
+  ubirchUtilJson
 
 ) ++ scalaLogging
 
@@ -136,7 +137,7 @@ lazy val depAws = Seq(
   scalatest % "test"
 ) ++ scalaLogging
 
-lazy val depModelRest = joda ++ json4s ++ scalaLogging :+ ubirchUtilJsonAutoConvert
+lazy val depModelRest = Seq(ubirchUtilJson) ++ joda ++ json4s ++ scalaLogging :+ ubirchUtilJsonAutoConvert
 
 lazy val depModelDb = Seq()
 

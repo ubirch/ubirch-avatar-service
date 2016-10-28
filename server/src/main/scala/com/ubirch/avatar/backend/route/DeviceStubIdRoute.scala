@@ -1,7 +1,8 @@
 package com.ubirch.avatar.backend.route
 
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
@@ -17,6 +18,10 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 trait DeviceStubIdRoute extends MyJsonProtocol
   with CORSDirective {
 
+  implicit val system = ActorSystem()
+
+  import system.dispatcher
+
   val route: Route = {
 
     // TODO authentication
@@ -26,7 +31,7 @@ trait DeviceStubIdRoute extends MyJsonProtocol
         get {
           complete {
 
-            DeviceManager.shortInfo(deviceId) match {
+            DeviceManager.shortInfo(deviceId).map {
 
               case None =>
                 val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId")

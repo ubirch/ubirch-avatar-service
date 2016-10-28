@@ -55,7 +55,8 @@ object ShadowService extends MyJsonProtocol {
     getShadowResource(awsDeviceShadowId) match {
       case Some(thingShadow) =>
         val inputStream = new ByteArrayInputStream(thingShadow.getPayload().array())
-        Json4sUtil.any2jvalue(inputStream) match {
+        val input: String = scala.io.Source.fromInputStream(inputStream).getLines().next()
+        Json4sUtil.string2JValue(input) match {
           case Some(jval) =>
             (jval \ "state" \ state).extractOpt[JValue]
           case None => None

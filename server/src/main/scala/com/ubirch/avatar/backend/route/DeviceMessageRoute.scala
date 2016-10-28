@@ -1,18 +1,17 @@
 package com.ubirch.avatar.backend.route
 
+import akka.actor.ActorSystem
 import com.ubirch.avatar.core.device.DeviceMessageManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.{DeviceMessage, ErrorFactory}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -21,6 +20,10 @@ import scala.concurrent.Future
   */
 trait DeviceMessageRoute extends MyJsonProtocol
   with CORSDirective {
+
+  implicit val system = ActorSystem()
+
+  import system.dispatcher
 
   val route: Route = {
 

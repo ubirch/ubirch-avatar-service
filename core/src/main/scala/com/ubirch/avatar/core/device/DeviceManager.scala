@@ -41,13 +41,15 @@ object DeviceManager extends MyJsonProtocol {
   def createWithShadow(device: Device): Future[Option[Device]] = {
     create(device: Device).map {
       case Some(device) =>
+
         AwsThingUtil.createShadow(device.awsDeviceThingId)
+
         Some(device)
-      case None => None
+
+      case None =>
+        None
     }
   }
-
-  //  def update(deviceId: String): Option[Device] = DummyDevices.deviceMap.get(deviceId) // TODO implement
 
   def update(device: Device): Future[Option[Device]] = {
     Json4sUtil.any2jvalue(device) match {
@@ -60,15 +62,15 @@ object DeviceManager extends MyJsonProtocol {
     }
   }
 
-  //  def delete(deviceId: String): Option[Device] = {
-  //    DummyDevices.deviceMap.get(deviceId) // TODO implement
-  //  }
-
   def delete(device: Device): Future[Option[Device]] = {
+
     AwsThingUtil.deleteShadow(device.awsDeviceThingId)
+
     DeviceStorage.deleteDoc(Config.esDeviceIndex, Config.esDeviceType, device.deviceId).map {
       case true =>
+
         Some(device)
+
       case _ =>
         None
     }
@@ -82,7 +84,7 @@ object DeviceManager extends MyJsonProtocol {
     }
   }
 
-  def shortInfo(deviceId: String): Option[Device] = ??? // TODO implement
+  def shortInfo(deviceId: String): Future[Option[Device]] = info(deviceId: String) // TODO implement
 
   def curretShadowState(device: Device): ThingShadowState = {
     ShadowService.getCurrentDeviceState(device.awsDeviceThingId)

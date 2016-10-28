@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import com.ubirch.avatar.model.JsonMessageResponse
+import com.ubirch.avatar.model.JsonResponse
 import com.ubirch.avatar.test.base.RouteSpec
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -20,7 +20,7 @@ class WelcomeRouteSpec extends RouteSpec {
       Get() ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
-        responseAs[JsonMessageResponse] shouldEqual JsonMessageResponse(message = "Welcome to the ubirchAvatarService")
+        responseAs[JsonResponse] shouldEqual JsonResponse(message = "Welcome to the ubirchAvatarService")
         verifyCORSHeader(false)
       }
     }
