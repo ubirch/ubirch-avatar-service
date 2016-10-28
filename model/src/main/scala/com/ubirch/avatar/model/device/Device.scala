@@ -1,5 +1,7 @@
 package com.ubirch.avatar.model.device
 
+import java.util.UUID
+
 import org.joda.time.DateTime
 import org.json4s.JValue
 
@@ -9,7 +11,7 @@ import org.json4s.JValue
   */
 
 case class Device(deviceId: String,
-                  deviceType: String = "unknownDeviceType",
+                  deviceTypeId: Option[UUID] = None,
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",
                   syncState: Option[String],
