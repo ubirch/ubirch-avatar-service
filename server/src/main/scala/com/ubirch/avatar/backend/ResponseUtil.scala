@@ -11,17 +11,17 @@ import com.ubirch.avatar.model.{JsonErrorResponse, JsonResponse}
   */
 trait ResponseUtil {
 
-  def repsonse(message: String): HttpResponse = {
+  def response(message: String): HttpResponse = {
     val response = JsonResponse(message = message)
     HttpResponse(status = OK, entity = HttpEntity(ContentTypes.`application/json`, response.toJsonString))
   }
 
-  def requestErrorRepsonse(errorType: String, errorMessage: String): HttpResponse = {
+  def requestErrorResponse(errorType: String, errorMessage: String): HttpResponse = {
     val response = JsonErrorResponse(errorType = errorType, errorMessage = errorMessage)
     HttpResponse(status = BadRequest, entity = HttpEntity(ContentTypes.`application/json`, response.toJsonString))
   }
 
-  def serverErrorRepsonse(errorType: String, errorMessage: String): HttpResponse = {
+  def serverErrorResponse(errorType: String, errorMessage: String): HttpResponse = {
     val response = JsonErrorResponse(errorType = errorType, errorMessage = errorMessage)
     HttpResponse(status = InternalServerError, entity = HttpEntity(ContentTypes.`application/json`, response.toJsonString))
   }

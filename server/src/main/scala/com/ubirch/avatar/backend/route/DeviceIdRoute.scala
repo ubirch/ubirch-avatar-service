@@ -27,7 +27,7 @@ trait DeviceIdRoute extends CORSDirective
         complete {
           DeviceManager.info(deviceId).map {
             case None =>
-              requestErrorRepsonse(
+              requestErrorResponse(
                 errorType = "QueryError",
                 errorMessage = s"deviceId not found: deviceId=$deviceId"
               )
@@ -41,19 +41,19 @@ trait DeviceIdRoute extends CORSDirective
             complete {
               DeviceManager.info(deviceId).map {
                 case None =>
-                  requestErrorRepsonse(
+                  requestErrorResponse(
                     errorType = "UpdateError",
                     errorMessage = s"update non existing device: deviceId=$deviceId"
                   )
                 case Some(dev) if deviceId != device.deviceId =>
-                  requestErrorRepsonse(
+                  requestErrorResponse(
                     errorType = "UpdateError",
                     errorMessage = s"deviceId mismatch $deviceId <-> device: deviceId=$deviceId"
                   )
                 case Some(dev) =>
                   DeviceManager.update(device = device).map {
                     case None =>
-                      requestErrorRepsonse(
+                      requestErrorResponse(
                         errorType = "UpdateError",
                         errorMessage = s"failed to update device: deviceId=$deviceId"
                       )
@@ -67,19 +67,19 @@ trait DeviceIdRoute extends CORSDirective
           complete {
             DeviceManager.info(deviceId).map {
               case None =>
-                requestErrorRepsonse(
+                requestErrorResponse(
                   errorType = "DeleteError",
                   errorMessage = s"delete a non existing device: deviceId=$deviceId"
                 )
               case Some(existingDevice) =>
                 DeviceManager.delete(existingDevice).map {
                   case None =>
-                    requestErrorRepsonse(
+                    requestErrorResponse(
                       errorType = "DeleteError",
                       errorMessage = s"failed to delete device: deviceId=$deviceId"
                     )
                   case Some(deletedDevice) =>
-                    repsonse(message = s"deleted device: $existingDevice")
+                    response(message = s"deleted device: $existingDevice")
                 }
             }
           }

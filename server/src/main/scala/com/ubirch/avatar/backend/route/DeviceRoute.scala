@@ -35,7 +35,7 @@ trait DeviceRoute extends MyJsonProtocol
             complete {
               DeviceManager.createWithShadow(device).map {
                 case None =>
-                  requestErrorRepsonse(
+                  requestErrorResponse(
                     errorType = "CreationError",
                     errorMessage = s"failed to create device: ${entity(as[String])}"
                   )
