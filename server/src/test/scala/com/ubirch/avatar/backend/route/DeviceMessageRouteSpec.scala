@@ -10,6 +10,7 @@ import com.ubirch.util.uuid.UUIDUtil
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
@@ -120,10 +121,10 @@ class DeviceMessageRouteSpec extends RouteSpec
       val deviceId = UUIDUtil.uuidStr
 
       // test
-      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> routes ~> check {
+      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> Route.seal(routes) ~> check {
 
         // verify
-        status shouldEqual InternalServerError
+        status shouldEqual MethodNotAllowed
         verifyCORSHeader(exist = false)
 
       }
@@ -138,10 +139,10 @@ class DeviceMessageRouteSpec extends RouteSpec
       val deviceId = messageSeries.head.deviceId
 
       // test
-      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> routes ~> check {
+      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> Route.seal(routes) ~> check {
 
         // verify
-        status shouldEqual InternalServerError
+        status shouldEqual MethodNotAllowed
         verifyCORSHeader(exist = false)
 
       }

@@ -128,7 +128,7 @@ Add a message to the historic device data.
       }
     }'
 
-Query historic device data.
+Query historic device data (CAUTION: `from` and `page_size` may be zero or larger).
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history
 
