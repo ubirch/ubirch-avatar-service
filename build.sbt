@@ -129,7 +129,7 @@ lazy val depAws = Seq(
   scalatest % "test"
 ) ++ scalaLogging
 
-lazy val depModelRest = Seq(ubirchUtilJson, ubirchUtilJsonAutoConvert) ++ joda ++ json4s ++ scalaLogging
+lazy val depModelRest = Seq(ubirchUtilJson, ubirchUtilJsonAutoConvert, ubirchUtilUUID) ++ joda ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
   scalatest,
