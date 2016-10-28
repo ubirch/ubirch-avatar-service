@@ -130,25 +130,6 @@ class DeviceMessageRouteSpec extends RouteSpec
 
     // TODO test case: from = 0; size < elementCount
 
-    scenario("deviceId exists; from < 0; size > 0") {
-
-      // prepare
-      val messageSeries = DeviceMessageTestUtil.storeSeries(1)
-      val from = -1
-      val size = 10
-      val deviceId = messageSeries.head.deviceId
-
-      // test
-      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual MethodNotAllowed
-        verifyCORSHeader(exist = false)
-
-      }
-
-    }
-
     scenario("deviceId exists; from = 0; size < 0") {
 
       // prepare
@@ -174,6 +155,25 @@ class DeviceMessageRouteSpec extends RouteSpec
       val messageSeries = DeviceMessageTestUtil.storeSeries(1)
       val from = -1
       val size = -1
+      val deviceId = messageSeries.head.deviceId
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual MethodNotAllowed
+        verifyCORSHeader(exist = false)
+
+      }
+
+    }
+
+    scenario("deviceId exists; from < 0; size > 0") {
+
+      // prepare
+      val messageSeries = DeviceMessageTestUtil.storeSeries(1)
+      val from = -1
+      val size = 10
       val deviceId = messageSeries.head.deviceId
 
       // test
