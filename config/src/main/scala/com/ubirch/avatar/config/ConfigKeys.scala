@@ -18,7 +18,9 @@ object ConfigKeys {
   final val esPrefix = s"$prefix.es"
   final val esPortPrefix = s"$esPrefix.port"
   final val esDevicePrefix = s"$esPrefix.device"
+  final val esDeviceRawDataPrefix = s"$esPrefix.devicerawdata"
   final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
+
   final val awsPrefix = s"$prefix.aws"
   // Connection
   final val ESHOST = s"$esPrefix.host"
@@ -30,6 +32,10 @@ object ConfigKeys {
   // Device Index & Type
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
   final val ES_DEVICE_TYPE = s"$esDevicePrefix.type"
+
+  // DeviceRawData Index & Type
+  final val ES_DEVICE_RAW_DATA_INDEX = s"$esDeviceRawDataPrefix.index"
+  final val ES_DEVICE_RAW_DATA_TYPE = s"$esDeviceRawDataPrefix.type"
 
   // DeviceHistory Index & Type
   final val ES_DEVICE_HISTORY_INDEX = s"$esDeviceHistoryPrefix.index"

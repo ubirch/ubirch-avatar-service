@@ -2,8 +2,8 @@ package com.ubirch.avatar.backend.aws.services
 
 import java.io.ByteArrayInputStream
 
-import com.amazonaws.services.iot.model.ResourceNotFoundException
 import com.amazonaws.services.iotdata.model.GetThingShadowRequest
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.backend.aws.config.AwsConf
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
@@ -14,7 +14,7 @@ import org.json4s._
   * Created by derMicha on 04/04/16.
   */
 
-object ShadowService extends MyJsonProtocol {
+object ShadowService extends MyJsonProtocol with LazyLogging {
 
   /**
     * Determines current AWS IoT thing state
@@ -55,8 +55,9 @@ object ShadowService extends MyJsonProtocol {
     getShadowResource(awsDeviceShadowId) match {
       case Some(thingShadow) =>
         val inputStream = new ByteArrayInputStream(thingShadow.getPayload().array())
-        val input: String = scala.io.Source.fromInputStream(inputStream).getLines().next()
-        Json4sUtil.string2JValue(input) match {
+        //        val input: String = scala.io.Source.fromInputStream(inputStream).getLines().next()
+        Json4sUtil.inputstream2jvalue(inputStream) match {
+          //        Json4sUtil.string2JValue(input) match {
           case Some(jval) =>
             (jval \ "state" \ state).extractOpt[JValue]
           case None => None
@@ -73,7 +74,8 @@ object ShadowService extends MyJsonProtocol {
       getThingShadowRequest.setThingName(awsDeviceShadowId)
       Some(awsIotDataClient.getThingShadow(getThingShadowRequest))
     } catch {
-      case e: ResourceNotFoundException =>
+      case e: Exception =>
+        logger.error(s"error while accessing device shadow: $awsDeviceShadowId", e)
         None
     }
 
