@@ -1,7 +1,6 @@
 package com.ubirch.avatar.model
 
 import com.ubirch.avatar.model.device.{AvatarState, Device}
-import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime
 import org.json4s.native.JsonMethods._
@@ -28,7 +27,7 @@ object DummyDevices {
 
   lazy val device1 = Device(
     deviceId = device1Id,
-    deviceTypeId = Some(UUIDUtil.uuid),
+    deviceTypeKey = "lightsSensor",
     deviceName = "lightsSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
     syncState = None,
@@ -45,7 +44,7 @@ object DummyDevices {
 
   lazy val device2 = Device(
     deviceId = device2Id,
-    deviceTypeId = Some(UUIDUtil.uuid),
+    deviceTypeKey = "temperaturesSensor",
     deviceName = "temperaturesSensor_TU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
     syncState = Some("outofsync"),
@@ -62,7 +61,7 @@ object DummyDevices {
 
   lazy val device3 = Device(
     deviceId = device3Id,
-    deviceTypeId = Some(UUIDUtil.uuid),
+    deviceTypeKey = "machineSensor",
     deviceName = "machineSensor_WM_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
     syncState = Some("outofsync"),
@@ -79,7 +78,7 @@ object DummyDevices {
 
   lazy val device4 = Device(
     deviceId = device4Id,
-    deviceTypeId = Some(UUIDUtil.uuid),
+    deviceTypeKey = "trackleSensor",
     deviceName = "trackleSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
     syncState = Some("insync"),
