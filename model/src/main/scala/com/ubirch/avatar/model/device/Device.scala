@@ -11,7 +11,7 @@ import org.json4s.JValue
   */
 
 case class Device(deviceId: String,
-                  deviceTypeId: Option[UUID] = None,
+                  deviceTypeKey: String = "unknownDeviceTypeKey",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",
                   syncState: Option[String],
