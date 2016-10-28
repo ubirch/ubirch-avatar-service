@@ -32,6 +32,7 @@ object ConfigKeys {
   // Device Index & Type
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
   final val ES_DEVICE_TYPE = s"$esDevicePrefix.type"
+
   // DeviceRawData Index & Type
   final val ES_DEVICE_RAW_DATA_INDEX = s"$esDeviceRawDataPrefix.index"
   final val ES_DEVICE_RAW_DATA_TYPE = s"$esDeviceRawDataPrefix.type"
