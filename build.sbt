@@ -22,7 +22,6 @@ lazy val commonSettings = Seq(
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots")
   )
-
 )
 
 /*
@@ -52,7 +51,7 @@ lazy val server = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, model, testBase % "test")
+  .dependsOn(config, aws, transformer, model, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore
@@ -64,6 +63,14 @@ lazy val aws = project
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
+  )
+
+lazy val transformer = project
+  .settings(commonSettings: _*)
+  .dependsOn(config, model, testBase % "test")
+  .settings(
+    description := "device message transformation services",
+    libraryDependencies ++= depTransform
   )
 
 lazy val config = project
@@ -103,7 +110,6 @@ lazy val depServer = Seq(
   akkaG %% "akka-actor" % akkaV,
   akkaG %% "akka-http-experimental" % akkaV,
   akkaG %% "akka-slf4j" % akkaV,
-  //akkaG %% "akka-http-spray-json-experimental" % akkaV,
 
   //testing
   scalatest % "test",
@@ -119,6 +125,14 @@ lazy val depServer = Seq(
 lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
   ubirchUtilUUID % "test",
+  scalatest % "test"
+) ++ scalaLogging
+
+lazy val depTransform = Seq(
+  ubirchUtilJson,
+  akkaG %% "akka-actor" % akkaV,
+  akkaG %% "akka-slf4j" % akkaV,
+  akkaG %% "akka-testkit" % akkaV % "test",
   scalatest % "test"
 ) ++ scalaLogging
 
@@ -159,7 +173,7 @@ lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
 lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0" exclude("org.slf4j", "slf4j-api"),
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
   "ch.qos.logback" % "logback-classic" % "1.1.7",
   "ch.qos.logback" % "logback-core" % "1.1.7"
@@ -181,9 +195,9 @@ lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.2.1"
+lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.2.2"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2.1"
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2.2"
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.3"
 
 /*

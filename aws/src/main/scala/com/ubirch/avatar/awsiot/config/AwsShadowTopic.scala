@@ -1,11 +1,11 @@
-package com.ubirch.avatar.backend.aws.config
+package com.ubirch.avatar.awsiot.config
 
 import com.ubirch.avatar.config.Config
 
 /**
   * Created by derMicha on 20/04/16.
   */
-trait AwsThingTopic {
+trait AwsShadowTopic {
 
   val deviceName: String
 

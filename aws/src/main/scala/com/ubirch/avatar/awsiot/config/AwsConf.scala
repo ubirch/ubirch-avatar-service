@@ -1,4 +1,4 @@
-package com.ubirch.avatar.backend.aws.config
+package com.ubirch.avatar.awsiot.config
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.services.iot.AWSIotClient

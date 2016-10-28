@@ -8,6 +8,8 @@ import org.json4s._
 
 /**
   *
+  * Payload could contain e, which contains a error message
+  *
   * @param v message type version
   * @param a hashed deviceId
   * @param k public key
@@ -23,5 +25,12 @@ case class SimpleDeviceMessage(
                                 s: String,
                                 p: JValue
                               )
+
+case class SimpleDeviceMessageEnevelope(
+                                         validationState: String,
+                                         deviceMessage: SimpleDeviceMessage,
+                                         signature: Option[String],
+                                         timestamp: DateTime = DateTime.now()
+                                       )
 
 case class PayloadV3(c: JValue, p: Array[JValue])

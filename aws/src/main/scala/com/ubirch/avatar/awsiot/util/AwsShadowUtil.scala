@@ -1,11 +1,11 @@
-package com.ubirch.avatar.backend.aws.util
+package com.ubirch.avatar.awsiot.util
 
 import java.nio.ByteBuffer
 
 import com.amazonaws.services.iot.model.{CreateThingRequest, DeleteThingRequest}
 import com.amazonaws.services.iotdata.AWSIotDataClient
 import com.amazonaws.services.iotdata.model.PublishRequest
-import com.ubirch.avatar.backend.aws.config.AwsConf
+import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.model.aws.ThingShadowMessage
 import org.json4s.native.Serialization._
 import org.json4s.{NoTypeHints, jackson}
@@ -13,7 +13,7 @@ import org.json4s.{NoTypeHints, jackson}
 /**
   * Created by derMicha on 21/04/16.
   */
-object AwsThingUtil {
+object AwsShadowUtil {
 
   implicit val formats = jackson.Serialization.formats(NoTypeHints) ++ org.json4s.ext.JodaTimeSerializers.all
 

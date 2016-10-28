@@ -1,10 +1,10 @@
-package com.ubirch.avatar.backend.aws.services
+package com.ubirch.avatar.awsiot.services
 
 import java.io.ByteArrayInputStream
 
 import com.amazonaws.services.iotdata.model.GetThingShadowRequest
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import com.ubirch.avatar.backend.aws.config.AwsConf
+import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -14,7 +14,7 @@ import org.json4s._
   * Created by derMicha on 04/04/16.
   */
 
-object ShadowService extends MyJsonProtocol with LazyLogging {
+object AwsShadowService extends MyJsonProtocol with LazyLogging {
 
   /**
     * Determines current AWS IoT thing state

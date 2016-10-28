@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.device
 
-import com.ubirch.avatar.backend.aws.services.ShadowService
-import com.ubirch.avatar.backend.aws.util.AwsThingUtil
+import com.ubirch.avatar.awsiot.services.AwsShadowService
+import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.Device
@@ -42,7 +42,7 @@ object DeviceManager extends MyJsonProtocol {
     create(device: Device).map {
       case Some(device) =>
 
-        AwsThingUtil.createShadow(device.awsDeviceThingId)
+        AwsShadowUtil.createShadow(device.awsDeviceThingId)
 
         Some(device)
 
@@ -64,7 +64,7 @@ object DeviceManager extends MyJsonProtocol {
 
   def delete(device: Device): Future[Option[Device]] = {
 
-    AwsThingUtil.deleteShadow(device.awsDeviceThingId)
+    AwsShadowUtil.deleteShadow(device.awsDeviceThingId)
 
     DeviceStorage.deleteDoc(Config.esDeviceIndex, Config.esDeviceType, device.deviceId).map {
       case true =>
@@ -87,7 +87,7 @@ object DeviceManager extends MyJsonProtocol {
   def shortInfo(deviceId: String): Future[Option[Device]] = info(deviceId: String) // TODO implement
 
   def curretShadowState(device: Device): ThingShadowState = {
-    ShadowService.getCurrentDeviceState(device.awsDeviceThingId)
+    AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)
   }
 
 }
