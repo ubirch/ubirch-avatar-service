@@ -111,7 +111,7 @@ TODO: description
 
 #### History
 
-Query historic device data.
+Add a message to the historic device data.
 
     curl -XPOST localhost:8080/api/avatarService/v1/device/history -d '{
       "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
@@ -127,7 +127,9 @@ Query historic device data.
         "bar": "ubirch-sensor-data"
       }
     }'
-    
+
+Query historic device data.
+
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/history/<FROM>
