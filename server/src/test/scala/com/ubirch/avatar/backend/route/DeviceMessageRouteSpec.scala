@@ -387,35 +387,41 @@ class DeviceMessageRouteSpec extends RouteSpec
       // verify
       (from < 0) || (size < 0) match {
 
-        case true =>
-
-          status shouldEqual MethodNotAllowed
-          verifyCORSHeader(exist = false)
+        case true => verifyMethodNotAllowed()
 
         case false =>
 
           indexExists match {
-
-            case true =>
-
-              status shouldEqual BadRequest
-
-              val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId, from=${Some(from)}, size=${Some(size)}")
-              responseEntity.contentType should be(`application/json`)
-              responseAs[ErrorResponse] shouldEqual expectedError
-
-              verifyCORSHeader()
-
-            case false =>
-              status shouldEqual InternalServerError
-              verifyCORSHeader(exist = false)
+            case true => verifyBadRequestDeviceNotFound(deviceId, Some(from), Some(size))
+            case false => verifyInternalServerError()
 
           }
 
       }
 
-
     }
+
+  }
+
+  private def verifyMethodNotAllowed(): Unit = {
+    status shouldEqual MethodNotAllowed
+    verifyCORSHeader(exist = false)
+  }
+
+  private def verifyInternalServerError(): Unit = {
+    status shouldEqual InternalServerError
+    verifyCORSHeader(exist = false)
+  }
+
+  private def verifyBadRequestDeviceNotFound(deviceId: String, from: Option[Int], size: Option[Int]): Unit = {
+
+    status shouldEqual BadRequest
+
+    val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId, from=$from}, size=$size}")
+    responseEntity.contentType should be(`application/json`)
+    responseAs[ErrorResponse] shouldEqual expectedError
+
+    verifyCORSHeader()
 
   }
 
