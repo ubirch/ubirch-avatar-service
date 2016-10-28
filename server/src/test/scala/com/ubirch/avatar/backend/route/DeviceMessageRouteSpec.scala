@@ -190,34 +190,18 @@ class DeviceMessageRouteSpec extends RouteSpec
     scenario("deviceId exists; from = 0; size = elementCount") {
       val elementCount = 3
       val size = 3
-      historyWithFromSizeFindAll(elementCount, size)
+      getHistoryWithFromSizeFindAll(elementCount, size)
     }
 
     scenario("deviceId exists; from = 0; size > elementCount") {
       val elementCount = 3
       val size = 4
-      historyWithFromSizeFindAll(elementCount, size)
+      getHistoryWithFromSizeFindAll(elementCount, size)
     }
 
-    scenario("deviceId exists; from < 0; size > 0; Elasticsearch index does not exist") {
+    // TODO test case: from = 0; size < elementCount
 
-      // prepare
-      val from = -1
-      val size = 10
-      val deviceId = UUIDUtil.uuidStr
-
-      // test
-      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual MethodNotAllowed
-        verifyCORSHeader(exist = false)
-
-      }
-
-    }
-
-    scenario("deviceId exists; from < 0; size > 0; Elasticsearch index exists") {
+    scenario("deviceId exists; from < 0; size > 0") {
 
       // prepare
       val messageSeries = DeviceMessageTestUtil.storeSeries(1)
@@ -236,25 +220,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
     }
 
-    scenario("deviceId exists; from = 0; size < 0; ; Elasticsearch index does not exist") {
-
-      // prepare
-      val from = 0
-      val size = -1
-      val deviceId = UUIDUtil.uuidStr
-
-      // test
-      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual MethodNotAllowed
-        verifyCORSHeader(exist = false)
-
-      }
-
-    }
-
-    scenario("deviceId exists; from = 0; size < 0; ; Elasticsearch index exists") {
+    scenario("deviceId exists; from = 0; size < 0") {
 
       // prepare
       val messageSeries = DeviceMessageTestUtil.storeSeries(1)
@@ -273,25 +239,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
     }
 
-    scenario("deviceId exists; from < 0; size < 0; ; Elasticsearch index does not exist") {
-
-      // prepare
-      val from = -1
-      val size = -1
-      val deviceId = UUIDUtil.uuidStr
-
-      // test
-      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual MethodNotAllowed
-        verifyCORSHeader(exist = false)
-
-      }
-
-    }
-
-    scenario("deviceId exists; from < 0; size < 0; ; Elasticsearch index exists") {
+    scenario("deviceId exists; from < 0; size < 0") {
 
       // prepare
       val messageSeries = DeviceMessageTestUtil.storeSeries(1)
@@ -310,42 +258,76 @@ class DeviceMessageRouteSpec extends RouteSpec
 
     }
 
-    scenario("deviceId does not exist; Elasticsearch index does not exist") {
-
-      val deviceId = "1234asdf"
-      val from = 5
-      val size = 7
-
-      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> routes ~> check {
-
-        status shouldEqual InternalServerError
-        verifyCORSHeader(exist = false)
-
-      }
+    scenario("deviceId does not exist; from < 0; size < 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(-1, -1, indexExists = false)
     }
 
-    scenario("deviceId does not exists; Elasticsearch index exists") {
+    scenario("deviceId does not exist; from < 0; size = 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(-1, 0, indexExists = false)
+    }
 
-      // prepare
-      DeviceMessageTestUtil.storeSeries(1)
-      val deviceId = "1234asdf"
-      val from = 0
-      val size = 10
+    scenario("deviceId does not exist; from < 0; size > 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(-1, 10, indexExists = false)
+    }
 
-      // test
-      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> routes ~> check {
+    scenario("deviceId does not exist; from = 0; size < 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(0, -1, indexExists = false)
+    }
 
-        // verify
-        status shouldEqual BadRequest
+    scenario("deviceId does not exist; from = 0; size = 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(0, 0, indexExists = false)
+    }
 
-        val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId, from=${Some(from)}, size=${Some(size)}")
-        responseEntity.contentType should be(`application/json`)
-        responseAs[ErrorResponse] shouldEqual expectedError
+    scenario("deviceId does not exist; from = 0; size > 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(0, 10, indexExists = false)
+    }
 
-        verifyCORSHeader()
+    scenario("deviceId does not exist; from > 0; size < 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(5, -1, indexExists = false)
+    }
 
-      }
+    scenario("deviceId does not exist; from > 0; size = 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(5, 0, indexExists = false)
+    }
 
+    scenario("deviceId does not exist; from > 0; size > 0; Elasticsearch index does not exist") {
+      getHistoryWithFromSizeWithoutDevice(5, 10, indexExists = false)
+    }
+
+    scenario("deviceId does not exist; from < 0; size < 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(-1, -1, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from < 0; size = 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(-1, 0, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from < 0; size > 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(-1, 10, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from = 0; size < 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(0, -1, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from = 0; size = 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(0, 0, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from = 0; size > 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(0, 10, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from > 0; size < 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(5, -1, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from > 0; size = 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(5, 0, indexExists = true)
+    }
+
+    scenario("deviceId does not exist; from > 0; size > 0; Elasticsearch index exists") {
+      getHistoryWithFromSizeWithoutDevice(5, 10, indexExists = true)
     }
 
   }
@@ -362,7 +344,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   }
 
-  private def historyWithFromSizeFindAll(elementCount: Int, size: Int) = {
+  private def getHistoryWithFromSizeFindAll(elementCount: Int, size: Int) = {
 
     // prepare
     val from = 0
@@ -383,6 +365,55 @@ class DeviceMessageRouteSpec extends RouteSpec
       }
 
       verifyCORSHeader()
+
+    }
+
+  }
+
+  private def getHistoryWithFromSizeWithoutDevice(from: Int,
+                                                  size: Int,
+                                                  indexExists: Boolean
+                                                 ): Unit = {
+
+    // prepare
+    if (indexExists) {
+      DeviceMessageTestUtil.storeSeries(1)
+    }
+    val deviceId = "1234asdf"
+
+    // test
+    Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+      // verify
+      (from < 0) || (size < 0) match {
+
+        case true =>
+
+          status shouldEqual MethodNotAllowed
+          verifyCORSHeader(exist = false)
+
+        case false =>
+
+          indexExists match {
+
+            case true =>
+
+              status shouldEqual BadRequest
+
+              val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId, from=${Some(from)}, size=${Some(size)}")
+              responseEntity.contentType should be(`application/json`)
+              responseAs[ErrorResponse] shouldEqual expectedError
+
+              verifyCORSHeader()
+
+            case false =>
+              status shouldEqual InternalServerError
+              verifyCORSHeader(exist = false)
+
+          }
+
+      }
+
 
     }
 
