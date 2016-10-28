@@ -6,7 +6,9 @@ import org.json4s.JValue
 /**
   * author: cvandrei
   * since: 2016-09-30
+  * SimpleDeviceMessage should be used insted
   */
+@deprecated
 case class DeviceMessage(deviceId: String,
                          messageId: String,
                          deviceType: String,

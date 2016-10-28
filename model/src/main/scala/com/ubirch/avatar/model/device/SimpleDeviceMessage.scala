@@ -1,5 +1,8 @@
 package com.ubirch.avatar.model.device
 
+import java.util.UUID
+
+import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
 import org.json4s._
 
@@ -12,6 +15,7 @@ import org.json4s._
   * @param p payload
   */
 case class SimpleDeviceMessage(
+                                id: UUID = UUIDUtil.uuid,
                                 v: String = "0.0.3",
                                 a: Option[String] = None,
                                 k: Option[String] = None,
