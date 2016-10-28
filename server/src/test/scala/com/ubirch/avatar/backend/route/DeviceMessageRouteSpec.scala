@@ -199,16 +199,115 @@ class DeviceMessageRouteSpec extends RouteSpec
       historyWithFromSizeFindAll(elementCount, size)
     }
 
-    ignore("deviceId exists but from is negative") {
-      // TODO write test
+    scenario("deviceId exists; from < 0; size > 0; Elasticsearch index does not exist") {
+
+      // prepare
+      val from = -1
+      val size = 10
+      val deviceId = UUIDUtil.uuidStr
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual MethodNotAllowed
+        verifyCORSHeader(exist = false)
+
+      }
+
     }
 
-    ignore("deviceId exists but size is negative") {
-      // TODO write test
+    scenario("deviceId exists; from < 0; size > 0; Elasticsearch index exists") {
+
+      // prepare
+      val messageSeries = DeviceMessageTestUtil.storeSeries(1)
+      val from = -1
+      val size = 10
+      val deviceId = messageSeries.head.deviceId
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual MethodNotAllowed
+        verifyCORSHeader(exist = false)
+
+      }
+
     }
 
-    ignore("deviceId exists but from and size are negative") {
-      // TODO write test
+    scenario("deviceId exists; from = 0; size < 0; ; Elasticsearch index does not exist") {
+
+      // prepare
+      val from = 0
+      val size = -1
+      val deviceId = UUIDUtil.uuidStr
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual MethodNotAllowed
+        verifyCORSHeader(exist = false)
+
+      }
+
+    }
+
+    scenario("deviceId exists; from = 0; size < 0; ; Elasticsearch index exists") {
+
+      // prepare
+      val messageSeries = DeviceMessageTestUtil.storeSeries(1)
+      val from = 0
+      val size = -1
+      val deviceId = messageSeries.head.deviceId
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual MethodNotAllowed
+        verifyCORSHeader(exist = false)
+
+      }
+
+    }
+
+    scenario("deviceId exists; from < 0; size < 0; ; Elasticsearch index does not exist") {
+
+      // prepare
+      val from = -1
+      val size = -1
+      val deviceId = UUIDUtil.uuidStr
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual MethodNotAllowed
+        verifyCORSHeader(exist = false)
+
+      }
+
+    }
+
+    scenario("deviceId exists; from < 0; size < 0; ; Elasticsearch index exists") {
+
+      // prepare
+      val messageSeries = DeviceMessageTestUtil.storeSeries(1)
+      val from = -1
+      val size = -1
+      val deviceId = messageSeries.head.deviceId
+
+      // test
+      Get(RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual MethodNotAllowed
+        verifyCORSHeader(exist = false)
+
+      }
+
     }
 
     scenario("deviceId does not exist; Elasticsearch index does not exist") {
