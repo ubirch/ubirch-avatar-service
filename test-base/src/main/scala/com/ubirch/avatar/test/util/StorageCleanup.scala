@@ -3,6 +3,7 @@ package com.ubirch.avatar.test.util
 import java.net.URL
 
 import com.ubirch.avatar.config.Config
+
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.request.RequestBody
@@ -14,8 +15,12 @@ import uk.co.bigbeeconsultants.http.response.Status._
   */
 trait StorageCleanup {
 
-  private val indexInfoDeviceMessage = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
-  private val indexInfos: Seq[IndexInfo] = Seq(indexInfoDeviceMessage)
+  private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceHistoryIndex)
+  private val indexInfoDevice = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
+  private val indexInfos: Seq[IndexInfo] = Seq(
+    indexInfoDeviceHistory,
+    indexInfoDevice
+  )
 
   /**
     * Clean Elasticsearch instance by running the following operations:
@@ -50,7 +55,7 @@ trait StorageCleanup {
     val deviceMessageMapping =
       s"""{
           |  "mappings": {
-          |    "${Config.esDeviceType}" : {
+          |    "${Config.esDeviceHistoryType}" : {
           |      "properties" : {
           |        "deviceId" : {
           |          "type" : "string",
@@ -64,7 +69,7 @@ trait StorageCleanup {
           |    }
           |  }
           |}""".stripMargin
-    val url = indexInfoDeviceMessage.url
+    val url = indexInfoDeviceHistory.url
     val body = Some(RequestBody(deviceMessageMapping, APPLICATION_JSON))
     val res = httpClient.post(url, body)
 
