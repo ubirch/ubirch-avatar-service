@@ -110,9 +110,9 @@ lazy val depServer = Seq(
   akkaG %% "akka-testkit" % akkaV % "test",
   akkaHttpTestkit % "test",
 
+  ubirchUtilJson,
   ubirchUtilJsonAutoConvert,
-  ubirchUtilRestAkkaHttp,
-  ubirchUtilJson
+  ubirchUtilRestAkkaHttp
 
 ) ++ scalaLogging
 
@@ -123,13 +123,13 @@ lazy val depCore = Seq(
 ) ++ scalaLogging
 
 lazy val depAws = Seq(
-  awsIoT,
   ubirchUtilJson,
+  awsIoT,
   ubirchUtilUUID % "test",
   scalatest % "test"
 ) ++ scalaLogging
 
-lazy val depModelRest = Seq(ubirchUtilJson) ++ joda ++ json4s ++ scalaLogging :+ ubirchUtilJsonAutoConvert
+lazy val depModelRest = Seq(ubirchUtilJson, ubirchUtilJsonAutoConvert) ++ joda ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
   scalatest,
@@ -181,9 +181,9 @@ lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.1"
-lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2"
+lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.2.1"
+lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2.1"
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.3"
 
 /*
