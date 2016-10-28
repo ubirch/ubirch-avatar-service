@@ -1,5 +1,6 @@
 package com.ubirch.avatar.model
 
+import com.ubirch.avatar.model.device.DeviceMessage
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}

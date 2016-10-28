@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
-import com.ubirch.avatar.model.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceMessage
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
@@ -23,9 +23,23 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       an[IllegalArgumentException] should be thrownBy Await.result(DeviceMessageManager.history(""), 1 seconds)
     }
 
-    scenario("deviceId does not exist") {
+    scenario("deviceId does not exist; index does not exist") {
       val deviceId = UUIDUtil.uuidStr
       an[ExecutionException] should be thrownBy Await.result(DeviceMessageManager.history(deviceId), 1 seconds)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+
+      // prepare
+      DeviceMessageTestUtil.storeSeries(1)
+      val deviceId = UUIDUtil.uuidStr
+
+      // test
+      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId), 2 seconds)
+
+      // verify
+      result should be('isEmpty)
+
     }
 
     scenario("3 records exist: from = -1; size > 3") {

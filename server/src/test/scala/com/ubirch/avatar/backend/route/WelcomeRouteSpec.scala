@@ -1,8 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.model.server.JsonResponse
+
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import com.ubirch.avatar.model.JsonResponse
 import com.ubirch.avatar.test.base.RouteSpec
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 

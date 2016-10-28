@@ -31,7 +31,7 @@ lazy val commonSettings = Seq(
 
 lazy val avatarService = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(server, core, config, modelRest, modelDb, testBase)
+  .aggregate(server, core, config, model, testBase)
 
 lazy val server = project
   .settings(commonSettings: _*)
@@ -52,7 +52,7 @@ lazy val server = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, modelRest, modelDb, testBase % "test")
+  .dependsOn(config, aws, model, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore
@@ -60,7 +60,7 @@ lazy val core = project
 
 lazy val aws = project
   .settings(commonSettings: _*)
-  .dependsOn(config, modelRest, modelDb, testBase % "test")
+  .dependsOn(config, model, testBase % "test")
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
@@ -73,25 +73,17 @@ lazy val config = project
     libraryDependencies += ubirchUtilConfig
   )
 
-lazy val modelRest = (project in file("model-rest"))
+lazy val model = project
   .settings(commonSettings: _*)
   .settings(
-    name := "model-rest",
+    name := "model",
     description := "JSON models",
     libraryDependencies ++= depModelRest
   )
 
-lazy val modelDb = (project in file("model-db"))
-  .settings(commonSettings: _*)
-  .settings(
-    name := "model-db",
-    description := "DB models",
-    libraryDependencies ++= depModelDb
-  )
-
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(modelRest, config)
+  .dependsOn(model, config)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -138,8 +130,6 @@ lazy val depAws = Seq(
 ) ++ scalaLogging
 
 lazy val depModelRest = Seq(ubirchUtilJson) ++ joda ++ json4s ++ scalaLogging :+ ubirchUtilJsonAutoConvert
-
-lazy val depModelDb = Seq()
 
 lazy val depTestBase = Seq(
   scalatest,

@@ -1,9 +1,11 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.util.ErrorFactory
+
 import akka.actor.ActorSystem
 import com.ubirch.avatar.core.device.DeviceMessageManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
-import com.ubirch.avatar.model.{DeviceMessage, ErrorFactory}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import akka.http.scaladsl.model.ContentTypes._

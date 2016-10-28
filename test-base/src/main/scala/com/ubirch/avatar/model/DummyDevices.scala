@@ -1,5 +1,7 @@
 package com.ubirch.avatar.model
 
+import com.ubirch.avatar.model.device.{AvatarState, Device}
+
 import org.joda.time.DateTime
 import org.json4s.native.JsonMethods._
 

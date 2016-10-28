@@ -1,9 +1,10 @@
 package com.ubirch.avatar.backend
 
 
+import com.ubirch.avatar.model.server.{JsonResponse, JsonErrorResponse}
+
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
-import com.ubirch.avatar.model.{JsonErrorResponse, JsonResponse}
 
 /**
   * Created by derMicha on 28/10/16.

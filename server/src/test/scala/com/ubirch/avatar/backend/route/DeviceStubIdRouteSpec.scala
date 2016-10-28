@@ -1,9 +1,12 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.model.DummyDevices
+import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
+
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.model.{ErrorFactory, ErrorResponse, Device, DummyDevices}
 import com.ubirch.avatar.test.base.RouteSpec
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 

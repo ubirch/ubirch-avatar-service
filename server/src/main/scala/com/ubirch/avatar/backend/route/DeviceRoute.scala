@@ -1,11 +1,12 @@
 package com.ubirch.avatar.backend.route
 
 
+import com.ubirch.avatar.model.device.Device
+
 import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
-import com.ubirch.avatar.model.Device
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._

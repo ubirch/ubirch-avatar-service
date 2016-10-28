@@ -1,8 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.model.server.JsonResponse
+
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server._
-import com.ubirch.avatar.model.JsonResponse
 import com.ubirch.util.json.MyJsonProtocol
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 

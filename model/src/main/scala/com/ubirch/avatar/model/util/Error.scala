@@ -1,6 +1,7 @@
-package com.ubirch.avatar.model
+package com.ubirch.avatar.model.util
 
 import com.ubirch.util.json.MyJsonProtocol
+
 import org.json4s.native.Serialization.write
 
 /**

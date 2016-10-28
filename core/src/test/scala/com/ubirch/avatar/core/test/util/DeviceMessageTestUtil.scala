@@ -1,7 +1,8 @@
 package com.ubirch.avatar.core.test.util
 
 import com.ubirch.avatar.core.device.DeviceMessageManager
-import com.ubirch.avatar.model.{DeviceMessage, DummyDeviceMessage}
+import com.ubirch.avatar.model.DummyDeviceMessage
+import com.ubirch.avatar.model.device.DeviceMessage
 
 /**
   * author: cvandrei

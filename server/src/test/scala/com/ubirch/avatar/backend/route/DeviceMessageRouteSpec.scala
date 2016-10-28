@@ -3,7 +3,8 @@ package com.ubirch.avatar.backend.route
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
-import com.ubirch.avatar.model.{DeviceMessage, ErrorFactory, ErrorResponse}
+import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.util.uuid.UUIDUtil
 

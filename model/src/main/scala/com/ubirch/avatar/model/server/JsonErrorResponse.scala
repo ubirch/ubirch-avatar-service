@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model
+package com.ubirch.avatar.model.server
 
 /**
   * Created by derMicha on 28/10/16.

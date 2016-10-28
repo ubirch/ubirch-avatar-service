@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceMessage
 import com.ubirch.services.storage.DeviceDataStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}

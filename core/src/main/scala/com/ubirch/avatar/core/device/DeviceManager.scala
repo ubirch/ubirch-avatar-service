@@ -3,8 +3,8 @@ package com.ubirch.avatar.core.device
 import com.ubirch.avatar.backend.aws.services.ShadowService
 import com.ubirch.avatar.backend.aws.util.AwsThingUtil
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.Device
 import com.ubirch.avatar.model.aws.ThingShadowState
+import com.ubirch.avatar.model.device.Device
 import com.ubirch.services.storage.DeviceStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
