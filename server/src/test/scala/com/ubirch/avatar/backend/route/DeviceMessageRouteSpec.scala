@@ -1,7 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
+import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.device.DeviceMessage
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
@@ -22,8 +24,16 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}") {
 
-    scenario("deviceId exists") {
-      testGetHistoryDeviceExists(3, None, None)
+    scenario("deviceId exists; elementCount < defaultPageSize") {
+      testGetHistoryDeviceExists(Config.esDefaultPageSize - 1, None, None)
+    }
+
+    scenario("deviceId exists; elementCount = defaultPageSize") {
+      testGetHistoryDeviceExists(Config.esDefaultPageSize, None, None)
+    }
+
+    scenario("deviceId exists; elementCount > defaultPageSize") {
+      testGetHistoryDeviceExists(Config.esDefaultPageSize + 1, None, None)
     }
 
     scenario("deviceId does not exists; Elasticsearch index does not exist either") {
@@ -38,8 +48,8 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from") {
 
-    ignore("deviceId exists; from < 0") {
-      // TODO write test
+    scenario("deviceId exists; from < 0") {
+      testGetHistoryDeviceExists(3, Some(-1), None)
     }
 
     scenario("deviceId exists; from = 0") {
@@ -47,29 +57,7 @@ class DeviceMessageRouteSpec extends RouteSpec
     }
 
     scenario("deviceId exists; from > 0") {
-      // prepare
-      val elementCount = 3
-      val from = 1
-      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
-      val deviceId = dataSeries.head.deviceId
-
-      // test
-      Get(RouteConstants.urlDeviceHistoryFrom(deviceId, from)) ~> routes ~> check {
-
-        // verify
-        status shouldEqual OK
-
-        responseEntity.contentType should be(`application/json`)
-        val resultSeq = responseAs[Seq[DeviceMessage]]
-        resultSeq.size shouldBe 2
-        for (i <- 0 until 2) {
-          resultSeq(i) shouldEqual dataSeries(i + from)
-        }
-
-        verifyCORSHeader()
-
-      }
-
+      testGetHistoryDeviceExists(3, Some(1), None)
     }
 
     scenario("deviceId does not exist; from < 0; Elasticsearch index does not exist") {
@@ -100,8 +88,8 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from/:size") {
 
-    ignore("deviceId exists; from = 0; size < elementCount") {
-      // TODO test case: from = 0; size < elementCount
+    scenario("deviceId exists; from = 0; size < elementCount") {
+      testGetHistoryDeviceExists(3, Some(0), Some(2))
     }
 
     scenario("deviceId exists; from = 0; size = elementCount") {
@@ -229,14 +217,29 @@ class DeviceMessageRouteSpec extends RouteSpec
 
           status shouldEqual OK
 
+          verifyCORSHeader()
+
           responseEntity.contentType should be(`application/json`)
           val resultSeq = responseAs[Seq[DeviceMessage]]
-          resultSeq.size shouldBe dataSeries.size
-          for (i <- dataSeries.indices) {
-            resultSeq(i) shouldEqual dataSeries(i)
+
+          val beginIndex = HistoryIndexUtil.calculateBeginIndex(from)
+          val endIndexOpt = size match {
+            case None => HistoryIndexUtil.calculateEndIndex(dataSeries.size, beginIndex)
+            case Some(sizeValue) => HistoryIndexUtil.calculateEndIndex(dataSeries.size, beginIndex, sizeValue)
+          }
+          endIndexOpt match {
+
+            case None => resultSeq should be('isEmpty)
+
+            case Some(endIndex) =>
+              val expectedSize = HistoryIndexUtil.calculateExpectedSize(beginIndex, endIndex)
+              resultSeq.size shouldEqual expectedSize
+              for (i <- beginIndex until endIndex) {
+                resultSeq(i) shouldEqual dataSeries(i)
+              }
+
           }
 
-          verifyCORSHeader()
 
       }
 
@@ -245,9 +248,9 @@ class DeviceMessageRouteSpec extends RouteSpec
   }
 
   private def testGetHistoryDeviceExistsNot(from: Option[Int],
-                                                  size: Option[Int],
-                                                  indexExists: Boolean
-                                                 ): Unit = {
+                                            size: Option[Int],
+                                            indexExists: Boolean
+                                           ): Unit = {
 
     // prepare
     if (indexExists) {
@@ -284,7 +287,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
       case Some(from) =>
         sizeOpt match {
-          case Some(size) => RouteConstants.urlDeviceHistoryFromSize(deviceId, from, size)
+          case Some(sizeValue) => RouteConstants.urlDeviceHistoryFromSize(deviceId, from, sizeValue)
           case None => RouteConstants.urlDeviceHistoryFrom(deviceId, from)
         }
 
