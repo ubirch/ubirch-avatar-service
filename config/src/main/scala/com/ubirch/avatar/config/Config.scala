@@ -12,6 +12,10 @@ object Config extends ConfigBase {
    * SERVER RELATED
    ****************************************************************/
 
+  final val sdmV001 = "0.0.1"
+  final val sdmV002 = "0.0.2"
+  final val sdmV003 = "0.0.3"
+
   /**
     * The interface the server runs on.
     *

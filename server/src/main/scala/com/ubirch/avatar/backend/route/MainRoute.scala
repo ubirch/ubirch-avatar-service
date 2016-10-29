@@ -14,6 +14,7 @@ class MainRoute {
   val welcome = new WelcomeRoute {}
 
   val device = new DeviceRoute {}
+  val deviceUpdate = new DeviceUpdateRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
   val deviceState = new DeviceStateRoute {}
@@ -26,6 +27,7 @@ class MainRoute {
         pathPrefix(currentVersion) {
 
           device.route ~
+            deviceUpdate.route ~
             deviceId.route ~
             deviceStubId.route ~
             deviceState.route ~

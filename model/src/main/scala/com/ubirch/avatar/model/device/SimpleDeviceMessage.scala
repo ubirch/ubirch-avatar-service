@@ -24,7 +24,21 @@ case class SimpleDeviceMessage(
                                 ts: Option[DateTime] = None,
                                 s: String,
                                 p: JValue
-                              )
+                              ) {
+  override def hashCode(): Int = id.hashCode()
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj match {
+      case sdm: SimpleDeviceMessage if sdm.id == this.id =>
+        true
+      case _ =>
+        false
+
+    }
+  }
+
+  override def toString: String = s"id: $id / v: $v / p: $p"
+}
 
 case class SimpleDeviceMessageEnevelope(
                                          validationState: String,
