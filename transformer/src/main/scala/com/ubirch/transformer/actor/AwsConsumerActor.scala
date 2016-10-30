@@ -6,7 +6,7 @@ import akka.camel.{CamelMessage, Consumer}
 /**
   * Created by derMicha on 30/10/16.
   */
-class AwsAdaptorActor extends Consumer with ActorLogging {
+class AwsConsumerActor extends Consumer with ActorLogging {
 
   val accessKey = System.getenv().get("AWS_ACCESS_KEY_ID")
 
@@ -18,6 +18,7 @@ class AwsAdaptorActor extends Consumer with ActorLogging {
 
   override def receive = {
     case msg: CamelMessage =>
+
       log.debug(s"received ${msg.bodyAs[String]}")
     case _ =>
       log.error("received unknown message")

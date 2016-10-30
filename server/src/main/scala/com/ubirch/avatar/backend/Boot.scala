@@ -7,11 +7,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-
 import com.typesafe.scalalogging.slf4j.LazyLogging
-
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
+import com.ubirch.transformer.TransformerManager
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -32,6 +31,8 @@ object Boot extends App with LazyLogging {
   implicit val timeout = Timeout(15 seconds)
 
   val bindingFuture = start()
+
+  TransformerManager.init
 
   Runtime.getRuntime.addShutdownHook(new Thread() {
     override def run() = {
