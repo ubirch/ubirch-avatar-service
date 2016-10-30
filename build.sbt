@@ -85,7 +85,7 @@ lazy val model = project
   .settings(
     name := "model",
     description := "JSON models",
-    libraryDependencies ++= depModelRest
+    libraryDependencies ++= depModel
   )
 
 lazy val testBase = (project in file("test-base"))
@@ -134,16 +134,19 @@ lazy val depTransform = Seq(
   akkaG %% "akka-slf4j" % akkaV,
   akkaG %% "akka-testkit" % akkaV % "test",
   scalatest % "test"
-) ++ scalaLogging
+) ++ awsSqsSdk ++ akkaCamel ++ scalaLogging
 
 lazy val depAws = Seq(
   ubirchUtilJson,
-  awsIoT,
   ubirchUtilUUID % "test",
   scalatest % "test"
-) ++ scalaLogging
+) ++ awsIoTSdk ++ scalaLogging
 
-lazy val depModelRest = Seq(ubirchUtilJson, ubirchUtilJsonAutoConvert, ubirchUtilUUID) ++ joda ++ json4s ++ scalaLogging
+lazy val depModel = Seq(
+  ubirchUtilJson,
+  ubirchUtilJsonAutoConvert,
+  ubirchUtilUUID
+) ++ joda ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
   scalatest,
@@ -159,8 +162,11 @@ lazy val depTestBase = Seq(
 // VERSIONS
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.1"
-lazy val awsSdkV = "1.11.37"
+lazy val awsSdkV = "1.11.48"
+lazy val awsSqsV = "1.9.6"
 lazy val scalaTestV = "3.0.0"
+lazy val camelAwsV = "2.13.4"
+lazy val camelV = "2.18.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -179,6 +185,12 @@ lazy val scalaLogging = Seq(
   "ch.qos.logback" % "logback-core" % "1.1.7"
 )
 
+lazy val akkaCamel = Seq(
+  "org.apache.camel" % "camel-core" % camelV,
+  "org.apache.camel" % "camel-aws" % camelAwsV,
+  "com.typesafe.akka" %% "akka-camel" % akkaV
+)
+
 lazy val joda = Seq(jodaTime, jodaConvert)
 lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
 lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8"
@@ -189,7 +201,12 @@ lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
 lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
-lazy val awsIoT = awsIot % "aws-java-sdk-iot" % awsSdkV
+
+lazy val awsIoTSdk = Seq(awsIot % "aws-java-sdk-iot" % awsSdkV)
+
+lazy val awsSqsSdk = Seq("com.amazonaws" % "aws-java-sdk-sqs" % awsSqsV)
+
+//lazy val awsSdk = Seq("com.amazonaws" % "aws-java-sdk" % awsSdkV)
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
@@ -197,8 +214,8 @@ lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
 lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.2.2"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.2.2"
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.3"
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.1"
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.4"
 
 /*
  * RESOLVER

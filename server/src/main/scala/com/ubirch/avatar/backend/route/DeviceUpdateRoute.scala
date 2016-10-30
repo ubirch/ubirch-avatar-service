@@ -36,13 +36,14 @@ trait DeviceUpdateRoute extends MyJsonProtocol
     path(device / update) {
 
       post {
+
         entity(as[SimpleDeviceMessage]) { sdm =>
 
           onComplete(processorActor ? sdm) {
             case Success(resp) =>
               resp match {
-                case str: String =>
-                  complete(response(str))
+                case dm: SimpleDeviceMessage =>
+                  complete(dm)
                 case _ =>
                   complete(requestErrorResponse(
                     errorType = "UnknownResult",

@@ -3,7 +3,7 @@ package com.ubirch.avatar.awsiot.config
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.services.iot.AWSIotClient
 import com.amazonaws.services.iotdata.AWSIotDataClient
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.config.Config
 
 /**
