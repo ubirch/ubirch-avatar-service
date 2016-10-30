@@ -4,13 +4,16 @@ import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
+
 import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.actor.MessageProcessorActor
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.device.SimpleDeviceMessage
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.duration._

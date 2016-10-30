@@ -13,17 +13,26 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
 trait ResponseUtil {
 
   def response(message: String): HttpResponse = {
-    val response = JsonResponse(message = message)
+    response(JsonResponse(message = message))
+  }
+
+  def response(response: JsonResponse): HttpResponse = {
     HttpResponse(status = OK, entity = HttpEntity(ContentTypes.`application/json`, response.toJsonString))
   }
 
   def requestErrorResponse(errorType: String, errorMessage: String): HttpResponse = {
-    val response = JsonErrorResponse(errorType = errorType, errorMessage = errorMessage)
+    requestErrorResponse(JsonErrorResponse(errorType = errorType, errorMessage = errorMessage))
+  }
+
+  def requestErrorResponse(response: JsonErrorResponse): HttpResponse = {
     HttpResponse(status = BadRequest, entity = HttpEntity(ContentTypes.`application/json`, response.toJsonString))
   }
 
   def serverErrorResponse(errorType: String, errorMessage: String): HttpResponse = {
-    val response = JsonErrorResponse(errorType = errorType, errorMessage = errorMessage)
+    serverErrorResponse(JsonErrorResponse(errorType = errorType, errorMessage = errorMessage))
+  }
+
+  def serverErrorResponse(response: JsonErrorResponse): HttpResponse = {
     HttpResponse(status = InternalServerError, entity = HttpEntity(ContentTypes.`application/json`, response.toJsonString))
   }
 }
