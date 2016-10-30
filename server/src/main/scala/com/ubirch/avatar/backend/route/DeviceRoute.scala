@@ -54,10 +54,9 @@ trait DeviceRoute extends MyJsonProtocol
                     complete(requestErrorResponse(jer))
                 }
               case Failure(t) =>
-                logger.error("device creatin failed", t)
+                logger.error("device creation failed", t)
                 complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
             }
-
           }
         }
     }
