@@ -134,13 +134,13 @@ lazy val depTransform = Seq(
   akkaG %% "akka-slf4j" % akkaV,
   akkaG %% "akka-testkit" % akkaV % "test",
   scalatest % "test"
-) ++ awsSdk ++ akkaCamel ++ scalaLogging
+) ++ akkaCamel ++ scalaLogging ++ awsSqsSdk
 
 lazy val depAws = Seq(
   ubirchUtilJson,
   ubirchUtilUUID % "test",
   scalatest % "test"
-) ++ awsSdk ++ scalaLogging
+) ++ scalaLogging ++ awsIotSdk
 
 lazy val depModel = Seq(
   ubirchUtilJson,
@@ -176,7 +176,7 @@ lazy val camelV = "2.18.0"
 lazy val akkaG = "com.typesafe.akka"
 lazy val logbackG = "ch.qos.logback"
 lazy val json4sG = "org.json4s"
-lazy val awsIot = "com.amazonaws"
+lazy val awsG = "com.amazonaws"
 lazy val ubirchUtilG = "com.ubirch.util"
 
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
@@ -206,11 +206,9 @@ lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 
-//lazy val awsIoTSdk = Seq(awsIot % "aws-java-sdk-iot" % awsSdkV)
-
-//lazy val awsSqsSdk = Seq("com.amazonaws" % "aws-java-sdk-sqs" % awsSqsV)
-
-lazy val awsSdk = Seq("com.amazonaws" % "aws-java-sdk" % awsSdkV)
+lazy val awsIotSdk = Seq(awsG % "aws-java-sdk-iot" % awsSdkV)
+lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
+//lazy val awsSdk = Seq(awsG % "aws-java-sdk" % awsSdkV)
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
