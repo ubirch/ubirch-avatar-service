@@ -17,7 +17,7 @@ object AwsShadowUtil {
 
   implicit val formats = jackson.Serialization.formats(NoTypeHints) ++ org.json4s.ext.JodaTimeSerializers.all
 
-  private val iotDataClient = new AWSIotDataClient()
+  private val iotDataClient = AwsConf.awsIotDataClient
   private val iotClient = AwsConf.awsIotClient
 
   def publish(topic: String, thingShadowMessage: ThingShadowMessage) {

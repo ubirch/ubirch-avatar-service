@@ -134,13 +134,13 @@ lazy val depTransform = Seq(
   akkaG %% "akka-slf4j" % akkaV,
   akkaG %% "akka-testkit" % akkaV % "test",
   scalatest % "test"
-) ++ awsSqsSdk ++ akkaCamel ++ scalaLogging
+) ++ awsSdk ++ akkaCamel ++ scalaLogging
 
 lazy val depAws = Seq(
   ubirchUtilJson,
   ubirchUtilUUID % "test",
   scalatest % "test"
-) ++ awsIoTSdk ++ scalaLogging
+) ++ awsSdk ++ scalaLogging
 
 lazy val depModel = Seq(
   ubirchUtilJson,
@@ -162,8 +162,12 @@ lazy val depTestBase = Seq(
 // VERSIONS
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.1"
-lazy val awsSdkV = "1.11.48"
-lazy val awsSqsV = "1.9.6"
+//lazy val awsSdkV = "1.11.49"
+//lazy val awsSdkV = "1.11.18"
+lazy val awsSdkV = "1.10.77"
+//lazy val awsIotV = awsSdkV
+//lazy val awsSqsV = awsSdkV
+//lazy val awsSqsV = "1.9.6"
 lazy val scalaTestV = "3.0.0"
 lazy val camelAwsV = "2.13.4"
 lazy val camelV = "2.18.0"
@@ -202,11 +206,11 @@ lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 
-lazy val awsIoTSdk = Seq(awsIot % "aws-java-sdk-iot" % awsSdkV)
+//lazy val awsIoTSdk = Seq(awsIot % "aws-java-sdk-iot" % awsSdkV)
 
-lazy val awsSqsSdk = Seq("com.amazonaws" % "aws-java-sdk-sqs" % awsSqsV)
+//lazy val awsSqsSdk = Seq("com.amazonaws" % "aws-java-sdk-sqs" % awsSqsV)
 
-//lazy val awsSdk = Seq("com.amazonaws" % "aws-java-sdk" % awsSdkV)
+lazy val awsSdk = Seq("com.amazonaws" % "aws-java-sdk" % awsSdkV)
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
@@ -215,7 +219,7 @@ lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
 lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.2.2"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.2"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.1"
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.4"
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.5"
 
 /*
  * RESOLVER
