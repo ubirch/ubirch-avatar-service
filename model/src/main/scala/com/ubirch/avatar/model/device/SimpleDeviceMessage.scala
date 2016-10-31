@@ -40,7 +40,7 @@ case class SimpleDeviceMessage(
   override def toString: String = s"id: $id / v: $v / p: $p"
 }
 
-case class SimpleDeviceMessageEnevelope(
+case class SimpleDeviceMessageEnvelope(
                                          validationState: String,
                                          deviceMessage: SimpleDeviceMessage,
                                          signature: Option[String],
