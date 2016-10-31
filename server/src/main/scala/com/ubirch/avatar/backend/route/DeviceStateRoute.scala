@@ -31,20 +31,24 @@ trait DeviceStateRoute extends MyJsonProtocol
 
   val route: Route = {
 
-    path(device / Segment / state) { deviceId =>
+    respondWithCORS {
 
-      get {
-        onSuccess(queryState(deviceId)) {
-          case None => complete(errorResponse(deviceId))
-          case Some(deviceState) => complete(deviceState)
-        }
-      } ~ post {
-        entity(as[DeviceState]) { state =>
-          onSuccess(storeState(deviceId, state)) {
+      path(device / Segment / state) { deviceId =>
+
+        get {
+          onSuccess(queryState(deviceId)) {
             case None => complete(errorResponse(deviceId))
-            case Some(storedData) => complete(storedData)
+            case Some(deviceState) => complete(deviceState)
+          }
+        } ~ post {
+          entity(as[DeviceState]) { state =>
+            onSuccess(storeState(deviceId, state)) {
+              case None => complete(errorResponse(deviceId))
+              case Some(storedData) => complete(storedData)
+            }
           }
         }
+
       }
 
     }
@@ -53,8 +57,8 @@ trait DeviceStateRoute extends MyJsonProtocol
 
   private def queryState(deviceId: String): Future[Option[ThingShadowState]] = {
     DeviceManager.shortInfo(deviceId).map {
-      case Some(device) =>
-        Some(AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId))
+      case Some(dvc) =>
+        Some(AwsShadowService.getCurrentDeviceState(dvc.awsDeviceThingId))
       case None =>
         None
     }
