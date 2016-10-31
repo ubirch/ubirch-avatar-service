@@ -15,11 +15,13 @@ import uk.co.bigbeeconsultants.http.response.Status._
   */
 trait StorageCleanup {
 
-  private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceHistoryIndex)
   private val indexInfoDevice = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
+  private val indexInfoDeviceRawData = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceRawDataIndex)
+  private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceHistoryIndex)
   private val indexInfos: Seq[IndexInfo] = Seq(
-    indexInfoDeviceHistory,
-    indexInfoDevice
+    indexInfoDevice,
+    indexInfoDeviceRawData,
+    indexInfoDeviceHistory
   )
 
   /**

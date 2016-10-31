@@ -33,8 +33,8 @@ object DeviceMessageManager extends MyJsonProtocol {
 
     require(deviceId.nonEmpty, "deviceId may not be empty")
 
-    val index = Config.esDeviceHistoryIndex
-    val esType = Config.esDeviceHistoryType
+    val index = Config.esDeviceRawDataIndex
+    val esType = Config.esDeviceRawDataType
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
@@ -57,8 +57,8 @@ object DeviceMessageManager extends MyJsonProtocol {
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-        val index = Config.esDeviceHistoryIndex
-        val esType = Config.esDeviceHistoryType
+        val index = Config.esDeviceRawDataIndex
+        val esType = Config.esDeviceRawDataType
         val id = Some(data.messageId)
         DeviceDataStorage.storeDoc(index, esType, id, doc) map { jv =>
           Some(jv.extract[DeviceMessage])
