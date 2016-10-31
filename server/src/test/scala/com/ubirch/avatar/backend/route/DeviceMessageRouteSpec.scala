@@ -88,6 +88,22 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from/:size") {
 
+    scenario("deviceId exists; from < 0; size < 0") {
+      testGetHistoryDeviceExists(1, Some(-1), Some(-1))
+    }
+
+    scenario("deviceId exists; from < 0; size = 0") {
+      testGetHistoryDeviceExists(1, Some(-1), Some(0))
+    }
+
+    scenario("deviceId exists; from < 0; size > 0") {
+      testGetHistoryDeviceExists(1, Some(-1), Some(10))
+    }
+
+    scenario("deviceId exists; from = 0; size < 0") {
+      testGetHistoryDeviceExists(1, Some(0), Some(-1))
+    }
+
     scenario("deviceId exists; from = 0; size < elementCount") {
       testGetHistoryDeviceExists(3, Some(0), Some(2))
     }
@@ -100,16 +116,16 @@ class DeviceMessageRouteSpec extends RouteSpec
       testGetHistoryDeviceExists(3, Some(0), Some(4))
     }
 
-    scenario("deviceId exists; from = 0; size < 0") {
-      testGetHistoryDeviceExists(1, Some(0), Some(10))
+    scenario("deviceId exists; from > 0; size < elementCount") {
+      testGetHistoryDeviceExists(3, Some(1), Some(2))
     }
 
-    scenario("deviceId exists; from < 0; size < 0") {
-      testGetHistoryDeviceExists(1, Some(-1), Some(-1))
+    scenario("deviceId exists; from > 0; size = elementCount") {
+      testGetHistoryDeviceExists(3, Some(1), Some(3))
     }
 
-    scenario("deviceId exists; from < 0; size > 0") {
-      testGetHistoryDeviceExists(1, Some(-1), Some(10))
+    scenario("deviceId exists; from > 0; size > elementCount") {
+      testGetHistoryDeviceExists(3, Some(1), Some(4))
     }
 
     scenario("deviceId does not exist; from < 0; size < 0; Elasticsearch index does not exist") {
@@ -234,8 +250,9 @@ class DeviceMessageRouteSpec extends RouteSpec
             case Some(endIndex) =>
               val expectedSize = HistoryIndexUtil.calculateExpectedSize(beginIndex, endIndex)
               resultSeq.size shouldEqual expectedSize
-              for (i <- beginIndex until endIndex) {
-                resultSeq(i) shouldEqual dataSeries(i)
+              val dataSeriesSlice = dataSeries.slice(beginIndex, endIndex)
+              for (i <- dataSeriesSlice.indices) {
+                resultSeq(i) shouldEqual dataSeriesSlice(i)
               }
 
           }
