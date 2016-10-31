@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
+import com.ubirch.avatar.model.DummyDeviceMessage
 import com.ubirch.avatar.model.device.DeviceMessage
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
@@ -16,6 +17,49 @@ import scala.language.postfixOps
   */
 class DeviceMessageManagerSpec extends ElasticsearchSpec
   with MyJsonProtocol {
+
+  feature("store()") {
+
+    scenario("messageId does not exist") {
+
+      // prepare
+      val deviceMessage = DummyDeviceMessage.data()
+
+      // test
+      Await.result(DeviceMessageManager.store(deviceMessage), 1 seconds)
+      Thread.sleep(1000)
+
+      // verify
+      val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMessage.deviceId), 1 seconds)
+      deviceMsgList.size should be(1)
+
+      val deviceMsgInDb = deviceMsgList.head
+      deviceMsgInDb should be(deviceMessage)
+
+    }
+
+    scenario("messageId already exist") {
+
+      // prepare
+      val deviceMsg1 = DummyDeviceMessage.data()
+      Await.result(DeviceMessageManager.store(deviceMsg1), 1 seconds)
+
+      val deviceMsg2 = DummyDeviceMessage.data(deviceId = deviceMsg1.deviceId, messageId = deviceMsg1.messageId)
+
+      // test
+      Await.result(DeviceMessageManager.store(deviceMsg2), 1 seconds)
+      Thread.sleep(1000)
+
+      // verify
+      val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMsg2.deviceId), 1 seconds)
+      deviceMsgList.size should be(1)
+
+      val deviceMsgInDb = deviceMsgList.head
+      deviceMsgInDb should be(deviceMsg2)
+
+    }
+
+  }
 
   feature("history()") {
 

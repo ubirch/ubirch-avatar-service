@@ -1,9 +1,11 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.device.DeviceMessageManager
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
+import com.ubirch.avatar.model.DummyDeviceMessage
 import com.ubirch.avatar.model.device.DeviceMessage
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
@@ -12,6 +14,10 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * author: cvandrei
@@ -204,12 +210,54 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   feature(s"POST ${RouteConstants.urlDeviceHistory}") {
 
-    ignore("insert message (messageId does not exist yet)") {
-      // TODO write test
+    scenario("insert message (messageId does not exist yet)") {
+
+      // prepare
+      val deviceMsg = DummyDeviceMessage.data()
+
+      // test
+      Post(RouteConstants.urlDeviceHistory, deviceMsg) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual OK
+        verifyCORSHeader()
+        responseAs[DeviceMessage] shouldEqual deviceMsg
+
+        Thread.sleep(1000)
+
+        val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMsg.deviceId), 1 seconds)
+        deviceMsgList.size should be(1)
+
+        val deviceMsgInDb = deviceMsgList.head
+        deviceMsgInDb should be(deviceMsg)
+
+      }
+
     }
 
-    ignore("update message (messageId already exists)") {
-      // TODO write test
+    scenario("update message (messageId already exists)") {
+
+      // prepare
+      val deviceMsg1 = DummyDeviceMessage.data()
+      val deviceMsg2 = DummyDeviceMessage.data(deviceId = deviceMsg1.deviceId, messageId = deviceMsg1.messageId)
+
+      // test
+      Post(RouteConstants.urlDeviceHistory, deviceMsg2) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual OK
+        verifyCORSHeader()
+        responseAs[DeviceMessage] shouldEqual deviceMsg2
+
+        Thread.sleep(1000)
+        val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMsg2.deviceId), 1 seconds)
+        deviceMsgList.size should be(1)
+
+        val deviceMsgInDb = deviceMsgList.head
+        deviceMsgInDb should be(deviceMsg2)
+
+      }
+
     }
 
   }
