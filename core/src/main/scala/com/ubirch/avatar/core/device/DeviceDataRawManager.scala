@@ -50,7 +50,7 @@ object DeviceDataRawManager extends MyJsonProtocol {
   /**
     * Store a [[DeviceDataRaw]].
     *
-    * @param data device message to store (messageId will be ignored)
+    * @param data a device's raw data to store (messageId will be ignored)
     * @return json of what we stored
     */
   def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
