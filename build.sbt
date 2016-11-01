@@ -162,7 +162,7 @@ lazy val depTestBase = Seq(
 // VERSIONS
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.2"
-lazy val awsSdkV = "1.10.77"
+lazy val awsSdkV = "1.11.18"
 lazy val scalaTestV = "3.0.0"
 lazy val camelV = "2.18.0"
 
@@ -207,7 +207,7 @@ lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.4"
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.5"
 lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
