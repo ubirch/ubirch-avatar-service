@@ -1,6 +1,6 @@
 package com.ubirch.avatar.model
 
-import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}
@@ -21,8 +21,8 @@ object DummyDeviceMessage {
            timestamp: DateTime = DateTime.now,
            deviceTags: Seq[String] = Seq("ubirch#0", "actor"),
            deviceMessage: JValue = parse("""{"foo": 23, "bar": 42}""")
-          ): DeviceMessage = {
-    DeviceMessage(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
+          ): DeviceDataRaw = {
+    DeviceDataRaw(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
   }
 
   def dataSeries(id: String = UUIDUtil.uuidStr,
@@ -32,9 +32,9 @@ object DummyDeviceMessage {
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
                  elementCount: Int = 5
-                ): List[DeviceMessage] = {
+                ): List[DeviceDataRaw] = {
 
-    val deviceDataList: ListBuffer[DeviceMessage] = ListBuffer()
+    val deviceDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
 
     val range = 0 until elementCount

@@ -1,8 +1,8 @@
 package com.ubirch.avatar.core.test.util
 
-import com.ubirch.avatar.core.device.DeviceMessageManager
+import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.DummyDeviceMessage
-import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 
 /**
   * author: cvandrei
@@ -16,12 +16,12 @@ object DeviceMessageTestUtil {
     * @param elementCount number of elements to create and store
     * @return list of stored messages (ordered by: timestamp ASC)
     */
-  def storeSeries(elementCount: Int): List[DeviceMessage] = {
+  def storeSeries(elementCount: Int): List[DeviceDataRaw] = {
 
-    val dataSeries: List[DeviceMessage] = DummyDeviceMessage.dataSeries(elementCount = elementCount)
+    val dataSeries: List[DeviceDataRaw] = DummyDeviceMessage.dataSeries(elementCount = elementCount)
 
     dataSeries foreach { deviceData =>
-      DeviceMessageManager.store(deviceData)
+      DeviceDataRawManager.store(deviceData)
     }
     Thread.sleep(3000)
 

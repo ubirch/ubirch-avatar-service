@@ -1,12 +1,12 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.device.DeviceMessageManager
+import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.DummyDeviceMessage
-import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 
@@ -221,11 +221,11 @@ class DeviceMessageRouteSpec extends RouteSpec
         // verify
         status shouldEqual OK
         verifyCORSHeader()
-        responseAs[DeviceMessage] shouldEqual deviceMsg
+        responseAs[DeviceDataRaw] shouldEqual deviceMsg
 
         Thread.sleep(1000)
 
-        val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMsg.deviceId), 1 seconds)
+        val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMsg.deviceId), 1 seconds)
         deviceMsgList.size should be(1)
 
         val deviceMsgInDb = deviceMsgList.head
@@ -247,10 +247,10 @@ class DeviceMessageRouteSpec extends RouteSpec
         // verify
         status shouldEqual OK
         verifyCORSHeader()
-        responseAs[DeviceMessage] shouldEqual deviceMsg2
+        responseAs[DeviceDataRaw] shouldEqual deviceMsg2
 
         Thread.sleep(1000)
-        val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMsg2.deviceId), 1 seconds)
+        val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMsg2.deviceId), 1 seconds)
         deviceMsgList.size should be(1)
 
         val deviceMsgInDb = deviceMsgList.head
@@ -265,7 +265,7 @@ class DeviceMessageRouteSpec extends RouteSpec
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
 
     // prepare
-    val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+    val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
     val deviceId = dataSeries.head.deviceId
     val url = urlForTest(deviceId, from, size)
 
@@ -284,7 +284,7 @@ class DeviceMessageRouteSpec extends RouteSpec
           verifyCORSHeader()
 
           responseEntity.contentType should be(`application/json`)
-          val resultSeq = responseAs[Seq[DeviceMessage]]
+          val resultSeq = responseAs[Seq[DeviceDataRaw]]
 
           val beginIndex = HistoryIndexUtil.calculateBeginIndex(from)
           val endIndexOpt = size match {

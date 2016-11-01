@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
 import com.ubirch.avatar.model.DummyDeviceMessage
-import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
@@ -15,7 +15,7 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-10-25
   */
-class DeviceMessageManagerSpec extends ElasticsearchSpec
+class DeviceDataRawManagerSpec extends ElasticsearchSpec
   with MyJsonProtocol {
 
   feature("store()") {
@@ -26,11 +26,11 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val deviceMessage = DummyDeviceMessage.data()
 
       // test
-      Await.result(DeviceMessageManager.store(deviceMessage), 1 seconds)
+      Await.result(DeviceDataRawManager.store(deviceMessage), 1 seconds)
       Thread.sleep(1000)
 
       // verify
-      val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMessage.deviceId), 1 seconds)
+      val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMessage.deviceId), 1 seconds)
       deviceMsgList.size should be(1)
 
       val deviceMsgInDb = deviceMsgList.head
@@ -42,16 +42,16 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
 
       // prepare
       val deviceMsg1 = DummyDeviceMessage.data()
-      Await.result(DeviceMessageManager.store(deviceMsg1), 1 seconds)
+      Await.result(DeviceDataRawManager.store(deviceMsg1), 1 seconds)
 
       val deviceMsg2 = DummyDeviceMessage.data(deviceId = deviceMsg1.deviceId, messageId = deviceMsg1.messageId)
 
       // test
-      Await.result(DeviceMessageManager.store(deviceMsg2), 1 seconds)
+      Await.result(DeviceDataRawManager.store(deviceMsg2), 1 seconds)
       Thread.sleep(1000)
 
       // verify
-      val deviceMsgList = Await.result(DeviceMessageManager.history(deviceMsg2.deviceId), 1 seconds)
+      val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMsg2.deviceId), 1 seconds)
       deviceMsgList.size should be(1)
 
       val deviceMsgInDb = deviceMsgList.head
@@ -64,12 +64,12 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
   feature("history()") {
 
     scenario("deviceId empty") {
-      an[IllegalArgumentException] should be thrownBy Await.result(DeviceMessageManager.history(""), 1 seconds)
+      an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataRawManager.history(""), 1 seconds)
     }
 
     scenario("deviceId does not exist; index does not exist") {
       val deviceId = UUIDUtil.uuidStr
-      an[ExecutionException] should be thrownBy Await.result(DeviceMessageManager.history(deviceId), 1 seconds)
+      an[ExecutionException] should be thrownBy Await.result(DeviceDataRawManager.history(deviceId), 1 seconds)
     }
 
     scenario("deviceId does not exist; index exists") {
@@ -79,7 +79,7 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val deviceId = UUIDUtil.uuidStr
 
       // test
-      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId), 2 seconds)
 
       // verify
       result should be('isEmpty)
@@ -100,11 +100,11 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = 0
-      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
-      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
 
       // verify
       result should be('isEmpty)
@@ -117,11 +117,11 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = elementCount + 1
-      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
-      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
 
       // verify
       result.size should be(3)
@@ -137,11 +137,11 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 1
       val size = elementCount + 1
-      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
-      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
 
       // verify
       result.size should be(2)
@@ -156,11 +156,11 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = elementCount
       val size = elementCount + 1
-      val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
-      val result: Seq[DeviceMessage] = Await.result(DeviceMessageManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
 
       // verify
       result should be('isEmpty)
@@ -172,11 +172,11 @@ class DeviceMessageManagerSpec extends ElasticsearchSpec
   private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
 
     // prepare
-    val dataSeries: List[DeviceMessage] = DeviceMessageTestUtil.storeSeries(elementCount)
+    val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount)
     val deviceId: String = dataSeries.head.deviceId
 
     // test && verify
-    an[IllegalArgumentException] should be thrownBy Await.result(DeviceMessageManager.history(deviceId, from, size), 1 seconds)
+    an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataRawManager.history(deviceId, from, size), 1 seconds)
 
   }
 

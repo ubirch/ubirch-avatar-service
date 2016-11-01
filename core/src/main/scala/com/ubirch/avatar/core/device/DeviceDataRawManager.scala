@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.services.storage.DeviceDataStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionException, Future}
   * author: cvandrei
   * since: 2016-09-30
   */
-object DeviceMessageManager extends MyJsonProtocol {
+object DeviceDataRawManager extends MyJsonProtocol {
 
   /**
     * Query the history of deviceMessages for a specified deviceId.
@@ -29,7 +29,7 @@ object DeviceMessageManager extends MyJsonProtocol {
   def history(deviceId: String,
               from: Int = 0,
               size: Int = Config.esDefaultPageSize
-             ): Future[Seq[DeviceMessage]] = {
+             ): Future[Seq[DeviceDataRaw]] = {
 
     require(deviceId.nonEmpty, "deviceId may not be empty")
 
@@ -40,19 +40,19 @@ object DeviceMessageManager extends MyJsonProtocol {
 
     DeviceDataStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
       res.map { jv =>
-        jv.extract[DeviceMessage]
+        jv.extract[DeviceDataRaw]
       }
     }
 
   }
 
   /**
-    * Store a [[DeviceMessage]].
+    * Store a [[DeviceDataRaw]].
     *
     * @param data device message to store
     * @return json of what we stored
     */
-  def store(data: DeviceMessage): Future[Option[DeviceMessage]] = {
+  def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
 
     Json4sUtil.any2jvalue(data) match {
 
@@ -61,7 +61,7 @@ object DeviceMessageManager extends MyJsonProtocol {
         val esType = Config.esDeviceRawDataType
         val id = Some(data.messageId)
         DeviceDataStorage.storeDoc(index, esType, id, doc) map { jv =>
-          Some(jv.extract[DeviceMessage])
+          Some(jv.extract[DeviceDataRaw])
         }
 
       case None => Future(None)

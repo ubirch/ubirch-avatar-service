@@ -5,9 +5,9 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.core.device.DeviceMessageManager
+import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
-import com.ubirch.avatar.model.device.DeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.util.ErrorFactory
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
@@ -66,8 +66,8 @@ trait DeviceMessageRoute extends MyJsonProtocol
       } ~ path(device / history) {
 
         post {
-          entity(as[DeviceMessage]) { deviceMessage =>
-            onSuccess(DeviceMessageManager.store(deviceMessage)) {
+          entity(as[DeviceDataRaw]) { deviceMessage =>
+            onSuccess(DeviceDataRawManager.store(deviceMessage)) {
               case None => complete(errorResponseMessage(deviceMessage))
               case Some(storedMessage) => complete(storedMessage)
             }
@@ -84,17 +84,17 @@ trait DeviceMessageRoute extends MyJsonProtocol
   private def queryHistory(deviceId: String,
                            fromOpt: Option[Int] = None,
                            sizeOpt: Option[Int] = None
-                          ): Future[Option[Seq[DeviceMessage]]] = {
+                          ): Future[Option[Seq[DeviceDataRaw]]] = {
 
-    val deviceData: Future[Seq[DeviceMessage]] = fromOpt match {
+    val deviceData: Future[Seq[DeviceDataRaw]] = fromOpt match {
 
       case Some(from) =>
         sizeOpt match {
-          case Some(size) => DeviceMessageManager.history(deviceId, from, size)
-          case None => DeviceMessageManager.history(deviceId, from)
+          case Some(size) => DeviceDataRawManager.history(deviceId, from, size)
+          case None => DeviceDataRawManager.history(deviceId, from)
         }
 
-      case None => DeviceMessageManager.history(deviceId)
+      case None => DeviceDataRawManager.history(deviceId)
 
     }
 
@@ -113,7 +113,7 @@ trait DeviceMessageRoute extends MyJsonProtocol
     HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
   }
 
-  private def errorResponseMessage(deviceMessage: DeviceMessage): HttpResponse = {
+  private def errorResponseMessage(deviceMessage: DeviceDataRaw): HttpResponse = {
     val error = ErrorFactory.createString("CreateError", s"failed to persist message")
     HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
   }

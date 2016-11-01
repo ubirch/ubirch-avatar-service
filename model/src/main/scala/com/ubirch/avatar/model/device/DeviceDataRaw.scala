@@ -9,7 +9,7 @@ import org.json4s.JValue
   * SimpleDeviceMessage should be used instead
   */
 @deprecated
-case class DeviceMessage(deviceId: String,
+case class DeviceDataRaw(deviceId: String,
                          messageId: String,
                          deviceType: String,
                          timestamp: DateTime,
