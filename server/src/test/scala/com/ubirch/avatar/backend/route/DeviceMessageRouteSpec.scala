@@ -3,9 +3,9 @@ package com.ubirch.avatar.backend.route
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
+import com.ubirch.avatar.core.test.util.DeviceDataRawTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
-import com.ubirch.avatar.model.DummyDeviceMessage
+import com.ubirch.avatar.model.DummyDeviceDataRaw
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
@@ -213,7 +213,7 @@ class DeviceMessageRouteSpec extends RouteSpec
     scenario("insert message (messageId does not exist yet)") {
 
       // prepare
-      val deviceMsg = DummyDeviceMessage.data()
+      val deviceMsg = DummyDeviceDataRaw.data()
 
       // test
       Post(RouteConstants.urlDeviceHistory, deviceMsg) ~> Route.seal(routes) ~> check {
@@ -238,8 +238,8 @@ class DeviceMessageRouteSpec extends RouteSpec
     scenario("update message (messageId already exists)") {
 
       // prepare
-      val deviceMsg1 = DummyDeviceMessage.data()
-      val deviceMsg2 = DummyDeviceMessage.data(deviceId = deviceMsg1.deviceId, messageId = deviceMsg1.messageId)
+      val deviceMsg1 = DummyDeviceDataRaw.data()
+      val deviceMsg2 = DummyDeviceDataRaw.data(deviceId = deviceMsg1.deviceId, messageId = deviceMsg1.messageId)
 
       // test
       Post(RouteConstants.urlDeviceHistory, deviceMsg2) ~> Route.seal(routes) ~> check {
@@ -265,7 +265,7 @@ class DeviceMessageRouteSpec extends RouteSpec
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
 
     // prepare
-    val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+    val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount).reverse
     val deviceId = dataSeries.head.deviceId
     val url = urlForTest(deviceId, from, size)
 
@@ -319,7 +319,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
     // prepare
     if (indexExists) {
-      DeviceMessageTestUtil.storeSeries(1)
+      DeviceDataRawTestUtil.storeSeries(1)
     }
     val deviceId = "1234asdf"
     val url = urlForTest(deviceId, from, size)

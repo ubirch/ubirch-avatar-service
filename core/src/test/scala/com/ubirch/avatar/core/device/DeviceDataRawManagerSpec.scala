@@ -1,14 +1,14 @@
 package com.ubirch.avatar.core.device
 
-import com.ubirch.avatar.core.test.util.DeviceMessageTestUtil
-import com.ubirch.avatar.model.DummyDeviceMessage
+import com.ubirch.avatar.core.test.util.DeviceDataRawTestUtil
+import com.ubirch.avatar.model.DummyDeviceDataRaw
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 
-import scala.concurrent.{ExecutionException, Await}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionException}
 import scala.language.postfixOps
 
 /**
@@ -23,39 +23,42 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
     scenario("messageId does not exist") {
 
       // prepare
-      val deviceMessage = DummyDeviceMessage.data()
+      val deviceDataRaw = DummyDeviceDataRaw.data()
 
       // test
-      Await.result(DeviceDataRawManager.store(deviceMessage), 1 seconds)
+      val storedDeviceDataRaw1 = Await.result(DeviceDataRawManager.store(deviceDataRaw), 1 seconds).get
       Thread.sleep(1000)
 
       // verify
-      val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMessage.deviceId), 1 seconds)
-      deviceMsgList.size should be(1)
+      val deviceDataRawList = Await.result(DeviceDataRawManager.history(storedDeviceDataRaw1.deviceId), 1 seconds)
+      deviceDataRawList.size should be(1)
 
-      val deviceMsgInDb = deviceMsgList.head
-      deviceMsgInDb should be(deviceMessage)
+      val deviceDataRawInDb = deviceDataRawList.head
+      deviceDataRawInDb should be(storedDeviceDataRaw1)
 
     }
 
-    scenario("messageId already exist") {
+    scenario("send in object with same messageId") {
 
       // prepare
-      val deviceMsg1 = DummyDeviceMessage.data()
-      Await.result(DeviceDataRawManager.store(deviceMsg1), 1 seconds)
+      val deviceDataRaw1 = DummyDeviceDataRaw.data()
+      val storedDeviceDataRaw1 = Await.result(DeviceDataRawManager.store(deviceDataRaw1), 1 seconds).get
 
-      val deviceMsg2 = DummyDeviceMessage.data(deviceId = deviceMsg1.deviceId, messageId = deviceMsg1.messageId)
+      val deviceDataRaw2 = DummyDeviceDataRaw.data(
+        deviceId = storedDeviceDataRaw1.deviceId,
+        messageId = storedDeviceDataRaw1.messageId
+      )
 
       // test
-      Await.result(DeviceDataRawManager.store(deviceMsg2), 1 seconds)
+      Await.result(DeviceDataRawManager.store(deviceDataRaw2), 1 seconds)
       Thread.sleep(1000)
 
       // verify
-      val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMsg2.deviceId), 1 seconds)
-      deviceMsgList.size should be(1)
+      val deviceDataRawList = Await.result(DeviceDataRawManager.history(deviceDataRaw2.deviceId), 1 seconds)
+      deviceDataRawList.size should be(2)
 
-      val deviceMsgInDb = deviceMsgList.head
-      deviceMsgInDb should be(deviceMsg2)
+      val deviceDataRawInDb = deviceDataRawList.head
+      deviceDataRawInDb should be(deviceDataRaw2)
 
     }
 
@@ -75,7 +78,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
     scenario("deviceId does not exist; index exists") {
 
       // prepare
-      DeviceMessageTestUtil.storeSeries(1)
+      DeviceDataRawTestUtil.storeSeries(1)
       val deviceId = UUIDUtil.uuidStr
 
       // test
@@ -100,7 +103,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = 0
-      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -117,7 +120,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -137,7 +140,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 1
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -156,7 +159,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = elementCount
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount)
+      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -172,7 +175,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
   private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
 
     // prepare
-    val dataSeries: List[DeviceDataRaw] = DeviceMessageTestUtil.storeSeries(elementCount)
+    val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount)
     val deviceId: String = dataSeries.head.deviceId
 
     // test && verify

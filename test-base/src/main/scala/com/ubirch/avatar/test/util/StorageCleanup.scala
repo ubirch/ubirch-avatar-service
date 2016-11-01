@@ -52,9 +52,54 @@ trait StorageCleanup {
     */
   private def createMappings() = {
 
-    val httpClient = new HttpClient
+    val mappings = Seq(
+      deviceDataRawMappings,
+      deviceDataProcessedMappings
+    )
+    mappings foreach storeMapping
 
-    val deviceMessageMapping =
+  }
+
+  private def storeMapping(mapping: Mapping) = {
+
+    val httpClient = new HttpClient
+    val body = Some(RequestBody(mapping.mappings, APPLICATION_JSON))
+    val res = httpClient.post(mapping.url, body)
+
+    if (res.status != S200_OK) {
+      throw new IllegalArgumentException(s"creating Elasticsearch mappings failed: ${res.body.asString}")
+    }
+
+  }
+
+  private def deviceDataRawMappings: Mapping = {
+
+    val deviceDataRawMapping =
+      s"""{
+          |  "mappings": {
+          |    "${Config.esDeviceRawDataType}" : {
+          |      "properties" : {
+          |        "deviceId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        },
+          |        "messageId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        }
+          |      }
+          |    }
+          |  }
+          |}""".stripMargin
+    val url = indexInfoDeviceRawData.url
+
+    Mapping(url, deviceDataRawMapping)
+
+  }
+
+  private def deviceDataProcessedMappings: Mapping = {
+
+    val deviceDataProcessedMapping =
       s"""{
           |  "mappings": {
           |    "${Config.esDeviceHistoryType}" : {
@@ -72,12 +117,8 @@ trait StorageCleanup {
           |  }
           |}""".stripMargin
     val url = indexInfoDeviceHistory.url
-    val body = Some(RequestBody(deviceMessageMapping, APPLICATION_JSON))
-    val res = httpClient.post(url, body)
 
-    if (res.status != S200_OK) {
-      throw new IllegalArgumentException(s"creating Elasticsearch mappings failed: ${res.body.asString}")
-    }
+    Mapping(url, deviceDataProcessedMapping)
 
   }
 
@@ -86,3 +127,5 @@ trait StorageCleanup {
 case class IndexInfo(host: String, port: Int, index: String) {
   def url: URL = new URL(s"http://$host:$port/$index")
 }
+
+case class Mapping(url: URL, mappings: String)

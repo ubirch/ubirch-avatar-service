@@ -5,6 +5,7 @@ import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.services.storage.DeviceDataStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.uuid.UUIDUtil
 
 import org.elasticsearch.index.query.QueryBuilders
 
@@ -18,7 +19,7 @@ import scala.concurrent.{ExecutionException, Future}
 object DeviceDataRawManager extends MyJsonProtocol {
 
   /**
-    * Query the history of deviceMessages for a specified deviceId.
+    * Query the history of deviceDataRaw for a specified deviceId.
     *
     * @param deviceId id of the device for which we would like to get messages
     * @param from     paging parameter: skip the first x elements
@@ -49,17 +50,18 @@ object DeviceDataRawManager extends MyJsonProtocol {
   /**
     * Store a [[DeviceDataRaw]].
     *
-    * @param data device message to store
+    * @param data device message to store (messageId will be ignored)
     * @return json of what we stored
     */
   def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
 
-    Json4sUtil.any2jvalue(data) match {
+    val toStore = data.copy(messageId = UUIDUtil.uuidStr)
+    Json4sUtil.any2jvalue(toStore) match {
 
       case Some(doc) =>
         val index = Config.esDeviceRawDataIndex
         val esType = Config.esDeviceRawDataType
-        val id = Some(data.messageId)
+        val id = Some(toStore.messageId)
         DeviceDataStorage.storeDoc(index, esType, id, doc) map { jv =>
           Some(jv.extract[DeviceDataRaw])
         }

@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
   * author: cvandrei
   * since: 2016-10-25
   */
-object DummyDeviceMessage {
+object DummyDeviceDataRaw {
 
   def data(deviceId: String = UUIDUtil.uuidStr,
            messageId: String = UUIDUtil.uuidStr,
