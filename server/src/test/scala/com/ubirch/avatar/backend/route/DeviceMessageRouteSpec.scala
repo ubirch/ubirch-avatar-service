@@ -213,48 +213,49 @@ class DeviceMessageRouteSpec extends RouteSpec
     scenario("insert message (messageId does not exist yet)") {
 
       // prepare
-      val deviceMsg = DummyDeviceDataRaw.data()
+      val deviceRaw = DummyDeviceDataRaw.data()
 
       // test
-      Post(RouteConstants.urlDeviceHistory, deviceMsg) ~> Route.seal(routes) ~> check {
+      Post(RouteConstants.urlDeviceHistory, deviceRaw) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual OK
         verifyCORSHeader()
-        responseAs[DeviceDataRaw] shouldEqual deviceMsg
+        val storedDeviceRaw = responseAs[DeviceDataRaw]
+        storedDeviceRaw shouldEqual deviceRaw.copy(messageId = storedDeviceRaw.messageId)
 
         Thread.sleep(1000)
 
-        val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMsg.deviceId), 1 seconds)
-        deviceMsgList.size should be(1)
-
-        val deviceMsgInDb = deviceMsgList.head
-        deviceMsgInDb should be(deviceMsg)
+        val deviceRawList = Await.result(DeviceDataRawManager.history(deviceRaw.deviceId), 1 seconds)
+        deviceRawList.size should be(1)
+        deviceRawList.head should be(storedDeviceRaw)
 
       }
 
     }
 
-    scenario("update message (messageId already exists)") {
+    scenario("ensure messageId is ignored: store DeviceDataRaw with existing messageId") {
 
       // prepare
-      val deviceMsg1 = DummyDeviceDataRaw.data()
-      val deviceMsg2 = DummyDeviceDataRaw.data(deviceId = deviceMsg1.deviceId, messageId = deviceMsg1.messageId)
+      val deviceRaw1 = DummyDeviceDataRaw.data()
+      val storedDeviceRaw1 = Await.result(DeviceDataRawManager.store(deviceRaw1), 1 second).get
+      val deviceRaw2 = DummyDeviceDataRaw.data(deviceId = storedDeviceRaw1.deviceId, messageId = storedDeviceRaw1.messageId)
 
       // test
-      Post(RouteConstants.urlDeviceHistory, deviceMsg2) ~> Route.seal(routes) ~> check {
+      Post(RouteConstants.urlDeviceHistory, deviceRaw2) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual OK
         verifyCORSHeader()
-        responseAs[DeviceDataRaw] shouldEqual deviceMsg2
+        val storedDeviceRaw2 = responseAs[DeviceDataRaw]
+        storedDeviceRaw2 shouldEqual deviceRaw2.copy(messageId = storedDeviceRaw2.messageId)
 
         Thread.sleep(1000)
-        val deviceMsgList = Await.result(DeviceDataRawManager.history(deviceMsg2.deviceId), 1 seconds)
-        deviceMsgList.size should be(1)
+        val deviceRawList = Await.result(DeviceDataRawManager.history(deviceRaw2.deviceId), 1 seconds)
+        deviceRawList.size should be(2)
 
-        val deviceMsgInDb = deviceMsgList.head
-        deviceMsgInDb should be(deviceMsg2)
+        deviceRawList.head should be(storedDeviceRaw2)
+        deviceRawList(1) should be(storedDeviceRaw1)
 
       }
 
