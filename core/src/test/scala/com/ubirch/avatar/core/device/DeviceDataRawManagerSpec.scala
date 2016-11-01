@@ -38,7 +38,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
 
     }
 
-    scenario("send in object with same messageId") {
+    scenario("make sure that messageId is ignore: try to store object with same messageId twice") {
 
       // prepare
       val deviceDataRaw1 = DummyDeviceDataRaw.data()
@@ -50,15 +50,15 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       )
 
       // test
-      Await.result(DeviceDataRawManager.store(deviceDataRaw2), 1 seconds)
+      val storedDeviceDataRaw2 = Await.result(DeviceDataRawManager.store(deviceDataRaw2), 1 seconds).get
       Thread.sleep(1000)
 
       // verify
       val deviceDataRawList = Await.result(DeviceDataRawManager.history(deviceDataRaw2.deviceId), 1 seconds)
       deviceDataRawList.size should be(2)
 
-      val deviceDataRawInDb = deviceDataRawList.head
-      deviceDataRawInDb should be(deviceDataRaw2)
+      deviceDataRawList.head should be(storedDeviceDataRaw2)
+      deviceDataRawList(1) should be(storedDeviceDataRaw1)
 
     }
 
