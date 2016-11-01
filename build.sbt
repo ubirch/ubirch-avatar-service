@@ -164,7 +164,6 @@ lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.1"
 lazy val awsSdkV = "1.10.77"
 lazy val scalaTestV = "3.0.0"
-lazy val camelAwsV = "2.13.4"
 lazy val camelV = "2.18.0"
 
 // GROUP NAMES
@@ -186,7 +185,6 @@ lazy val scalaLogging = Seq(
 
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
-  "org.apache.camel" % "camel-aws" % camelAwsV,
   "com.typesafe.akka" %% "akka-camel" % akkaV
 )
 
