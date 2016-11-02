@@ -140,6 +140,29 @@ Query historic device data (CAUTION: `from` and `page_size` may be zero or large
 
 TODO
 
+
+## AWS
+
+### AWS CLI
+
+On MacOS you can install the aws-cli tool through brew:
+
+    brew install awscli
+
+To configure it then run:
+
+    aws configure
+
+The default region should be `us-east-1` while the output format can remain None since it's not relevant yet.
+
+### AWS Configuration
+
+The AvatarService opens a connection to AWS which depends on the following environment variables:
+
+    export AWS_ACCESS_KEY_ID=foo
+    export AWS_SECRET_ACCESS_KEY=bar
+
+
 ## Deployment Notes
 
 ### Elasticsearch
