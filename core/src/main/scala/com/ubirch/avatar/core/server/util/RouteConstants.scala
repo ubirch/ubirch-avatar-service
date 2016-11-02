@@ -14,6 +14,8 @@ object RouteConstants {
   val state = "state"
   val history = "history"
   val update = "update"
+  val data = "data"
+  val raw = "raw"
 
   val urlPrefix = s"/$apiPrefix/$serviceName/$currentVersion"
 
@@ -25,10 +27,10 @@ object RouteConstants {
   def urlDeviceStubWithId(id: String): String = s"$urlDeviceStubWithIdPrefix/$id"
 
   def urlDeviceState(id: String): String = s"${urlDeviceWithId(id)}/$state"
-  def urlDeviceHistory(id: String): String = s"${urlDeviceWithId(id)}/$history"
-  val urlDeviceHistory: String = s"$urlDevice/$history"
+  val urlDeviceDataRaw: String = s"$urlDevice/$data/$raw"
+  def urlDeviceDataHistory(id: String): String = s"${urlDeviceWithId(id)}/$data/$history"
   val urlDeviceUpdate: String = s"$urlDevice/$update"
-  def urlDeviceHistoryFrom(id: String, from: Int): String = s"${urlDeviceHistory(id)}/$from"
-  def urlDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${urlDeviceHistory(id)}/$from/$size"
+  def urlDeviceHistoryFrom(id: String, from: Int): String = s"${urlDeviceDataHistory(id)}/$from"
+  def urlDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${urlDeviceDataHistory(id)}/$from/$size"
 
 }

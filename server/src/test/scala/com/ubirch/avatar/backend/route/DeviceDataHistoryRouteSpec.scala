@@ -1,11 +1,9 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.core.test.util.DeviceDataRawTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
-import com.ubirch.avatar.model.DummyDeviceDataRaw
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
@@ -15,20 +13,18 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
   * author: cvandrei
   * since: 2016-09-30
   */
-class DeviceMessageRouteSpec extends RouteSpec
+class DeviceDataHistoryRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}") {
+  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}") {
 
     scenario("deviceId exists; elementCount < defaultPageSize") {
       testGetHistoryDeviceExists(Config.esDefaultPageSize - 1, None, None)
@@ -52,7 +48,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from") {
+  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}/:from") {
 
     scenario("deviceId exists; from < 0") {
       testGetHistoryDeviceExists(3, Some(-1), None)
@@ -92,7 +88,7 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.urlDeviceHistory(":deviceId")}/:from/:size") {
+  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}/:from/:size") {
 
     scenario("deviceId exists; from < 0; size < 0") {
       testGetHistoryDeviceExists(1, Some(-1), Some(-1))
@@ -208,61 +204,6 @@ class DeviceMessageRouteSpec extends RouteSpec
 
   }
 
-  feature(s"POST ${RouteConstants.urlDeviceHistory}") {
-
-    scenario("insert message (messageId does not exist yet)") {
-
-      // prepare
-      val deviceRaw = DummyDeviceDataRaw.data()
-
-      // test
-      Post(RouteConstants.urlDeviceHistory, deviceRaw) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual OK
-        verifyCORSHeader()
-        val storedDeviceRaw = responseAs[DeviceDataRaw]
-        storedDeviceRaw shouldEqual deviceRaw.copy(messageId = storedDeviceRaw.messageId)
-
-        Thread.sleep(1000)
-
-        val deviceRawList = Await.result(DeviceDataRawManager.history(deviceRaw.deviceId), 1 seconds)
-        deviceRawList.size should be(1)
-        deviceRawList.head should be(storedDeviceRaw)
-
-      }
-
-    }
-
-    scenario("ensure messageId is ignored: store DeviceDataRaw with existing messageId") {
-
-      // prepare
-      val deviceRaw1 = DummyDeviceDataRaw.data()
-      val storedDeviceRaw1 = Await.result(DeviceDataRawManager.store(deviceRaw1), 1 second).get
-      val deviceRaw2 = DummyDeviceDataRaw.data(deviceId = storedDeviceRaw1.deviceId, messageId = storedDeviceRaw1.messageId)
-
-      // test
-      Post(RouteConstants.urlDeviceHistory, deviceRaw2) ~> Route.seal(routes) ~> check {
-
-        // verify
-        status shouldEqual OK
-        verifyCORSHeader()
-        val storedDeviceRaw2 = responseAs[DeviceDataRaw]
-        storedDeviceRaw2 shouldEqual deviceRaw2.copy(messageId = storedDeviceRaw2.messageId)
-
-        Thread.sleep(1000)
-        val deviceRawList = Await.result(DeviceDataRawManager.history(deviceRaw2.deviceId), 1 seconds)
-        deviceRawList.size should be(2)
-
-        deviceRawList.head should be(storedDeviceRaw2)
-        deviceRawList(1) should be(storedDeviceRaw1)
-
-      }
-
-    }
-
-  }
-
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
 
     // prepare
@@ -357,7 +298,7 @@ class DeviceMessageRouteSpec extends RouteSpec
           case None => RouteConstants.urlDeviceHistoryFrom(deviceId, from)
         }
 
-      case None => RouteConstants.urlDeviceHistory(deviceId)
+      case None => RouteConstants.urlDeviceDataHistory(deviceId)
 
     }
 
