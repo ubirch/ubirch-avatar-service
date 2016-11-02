@@ -1,14 +1,24 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.model.device.Device
-
+import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.util.Timeout
+
+import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.ubirch.avatar.backend.Actor.{CreateDevice, DeviceApiActor}
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
+import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+
+import scala.concurrent.duration._
+import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 /**
   * author: cvandrei
@@ -16,9 +26,13 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   */
 trait DeviceIdRoute extends CORSDirective
   with MyJsonProtocol
-  with ResponseUtil {
+  with ResponseUtil
+  with LazyLogging {
 
-  implicit val ec = scala.concurrent.ExecutionContext.global
+  implicit val system = ActorSystem()
+  implicit val executionContext = system.dispatcher
+  implicit val timeout = Timeout(15 seconds)
+  private val deviceApiActor = system.actorOf(Props[DeviceApiActor], "device-api")
 
   val route: Route = respondWithCORS {
     path(device / Segment) { deviceId =>
@@ -37,33 +51,48 @@ trait DeviceIdRoute extends CORSDirective
           }
         }
       } ~
-        put {
+        post {
           entity(as[Device]) { device =>
-            complete {
-              DeviceManager.info(deviceId).map {
-                case None =>
-                  requestErrorResponse(
-                    errorType = "UpdateError",
-                    errorMessage = s"update non existing device: deviceId=$deviceId"
-                  )
-                case Some(dev) if deviceId != device.deviceId =>
-                  requestErrorResponse(
-                    errorType = "UpdateError",
-                    errorMessage = s"deviceId mismatch $deviceId <-> device: deviceId=$deviceId"
-                  )
-                case Some(dev) =>
-                  DeviceManager.update(device = device).map {
-                    case None =>
-                      requestErrorResponse(
-                        errorType = "UpdateError",
-                        errorMessage = s"failed to update device: deviceId=$deviceId"
-                      )
-                    case Some(deviceObject) => Some(deviceObject)
-                  }
-              }
+            onComplete(deviceApiActor ? CreateDevice(device = device)) {
+              case Success(resp) =>
+                resp match {
+                  case dev: Device =>
+                    complete(dev)
+                  case jer: JsonErrorResponse =>
+                    complete(requestErrorResponse(jer))
+                }
+              case Failure(t) =>
+                logger.error("device creation failed", t)
+                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
             }
           }
-        } ~
+        } ~ put {
+        entity(as[Device]) { device =>
+          complete {
+            DeviceManager.info(deviceId).map {
+              case None =>
+                requestErrorResponse(
+                  errorType = "UpdateError",
+                  errorMessage = s"update non existing device: deviceId=$deviceId"
+                )
+              case Some(dev) if deviceId != device.deviceId =>
+                requestErrorResponse(
+                  errorType = "UpdateError",
+                  errorMessage = s"deviceId mismatch $deviceId <-> device: deviceId=$deviceId"
+                )
+              case Some(dev) =>
+                DeviceManager.update(device = device).map {
+                  case None =>
+                    requestErrorResponse(
+                      errorType = "UpdateError",
+                      errorMessage = s"failed to update device: deviceId=$deviceId"
+                    )
+                  case Some(deviceObject) => deviceObject
+                }
+            }
+          }
+        }
+      } ~
         delete {
           complete {
             DeviceManager.info(deviceId).map {

@@ -32,10 +32,10 @@ trait DeviceRoute extends MyJsonProtocol
   implicit val system = ActorSystem()
   implicit val executionContext = system.dispatcher
   implicit val timeout = Timeout(15 seconds)
-
   private val deviceApiActor = system.actorOf(Props[DeviceApiActor], "device-api")
 
   val route: Route = respondWithCORS {
+
     path(device) {
 
       // TODO authentication for all methods...or just for post?
@@ -43,7 +43,6 @@ trait DeviceRoute extends MyJsonProtocol
         complete(DeviceManager.all())
       } ~
         post {
-
           entity(as[Device]) { device =>
             onComplete(deviceApiActor ? CreateDevice(device = device)) {
               case Success(resp) =>
