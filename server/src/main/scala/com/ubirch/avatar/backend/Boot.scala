@@ -32,7 +32,7 @@ object Boot extends App with LazyLogging {
 
   val bindingFuture = start()
 
-  TransformerManager.init
+  TransformerManager.init()
 
   Runtime.getRuntime.addShutdownHook(new Thread() {
     override def run() = {
