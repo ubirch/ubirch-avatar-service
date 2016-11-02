@@ -58,4 +58,10 @@ object ConfigKeys {
 
   // AWS IoT reported state name
   final val AWS_STATES_REPORTED = s"$awsPrefix.states.reported"
+
+  // AWS IoT reported state name
+  final val AWS_STATES_DELTA = s"$awsPrefix.states.delta"
+
+  // AWS IoT reported state name
+  final val AWS_STATES_TIMESTAMP = s"$awsPrefix.states.timestamp"
 }

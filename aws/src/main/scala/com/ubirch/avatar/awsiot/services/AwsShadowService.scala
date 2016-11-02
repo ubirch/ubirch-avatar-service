@@ -8,6 +8,7 @@ import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import org.joda.time.DateTime
 import org.json4s._
 
 /**
@@ -24,8 +25,12 @@ object AwsShadowService extends MyJsonProtocol with LazyLogging {
     */
   def getCurrentDeviceState(awsDeviceShadowId: String): ThingShadowState = {
     ThingShadowState(
+      syncState = getSyncState(awsDeviceShadowId),
       desired = getDesired(awsDeviceShadowId),
-      reported = getReported(awsDeviceShadowId)
+      reported = getReported(awsDeviceShadowId),
+      delta = getDelta(awsDeviceShadowId),
+      deviceLastUpdated = getTimestamp(awsDeviceShadowId),
+      avatarLastUpdated = getTimestamp(awsDeviceShadowId)
     )
   }
 
@@ -45,10 +50,42 @@ object AwsShadowService extends MyJsonProtocol with LazyLogging {
     * http://docs.aws.amazon.com/iot/latest/developerguide/using-thing-shadows.html#retrieving-thing-shadow
     *
     * @param awsDeviceShadowId AWS IoT thing name, which is the AWS IoT Thing Id
-    * @return current desired state as Option[JValue]
+    * @return current reported state as Option[JValue]
     */
   def getReported(awsDeviceShadowId: String): Option[JValue] = {
     getState(awsDeviceShadowId, Config.awsStatesReported)
+  }
+
+  /**
+    * Determines current AWS IoT delta thing state
+    * http://docs.aws.amazon.com/iot/latest/developerguide/using-thing-shadows.html#retrieving-thing-shadow
+    *
+    * @param awsDeviceShadowId AWS IoT thing name, which is the AWS IoT Thing Id
+    * @return current delta state as Option[JValue]
+    */
+  def getDelta(awsDeviceShadowId: String): Option[JValue] = {
+    getState(awsDeviceShadowId, Config.awsStatesDelta)
+  }
+
+  /**
+    * Determines current AWS IoT delta thing state
+    * http://docs.aws.amazon.com/iot/latest/developerguide/using-thing-shadows.html#retrieving-thing-shadow
+    *
+    * @param awsDeviceShadowId AWS IoT thing name, which is the AWS IoT Thing Id
+    * @return current delta state as Option[JValue]
+    */
+  def getTimestamp(awsDeviceShadowId: String): Option[DateTime] = {
+    getState(awsDeviceShadowId, Config.awsStatesTimestamp) match {
+      case Some(jint) =>
+        jint.extractOpt[Int] match {
+          case Some(ts) =>
+            Some(new DateTime(ts * 1000))
+          case None =>
+            None
+        }
+      case None =>
+        None
+    }
   }
 
   private def getState(awsDeviceShadowId: String, state: String): Option[JValue] = {
@@ -59,13 +96,29 @@ object AwsShadowService extends MyJsonProtocol with LazyLogging {
         Json4sUtil.inputstream2jvalue(inputStream) match {
           //        Json4sUtil.string2JValue(input) match {
           case Some(jval) =>
-            (jval \ "state" \ state).extractOpt[JValue]
+            if (state == Config.awsStatesTimestamp)
+              (jval \ state).extractOpt[JValue]
+            else
+              (jval \ "state" \ state).extractOpt[JValue]
           case None => None
         }
       case None =>
         None
     }
   }
+
+  def getSyncState(awsDeviceShadowId: String): Option[String] = {
+    getDelta(awsDeviceShadowId) match {
+      case Some(delta) =>
+        if (delta.children.size > 0)
+          Some("out of sync")
+        else
+          Some("in sync")
+      case None =>
+        None
+    }
+  }
+
 
   private def getShadowResource(awsDeviceShadowId: String) = {
     try {
