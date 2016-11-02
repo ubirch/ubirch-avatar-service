@@ -12,7 +12,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress
   * author: cvandrei
   * since: 2016-10-21
   */
-object DeviceDataStorage extends ElasticsearchStorage {
+object DeviceDataProcessedStorage extends ElasticsearchStorage {
 
   private val address = new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPortBinary)
 

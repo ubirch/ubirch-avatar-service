@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
-import com.ubirch.services.storage.DeviceDataRawStorage
+import com.ubirch.services.storage.DeviceDataProcessedStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
@@ -16,10 +16,10 @@ import scala.concurrent.{ExecutionException, Future}
   * author: cvandrei
   * since: 2016-09-30
   */
-object DeviceDataRawManager extends MyJsonProtocol {
+object DeviceDataProcessedManager extends MyJsonProtocol {
 
   /**
-    * Query the history of deviceDataRaw for a specified deviceId.
+    * Query the history of deviceDataHistory for a specified deviceId.
     *
     * @param deviceId id of the device for which we would like to get messages
     * @param from     paging parameter: skip the first x elements
@@ -34,12 +34,12 @@ object DeviceDataRawManager extends MyJsonProtocol {
 
     require(deviceId.nonEmpty, "deviceId may not be empty")
 
-    val index = Config.esDeviceRawDataIndex
-    val esType = Config.esDeviceRawDataType
+    val index = Config.esDeviceHistoryIndex
+    val esType = Config.esDeviceHistoryType
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
-    DeviceDataRawStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
+    DeviceDataProcessedStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
       res.map { jv =>
         jv.extract[DeviceDataRaw]
       }
@@ -59,10 +59,10 @@ object DeviceDataRawManager extends MyJsonProtocol {
     Json4sUtil.any2jvalue(toStore) match {
 
       case Some(doc) =>
-        val index = Config.esDeviceRawDataIndex
-        val esType = Config.esDeviceRawDataType
+        val index = Config.esDeviceHistoryIndex
+        val esType = Config.esDeviceHistoryType
         val id = Some(toStore.messageId)
-        DeviceDataRawStorage.storeDoc(index, esType, id, doc) map { jv =>
+        DeviceDataProcessedStorage.storeDoc(index, esType, id, doc) map { jv =>
           Some(jv.extract[DeviceDataRaw])
         }
 
