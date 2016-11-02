@@ -4,6 +4,7 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.services.iot.AWSIotClient
 import com.amazonaws.services.iotdata.AWSIotDataClient
+import com.amazonaws.services.sqs.AmazonSQSClient
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.config.Config
 
@@ -25,9 +26,6 @@ object AwsConf extends LazyLogging {
       case true =>
         val pcp = new ProfileCredentialsProvider()
         new AWSIotDataClient(pcp)
-      //        val awsClient = new AWSIotDataClient(awsCredentials)
-      //        awsClient.setRegion(Region.getRegion(Regions.US_EAST_1))
-      //        awsClient
       case _ =>
         new AWSIotDataClient()
     }
@@ -38,11 +36,18 @@ object AwsConf extends LazyLogging {
     Config.awsLocalMode match {
       case true =>
         new AWSIotClient(new ProfileCredentialsProvider())
-      //        val awsClient = new AWSIotClient(awsCredentials)
-      //        awsClient.setRegion(Region.getRegion(Regions.US_EAST_1))
-      //        awsClient
       case _ => new
           AWSIotClient()
+    }
+  }
+
+  lazy val awsSqsClient: AmazonSQSClient = {
+
+    Config.awsLocalMode match {
+      case true =>
+        new AmazonSQSClient(new ProfileCredentialsProvider())
+      case _ => new
+          AmazonSQSClient()
     }
   }
 }

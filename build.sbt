@@ -67,7 +67,7 @@ lazy val aws = project
 
 lazy val transformer = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, testBase % "test")
+  .dependsOn(config, aws, model, testBase % "test")
   .settings(
     description := "device message transformation services",
     libraryDependencies ++= depTransform
@@ -140,7 +140,7 @@ lazy val depAws = Seq(
   ubirchUtilJson,
   ubirchUtilUUID % "test",
   scalatest % "test"
-) ++ awsIotSdk ++ scalaLogging
+) ++ awsIotSdk ++ awsSqsSdk ++ scalaLogging
 
 lazy val depModel = Seq(
   ubirchUtilJsonAutoConvert,

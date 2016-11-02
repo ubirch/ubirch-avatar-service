@@ -1,5 +1,6 @@
 package com.ubirch.avatar.model.aws
 
+import org.joda.time.DateTime
 import org.json4s.JValue
 
 /**
@@ -11,6 +12,10 @@ case class ThingShadowMessage(
 
 
 case class ThingShadowState(
+                             syncState: Option[String] = None,
                              desired: Option[JValue] = None,
-                             reported: Option[JValue] = None
+                             reported: Option[JValue] = None,
+                             delta: Option[JValue] = None,
+                             deviceLastUpdated: Option[DateTime],
+                             avatarLastUpdated: Option[DateTime]
                            )

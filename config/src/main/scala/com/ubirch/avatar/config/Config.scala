@@ -105,17 +105,23 @@ object Config extends ConfigBase {
   def awsTopicsBasename: String = config.getString(ConfigKeys.AWS_TOPICS_BASENAME)
 
   /**
-    * AWS base MQTT topic name for all AWS IoT Things
-    *
     * @return boolean value
     */
   def awsStatesDesired: String = config.getString(ConfigKeys.AWS_STATES_DESIRED)
 
   /**
-    * AWS base MQTT topic name for all AWS IoT Things
-    *
     * @return boolean value
     */
   def awsStatesReported: String = config.getString(ConfigKeys.AWS_STATES_REPORTED)
+
+  /**
+    * @return boolean value
+    */
+  def awsStatesDelta: String = config.getString(ConfigKeys.AWS_STATES_DELTA)
+
+  /**
+    * @return boolean value
+    */
+  def awsStatesTimestamp: String = config.getString(ConfigKeys.AWS_STATES_TIMESTAMP)
 
 }
