@@ -34,12 +34,12 @@ object ConfigKeys {
   final val ES_DEVICE_TYPE = s"$esDevicePrefix.type"
 
   // DeviceRawData Index & Type
-  final val ES_DEVICE_RAW_DATA_INDEX = s"$esDeviceRawDataPrefix.index"
-  final val ES_DEVICE_RAW_DATA_TYPE = s"$esDeviceRawDataPrefix.type"
+  final val ES_DEVICE_DATA_RAW_INDEX = s"$esDeviceRawDataPrefix.index"
+  final val ES_DEVICE_DATA_RAW_TYPE = s"$esDeviceRawDataPrefix.type"
 
   // DeviceHistory Index & Type
-  final val ES_DEVICE_HISTORY_INDEX = s"$esDeviceHistoryPrefix.index"
-  final val ES_DEVICE_HISTORY_TYPE = s"$esDeviceHistoryPrefix.type"
+  final val ES_DEVICE_DATA_PROCESSED_INDEX = s"$esDeviceHistoryPrefix.index"
+  final val ES_DEVICE_DATA_PROCESSED_TYPE = s"$esDeviceHistoryPrefix.type"
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"

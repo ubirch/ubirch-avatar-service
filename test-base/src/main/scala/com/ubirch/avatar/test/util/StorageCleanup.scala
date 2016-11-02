@@ -16,8 +16,8 @@ import uk.co.bigbeeconsultants.http.response.Status._
 trait StorageCleanup {
 
   private val indexInfoDevice = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
-  private val indexInfoDeviceRawData = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceRawDataIndex)
-  private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceHistoryIndex)
+  private val indexInfoDeviceRawData = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataRawIndex)
+  private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataProcessedIndex)
   private val indexInfos: Seq[IndexInfo] = Seq(
     indexInfoDevice,
     indexInfoDeviceRawData,
@@ -77,7 +77,7 @@ trait StorageCleanup {
     val deviceDataRawMapping =
       s"""{
           |  "mappings": {
-          |    "${Config.esDeviceRawDataType}" : {
+          |    "${Config.esDeviceDataRawType}" : {
           |      "properties" : {
           |        "deviceId" : {
           |          "type" : "string",
@@ -102,7 +102,7 @@ trait StorageCleanup {
     val deviceDataProcessedMapping =
       s"""{
           |  "mappings": {
-          |    "${Config.esDeviceHistoryType}" : {
+          |    "${Config.esDeviceDataProcessedType}" : {
           |      "properties" : {
           |        "deviceId" : {
           |          "type" : "string",

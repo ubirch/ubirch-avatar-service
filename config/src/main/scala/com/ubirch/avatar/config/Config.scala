@@ -68,22 +68,22 @@ object Config extends ConfigBase {
   /**
     * @return Elasticsearch raw device data index
     */
-  def esDeviceRawDataIndex: String = config.getString(ConfigKeys.ES_DEVICE_RAW_DATA_INDEX)
+  def esDeviceDataRawIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_INDEX)
 
   /**
     * @return Elasticsearch raw device data type
     */
-  def esDeviceRawDataType: String = config.getString(ConfigKeys.ES_DEVICE_RAW_DATA_TYPE)
+  def esDeviceDataRawType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_TYPE)
 
   /**
     * @return Elasticsearch processed device data index
     */
-  def esDeviceHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
+  def esDeviceDataProcessedIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_INDEX)
 
   /**
     * @return Elasticsearch processed device data type
     */
-  def esDeviceHistoryType: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_TYPE)
+  def esDeviceDataProcessedType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_TYPE)
 
   /**
     * @return ElasticSearch default size in regards to pagination
