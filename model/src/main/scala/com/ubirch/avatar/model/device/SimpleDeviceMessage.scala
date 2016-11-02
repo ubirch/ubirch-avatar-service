@@ -42,6 +42,7 @@ case class SimpleDeviceMessage(
   }
 
   override def toString: String = s"id: $id / v: $v / p: $p"
+
 }
 
 case class SimpleDeviceMessageEnvelope(

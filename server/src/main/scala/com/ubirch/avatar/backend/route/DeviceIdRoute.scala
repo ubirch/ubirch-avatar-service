@@ -32,6 +32,7 @@ trait DeviceIdRoute extends CORSDirective
   implicit val system = ActorSystem()
   implicit val executionContext = system.dispatcher
   implicit val timeout = Timeout(15 seconds)
+
   private val deviceApiActor = system.actorOf(Props[DeviceApiActor], "device-api")
 
   val route: Route = respondWithCORS {

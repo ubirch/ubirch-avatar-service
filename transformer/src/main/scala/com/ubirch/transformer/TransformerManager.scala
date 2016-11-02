@@ -18,7 +18,7 @@ object TransformerManager {
     //    val ctx = new DefaultCamelContext()
     //    ctx.addComponent()
     //    ctx.bind("client", client);
-    system.actorOf(Props[AwsConsumerActor], "transformer-consumer")
+    // system.actorOf(Props[AwsConsumerActor], "transformer-consumer")
 
   }
 }

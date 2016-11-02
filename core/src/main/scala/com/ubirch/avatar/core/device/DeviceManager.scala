@@ -1,5 +1,7 @@
 package com.ubirch.avatar.core.device
 
+import java.util.UUID
+
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
@@ -7,6 +9,7 @@ import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.services.storage.DeviceStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.Future
 
@@ -74,6 +77,23 @@ object DeviceManager extends MyJsonProtocol {
       case _ =>
         None
     }
+  }
+
+  def infoByHwId(hwDeviceId: String): Future[Option[Device]] = {
+    val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId)
+    DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
+      l.headOption match {
+        case Some(jval) =>
+          jval.extractOpt[Device]
+        case None =>
+          None
+      }
+    }
+  }
+
+
+  def info(deviceId: UUID): Future[Option[Device]] = {
+    info(deviceId.toString)
   }
 
   def info(deviceId: String): Future[Option[Device]] = {

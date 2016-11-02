@@ -10,40 +10,30 @@ import com.ubirch.transformer.actor.TransformerProducerActor
   */
 class MessageProcessorActor extends Actor with ActorLogging {
 
-  private val simpleValidatorActor = context.actorOf(Props[MessageSimpleValidatorActor], "simple-validator")
-  private val eccValidatorActor = context.actorOf(Props[MessageECCValidatorActor], "ecc-validator")
   private val producerActor = context.actorOf(Props[TransformerProducerActor], "transformer-producer")
 
+  private val persistorActor = context.actorOf(Props[MessagePersistorActor], "persistor-service")
+
+  private val notaryActor = context.actorOf(Props[MessageNotaryActor], "notatry-service")
+
   override def receive: Receive = {
-    case sdm: SimpleDeviceMessage if sdm.v == Config.sdmV001 =>
+    case sdm: SimpleDeviceMessage =>
       val s = sender
-      log.debug(s"received V0.0.1 message: $sdm")
-      simpleValidatorActor ! sdm
+      log.debug(s"received message: $sdm")
+      //TODO add property check
+      persistorActor ! sdm
+      //TODO add property check
+      notaryActor ! sdm
 
-      // TODO AWS State update missing
       producerActor ! sdm.id
 
-      s ! sdm
-    case sdm: SimpleDeviceMessage if sdm.v == Config.sdmV002 =>
-      val s = sender
-      log.debug(s"received V0.0.2 message: $sdm")
-      eccValidatorActor ! sdm
-
       // TODO AWS State update missing
-      producerActor ! sdm.id
-
       s ! sdm
-    case sdm: SimpleDeviceMessage if sdm.v == Config.sdmV003 =>
-      val s = sender
-      log.debug(s"received V0.0.3 message: $sdm")
-      eccValidatorActor ! sdm
 
-      // TODO AWS State update missing
-      producerActor ! sdm.id
-
-      s ! sdm
     case _ =>
+
       log.error("received unknown message")
+
   }
 
 }

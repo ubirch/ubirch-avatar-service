@@ -4,16 +4,14 @@ import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
-
 import com.typesafe.scalalogging.slf4j.LazyLogging
-
 import com.ubirch.avatar.backend.ResponseUtil
-import com.ubirch.avatar.core.actor.MessageProcessorActor
+import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.device.SimpleDeviceMessage
+import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.duration._
@@ -33,20 +31,19 @@ trait DeviceUpdateRoute extends MyJsonProtocol
   implicit val executionContext = system.dispatcher
   implicit val timeout = Timeout(15 seconds)
 
-  private val processorActor = system.actorOf(Props[MessageProcessorActor], "message-processor")
+  private val validatorActor = system.actorOf(Props[MessageValidatorActor], "message-validator")
 
   val route: Route = respondWithCORS {
     path(device / update) {
-
       post {
-
         entity(as[SimpleDeviceMessage]) { sdm =>
-
-          onComplete(processorActor ? sdm) {
+          onComplete(validatorActor ? sdm) {
             case Success(resp) =>
               resp match {
                 case dm: SimpleDeviceMessage =>
                   complete(dm)
+                case jer: JsonErrorResponse =>
+                  complete(requestErrorResponse(jer))
                 case _ =>
                   complete(requestErrorResponse(
                     errorType = "UnknownResult",

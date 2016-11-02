@@ -124,6 +124,7 @@ lazy val depServer = Seq(
 
 lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
+  ubirchCrypto,
   ubirchUtilUUID % "test",
   scalatest % "test"
 ) ++ scalaLogging
@@ -209,6 +210,7 @@ lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
+lazy val ubirchCrypto = ubirchUtilG %% "crypto-util" % "0.1"
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.6"
 lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.1"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.1"
