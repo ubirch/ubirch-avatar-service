@@ -143,10 +143,10 @@ lazy val depAws = Seq(
 ) ++ awsIotSdk ++ scalaLogging
 
 lazy val depModel = Seq(
-  ubirchUtilJson,
   ubirchUtilJsonAutoConvert,
+  json4sNative,
   ubirchUtilUUID
-) ++ joda ++ json4s ++ scalaLogging
+) ++ joda
 
 lazy val depTestBase = Seq(
   scalatest,
@@ -191,7 +191,7 @@ lazy val akkaCamel = Seq(
 
 lazy val joda = Seq(jodaTime, jodaConvert)
 lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
-lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8"
+lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8.1"
 
 lazy val json4s = Seq(json4sNative, json4sExt, json4sJackson)
 lazy val json4sNative = json4sG %% "json4s-native" % json4sV
@@ -200,7 +200,9 @@ lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 
-lazy val awsIotSdk = Seq(awsG % "aws-java-sdk-iot" % awsSdkV)
+lazy val awsIotSdk = Seq(
+  awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor")
+)
 lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
 //lazy val awsSdk = Seq(awsG % "aws-java-sdk" % awsSdkV)
 
