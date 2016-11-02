@@ -18,7 +18,8 @@ class MainRoute {
   val deviceId = new DeviceIdRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
   val deviceState = new DeviceStateRoute {}
-  val deviceDataHistory = new DeviceMessageRoute {}
+  val deviceDataRaw = new DeviceDataRawRoute {}
+  val deviceDataHistory = new DeviceDataHistoryRoute {}
 
   val myRoute: Route = {
 
@@ -31,6 +32,7 @@ class MainRoute {
             deviceId.route ~
             deviceStubId.route ~
             deviceState.route ~
+            deviceDataRaw.route ~
             deviceDataHistory.route
 
         }

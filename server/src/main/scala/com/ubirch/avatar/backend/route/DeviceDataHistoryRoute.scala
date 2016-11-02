@@ -19,7 +19,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-30
   */
-trait DeviceMessageRoute extends MyJsonProtocol
+trait DeviceDataHistoryRoute extends MyJsonProtocol
   with CORSDirective {
 
   implicit val system = ActorSystem()
@@ -31,7 +31,7 @@ trait DeviceMessageRoute extends MyJsonProtocol
     // TODO authentication
     respondWithCORS {
 
-      pathPrefix(device / Segment) { deviceId =>
+      pathPrefix(device / Segment / data) { deviceId =>
 
         path(history) {
           get {
@@ -61,18 +61,6 @@ trait DeviceMessageRoute extends MyJsonProtocol
 
           }
 
-        }
-
-      } ~ path(device / history) {
-
-        post {
-          entity(as[DeviceDataRaw]) { deviceMessage =>
-            onSuccess(DeviceDataRawManager.store(deviceMessage)) {
-              case None => complete(errorResponseMessage(deviceMessage))
-              case Some(storedMessage) => complete(storedMessage)
-            }
-
-          }
         }
 
       }
