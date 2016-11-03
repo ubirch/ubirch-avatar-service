@@ -79,11 +79,11 @@ trait StorageCleanup {
           |  "mappings": {
           |    "${Config.esDeviceDataRawType}" : {
           |      "properties" : {
-          |        "deviceId" : {
+          |        "a" : {
           |          "type" : "string",
           |          "index": "not_analyzed"
           |        },
-          |        "messageId" : {
+          |        "id" : {
           |          "type" : "string",
           |          "index": "not_analyzed"
           |        }
