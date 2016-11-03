@@ -37,7 +37,7 @@ object DeviceDataRawManager extends MyJsonProtocol {
     val index = Config.esDeviceDataRawIndex
     val esType = Config.esDeviceDataRawType
     val query = Some(QueryBuilders.termQuery("a", device.hwDeviceId))
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
+    val sort = Some(SortUtil.sortBuilder("ts", asc = false))
 
     DeviceDataRawStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
       res.map { jv =>
@@ -60,7 +60,7 @@ object DeviceDataRawManager extends MyJsonProtocol {
       case Some(doc) =>
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
-        val id = None
+        val id = Some(data.a)
         DeviceDataRawStorage.storeDoc(index, esType, id, doc) map { jv =>
           Some(jv.extract[DeviceDataRaw])
         }
