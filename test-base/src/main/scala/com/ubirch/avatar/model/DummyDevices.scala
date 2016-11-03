@@ -1,6 +1,8 @@
 package com.ubirch.avatar.model
 
 import com.ubirch.avatar.model.device.{AvatarState, Device}
+import com.ubirch.util.crypto.hash.HashUtil
+import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime
 import org.json4s.native.JsonMethods._
@@ -10,6 +12,14 @@ import org.json4s.native.JsonMethods._
   * since: 2016-09-23
   */
 object DummyDevices {
+
+  def minimalDevice(deviceId: String = UUIDUtil.uuidStr,
+                    hwDeviceId: String = HashUtil.sha256HexString(UUIDUtil.uuidStr)
+                   ): Device = {
+
+    Device(deviceId = deviceId, hwDeviceId = hwDeviceId)
+
+  }
 
   lazy val all: Seq[Device] = Seq(device1, device2, device3, device4)
 

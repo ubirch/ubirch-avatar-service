@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.model.DummyDeviceDataRaw
+import com.ubirch.avatar.model.{DummyDevices, DummyDeviceDataRaw}
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 
@@ -28,7 +28,8 @@ class DeviceDataRawRouteSpec extends RouteSpec
     scenario("insert message (messageId does not exist yet)") {
 
       // prepare
-      val deviceRaw = DummyDeviceDataRaw.data()
+      val device = DummyDevices.minimalDevice()
+      val deviceRaw = DummyDeviceDataRaw.data(device = device)
 
       // test
       Post(RouteConstants.urlDeviceDataRaw, deviceRaw) ~> Route.seal(routes) ~> check {
@@ -37,11 +38,11 @@ class DeviceDataRawRouteSpec extends RouteSpec
         status shouldEqual OK
         verifyCORSHeader()
         val storedDeviceRaw = responseAs[DeviceDataRaw]
-        storedDeviceRaw shouldEqual deviceRaw.copy(messageId = storedDeviceRaw.messageId)
+        storedDeviceRaw shouldEqual deviceRaw
 
         Thread.sleep(1000)
 
-        val deviceRawList = Await.result(DeviceDataRawManager.history(deviceRaw.deviceId), 1 seconds)
+        val deviceRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
         deviceRawList.size should be(1)
         deviceRawList.head should be(storedDeviceRaw)
 
@@ -52,9 +53,10 @@ class DeviceDataRawRouteSpec extends RouteSpec
     scenario("ensure messageId is ignored: store DeviceDataRaw with existing messageId") {
 
       // prepare
-      val deviceRaw1 = DummyDeviceDataRaw.data()
+      val device = DummyDevices.minimalDevice()
+      val deviceRaw1 = DummyDeviceDataRaw.data(device = device)
       val storedDeviceRaw1 = Await.result(DeviceDataRawManager.store(deviceRaw1), 1 second).get
-      val deviceRaw2 = DummyDeviceDataRaw.data(deviceId = storedDeviceRaw1.deviceId, messageId = storedDeviceRaw1.messageId)
+      val deviceRaw2 = DummyDeviceDataRaw.data(messageId = storedDeviceRaw1.id, device = device)
 
       // test
       Post(RouteConstants.urlDeviceDataRaw, deviceRaw2) ~> Route.seal(routes) ~> check {
@@ -63,10 +65,10 @@ class DeviceDataRawRouteSpec extends RouteSpec
         status shouldEqual OK
         verifyCORSHeader()
         val storedDeviceRaw2 = responseAs[DeviceDataRaw]
-        storedDeviceRaw2 shouldEqual deviceRaw2.copy(messageId = storedDeviceRaw2.messageId)
+        storedDeviceRaw2 shouldEqual deviceRaw2
 
         Thread.sleep(1000)
-        val deviceRawList = Await.result(DeviceDataRawManager.history(deviceRaw2.deviceId), 1 seconds)
+        val deviceRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
         deviceRawList.size should be(2)
 
         deviceRawList.head should be(storedDeviceRaw2)

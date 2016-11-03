@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.test.util
 
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.DummyDeviceDataRaw
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
@@ -21,9 +21,9 @@ object DeviceDataRawTestUtil {
     * @param elementCount number of elements to create and store
     * @return list of stored messages (ordered by: timestamp ASC)
     */
-  def storeSeries(elementCount: Int): List[DeviceDataRaw] = {
+  def storeSeries(elementCount: Int): (Device, List[DeviceDataRaw]) = {
 
-    val dataSeries: List[DeviceDataRaw] = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)
+    val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)
     val storedSeries: ListBuffer[DeviceDataRaw] = ListBuffer()
 
     dataSeries foreach { deviceData =>
@@ -32,7 +32,7 @@ object DeviceDataRawTestUtil {
     }
     Thread.sleep(3000)
 
-    storedSeries.toList
+    (device, storedSeries.toList)
 
   }
 

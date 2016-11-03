@@ -1,6 +1,9 @@
 package com.ubirch.avatar.model
 
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import java.util.UUID
+
+import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}
@@ -15,36 +18,41 @@ import scala.collection.mutable.ListBuffer
   */
 object DummyDeviceDataRaw {
 
-  def data(deviceId: String = UUIDUtil.uuidStr,
-           messageId: String = UUIDUtil.uuidStr,
-           deviceType: String = "lightsLamp",
-           timestamp: DateTime = DateTime.now,
-           deviceTags: Seq[String] = Seq("ubirch#0", "actor"),
-           deviceMessage: JValue = parse("""{"foo": 23, "bar": 42}""")
+  def data(messageId: UUID = UUIDUtil.uuid,
+           device: Device,
+           pubKey: Option[String] = None,
+           timestamp: Option[DateTime] = Some(DateTime.now),
+           hashedPubKey: String = "pretend-to-be-a-public-key",
+           payload: JValue = parse("""{"foo": 23, "bar": 42}""")
           ): DeviceDataRaw = {
-    DeviceDataRaw(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
+    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = pubKey, ts = timestamp, s = hashedPubKey, p = payload)
   }
 
-  def dataSeries(id: String = UUIDUtil.uuidStr,
-                 dType: String = "lightsLamp",
-                 tags: Seq[String] = Seq("ubirch#0", "actor"),
-                 message: JValue = parse("""{"foo": 23, "bar": 42}"""),
+  def dataSeries(messageId: UUID = UUIDUtil.uuid,
+                 device: Device = DummyDevices.minimalDevice(),
+                 pubKey: Option[String] = None,
+                 payload: JValue = parse("""{"foo": 23, "bar": 42}"""),
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
                  elementCount: Int = 5
-                ): List[DeviceDataRaw] = {
+                ): (Device, List[DeviceDataRaw]) = {
 
-    val deviceDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
+    val rawDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
+
+    val hashedPubKey = pubKey match {
+      case None => "pretend-to-be-a-public-key"
+      case Some(pk) => HashUtil.sha256HexString(pk)
+    }
 
     val range = 0 until elementCount
     for (i <- range) {
-      val timestamp = newestDateTime.minus(i * intervalMillis)
-      val deviceData = data(deviceId = id, deviceType = dType, timestamp = timestamp, deviceTags = tags, deviceMessage = message)
-      deviceDataList.+=:(deviceData)
+      val timestamp = Some(newestDateTime.minus(i * intervalMillis))
+      val deviceData = data(messageId = messageId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey, payload = payload)
+      rawDataList.+=:(deviceData)
     }
 
-    deviceDataList.toList
+    (device, rawDataList.toList)
 
   }
 

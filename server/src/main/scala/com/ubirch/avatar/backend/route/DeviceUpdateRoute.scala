@@ -10,7 +10,7 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.actor.MessageProcessorActor
 import com.ubirch.avatar.core.server.util.RouteConstants._
-import com.ubirch.avatar.model.device.SimpleDeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
@@ -40,12 +40,12 @@ trait DeviceUpdateRoute extends MyJsonProtocol
 
       post {
 
-        entity(as[SimpleDeviceMessage]) { sdm =>
+        entity(as[DeviceDataRaw]) { sdm =>
 
           onComplete(processorActor ? sdm) {
             case Success(resp) =>
               resp match {
-                case dm: SimpleDeviceMessage =>
+                case dm: DeviceDataRaw =>
                   complete(dm)
                 case _ =>
                   complete(requestErrorResponse(

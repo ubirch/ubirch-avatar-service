@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.SimpleDeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.transformer.actor.TransformerProducerActor
 
 /**
@@ -15,7 +15,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
   private val producerActor = context.actorOf(Props[TransformerProducerActor], "transformer-producer")
 
   override def receive: Receive = {
-    case sdm: SimpleDeviceMessage if sdm.v == Config.sdmV001 =>
+    case sdm: DeviceDataRaw if sdm.v == Config.sdmV001 =>
       val s = sender
       log.debug(s"received V0.0.1 message: $sdm")
       simpleValidatorActor ! sdm
@@ -24,7 +24,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
       producerActor ! sdm.id
 
       s ! sdm
-    case sdm: SimpleDeviceMessage if sdm.v == Config.sdmV002 =>
+    case sdm: DeviceDataRaw if sdm.v == Config.sdmV002 =>
       val s = sender
       log.debug(s"received V0.0.2 message: $sdm")
       eccValidatorActor ! sdm
@@ -33,7 +33,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
       producerActor ! sdm.id
 
       s ! sdm
-    case sdm: SimpleDeviceMessage if sdm.v == Config.sdmV003 =>
+    case sdm: DeviceDataRaw if sdm.v == Config.sdmV003 =>
       val s = sender
       log.debug(s"received V0.0.3 message: $sdm")
       eccValidatorActor ! sdm
