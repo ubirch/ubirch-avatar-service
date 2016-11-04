@@ -1,11 +1,10 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.core.test.util.DeviceDataRawTestUtil
-import com.ubirch.avatar.model.DummyDeviceDataRaw
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
-import com.ubirch.util.uuid.UUIDUtil
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionException}
@@ -23,42 +22,45 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
     scenario("messageId does not exist") {
 
       // prepare
-      val deviceDataRaw = DummyDeviceDataRaw.data()
+      val device = DummyDevices.minimalDevice()
+      val rawData = DummyDeviceDataRaw.data(device = device)
 
       // test
-      val storedDeviceDataRaw1 = Await.result(DeviceDataRawManager.store(deviceDataRaw), 1 seconds).get
+      val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData), 1 seconds).get
       Thread.sleep(1000)
 
       // verify
-      val deviceDataRawList = Await.result(DeviceDataRawManager.history(storedDeviceDataRaw1.deviceId), 1 seconds)
+      val expectedStoredRaw = rawData.copy(id = storedRaw1.id)
+      storedRaw1 should be(expectedStoredRaw)
+
+      val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
       deviceDataRawList.size should be(1)
 
       val deviceDataRawInDb = deviceDataRawList.head
-      deviceDataRawInDb should be(storedDeviceDataRaw1)
+      deviceDataRawInDb should be(storedRaw1)
 
     }
 
-    scenario("make sure that messageId is ignore: try to store object with same messageId twice") {
+    scenario("make sure that messageId is ignored: try to store object with same messageId twice") {
 
       // prepare
-      val deviceDataRaw1 = DummyDeviceDataRaw.data()
-      val storedDeviceDataRaw1 = Await.result(DeviceDataRawManager.store(deviceDataRaw1), 1 seconds).get
+      val device = DummyDevices.minimalDevice()
 
-      val deviceDataRaw2 = DummyDeviceDataRaw.data(
-        deviceId = storedDeviceDataRaw1.deviceId,
-        messageId = storedDeviceDataRaw1.messageId
-      )
+      val rawData1 = DummyDeviceDataRaw.data(device = device)
+      val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData1), 1 seconds).get
+
+      val rawData2 = DummyDeviceDataRaw.data(device = device, messageId = storedRaw1.id)
 
       // test
-      val storedDeviceDataRaw2 = Await.result(DeviceDataRawManager.store(deviceDataRaw2), 1 seconds).get
+      val storedRaw2 = Await.result(DeviceDataRawManager.store(rawData2), 1 seconds).get
       Thread.sleep(1000)
 
       // verify
-      val deviceDataRawList = Await.result(DeviceDataRawManager.history(deviceDataRaw2.deviceId), 1 seconds)
+      val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
       deviceDataRawList.size should be(2)
 
-      deviceDataRawList.head should be(storedDeviceDataRaw2)
-      deviceDataRawList(1) should be(storedDeviceDataRaw1)
+      deviceDataRawList.head should be(storedRaw2)
+      deviceDataRawList(1) should be(storedRaw1)
 
     }
 
@@ -67,22 +69,23 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
   feature("history()") {
 
     scenario("deviceId empty") {
-      an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataRawManager.history(""), 1 seconds)
+      val device = DummyDevices.minimalDevice(hwDeviceId = "")
+      an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataRawManager.history(device), 1 seconds)
     }
 
     scenario("deviceId does not exist; index does not exist") {
-      val deviceId = UUIDUtil.uuidStr
-      an[ExecutionException] should be thrownBy Await.result(DeviceDataRawManager.history(deviceId), 1 seconds)
+      val device = DummyDevices.minimalDevice()
+      an[ExecutionException] should be thrownBy Await.result(DeviceDataRawManager.history(device), 1 seconds)
     }
 
     scenario("deviceId does not exist; index exists") {
 
       // prepare
       DeviceDataRawTestUtil.storeSeries(1)
-      val deviceId = UUIDUtil.uuidStr
+      val device = DummyDevices.minimalDevice()
 
       // test
-      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(device), 2 seconds)
 
       // verify
       result should be('isEmpty)
@@ -103,11 +106,10 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = 0
-      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount)
-      val deviceId: String = dataSeries.head.deviceId
+      val (device: Device, _) = DeviceDataRawTestUtil.storeSeries(elementCount)
 
       // test
-      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(device, from, size), 2 seconds)
 
       // verify
       result should be('isEmpty)
@@ -120,16 +122,15 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 0
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount).reverse
-      val deviceId: String = dataSeries.head.deviceId
+      val (device: Device, dataSeries: List[DeviceDataRaw]) = DeviceDataRawTestUtil.storeSeries(elementCount)
 
       // test
-      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(device, from, size), 2 seconds)
 
       // verify
       result.size should be(3)
       for (i <- dataSeries.indices) {
-        result(i) shouldEqual dataSeries(i)
+        result(i) shouldEqual dataSeries.reverse(i)
       }
 
     }
@@ -140,16 +141,15 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = 1
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount).reverse
-      val deviceId: String = dataSeries.head.deviceId
+      val (device: Device, dataSeries: List[DeviceDataRaw]) = DeviceDataRawTestUtil.storeSeries(elementCount)
 
       // test
-      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(device, from, size), 2 seconds)
 
       // verify
       result.size should be(2)
-      result.head shouldEqual dataSeries(1)
-      result(1) shouldEqual dataSeries(2)
+      result.head shouldEqual dataSeries.reverse(1)
+      result(1) shouldEqual dataSeries.reverse(2)
 
     }
 
@@ -159,11 +159,10 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val elementCount = 3
       val from = elementCount
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount)
-      val deviceId: String = dataSeries.head.deviceId
+      val (device: Device, _) = DeviceDataRawTestUtil.storeSeries(elementCount)
 
       // test
-      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(deviceId, from, size), 2 seconds)
+      val result: Seq[DeviceDataRaw] = Await.result(DeviceDataRawManager.history(device, from, size), 2 seconds)
 
       // verify
       result should be('isEmpty)
@@ -175,11 +174,10 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
   private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
 
     // prepare
-    val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount)
-    val deviceId: String = dataSeries.head.deviceId
+    val (device: Device, _) = DeviceDataRawTestUtil.storeSeries(elementCount)
 
     // test && verify
-    an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataRawManager.history(deviceId, from, size), 1 seconds)
+    an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataRawManager.history(device, from, size), 1 seconds)
 
   }
 

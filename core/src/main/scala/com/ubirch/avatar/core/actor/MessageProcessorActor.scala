@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.SimpleDeviceMessage
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.transformer.actor.TransformerProducerActor
 
 /**
@@ -17,7 +17,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
   private val notaryActor = context.actorOf(Props[MessageNotaryActor], "notatry-service")
 
   override def receive: Receive = {
-    case sdm: SimpleDeviceMessage =>
+    case sdm: DeviceDataRaw =>
       val s = sender
       log.debug(s"received message: $sdm")
       //TODO add property check
@@ -25,6 +25,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
       //TODO add property check
       notaryActor ! sdm
 
+      // TODO AWS State update missing
       producerActor ! sdm.id
 
       // TODO AWS State update missing

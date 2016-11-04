@@ -1,6 +1,8 @@
 package com.ubirch.avatar.model
 
-import com.ubirch.avatar.model.device.{AvatarState, Device}
+import com.ubirch.avatar.model.device.Device
+import com.ubirch.util.crypto.hash.HashUtil
+import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime
 import org.json4s.native.JsonMethods._
@@ -10,6 +12,14 @@ import org.json4s.native.JsonMethods._
   * since: 2016-09-23
   */
 object DummyDevices {
+
+  def minimalDevice(deviceId: String = UUIDUtil.uuidStr,
+                    hwDeviceId: String = HashUtil.sha256HexString(UUIDUtil.uuidStr)
+                   ): Device = {
+
+    Device(deviceId = deviceId, hwDeviceId = hwDeviceId)
+
+  }
 
   lazy val all: Seq[Device] = Seq(device1, device2, device3, device4)
 
@@ -30,12 +40,10 @@ object DummyDevices {
     deviceTypeKey = "lightsSensor",
     deviceName = "lightsSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
-    syncState = None,
     tags = Set("ubirch#0", "sensor"),
     deviceConfig = Some(device1Config),
     deviceProperties = Some(device1Properties),
     subscriptions = None,
-    avatarState = Some(AvatarState(Some(avatar1Desired), Some(avatar1Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
     created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),
@@ -47,12 +55,10 @@ object DummyDevices {
     deviceTypeKey = "temperaturesSensor",
     deviceName = "temperaturesSensor_TU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
-    syncState = Some("outofsync"),
     tags = Set("ubirch#2"),
     deviceConfig = Some(device2Config),
     deviceProperties = Some(device2Properties),
     subscriptions = None,
-    avatarState = Some(AvatarState(Some(avatar2Desired), Some(avatar2Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
     created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),
@@ -64,12 +70,10 @@ object DummyDevices {
     deviceTypeKey = "machineSensor",
     deviceName = "machineSensor_WM_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
-    syncState = Some("outofsync"),
     tags = Set("ubirch#0", "sensor"),
     deviceConfig = Some(device3Config),
     deviceProperties = Some(device3Properties),
     subscriptions = None,
-    avatarState = Some(AvatarState(Some(avatar3Desired), Some(avatar3Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
     created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),
@@ -81,12 +85,10 @@ object DummyDevices {
     deviceTypeKey = "trackleSensor",
     deviceName = "trackleSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
-    syncState = Some("insync"),
     tags = Set("ubirch#0", "sensor"),
     deviceConfig = Some(device4Config),
     deviceProperties = Some(device4Properties),
     subscriptions = None,
-    avatarState = Some(AvatarState(Some(avatar4Desired), Some(avatar4Reported))),
     avatarLastUpdated = Some(DateTime.now.minusMinutes(1)),
     created = DateTime.now.minusDays(60),
     updated = Some(DateTime.now.minusDays(2)),

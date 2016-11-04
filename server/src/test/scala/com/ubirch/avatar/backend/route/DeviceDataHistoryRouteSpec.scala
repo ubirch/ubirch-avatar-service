@@ -2,9 +2,9 @@ package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.server.util.RouteConstants
-import com.ubirch.avatar.core.test.util.DeviceDataRawTestUtil
+import com.ubirch.avatar.core.test.util.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 
@@ -207,7 +207,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
 
     // prepare
-    val dataSeries: List[DeviceDataRaw] = DeviceDataRawTestUtil.storeSeries(elementCount).reverse
+    val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
     val deviceId = dataSeries.head.deviceId
     val url = urlForTest(deviceId, from, size)
 
@@ -226,7 +226,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
           verifyCORSHeader()
 
           responseEntity.contentType should be(`application/json`)
-          val resultSeq = responseAs[Seq[DeviceDataRaw]]
+          val resultSeq = responseAs[Seq[DeviceDataProcessed]]
 
           val beginIndex = HistoryIndexUtil.calculateBeginIndex(from)
           val endIndexOpt = size match {
@@ -261,7 +261,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
     // prepare
     if (indexExists) {
-      DeviceDataRawTestUtil.storeSeries(1)
+      DeviceDataProcessedTestUtil.storeSeries(1)
     }
     val deviceId = "1234asdf"
     val url = urlForTest(deviceId, from, size)

@@ -7,21 +7,18 @@ import org.json4s.JValue
   * author: cvandrei
   * since: 2016-09-23
   */
-
 case class Device(deviceId: String,
                   deviceTypeKey: String = "unknownDeviceTypeKey",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",
-                  syncState: Option[String],
                   tags: Set[String] = Set(),
-                  deviceConfig: Option[JValue],
-                  deviceProperties: Option[JValue],
-                  subscriptions: Option[Seq[String]],
-                  avatarState: Option[AvatarState],
-                  avatarLastUpdated: Option[DateTime],
-                  created: DateTime = DateTime.now(),
-                  updated: Option[DateTime],
-                  deviceLastUpdated: Option[DateTime]
+                  deviceConfig: Option[JValue] = None,
+                  deviceProperties: Option[JValue] = None,
+                  subscriptions: Option[Seq[String]] = None,
+                  avatarLastUpdated: Option[DateTime] = None,
+                  deviceLastUpdated: Option[DateTime] = None,
+                  updated: Option[DateTime] = None,
+                  created: DateTime = DateTime.now()
                  ) {
 
   override def equals(obj: scala.Any): Boolean = {

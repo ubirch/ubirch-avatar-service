@@ -3,19 +3,20 @@ package com.ubirch.avatar.awsiot.util
 import java.nio.ByteBuffer
 
 import com.amazonaws.services.iot.model.{CreateThingRequest, DeleteThingRequest}
-import com.amazonaws.services.iotdata.AWSIotDataClient
 import com.amazonaws.services.iotdata.model.PublishRequest
+
 import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.model.aws.ThingShadowMessage
+import com.ubirch.util.json.JsonFormats
+
 import org.json4s.native.Serialization._
-import org.json4s.{NoTypeHints, jackson}
 
 /**
   * Created by derMicha on 21/04/16.
   */
 object AwsShadowUtil {
 
-  implicit val formats = jackson.Serialization.formats(NoTypeHints) ++ org.json4s.ext.JodaTimeSerializers.all
+  implicit val formats = JsonFormats.default
 
   private val iotDataClient = AwsConf.awsIotDataClient
   private val iotClient = AwsConf.awsIotClient

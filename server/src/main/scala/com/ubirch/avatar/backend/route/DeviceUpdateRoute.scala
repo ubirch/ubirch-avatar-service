@@ -8,6 +8,7 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.core.server.util.RouteConstants._
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.device.SimpleDeviceMessage
 import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.util.json.MyJsonProtocol
@@ -36,11 +37,11 @@ trait DeviceUpdateRoute extends MyJsonProtocol
   val route: Route = respondWithCORS {
     path(device / update) {
       post {
-        entity(as[SimpleDeviceMessage]) { sdm =>
+        entity(as[DeviceDataRaw]) { sdm =>
           onComplete(validatorActor ? sdm) {
             case Success(resp) =>
               resp match {
-                case dm: SimpleDeviceMessage =>
+                case dm: DeviceDataRaw =>
                   complete(dm)
                 case jer: JsonErrorResponse =>
                   complete(requestErrorResponse(jer))

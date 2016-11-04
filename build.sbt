@@ -96,7 +96,8 @@ lazy val testBase = (project in file("test-base"))
     description := "test tools",
     libraryDependencies ++= depTestBase,
     resolvers ++= Seq(
-      resolverBeeClient
+      resolverBeeClient,
+      resolverRoundEights
     )
   )
 
@@ -153,7 +154,8 @@ lazy val depTestBase = Seq(
   scalatest,
   akkaHttpTestkit,
   beeClient,
-  ubirchUtilUUID
+  ubirchUtilUUID,
+  ubirchUtilCrypto
 )
 
 /*
@@ -210,10 +212,10 @@ lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
-lazy val ubirchCrypto = ubirchUtilG %% "crypto-util" % "0.1"
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.6"
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.1"
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.1"
+lazy val ubirchCrypto = ubirchUtilG %% "crypto-util" % "0.3"
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.8"
+lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.3"
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
 
@@ -223,6 +225,7 @@ lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
 
 lazy val resolverSeebergerJson = Resolver.bintrayRepo("hseeberger", "maven")
 lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
+lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
 
 /*
  * MISC

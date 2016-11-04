@@ -12,11 +12,11 @@ import org.json4s._
   * @param version                  verison Id which identifies the version of the message type
   * @param messageId                unique message id
   * @param deviceId                 id of the device which sends the message
-  * @param simpleDeviceMessageRefId refers to original SimpleDeviceMessage
+  * @param simpleDeviceMessageRefId refers to original DeviceDataRaw
   * @param error                    device error message
   * @param config                   device config
   * @param payload                  data as JSON / JValue
-  * @param timestamp                timestamp of the original SimpleDeviceMessage
+  * @param timestamp                timestamp of the original DeviceDataRaw
   */
 case class TransformedDeviceMessage(
                                      version: String = "0.0.3",
