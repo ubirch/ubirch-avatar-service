@@ -23,18 +23,21 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceDataRaw = DummyDeviceDataRaw.data(device = device)
+      val rawData = DummyDeviceDataRaw.data(device = device)
 
       // test
-      val storedDeviceDataRaw1 = Await.result(DeviceDataRawManager.store(deviceDataRaw), 1 seconds).get
+      val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData), 1 seconds).get
       Thread.sleep(1000)
 
       // verify
+      val expectedStoredRaw = rawData.copy(id = storedRaw1.id)
+      storedRaw1 should be(expectedStoredRaw)
+
       val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
       deviceDataRawList.size should be(1)
 
       val deviceDataRawInDb = deviceDataRawList.head
-      deviceDataRawInDb should be(storedDeviceDataRaw1)
+      deviceDataRawInDb should be(storedRaw1)
 
     }
 
@@ -43,21 +46,21 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       // prepare
       val device = DummyDevices.minimalDevice()
 
-      val deviceDataRaw1 = DummyDeviceDataRaw.data(device = device)
-      val storedDeviceDataRaw1 = Await.result(DeviceDataRawManager.store(deviceDataRaw1), 1 seconds).get
+      val rawData1 = DummyDeviceDataRaw.data(device = device)
+      val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData1), 1 seconds).get
 
-      val deviceDataRaw2 = DummyDeviceDataRaw.data(device = device, messageId = storedDeviceDataRaw1.id)
+      val rawData2 = DummyDeviceDataRaw.data(device = device, messageId = storedRaw1.id)
 
       // test
-      val storedDeviceDataRaw2 = Await.result(DeviceDataRawManager.store(deviceDataRaw2), 1 seconds).get
+      val storedRaw2 = Await.result(DeviceDataRawManager.store(rawData2), 1 seconds).get
       Thread.sleep(1000)
 
       // verify
       val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
       deviceDataRawList.size should be(2)
 
-      deviceDataRawList.head should be(storedDeviceDataRaw2)
-      deviceDataRawList(1) should be(storedDeviceDataRaw1)
+      deviceDataRawList.head should be(storedRaw2)
+      deviceDataRawList(1) should be(storedRaw1)
 
     }
 
