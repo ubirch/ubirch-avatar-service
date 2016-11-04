@@ -7,17 +7,14 @@ import org.json4s.JValue
   * author: cvandrei
   * since: 2016-09-23
   */
-
 case class Device(deviceId: String,
                   deviceTypeKey: String = "unknownDeviceTypeKey",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",
-                  syncState: Option[String] = None, // TODO remove
                   tags: Set[String] = Set(),
                   deviceConfig: Option[JValue] = None,
                   deviceProperties: Option[JValue] = None,
                   subscriptions: Option[Seq[String]] = None,
-                  avatarState: Option[AvatarState] = None, // TODO remove
                   avatarLastUpdated: Option[DateTime] = None,
                   deviceLastUpdated: Option[DateTime] = None,
                   updated: Option[DateTime] = None,
