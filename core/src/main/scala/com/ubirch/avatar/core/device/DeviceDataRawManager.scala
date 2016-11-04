@@ -5,6 +5,7 @@ import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.services.storage.DeviceDataRawStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.uuid.UUIDUtil
 
 import org.elasticsearch.index.query.QueryBuilders
 
@@ -55,12 +56,13 @@ object DeviceDataRawManager extends MyJsonProtocol {
     */
   def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
 
-    Json4sUtil.any2jvalue(data) match {
+    val dataCopy = data.copy(id = UUIDUtil.uuid)
+    Json4sUtil.any2jvalue(dataCopy) match {
 
       case Some(doc) =>
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
-        val id = Some(data.a)
+        val id = Some(dataCopy.id.toString)
         DeviceDataRawStorage.storeDoc(index, esType, id, doc) map { jv =>
           Some(jv.extract[DeviceDataRaw])
         }
