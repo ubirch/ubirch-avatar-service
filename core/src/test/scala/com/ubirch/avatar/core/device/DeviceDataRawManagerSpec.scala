@@ -69,7 +69,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
   feature("history()") {
 
     scenario("deviceId empty") {
-      val device = DummyDevices.minimalDevice(deviceId = "")
+      val device = DummyDevices.minimalDevice(hwDeviceId = "")
       an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataRawManager.history(device), 1 seconds)
     }
 
