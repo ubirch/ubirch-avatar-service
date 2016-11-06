@@ -155,7 +155,7 @@ lazy val depTestBase = Seq(
   akkaHttpTestkit,
   beeClient,
   ubirchUtilUUID,
-  ubirchUtilCrypto
+  ubirchCrypto
 )
 
 /*
@@ -212,9 +212,9 @@ lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
-lazy val ubirchCrypto = ubirchUtilG %% "crypto-util" % "0.3"
+lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3"
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.8"
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.3"
+lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.2"
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2"
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"

@@ -1,8 +1,8 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.transformer.actor.TransformerProducerActor
 
 /**
@@ -17,11 +17,13 @@ class MessageProcessorActor extends Actor with ActorLogging {
   private val notaryActor = context.actorOf(Props[MessageNotaryActor], "notatry-service")
 
   override def receive: Receive = {
-    case sdm: DeviceDataRaw =>
-      val s = sender
+    case (s: ActorRef, sdm: DeviceDataRaw, device: Device) =>
+
       log.debug(s"received message: $sdm")
+
       //TODO add property check
       persistorActor ! sdm
+
       //TODO add property check
       notaryActor ! sdm
 

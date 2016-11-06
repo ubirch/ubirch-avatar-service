@@ -5,7 +5,6 @@ import java.util.UUID
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._
