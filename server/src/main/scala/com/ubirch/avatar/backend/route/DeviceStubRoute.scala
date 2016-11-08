@@ -1,0 +1,47 @@
+package com.ubirch.avatar.backend.route
+
+import akka.http.scaladsl.server.Route
+import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.ubirch.avatar.backend.ResponseUtil
+import com.ubirch.avatar.core.device.DeviceManager
+import com.ubirch.avatar.core.server.util.RouteConstants._
+import com.ubirch.avatar.model.device.DeviceStub
+import com.ubirch.util.json.MyJsonProtocol
+import com.ubirch.util.rest.akka.directives.CORSDirective
+
+import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+
+import scala.util.{Failure, Success}
+
+/**
+  * author: cvandrei
+  * since: 2016-09-21
+  */
+trait DeviceStubRoute
+  extends MyJsonProtocol
+    with ResponseUtil
+    with CORSDirective
+    with LazyLogging {
+
+  val route: Route = respondWithCORS {
+
+    // TODO authentication
+
+    path(device / stub) {
+      get {
+        onComplete(DeviceManager.allStubs()) {
+          case Success(resp) =>
+            resp match {
+              case stubs: Seq[DeviceStub] =>
+                complete(stubs)
+              case _ =>
+                complete(requestErrorResponse(errorType = "DeviceStubError", errorMessage = "could not fetch device stubs"))
+            }
+          case Failure(t) =>
+            logger.error("device creation failed", t)
+            complete(serverErrorResponse(errorType = "DeviceStubError", errorMessage = t.getMessage))
+        }
+      }
+    }
+  }
+}

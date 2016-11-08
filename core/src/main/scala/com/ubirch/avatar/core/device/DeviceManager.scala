@@ -8,6 +8,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.{Device, DeviceStub}
 import com.ubirch.services.storage.DeviceStorage
+import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.elasticsearch.index.query.QueryBuilders
 
@@ -38,7 +39,17 @@ object DeviceManager extends MyJsonProtocol {
   }
 
   def create(device: Device): Future[Option[Device]] = {
-    Json4sUtil.any2jvalue(device) match {
+
+    val devWithDefaults = device.copy(
+      deviceProperties = Some(
+        DeviceUtil.defaultProps(device.deviceTypeKey)
+      ),
+      deviceConfig = Some(
+        DeviceUtil.defaultConf(device.deviceTypeKey)
+      ),
+      tags = DeviceUtil.defaultTags(device.deviceTypeKey)
+    )
+    Json4sUtil.any2jvalue(devWithDefaults) match {
       case Some(devJval) =>
         DeviceStorage.storeDoc(
           docIndex = Config.esDeviceIndex,

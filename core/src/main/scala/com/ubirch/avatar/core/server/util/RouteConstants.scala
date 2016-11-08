@@ -11,6 +11,7 @@ object RouteConstants {
   val serviceName = "avatarService"
   val device = "device"
   val stub = "stub"
+  val devicestub = "devicestub"
   val state = "state"
   val history = "history"
   val update = "update"

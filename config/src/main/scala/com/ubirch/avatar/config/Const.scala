@@ -43,4 +43,12 @@ object Const {
   final val ENCODING_B64 = "base64"
 
   final val DATEFMT = "dd-MM-yyyy HH:mm:ss"
+
+  final val CONF_SENSIVITY = "s"
+  final val CONF_INFRARED = "ir"
+  final val CONF_BLINKING = "bf"
+  final val CONF_INTERVALL = "i"
+  final val CONF_THRESHOLD = "th"
+
+
 }

@@ -16,7 +16,7 @@ class MainRoute {
   val device = new DeviceRoute {}
   val deviceUpdate = new DeviceUpdateRoute {}
   val deviceId = new DeviceIdRoute {}
-  val deviceStubId = new DeviceStubIdRoute {}
+  val deviceStub = new DeviceStubRoute {}
   val deviceState = new DeviceStateRoute {}
   val deviceDataRaw = new DeviceDataRawRoute {}
   val deviceDataHistory = new DeviceDataHistoryRoute {}
@@ -27,13 +27,14 @@ class MainRoute {
       pathPrefix(serviceName) {
         pathPrefix(currentVersion) {
 
-          device.route ~
             deviceUpdate.route ~
-            deviceId.route ~
-            deviceStubId.route ~
-            deviceState.route ~
-            deviceDataRaw.route ~
-            deviceDataHistory.route
+              deviceStub.route ~
+              deviceState.route ~
+              deviceId.route ~
+              device.route ~
+              deviceDataRaw.route ~
+              deviceDataHistory.route
+
 
         }
       }
