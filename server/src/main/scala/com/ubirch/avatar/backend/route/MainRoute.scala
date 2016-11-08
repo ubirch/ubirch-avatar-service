@@ -35,8 +35,6 @@ class MainRoute {
             device.route ~
             deviceDataRaw.route ~
             deviceDataHistory.route
-
-
         }
       }
     } ~
