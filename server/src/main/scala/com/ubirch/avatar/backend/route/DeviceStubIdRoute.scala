@@ -17,7 +17,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-trait DeviceStubRoute
+trait DeviceStubIdRoute
   extends MyJsonProtocol
     with ResponseUtil
     with CORSDirective
@@ -30,14 +30,14 @@ trait DeviceStubRoute
     // TODO authentication
 
     get {
-      path(device / stub) {
-        onComplete(DeviceManager.allStubs()) {
+      path(device / stub / Segment) { deviceId =>
+        onComplete(DeviceManager.stub(deviceId)) {
           case Success(resp) =>
             resp match {
-              case stubs: Seq[DeviceStub] =>
-                complete(stubs)
+              case Some(stub: DeviceStub) =>
+                complete(stub)
               case _ =>
-                complete(requestErrorResponse(errorType = "DeviceStubError", errorMessage = "could not fetch device stubs"))
+                complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
             }
           case Failure(t) =>
             logger.error("device creation failed", t)

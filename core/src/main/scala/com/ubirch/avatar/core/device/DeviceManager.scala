@@ -134,7 +134,14 @@ object DeviceManager extends MyJsonProtocol {
     }
   }
 
-  def shortInfo(deviceId: String): Future[Option[Device]] = info(deviceId: String)
+  def stub(deviceId: String): Future[Option[DeviceStub]] = {
+    info(deviceId: String).map {
+      case Some(device) =>
+        Some(DeviceStubManger.create(device = device))
+      case None =>
+        None
+    }
+  }
 
   def curretShadowState(device: Device): ThingShadowState = {
     AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)
