@@ -1,17 +1,16 @@
 package com.ubirch.avatar.backend.route
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.model.util.ErrorFactory
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
-import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.Future
@@ -30,29 +29,34 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
   val route: Route = {
 
     // TODO authentication
-    respondWithCORS {
 
-      pathPrefix(device / Segment / data) { deviceId =>
 
-        path(history) {
+    pathPrefix(device / Segment / data) { deviceId =>
+
+      path(history) {
+        respondWithCORS {
           get {
             onSuccess(queryHistory(deviceId)) {
               case None => complete(errorResponseHistory(deviceId))
               case Some(deviceData) => complete(deviceData)
             }
           }
+        }
 
-        } ~ pathPrefix(history) {
+      } ~ pathPrefix(history) {
 
-          path(IntNumber) { from =>
+        path(IntNumber) { from =>
+          respondWithCORS {
             get {
               onSuccess(queryHistory(deviceId, Some(from))) {
                 case None => complete(errorResponseHistory(deviceId, Some(from)))
                 case Some(deviceData) => complete(deviceData)
               }
             }
+          }
 
-          } ~ path(IntNumber / IntNumber) { (from, size) =>
+        } ~ path(IntNumber / IntNumber) { (from, size) =>
+          respondWithCORS {
             get {
               onSuccess(queryHistory(deviceId, Some(from), Some(size))) {
                 case None => complete(errorResponseHistory(deviceId, Some(from), Some(size)))
@@ -61,7 +65,6 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
             }
 
           }
-
         }
 
       }
@@ -101,5 +104,4 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
     val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
     HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
   }
-
 }
