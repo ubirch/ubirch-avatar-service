@@ -73,6 +73,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
   }
 
+  //TODO refactor this, put it into an actor
   private def queryHistory(deviceId: String,
                            fromOpt: Option[Int] = None,
                            sizeOpt: Option[Int] = None

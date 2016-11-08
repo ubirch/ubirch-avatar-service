@@ -34,7 +34,7 @@ trait DeviceDataRawRoute extends MyJsonProtocol
               case None => complete(errorResponseMessage(deviceMessage))
               case Some(storedMessage) => complete(storedMessage)
             }
-
+            //TODO onFailure is missing!! use better onComplete ...
           }
         }
 
@@ -44,9 +44,9 @@ trait DeviceDataRawRoute extends MyJsonProtocol
 
   }
 
+  //TODO refactor this, we have a trait for that
   private def errorResponseMessage(deviceMessage: DeviceDataRaw): HttpResponse = {
     val error = ErrorFactory.createString("CreateError", s"failed to persist message")
     HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
   }
-
 }
