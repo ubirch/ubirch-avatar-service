@@ -15,8 +15,9 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-10-25
   */
-class DeviceDataProcessedManagerSpec extends ElasticsearchSpec
-  with MyJsonProtocol {
+class DeviceDataProcessedManagerSpec
+  extends ElasticsearchSpec
+    with MyJsonProtocol {
 
   feature("store()") {
 

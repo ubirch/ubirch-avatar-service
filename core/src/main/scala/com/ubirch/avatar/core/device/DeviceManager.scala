@@ -6,7 +6,7 @@ import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.device.{Device, DeviceStub}
 import com.ubirch.services.storage.DeviceStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.elasticsearch.index.query.QueryBuilders
@@ -29,10 +29,23 @@ object DeviceManager extends MyJsonProtocol {
     }
   }
 
+  def allStubs(): Future[Seq[DeviceStub]] = {
+    DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
+      res.map { jv =>
+        DeviceStubManger.create(device = jv.extract[Device])
+      }
+    }
+  }
+
   def create(device: Device): Future[Option[Device]] = {
     Json4sUtil.any2jvalue(device) match {
       case Some(devJval) =>
-        DeviceStorage.storeDoc(Config.esDeviceIndex, Config.esDeviceType, Some(device.deviceId), devJval).map { resJval =>
+        DeviceStorage.storeDoc(
+          docIndex = Config.esDeviceIndex,
+          docType = Config.esDeviceType,
+          docIdOpt = Some(device.deviceId),
+          doc = devJval
+        ).map { resJval =>
           Some(resJval.extract[Device])
 
         }
@@ -57,7 +70,12 @@ object DeviceManager extends MyJsonProtocol {
   def update(device: Device): Future[Option[Device]] = {
     Json4sUtil.any2jvalue(device) match {
       case Some(devJval) =>
-        DeviceStorage.storeDoc(Config.esDeviceIndex, Config.esDeviceType, Some(device.deviceId), devJval).map { resJval =>
+        DeviceStorage.storeDoc(
+          docIndex = Config.esDeviceIndex,
+          docType = Config.esDeviceType,
+          docIdOpt = Some(device.deviceId),
+          doc = devJval
+        ).map { resJval =>
           Some(resJval.extract[Device])
         }
       case None =>
@@ -100,11 +118,12 @@ object DeviceManager extends MyJsonProtocol {
     DeviceStorage.getDoc(Config.esDeviceIndex, Config.esDeviceType, deviceId).map {
       case Some(resJval) =>
         Some(resJval.extract[Device])
-      case None => None
+      case None =>
+        None
     }
   }
 
-  def shortInfo(deviceId: String): Future[Option[Device]] = info(deviceId: String) // TODO implement
+  def shortInfo(deviceId: String): Future[Option[Device]] = info(deviceId: String)
 
   def curretShadowState(device: Device): ThingShadowState = {
     AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)

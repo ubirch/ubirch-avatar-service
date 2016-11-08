@@ -63,7 +63,12 @@ object DeviceDataRawManager extends MyJsonProtocol {
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
         val id = Some(dataCopy.id.toString)
-        DeviceDataRawStorage.storeDoc(index, esType, id, doc) map { jv =>
+        DeviceDataRawStorage.storeDoc(
+          docIndex = index,
+          docType = esType,
+          docIdOpt = id,
+          doc = doc
+        ) map { jv =>
           Some(jv.extract[DeviceDataRaw])
         }
 

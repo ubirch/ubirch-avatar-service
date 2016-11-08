@@ -62,7 +62,12 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
         val index = Config.esDeviceDataProcessedIndex
         val esType = Config.esDeviceDataProcessedType
         val id = Some(toStore.messageId)
-        DeviceDataProcessedStorage.storeDoc(index, esType, id, doc) map { jv =>
+        DeviceDataProcessedStorage.storeDoc(
+          docIndex = index,
+          docType = esType,
+          docIdOpt = id,
+          doc = doc
+        ) map { jv =>
           Some(jv.extract[DeviceDataProcessed])
         }
 
