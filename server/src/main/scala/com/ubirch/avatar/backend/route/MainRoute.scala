@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.core.server.util.RouteConstants._
+import com.ubirch.avatar.core.server.util.RouteConstants
 
 /**
   * author: cvandrei
@@ -23,18 +23,19 @@ class MainRoute {
 
   val myRoute: Route = {
 
-    pathPrefix(apiPrefix) {
-      pathPrefix(serviceName) {
-        pathPrefix(currentVersion) {
-
-          deviceUpdate.route ~
-            deviceStubId.route ~
-            deviceStub.route ~
-            deviceState.route ~
-            deviceId.route ~
-            device.route ~
-            deviceDataRaw.route ~
-            deviceDataHistory.route
+    pathPrefix(RouteConstants.apiPrefix) {
+      pathPrefix(RouteConstants.serviceName) {
+        pathPrefix(RouteConstants.currentVersion) {
+          pathPrefix(RouteConstants.device) {
+            deviceUpdate.route ~
+              deviceStubId.route ~
+              deviceStub.route ~
+              deviceState.route ~
+              deviceId.route ~
+              device.route ~
+              deviceDataRaw.route ~
+              deviceDataHistory.route
+          }
         }
       }
     } ~

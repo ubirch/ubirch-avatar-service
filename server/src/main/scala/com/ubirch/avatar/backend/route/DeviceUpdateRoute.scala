@@ -33,29 +33,31 @@ trait DeviceUpdateRoute extends MyJsonProtocol
 
   private val validatorActor = system.actorOf(Props[MessageValidatorActor], "message-validator")
 
-  val route: Route = respondWithCORS {
-    path(device / update) {
-      post {
-        entity(as[DeviceDataRaw]) { sdm =>
-          onComplete(validatorActor ? sdm) {
-            case Success(resp) =>
-              resp match {
-                case dm: DeviceDataRaw =>
-                  complete(dm)
-                case jer: JsonErrorResponse =>
-                  complete(requestErrorResponse(jer))
-                case _ =>
-                  complete(requestErrorResponse(
-                    errorType = "UnknownResult",
-                    errorMessage = s"received unknown result")
-                  )
-              }
-            case Failure(t) =>
-              logger.error("update device data failed", t)
-              complete(requestErrorResponse(
-                errorType = "UpdateDeviceError",
-                errorMessage = s"update was not successfull: $sdm")
-              )
+  val route: Route = {
+    path(update) {
+      respondWithCORS {
+        post {
+          entity(as[DeviceDataRaw]) { sdm =>
+            onComplete(validatorActor ? sdm) {
+              case Success(resp) =>
+                resp match {
+                  case dm: DeviceDataRaw =>
+                    complete(dm)
+                  case jer: JsonErrorResponse =>
+                    complete(requestErrorResponse(jer))
+                  case _ =>
+                    complete(requestErrorResponse(
+                      errorType = "UnknownResult",
+                      errorMessage = s"received unknown result")
+                    )
+                }
+              case Failure(t) =>
+                logger.error("update device data failed", t)
+                complete(requestErrorResponse(
+                  errorType = "UpdateDeviceError",
+                  errorMessage = s"update was not successfull: $sdm")
+                )
+            }
           }
         }
       }

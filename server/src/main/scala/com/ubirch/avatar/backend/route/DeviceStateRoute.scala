@@ -30,10 +30,8 @@ trait DeviceStateRoute extends MyJsonProtocol
 
   val route: Route = {
 
-    respondWithCORS {
-
-      path(device / Segment / state) { deviceId =>
-
+    path(Segment / state) { deviceId =>
+      respondWithCORS {
         get {
           onSuccess(queryState(deviceId)) {
             case None => complete(errorResponse(deviceId))
