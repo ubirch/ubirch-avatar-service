@@ -25,25 +25,27 @@ trait DeviceStubIdRoute
 
   implicit val system = ActorSystem()
 
-  val route: Route = respondWithCORS {
+  val route: Route =
 
-    // TODO authentication
+  // TODO authentication
 
-    get {
-      path(device / stub / Segment) { deviceId =>
-        onComplete(DeviceManager.stub(deviceId)) {
-          case Success(resp) =>
-            resp match {
-              case Some(stub: DeviceStub) =>
-                complete(stub)
-              case _ =>
-                complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
-            }
-          case Failure(t) =>
-            logger.error("device creation failed", t)
-            complete(serverErrorResponse(errorType = "DeviceStubError", errorMessage = t.getMessage))
+    path(device / stub / Segment) { deviceId =>
+      respondWithCORS {
+        get {
+          onComplete(DeviceManager.stub(deviceId)) {
+            case Success(resp) =>
+              resp match {
+                case Some(stub: DeviceStub) =>
+                  complete(stub)
+                case _ =>
+                  complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
+              }
+            case Failure(t) =>
+              logger.error("device creation failed", t)
+              complete(serverErrorResponse(errorType = "DeviceStubError", errorMessage = t.getMessage))
+          }
+
         }
       }
     }
-  }
 }

@@ -25,23 +25,25 @@ trait DeviceStubRoute
 
   implicit val system = ActorSystem()
 
-  val route: Route = respondWithCORS {
+  val route: Route = {
 
     // TODO authentication
 
-    get {
-      path(device / stub) {
-        onComplete(DeviceManager.allStubs()) {
-          case Success(resp) =>
-            resp match {
-              case stubs: Seq[DeviceStub] =>
-                complete(stubs)
-              case _ =>
-                complete(requestErrorResponse(errorType = "DeviceStubError", errorMessage = "could not fetch device stubs"))
-            }
-          case Failure(t) =>
-            logger.error("device creation failed", t)
-            complete(serverErrorResponse(errorType = "DeviceStubError", errorMessage = t.getMessage))
+    path(device / stub) {
+      respondWithCORS {
+        get {
+          onComplete(DeviceManager.allStubs()) {
+            case Success(resp) =>
+              resp match {
+                case stubs: Seq[DeviceStub] =>
+                  complete(stubs)
+                case _ =>
+                  complete(requestErrorResponse(errorType = "DeviceStubError", errorMessage = "could not fetch device stubs"))
+              }
+            case Failure(t) =>
+              logger.error("device creation failed", t)
+              complete(serverErrorResponse(errorType = "DeviceStubError", errorMessage = t.getMessage))
+          }
         }
       }
     }
