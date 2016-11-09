@@ -17,10 +17,15 @@ object RouteConstants {
   val update = "update"
   val data = "data"
   val raw = "raw"
+  val deviceType = "deviceType"
+  val init = "init"
 
   val urlPrefix = s"/$apiPrefix/$serviceName/$currentVersion"
 
   val urlDevice = s"$urlPrefix/$device"
+
+  val urlDeviceType = s"$urlDevice/$deviceType"
+  val urlDeviceTypeInit = s"$urlDeviceType/$init"
 
   def urlDeviceWithId(id: String): String = s"$urlDevice/$id"
 

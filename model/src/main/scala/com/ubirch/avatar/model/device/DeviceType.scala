@@ -3,17 +3,33 @@ package com.ubirch.avatar.model.device
 import org.json4s.JValue
 
 /**
-  * * Created by derMicha on 28/10/16.
+  * author: derMicha
+  * since: 2016-10-28.
   *
-  * @param deviceTypeKey     unique desricptive id which indentifies the current DeviceType
-  * @param deviceTypeName    human understandable name
-  * @param defaultProperties default properties of a device
-  * @param defaultTags       default tags of a device
+  * @param key      unique descriptive id which identifies the current DeviceType
+  * @param name     human readable name
+  * @param defaults default properties of a device
   */
 case class DeviceType(
-                       deviceTypeKey: String,
-                       deviceTypeName: String,
-                       defaultProperties: JValue,
-                       defaultTags: JValue
-                     )
+                       key: String,
+                       name: DeviceTypeName,
+                       icon: String,
+                       defaults: DeviceTypeDefaults
+                     ) {
 
+  override def hashCode(): Int = key.hashCode
+
+  override def toString: String = s"deviceType.key=$key"
+
+}
+
+case class DeviceTypeName(
+                           de: String,
+                           en: String
+                         )
+
+case class DeviceTypeDefaults(
+                               properties: JValue,
+                               config: JValue,
+                               tags: Set[String]
+                             )

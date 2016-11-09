@@ -143,6 +143,50 @@ Query historic device data (CAUTION: `from` and `page_size` may be zero or large
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/data/history/<FROM>/<PAGE_SIZE>
 
+### Device Types
+
+Devices have types and this set of methods allows us to manage them.
+
+Query all available device types:
+
+    curl -XGET localhost:8080/api/avatarService/v1/device/deviceType
+
+Create device type:
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/deviceType -d '{
+      key: "unknownDeviceTypeKey",
+      name: {
+        de: "unbekannterDeviceTyp",
+        en: "unknownDeviceType"
+      },
+      icon: "ion-help-circled",
+      defaults: {
+        properties: {},
+        config: {},
+        tags: []
+      }
+    }'
+
+Update device type:
+
+    curl -XPUT localhost:8080/api/avatarService/v1/device/deviceType -d '{
+      key: "unknownDeviceTypeKey",
+      name: {
+        de: "unbekannterDeviceTyp",
+        en: "unknownDeviceType"
+      },
+      icon: "ion-help-circled",
+      defaults: {
+        properties: {},
+        config: {},
+        tags: []
+      }
+    }'
+
+Create default device types but only if no other types exist in the database:
+
+    curl -XGET localhost:8080/api/avatarService/v1/device/deviceType/init
+
 ## Configuration
 
 TODO

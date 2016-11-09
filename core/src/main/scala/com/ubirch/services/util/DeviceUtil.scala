@@ -1,11 +1,13 @@
 package com.ubirch.services.util
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.device.{DeviceTypeDefaults, DeviceType, Device, DeviceTypeName}
 import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
+
 import org.json4s.JsonDSL._
 import org.json4s._
 
@@ -99,13 +101,15 @@ object DeviceUtil extends LazyLogging {
   }
 
   /**
+    * The following fields can be included in default configs:
     *
-    * @param deviceType
-    * @return
-    * s = sensitivität des Sensort
-    * ir = irfrarot filter
-    * bf = 0/1
-    * i = update intervall
+    * * s = sensor sensitivity
+    * * ir = infrared filter
+    * * bf = 0/1
+    * * i = update interval
+    *
+    * @param deviceType device type the default config applies to
+    * @return default config for the given device type
     */
   def defaultConf(deviceType: String): JValue = {
     val conf = deviceType match {
@@ -132,4 +136,33 @@ object DeviceUtil extends LazyLogging {
     }
     Json4sUtil.any2jvalue(conf)
   }
+
+  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR)
+
+  def defaultTranslation(deviceType: String): DeviceTypeName = {
+
+    deviceType match {
+      case Const.LIGHTSSENSOR => DeviceTypeName("Lichtsensor", "Light Sensor")
+      case Const.LIGHTSLAMP => DeviceTypeName("Lampe", "Lamp")
+      case Const.ENVIRONMENTSENSOR => DeviceTypeName("Umweltsensor", "Environment Sensor")
+      case _ => DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
+    }
+
+  }
+
+  def defaultDeviceTypes: Set[DeviceType] = defaultDeviceTypesSet map defaultDevice
+
+  def defaultDevice(deviceType: String): DeviceType = {
+    DeviceType(
+      deviceType,
+      defaultTranslation(deviceType),
+      deviceType,
+      DeviceTypeDefaults(
+        defaultProps(deviceType),
+        defaultConf(deviceType),
+        defaultTags(deviceType)
+      )
+    )
+  }
+
 }
