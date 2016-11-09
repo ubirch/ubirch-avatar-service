@@ -32,12 +32,11 @@ object DeviceUtil extends LazyLogging {
     val concatenated = s"$hwDeviceId$payloadString"
 
     HashUtil.sha512Base64(concatenated)
-
   }
 
   def validateMessage(hwDeviceId: String, authToken: String, payload: JValue): Future[Option[Device]] = {
     logger.info("validateMessage")
-    DeviceManager.infoByHwId(hwDeviceId).map {
+    DeviceManager.infoByHashedHwId(hwDeviceId).map {
       case Some(device) =>
         logger.debug(s"found device wir primaryKey: $hwDeviceId")
         val currentAuthToken = createSimpleSignature(payload, device)

@@ -45,8 +45,7 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
   def create(device: Device): Future[Option[Device]] = {
 
     val devWithDefaults = device.copy(
-      sourceHwDeviceId = device.hwDeviceId,
-      hwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
+      hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
       deviceProperties = Some(
         DeviceUtil.defaultProps(device.deviceTypeKey)
       ),
@@ -54,7 +53,6 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
         DeviceUtil.defaultConf(device.deviceTypeKey)
       ),
       tags = DeviceUtil.defaultTags(device.deviceTypeKey)
-
     )
     Json4sUtil.any2jvalue(devWithDefaults) match {
       case Some(devJval) =>
@@ -117,6 +115,18 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
 
   def infoByHwId(hwDeviceId: String): Future[Option[Device]] = {
     val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId)
+    DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
+      l.headOption match {
+        case Some(jval) =>
+          jval.extractOpt[Device]
+        case None =>
+          None
+      }
+    }
+  }
+
+  def infoByHashedHwId(hwDeviceId: String): Future[Option[Device]] = {
+    val query = QueryBuilders.termQuery("hashedHwDeviceId", HashUtil.sha512Base64(hwDeviceId))
     DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
       l.headOption match {
         case Some(jval) =>

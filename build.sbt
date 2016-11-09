@@ -49,6 +49,13 @@ lazy val server = project
     }.taskValue
   )
 
+lazy val cmdtools = project
+  .settings(commonSettings: _*)
+  .dependsOn(core)
+  .settings(
+    description := "command line tools"
+  )
+
 lazy val core = project
   .settings(commonSettings: _*)
   .dependsOn(config, aws, transformer, model, testBase % "test")
