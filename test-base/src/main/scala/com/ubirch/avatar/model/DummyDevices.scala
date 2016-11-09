@@ -1,9 +1,8 @@
 package com.ubirch.avatar.model
 
 import com.ubirch.avatar.model.device.Device
-import com.ubirch.util.crypto.hash.HashUtil
+import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 import org.json4s.native.JsonMethods._
 

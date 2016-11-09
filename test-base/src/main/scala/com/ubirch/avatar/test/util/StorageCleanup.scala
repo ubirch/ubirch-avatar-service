@@ -3,7 +3,6 @@ package com.ubirch.avatar.test.util
 import java.net.URL
 
 import com.ubirch.avatar.config.Config
-
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.request.RequestBody
@@ -53,6 +52,7 @@ trait StorageCleanup {
   private def createMappings() = {
 
     val mappings = Seq(
+      deviceMappings,
       deviceDataRawMappings,
       deviceDataProcessedMappings
     )
@@ -69,6 +69,35 @@ trait StorageCleanup {
     if (res.status != S200_OK) {
       throw new IllegalArgumentException(s"creating Elasticsearch mappings failed: ${res.body.asString}")
     }
+
+  }
+
+  private def deviceMappings: Mapping = {
+
+    val deviceMapping =
+      s"""{
+          |  "mappings": {
+          |    "${Config.esDeviceIndex}" : {
+          |      "properties" : {
+          |        "deviceId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        },
+          |        "hwDeviceId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        },
+          |        "hashedHwDeviceId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        }
+          |      }
+          |    }
+          |  }
+          |}""".stripMargin
+    val url = indexInfoDevice.url
+
+    Mapping(url, deviceMapping)
 
   }
 

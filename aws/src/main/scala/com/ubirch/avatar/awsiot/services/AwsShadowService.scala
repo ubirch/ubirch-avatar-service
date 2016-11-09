@@ -107,13 +107,13 @@ object AwsShadowService extends MyJsonProtocol with LazyLogging {
     }
   }
 
-  def getSyncState(awsDeviceShadowId: String): Option[String] = {
+  def getSyncState(awsDeviceShadowId: String): Option[Boolean] = {
     getDelta(awsDeviceShadowId) match {
       case Some(delta) =>
         if (delta.children.size > 0)
-          Some("out of sync")
+          Some(false)
         else
-          Some("in sync")
+          Some(true)
       case None =>
         None
     }

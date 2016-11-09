@@ -29,7 +29,7 @@ object DeviceStateManager extends MyJsonProtocol with LazyLogging {
         read[JValue]("")
     }
 
-    val (k, s) = sign(payload, device)
+    val (k, s) = DeviceUtil.sign(payload, device)
 
     DeviceStateUpdate(
       id = UUIDUtil.uuid,
@@ -38,24 +38,4 @@ object DeviceStateManager extends MyJsonProtocol with LazyLogging {
       p = payload
     )
   }
-
-  private def sign(payload: JValue, device: Device): (String, String) = {
-    //TODO add private key management!!!
-    val sgr: Signature = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
-    val spec: EdDSAParameterSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.CURVE_ED25519_SHA512)
-    val kpg: KeyPairGenerator = new KeyPairGenerator
-    kpg.initialize(spec, new SecureRandom(java.util.UUID.randomUUID.toString.getBytes))
-    val kp: KeyPair = kpg.generateKeyPair
-
-    val sKey: PrivateKey = kp.getPrivate
-    val pKey: PublicKey = kp.getPublic
-
-    sgr.initSign(sKey)
-    sgr.update(write(payload).getBytes)
-    val signature: Array[Byte] = sgr.sign
-
-    (Base64.getEncoder.encodeToString(pKey.getEncoded),
-      Base64.getEncoder.encodeToString(signature))
-  }
-
 }
