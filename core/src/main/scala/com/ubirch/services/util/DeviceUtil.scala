@@ -23,10 +23,13 @@ object DeviceUtil extends LazyLogging {
 
   }
 
+  /**
+    * @deprecated this code is legacy and will be deleted asap
+    */
   private def createSimpleSignature(payload: JValue, hwDeviceId: String): String = {
 
     val payloadString = Json4sUtil.jvalue2String(payload)
-    val concatenated = s"$payloadString$hwDeviceId"
+    val concatenated = s"$hwDeviceId$payloadString"
 
     HashUtil.sha512Base64(concatenated)
 
