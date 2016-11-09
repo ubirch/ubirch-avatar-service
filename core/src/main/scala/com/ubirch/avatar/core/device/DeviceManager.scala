@@ -2,13 +2,14 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.{Device, DeviceStub}
 import com.ubirch.services.storage.DeviceStorage
-import com.ubirch.services.util.DeviceUtil
+import com.ubirch.services.util.{DeviceUtil, SimpleHashUtil}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.elasticsearch.index.query.QueryBuilders
 
@@ -18,7 +19,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-23
   */
-object DeviceManager extends MyJsonProtocol {
+object DeviceManager extends MyJsonProtocol with LazyLogging {
 
   implicit val ec = scala.concurrent.ExecutionContext.global
 
@@ -41,6 +42,8 @@ object DeviceManager extends MyJsonProtocol {
   def create(device: Device): Future[Option[Device]] = {
 
     val devWithDefaults = device.copy(
+      sourceHwDeviceId = device.hwDeviceId,
+      hwDeviceId = SimpleHashUtil.hashString512B64(device.hwDeviceId),
       deviceProperties = Some(
         DeviceUtil.defaultProps(device.deviceTypeKey)
       ),
@@ -48,6 +51,7 @@ object DeviceManager extends MyJsonProtocol {
         DeviceUtil.defaultConf(device.deviceTypeKey)
       ),
       tags = DeviceUtil.defaultTags(device.deviceTypeKey)
+
     )
     Json4sUtil.any2jvalue(devWithDefaults) match {
       case Some(devJval) =>
