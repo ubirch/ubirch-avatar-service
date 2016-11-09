@@ -26,9 +26,9 @@ object DeviceUtil extends LazyLogging {
   private def createSimpleSignature(payload: JValue, hwDeviceId: String): String = {
 
     val payloadString = Json4sUtil.jvalue2String(payload)
-    val sig = s"$hwDeviceId$payloadString" // TODO iirc it's more secure (cryptographically) to reverse the append order (hwDeviceId last)
+    val concatenated = s"$payloadString$hwDeviceId"
 
-    HashUtil.sha512Base64(sig)
+    HashUtil.sha512Base64(concatenated)
 
   }
 
