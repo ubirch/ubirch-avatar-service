@@ -3,17 +3,15 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
-
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.{Device, DeviceStub}
+import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.storage.DeviceStorage
 import com.ubirch.services.util.DeviceUtil
-import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
 import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.Future
@@ -54,6 +52,7 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
       ),
       tags = DeviceUtil.defaultTags(device.deviceTypeKey)
     )
+
     Json4sUtil.any2jvalue(devWithDefaults) match {
       case Some(devJval) =>
         DeviceStorage.storeDoc(
@@ -125,8 +124,8 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
     }
   }
 
-  def infoByHashedHwId(hwDeviceId: String): Future[Option[Device]] = {
-    val query = QueryBuilders.termQuery("hashedHwDeviceId", HashUtil.sha512Base64(hwDeviceId))
+  def infoByHashedHwId(hashedHwDeviceId: String): Future[Option[Device]] = {
+    val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
     DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
       l.headOption match {
         case Some(jval) =>
