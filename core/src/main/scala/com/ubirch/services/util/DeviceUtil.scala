@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.Device
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
 import org.json4s.JsonDSL._
 import org.json4s._
@@ -25,10 +26,10 @@ object DeviceUtil extends LazyLogging {
   private def createSimpleSignature(payload: JValue, hwDeviceId: String): String = {
 
     val payloadString = Json4sUtil.jvalue2String(payload)
+    val sig = s"$hwDeviceId$payloadString" // TODO iirc it's more secure (cryptographically) to reverse the append order (hwDeviceId last)
 
-    val sig = s"$hwDeviceId$payloadString"
+    HashUtil.sha512Base64(sig)
 
-    SimpleHashUtil.hashString512B64(sig)
   }
 
   def validateMessage(hwDeviceId: String, authToken: String, payload: JValue): Future[Option[Device]] = {
