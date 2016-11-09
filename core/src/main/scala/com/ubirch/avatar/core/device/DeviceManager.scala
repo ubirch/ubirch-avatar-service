@@ -3,14 +3,17 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.{Device, DeviceStub}
 import com.ubirch.services.storage.DeviceStorage
-import com.ubirch.services.util.{DeviceUtil, SimpleHashUtil}
+import com.ubirch.services.util.DeviceUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+
 import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.Future
@@ -43,7 +46,7 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
 
     val devWithDefaults = device.copy(
       sourceHwDeviceId = device.hwDeviceId,
-      hwDeviceId = SimpleHashUtil.hashString512B64(device.hwDeviceId),
+      hwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
       deviceProperties = Some(
         DeviceUtil.defaultProps(device.deviceTypeKey)
       ),
