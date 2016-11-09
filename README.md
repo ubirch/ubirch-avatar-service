@@ -176,9 +176,26 @@ The AvatarService opens a connection to AWS which depends on the following envir
 
 The service requires the following mappings for things to work as expected:
 
-    curl -XPOST 'localhost:9200/ubirch-device-data' -H "Content-Type: application/json" -d '{
+    curl -XPOST 'localhost:9200/ubirch-device-raw-data' -H "Content-Type: application/json" -d '{
       "mappings": {
-        "message" : {
+        "devicemessage" : {
+          "properties" : {
+            "a" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            },
+            "id" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            }
+          }
+        }
+      }
+    }'
+
+    curl -XPOST 'localhost:9200/ubirch-device-history' -H "Content-Type: application/json" -d '{
+      "mappings": {
+        "devicedata" : {
           "properties" : {
             "deviceId" : {
               "type" : "string",
