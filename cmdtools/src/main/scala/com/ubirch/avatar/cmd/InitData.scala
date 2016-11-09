@@ -1,4 +1,4 @@
-package com.ubirch.avatar
+package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.core.device.DeviceManager
