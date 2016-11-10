@@ -38,31 +38,27 @@ trait DeviceRoute extends MyJsonProtocol
   val route: Route = respondWithCORS {
 
     // TODO authentication for all methods...or just for post?
-    pathEnd {
-
-      get {
-        complete(DeviceManager.all())
-      } ~
-        post {
-          entity(as[Device]) { device =>
-            onComplete(deviceApiActor ? CreateDevice(device = device)) {
-              case Success(resp) =>
-                resp match {
-                  case dev: Device =>
-                    complete(dev)
-                  case jer: JsonErrorResponse =>
-                    complete(requestErrorResponse(jer))
-                  case _ =>
-                    complete("doof")
-                }
-              case Failure(t) =>
-                logger.error("device creation failed", t)
-                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
-            }
+    get {
+      complete(DeviceManager.all())
+    } ~
+      post {
+        entity(as[Device]) { device =>
+          onComplete(deviceApiActor ? CreateDevice(device = device)) {
+            case Success(resp) =>
+              resp match {
+                case dev: Device =>
+                  complete(dev)
+                case jer: JsonErrorResponse =>
+                  complete(requestErrorResponse(jer))
+                case _ =>
+                  complete("doof")
+              }
+            case Failure(t) =>
+              logger.error("device creation failed", t)
+              complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
           }
         }
-
-    }
+      }
 
   }
 
