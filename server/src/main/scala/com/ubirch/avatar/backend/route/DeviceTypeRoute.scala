@@ -75,21 +75,23 @@ trait DeviceTypeRoute extends CORSDirective
 
       }
     } ~ path(deviceType / init) {
+      respondWithCORS {
 
-      get {
-        complete {
-          onComplete(DeviceTypeManager.init()) {
+        get {
+          complete {
+            onComplete(DeviceTypeManager.init()) {
 
-            case Success(resp) => complete(resp)
+              case Success(resp) => complete(resp)
 
-            case Failure(t) =>
-              logger.error("failed to create default deviceTypes", t)
-              complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
+              case Failure(t) =>
+                logger.error("failed to create default deviceTypes", t)
+                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
 
+            }
           }
         }
-      }
 
+      }
     }
   }
 
