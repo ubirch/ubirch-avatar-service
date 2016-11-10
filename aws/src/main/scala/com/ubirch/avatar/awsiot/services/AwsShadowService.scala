@@ -119,18 +119,15 @@ object AwsShadowService extends MyJsonProtocol with LazyLogging {
     }
   }
 
-
   private def getShadowResource(awsDeviceShadowId: String) = {
     try {
       val awsIotDataClient = AwsConf.awsIotDataClient
-      var getThingShadowRequest = new GetThingShadowRequest()
-      getThingShadowRequest.setThingName(awsDeviceShadowId)
+      var getThingShadowRequest = new GetThingShadowRequest().withThingName(awsDeviceShadowId)
       Some(awsIotDataClient.getThingShadow(getThingShadowRequest))
     } catch {
       case e: Exception =>
         logger.error(s"error while accessing device shadow: $awsDeviceShadowId", e)
         None
     }
-
   }
 }

@@ -71,11 +71,13 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
 
   def createWithShadow(device: Device): Future[Option[Device]] = {
     create(device: Device).map {
-      case Some(device) =>
+      case Some(dev) =>
 
-        AwsShadowUtil.createShadow(device.awsDeviceThingId)
+        AwsShadowUtil.createShadow(dev.awsDeviceThingId)
+        if (dev.deviceConfig.isDefined)
+          AwsShadowUtil.setDesired(dev, dev.deviceConfig.get)
 
-        Some(device)
+        Some(dev)
 
       case None =>
         None

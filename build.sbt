@@ -175,7 +175,7 @@ lazy val depTestBase = Seq(
 // VERSIONS
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.2"
-lazy val awsSdkV = "1.11.18"
+lazy val awsSdkV = "1.11.51"
 lazy val scalaTestV = "3.0.0"
 lazy val camelV = "2.18.0"
 
@@ -195,7 +195,6 @@ lazy val scalaLogging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
   "ch.qos.logback" % "logback-core" % "1.1.7",
   "ch.qos.logback" % "logback-classic" % "1.1.7"
-
 )
 
 lazy val akkaCamel = Seq(

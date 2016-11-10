@@ -1,6 +1,7 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.services.util.DeviceUtil
@@ -19,7 +20,8 @@ object InitData extends App with LazyLogging {
   val device = Device(
     deviceId = UUIDUtil.uuidStr,
     deviceName = "testHans001",
-    hwDeviceId = UUIDUtil.uuidStr
+    hwDeviceId = UUIDUtil.uuidStr,
+    deviceTypeKey = Const.ENVIRONMENTSENSOR
   )
 
   Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
