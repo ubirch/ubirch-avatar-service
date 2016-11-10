@@ -20,6 +20,7 @@ object ConfigKeys {
   final val esDevicePrefix = s"$esPrefix.device"
   final val esDeviceRawDataPrefix = s"$esPrefix.devicerawdata"
   final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
+  final val esDeviceTypePrefix = s"$esPrefix.devicetype"
 
   final val awsPrefix = s"$prefix.aws"
   // Connection
@@ -40,6 +41,10 @@ object ConfigKeys {
   // DeviceHistory Index & Type
   final val ES_DEVICE_DATA_PROCESSED_INDEX = s"$esDeviceHistoryPrefix.index"
   final val ES_DEVICE_DATA_PROCESSED_TYPE = s"$esDeviceHistoryPrefix.type"
+
+  // Device Type
+  final val ES_DEVICE_TYPE_INDEX = s"$esDeviceTypePrefix.index"
+  final val ES_DEVICE_TYPE_TYPE = s"$esDeviceTypePrefix.type"
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
