@@ -1,12 +1,11 @@
 package com.ubirch.avatar.core.device
 
+import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.services.storage.DeviceDataRawStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.uuid.UUIDUtil
-
 import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,7 +15,7 @@ import scala.concurrent.{ExecutionException, Future}
   * author: cvandrei
   * since: 2016-09-30
   */
-object DeviceDataRawManager extends MyJsonProtocol {
+object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
 
   /**
     * Query the history of deviceDataRaw for a specified device.
@@ -55,14 +54,13 @@ object DeviceDataRawManager extends MyJsonProtocol {
     * @return json of what we stored
     */
   def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
-
-    val dataCopy = data.copy(id = UUIDUtil.uuid)
-    Json4sUtil.any2jvalue(dataCopy) match {
+    logger.debug(s"store data: $data")
+    Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
-        val id = Some(dataCopy.id.toString)
+        val id = Some(data.id.toString)
         DeviceDataRawStorage.storeDoc(
           docIndex = index,
           docType = esType,

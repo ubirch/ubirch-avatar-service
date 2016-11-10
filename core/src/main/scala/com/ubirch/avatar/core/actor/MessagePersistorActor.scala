@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging}
+import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.device.DeviceDataRaw
 
 /**
@@ -12,6 +13,8 @@ class MessagePersistorActor extends Actor with ActorLogging {
     case drd: DeviceDataRaw =>
       val s = sender
       log.debug(s"received message: $drd")
+      DeviceDataRawManager.store(drd)
+
     case _ =>
       log.error("received unknown message")
   }
