@@ -61,7 +61,7 @@ lazy val cmdtools = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, transformer, model, testBase % "test")
+  .dependsOn(config, aws, model, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore
@@ -73,14 +73,6 @@ lazy val aws = project
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
-  )
-
-lazy val transformer = project
-  .settings(commonSettings: _*)
-  .dependsOn(config, aws, model, testBase % "test")
-  .settings(
-    description := "device message transformation services",
-    libraryDependencies ++= depTransform
   )
 
 lazy val config = project
@@ -138,15 +130,7 @@ lazy val depCore = Seq(
   ubirchCrypto,
   ubirchUtilUUID % "test",
   scalatest % "test"
-) ++ scalaLogging
-
-lazy val depTransform = Seq(
-  ubirchUtilJson,
-  akkaG %% "akka-actor" % akkaV,
-  akkaG %% "akka-slf4j" % akkaV,
-  akkaG %% "akka-testkit" % akkaV % "test",
-  scalatest % "test"
-) ++ akkaCamel ++ awsSqsSdk ++ scalaLogging
+) ++ akkaCamel ++ scalaLogging
 
 lazy val depAws = Seq(
   ubirchUtilJson,

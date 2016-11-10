@@ -3,16 +3,12 @@ package com.ubirch.avatar.backend.route
 import java.util.UUID
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.awsiot.services.AwsShadowService
+import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.aws.ThingShadowState
-import com.ubirch.avatar.model.device.DeviceState
-import com.ubirch.avatar.model.util.ErrorFactory
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
@@ -24,11 +20,11 @@ import scala.concurrent.Future
   * since: 2016-10-27
   */
 trait DeviceStateRoute extends MyJsonProtocol
+  with ResponseUtil
   with CORSDirective {
 
   implicit val system = ActorSystem()
-
-  import system.dispatcher
+  implicit val executionContext = system.dispatcher
 
   val route: Route = {
 
@@ -36,20 +32,19 @@ trait DeviceStateRoute extends MyJsonProtocol
       respondWithCORS {
         get {
           onSuccess(queryState(deviceId)) {
-            case None => complete(errorResponse(deviceId))
-            case Some(deviceState) => complete(deviceState)
-          }
-        } ~ post {
-          entity(as[DeviceState]) { state =>
-            onSuccess(storeState(deviceId, state)) {
-              case None => complete(errorResponse(deviceId))
-              case Some(storedData) => complete(storedData)
-            }
+            case None =>
+              complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
+            case Some(deviceState: ThingShadowState) =>
+              complete(deviceState)
           }
         }
-
+        //        ~ post {
+        //          entity(as[ThingShadowState]) { state =>
+        //            onSuccess(storeState(deviceId, state)) {
+        //              case None => complete(errorResponse(deviceId))
+        //              case Some(storedData) => complete(storedData)
+        //            }
       }
-
     }
 
   }
@@ -63,14 +58,14 @@ trait DeviceStateRoute extends MyJsonProtocol
     }
   }
 
-  private def storeState(deviceId: UUID, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
-
-  private def errorResponse(deviceId: UUID,
-                            fromOpt: Option[Long] = None,
-                            sizeOpt: Option[Long] = None
-                           ): HttpResponse = {
-    val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
-    HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
-  }
-
+  //  private def storeState(deviceId: UUID, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
+  //
+  //  private def errorResponse(deviceId: UUID,
+  //                            fromOpt: Option[Long] = None,
+  //                            sizeOpt: Option[Long] = None
+  //                           ): HttpResponse = {
+  //    val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
+  //    HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
+  //  }
+  //  //  private def storeState(deviceId: String, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
 }
