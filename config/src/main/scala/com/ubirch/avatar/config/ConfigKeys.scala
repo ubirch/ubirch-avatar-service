@@ -69,4 +69,13 @@ object ConfigKeys {
 
   // AWS IoT reported state name
   final val AWS_STATES_TIMESTAMP = s"$awsPrefix.states.timestamp"
+
+  // AWS Auth keys
+  final val AWS_ACCESS_KEY_ID = s"$awsPrefix.awsaccesskeyid"
+
+  // AWS Auth keys
+  final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
+
+  // AWS SQS queues
+  final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"
 }

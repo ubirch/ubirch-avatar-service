@@ -12,13 +12,12 @@ object TransformerManager {
 
   def init(): Unit = {
 
-
     //TODO we have to find a way to register our own awsSqsClient !!
     //-> http://camel.apache.org/aws-sqs.html -> Advanced AmazonSQS configuration
     //    val ctx = new DefaultCamelContext()
     //    ctx.addComponent()
     //    ctx.bind("client", client);
-    // system.actorOf(Props[AwsConsumerActor], "transformer-consumer")
+    system.actorOf(Props[AwsConsumerActor], "transformer-consumer")
 
   }
 }

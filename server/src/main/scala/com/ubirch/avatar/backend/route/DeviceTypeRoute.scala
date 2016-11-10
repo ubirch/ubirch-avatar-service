@@ -1,16 +1,14 @@
 package com.ubirch.avatar.backend.route
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
-
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.device.DeviceType
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
-import akka.actor.ActorSystem
-import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.util.{Failure, Success}
@@ -33,28 +31,27 @@ trait DeviceTypeRoute extends CORSDirective
       respondWithCORS {
 
         get {
-          complete {
-            onComplete(DeviceTypeManager.all()) {
+          onComplete(DeviceTypeManager.all()) {
 
-              case Success(res) => complete(res)
+            case Success(res) =>
+              complete(res)
 
-              case Failure(t) =>
-                logger.error(s"failed to query all device types", t)
-                complete(serverErrorResponse("QueryError", errorMessage = t.getMessage))
+            case Failure(t) =>
+              logger.error(s"failed to query all device types", t)
+              complete(serverErrorResponse("QueryError", errorMessage = t.getMessage))
 
-            }
           }
 
         } ~ post {
           entity(as[DeviceType]) { postDeviceType =>
             onComplete(DeviceTypeManager.create(postDeviceType)) {
 
-              case Success(resp) => complete(resp)
+              case Success(resp) =>
+                complete(resp)
 
               case Failure(t) =>
                 logger.error(s"deviceType creation failed: deviceType=$postDeviceType", t)
                 complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
-
             }
           }
 

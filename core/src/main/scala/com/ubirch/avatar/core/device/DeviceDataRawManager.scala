@@ -1,5 +1,7 @@
 package com.ubirch.avatar.core.device
 
+import java.util.UUID
+
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
@@ -48,6 +50,27 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
   }
 
   /**
+    * Query one raw data object
+    *
+    * @param id unique which identifies one raw data object
+    * @return DeviceDataRaw or None
+    */
+  def history(id: UUID): Future[Option[DeviceDataRaw]] = {
+
+    require(id != null, "raw data id may not be null")
+
+    val index = Config.esDeviceDataRawIndex
+    val esType = Config.esDeviceDataRawType
+    val query = Some(QueryBuilders.termQuery("id", id.toString))
+
+    DeviceDataRawStorage.getDocs(index, esType, query).map { res =>
+      res.map { jv =>
+        jv.extract[DeviceDataRaw]
+      }.headOption
+    }
+  }
+
+  /**
     * Store a [[DeviceDataRaw]].
     *
     * @param data a device's raw data to store (messageId will be ignored)
@@ -75,5 +98,7 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
     }
 
   }
+
+
 
 }
