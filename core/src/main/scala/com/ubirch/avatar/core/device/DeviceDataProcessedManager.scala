@@ -1,12 +1,13 @@
 package com.ubirch.avatar.core.device
 
+import java.util.UUID
+
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.DeviceDataProcessed
-import com.ubirch.services.storage.DeviceDataProcessedStorage
+import com.ubirch.avatar.model.device.{DeviceDataProcessed, DeviceDataRaw}
+import com.ubirch.services.storage.{DeviceDataProcessedStorage, DeviceDataRawStorage}
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,6 +46,27 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
       }
     }
 
+  }
+
+  /**
+    * Query one raw data object
+    *
+    * @param messageId unique which identifies one raw data object
+    * @return DeviceDataRaw or None
+    */
+  def history(messageId: UUID): Future[Option[DeviceDataProcessed]] = {
+
+    require(messageId != null, "raw data id may not be null")
+
+    val index = Config.esDeviceDataProcessedIndex
+    val esType = Config.esDeviceDataProcessedType
+    val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
+
+    DeviceDataRawStorage.getDocs(index, esType, query).map { res =>
+      res.map { jv =>
+        jv.extract[DeviceDataProcessed]
+      }.headOption
+    }
   }
 
   /**

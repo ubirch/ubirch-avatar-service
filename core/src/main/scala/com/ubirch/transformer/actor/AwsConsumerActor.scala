@@ -5,6 +5,7 @@ import java.util.UUID
 import akka.actor.{ActorLogging, Props}
 import akka.camel.{CamelMessage, Consumer}
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
 
 /**
   * Created by derMicha on 30/10/16.
@@ -20,6 +21,7 @@ class AwsConsumerActor extends Consumer with ActorLogging {
   override def autoAck: Boolean = true
 
   val transformerActor = context.actorOf(Props[TransformerActor], "transformer-actor")
+  implicit val executionContext = context.dispatcher
 
   override def receive = {
     case msg: CamelMessage =>
@@ -28,7 +30,21 @@ class AwsConsumerActor extends Consumer with ActorLogging {
           try {
             val id = UUID.fromString(idStr)
             log.debug(s"received id: $id")
-            //            DeviceDataRawManager.
+            DeviceDataRawManager.history(
+              id = id
+            ).map {
+              case Some(drd) =>
+                DeviceManager.infoByHashedHwId(drd.a).map {
+                  case Some(device) =>
+                    transformerActor ! (device, drd)
+                  case None =>
+                    log.error(s"no device found for hashedHwdeviceId: ${drd.a}")
+                }
+
+              case _ =>
+                log.error(s"no raw data found for id: $id")
+            }
+
           } catch {
             case e: Exception =>
               log.error(s"received invalid id: $idStr", e)
