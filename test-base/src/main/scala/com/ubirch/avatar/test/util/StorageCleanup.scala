@@ -17,10 +17,13 @@ trait StorageCleanup {
   private val indexInfoDevice = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
   private val indexInfoDeviceRawData = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataRawIndex)
   private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataProcessedIndex)
+  private val indexInfoDeviceType = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceTypeIndex)
+
   private val indexInfos: Seq[IndexInfo] = Seq(
     indexInfoDevice,
     indexInfoDeviceRawData,
-    indexInfoDeviceHistory
+    indexInfoDeviceHistory,
+    indexInfoDeviceType
   )
 
   /**

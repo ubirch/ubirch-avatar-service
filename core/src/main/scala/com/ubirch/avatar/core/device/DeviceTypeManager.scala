@@ -30,7 +30,6 @@ object DeviceTypeManager extends LazyLogging {
     */
   def all(): Future[Seq[DeviceType]] = {
 
-    // TODO integration tests
     DeviceTypeStorage.getDocs(index, esType) map { res =>
       res.map(_.extract[DeviceType])
     }
@@ -45,7 +44,6 @@ object DeviceTypeManager extends LazyLogging {
     */
   def getByKey(key: String): Future[Option[DeviceType]] = {
 
-    // TODO integration tests
     val query = Some(QueryBuilders.termQuery("key", key))
 
     DeviceTypeStorage.getDocs(index, esType, query) map { res =>
@@ -62,7 +60,6 @@ object DeviceTypeManager extends LazyLogging {
     */
   def create(deviceType: DeviceType): Future[Option[DeviceType]] = {
 
-    // TODO integration tests
     val key = deviceType.key
     Json4sUtil.any2jvalue(deviceType) match {
 
@@ -98,7 +95,6 @@ object DeviceTypeManager extends LazyLogging {
     */
   def update(deviceType: DeviceType): Future[Option[DeviceType]] = {
 
-    // TODO integration tests
     val key = deviceType.key
     Json4sUtil.any2jvalue(deviceType) match {
 
@@ -133,7 +129,6 @@ object DeviceTypeManager extends LazyLogging {
     */
   def init(): Future[Seq[DeviceType]] = {
 
-    // TODO integration tests
     all() map { allTypes =>
 
       allTypes.isEmpty match {
