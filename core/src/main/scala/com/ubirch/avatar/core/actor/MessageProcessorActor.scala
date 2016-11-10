@@ -25,10 +25,9 @@ class MessageProcessorActor extends Actor with ActorLogging {
 
       persistorActor ! drd
 
-      //TODO add property check
+      //TODO check notary config for device
       notaryActor ! drd
 
-      // TODO AWS State update missing
       transformerActor ! drd.id
 
       //update AWS Shadow state

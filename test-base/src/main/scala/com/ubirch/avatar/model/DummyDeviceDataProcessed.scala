@@ -1,8 +1,9 @@
 package com.ubirch.avatar.model
 
+import java.util.UUID
+
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._
@@ -16,18 +17,18 @@ import scala.collection.mutable.ListBuffer
 object DummyDeviceDataProcessed {
 
   def data(deviceId: String = UUIDUtil.uuidStr,
-           messageId: String = UUIDUtil.uuidStr,
+           messageId: UUID = UUIDUtil.uuid,
            deviceType: String = "lightsLamp",
            timestamp: DateTime = DateTime.now,
-           deviceTags: Seq[String] = Seq("ubirch#0", "actor"),
+           deviceTags: Set[String] = Set("ubirch#0", "actor"),
            deviceMessage: JValue = parse("""{"foo": 23, "bar": 42}""")
           ): DeviceDataProcessed = {
-    DeviceDataProcessed(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
+    DeviceDataProcessed(deviceId, messageId, UUIDUtil.uuid, deviceType, timestamp, deviceTags, deviceMessage)
   }
 
   def dataSeries(id: String = UUIDUtil.uuidStr,
                  dType: String = "lightsLamp",
-                 tags: Seq[String] = Seq("ubirch#0", "actor"),
+                 tags: Set[String] = Set("ubirch#0", "actor"),
                  message: JValue = parse("""{"foo": 23, "bar": 42}"""),
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h

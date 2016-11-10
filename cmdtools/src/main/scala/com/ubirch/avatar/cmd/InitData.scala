@@ -29,9 +29,21 @@ object InitData extends App with LazyLogging {
       logger.info(s"created: $dev")
       val payload =
         """
+          |[
           |{
-          |"a":"b"
+          |"a":1,
+          |"b":3,
+          |"c":7
+          |},{
+          |"a":2,
+          |"b":13,
+          |"c":11
+          |},{
+          |"a":3,
+          |"b":8,
+          |"c":6
           |}
+          |]
         """.stripMargin
       val payLoadJson = Json4sUtil.string2JValue(payload).get
       val (k, s) = DeviceUtil.sign(payLoadJson, dev)

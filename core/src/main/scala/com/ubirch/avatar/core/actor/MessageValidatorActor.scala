@@ -17,16 +17,17 @@ class MessageValidatorActor extends Actor with ActorLogging {
   private val processorActor = context.actorOf(Props[MessageProcessorActor], "message-processor")
 
   override def receive: Receive = {
-    case rdr: DeviceDataRaw if rdr.v == Config.sdmV001 =>
+
+    case drd: DeviceDataRaw if drd.v == Config.sdmV001 =>
       val s = sender()
 
-      log.debug(s"received message with version ${rdr.v}")
+      log.debug(s"received message with version ${drd.v}")
 
-      DeviceUtil.validateMessage(hwDeviceId = rdr.a, authToken = rdr.s, payload = rdr.p).map {
+      DeviceUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s, payload = drd.p).map {
         case Some(dev) =>
-          processorActor ! (s, rdr, dev)
+          processorActor ! (s, drd, dev)
         case None =>
-          s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid simple signature: ${rdr.a} / ${rdr.s}")
+          s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid simple signature: ${drd.a} / ${drd.s}")
       }
 
     case drd: DeviceDataRaw =>

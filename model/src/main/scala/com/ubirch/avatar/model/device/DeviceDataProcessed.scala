@@ -1,5 +1,7 @@
 package com.ubirch.avatar.model.device
 
+import java.util.UUID
+
 import org.joda.time.DateTime
 import org.json4s._
 
@@ -8,9 +10,11 @@ import org.json4s._
   * since: 2016-11-02
   */
 case class DeviceDataProcessed(deviceId: String,
-                               messageId: String,
+                               messageId: UUID,
+                               deviceDataRawId: UUID,
                                deviceType: String,
                                timestamp: DateTime,
-                               deviceTags: Seq[String],
-                               deviceMessage: JValue
+                               deviceTags: Set[String],
+                               deviceMessage: JValue,
+                               deviceDataRaw: Option[DeviceDataRaw] = None
                               )

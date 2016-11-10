@@ -20,7 +20,8 @@ class AwsConsumerActor extends Consumer with ActorLogging {
 
   override def autoAck: Boolean = true
 
-  val transformerActor = context.actorOf(Props[TransformerActor], "transformer-actor")
+  val transformerActor = context.actorOf(Props[TransformerPreprocessorActor], "transformer-pre-actor")
+
   implicit val executionContext = context.dispatcher
 
   override def receive = {
