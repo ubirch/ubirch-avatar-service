@@ -35,7 +35,6 @@ lazy val avatarService = (project in file("."))
 lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
-  .enablePlugins(SbtOneLog)
   .dependsOn(core, config, testBase % "test")
   .settings(
     description := "REST interface and Akka HTTP specific code",
@@ -49,6 +48,7 @@ lazy val server = project
       generateDockerFile(baseDirectory.value / ".." / "Dockerfile", name.value, version.value)
     }.taskValue
   )
+//.enablePlugins(SbtOneLog)
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
@@ -58,10 +58,10 @@ lazy val cmdtools = project
     description := "command line tools",
     libraryDependencies ++= scalaLogging
   )
+//
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .enablePlugins(SbtOneLog)
   .dependsOn(config, aws, transformer, model, testBase % "test")
   .settings(
     description := "business logic",
