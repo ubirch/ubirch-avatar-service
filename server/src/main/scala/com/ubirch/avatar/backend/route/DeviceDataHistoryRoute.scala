@@ -30,7 +30,6 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
     // TODO authentication
 
-
     pathPrefix(Segment / data) { deviceId =>
 
       path(history) {
