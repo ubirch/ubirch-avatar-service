@@ -42,7 +42,7 @@ class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorL
                 v = Config.sdmV002,
                 p = payload
               )
-              transformPostActor ! (dt, device, newDrd)
+              transformPostActor ! (dt, device, newDrd, drd)
             }
         }
       }

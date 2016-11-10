@@ -23,7 +23,7 @@ object DummyDeviceDataProcessed {
            deviceTags: Set[String] = Set("ubirch#0", "actor"),
            deviceMessage: JValue = parse("""{"foo": 23, "bar": 42}""")
           ): DeviceDataProcessed = {
-    DeviceDataProcessed(deviceId, messageId, deviceType, timestamp, deviceTags, deviceMessage)
+    DeviceDataProcessed(deviceId, messageId, UUIDUtil.uuid, deviceType, timestamp, deviceTags, deviceMessage)
   }
 
   def dataSeries(id: String = UUIDUtil.uuidStr,

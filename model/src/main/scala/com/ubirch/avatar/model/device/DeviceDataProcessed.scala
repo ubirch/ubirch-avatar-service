@@ -11,8 +11,10 @@ import org.json4s._
   */
 case class DeviceDataProcessed(deviceId: String,
                                messageId: UUID,
+                               deviceDataRawId: UUID,
                                deviceType: String,
                                timestamp: DateTime,
                                deviceTags: Set[String],
-                               deviceMessage: JValue
+                               deviceMessage: JValue,
+                               deviceDataRaw: Option[DeviceDataRaw] = None
                               )

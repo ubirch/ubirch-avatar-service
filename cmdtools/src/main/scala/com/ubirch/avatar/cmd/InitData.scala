@@ -31,11 +31,17 @@ object InitData extends App with LazyLogging {
         """
           |[
           |{
-          |"a":1
+          |"a":1,
+          |"b":3,
+          |"c":7
           |},{
-          |"b":2
+          |"a":2,
+          |"b":13,
+          |"c":11
           |},{
-          |"c":3
+          |"a":3,
+          |"b":8,
+          |"c":6
           |}
           |]
         """.stripMargin

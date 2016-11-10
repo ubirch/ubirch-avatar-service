@@ -140,6 +140,18 @@ trait StorageCleanup {
           |        "messageId" : {
           |          "type" : "string",
           |          "index": "not_analyzed"
+          |        },
+          |        "deviceDataRawId" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        },
+          |        "id" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        },
+          |        "a" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
           |        }
           |      }
           |    }
