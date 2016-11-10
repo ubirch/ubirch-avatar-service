@@ -52,13 +52,12 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
-  .enablePlugins(SbtOneLog)
   .dependsOn(core)
   .settings(
     description := "command line tools",
     libraryDependencies ++= scalaLogging
   )
-//
+//.enablePlugins(SbtOneLog)
 
 lazy val core = project
   .settings(commonSettings: _*)
