@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceTypeManager
-import com.ubirch.avatar.core.server.util.RouteConstants._
+import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.model.device.DeviceType
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
@@ -26,7 +26,7 @@ trait DeviceTypeRoute extends CORSDirective
 
   val route: Route = {
 
-    path(deviceType) {
+    path(RouteConstants.deviceType) {
 
       respondWithCORS {
 
@@ -46,12 +46,14 @@ trait DeviceTypeRoute extends CORSDirective
           entity(as[DeviceType]) { postDeviceType =>
             onComplete(DeviceTypeManager.create(postDeviceType)) {
 
-              case Success(resp) =>
-                complete(resp)
+              case Success(resp) => resp match {
+                case Some(deviceType) => complete(deviceType)
+                case None => complete(requestErrorResponse("CreateError", s"another deviceType with key=${postDeviceType.key} already exists or otherwise something else on the server went wrong"))
+              }
 
               case Failure(t) =>
                 logger.error(s"deviceType creation failed: deviceType=$postDeviceType", t)
-                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
+                complete(serverErrorResponse(errorType = "CreateError", errorMessage = t.getMessage))
             }
           }
 
@@ -59,7 +61,10 @@ trait DeviceTypeRoute extends CORSDirective
           entity(as[DeviceType]) { postDeviceType =>
             onComplete(DeviceTypeManager.update(postDeviceType)) {
 
-              case Success(resp) => complete(resp)
+              case Success(resp) => resp match {
+                case Some(deviceType) => complete(deviceType)
+                case None => complete(requestErrorResponse("UpdateError", s"no deviceType with key=${postDeviceType.key} exists or otherwise something else on the server went wrong"))
+              }
 
               case Failure(t) =>
                 logger.error(s"deviceType update failed: deviceType=$postDeviceType", t)
@@ -71,7 +76,7 @@ trait DeviceTypeRoute extends CORSDirective
         }
 
       }
-    } ~ path(deviceType / init) {
+    } ~ path(RouteConstants.deviceType / RouteConstants.init) {
       respondWithCORS {
 
         get {
