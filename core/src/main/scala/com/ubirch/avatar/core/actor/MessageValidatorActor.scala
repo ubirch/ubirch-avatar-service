@@ -33,15 +33,13 @@ class MessageValidatorActor extends Actor with ActorLogging {
       val s = sender()
 
       log.debug(s"received message version: $drd")
-      if (drd.k.isDefined)
-        DeviceUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p).map {
-          case Some(dev) =>
-            processorActor ! (s, drd, dev)
-          case None =>
-            s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid ecc signature: ${drd.a} / ${drd.s}")
-        }
-      else
-        s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"valid ecc key missing: ${drd.a} / ${drd.s}")
+
+      DeviceUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k, signature = drd.s, payload = drd.p).map {
+        case Some(dev) =>
+          processorActor ! (s, drd, dev)
+        case None =>
+          s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid ecc signature: ${drd.a} / ${drd.s}")
+      }
 
     case _ =>
       log.error("received unknown message")

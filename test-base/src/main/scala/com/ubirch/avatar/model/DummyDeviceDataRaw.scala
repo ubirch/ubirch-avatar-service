@@ -19,8 +19,8 @@ object DummyDeviceDataRaw {
 
   def data(messageId: UUID = UUIDUtil.uuid,
            device: Device,
-           pubKey: Option[String] = None,
-           timestamp: Option[DateTime] = Some(DateTime.now),
+           pubKey: String = "pretend-to-be-a-public-key",
+           timestamp: DateTime = DateTime.now,
            hashedPubKey: String = "pretend-to-be-a-public-key",
            payload: JValue = parse("""{"foo": 23, "bar": 42}""")
           ): DeviceDataRaw = {
@@ -29,7 +29,7 @@ object DummyDeviceDataRaw {
 
   def dataSeries(messageId: UUID = UUIDUtil.uuid,
                  device: Device = DummyDevices.minimalDevice(),
-                 pubKey: Option[String] = None,
+                 pubKey: String = "pretend-to-be-a-public-key",
                  payload: JValue = parse("""{"foo": 23, "bar": 42}"""),
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
@@ -40,13 +40,13 @@ object DummyDeviceDataRaw {
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
 
     val hashedPubKey = pubKey match {
-      case None => "pretend-to-be-a-public-key"
-      case Some(pk) => HashUtil.sha256HexString(pk)
+      case pk: String if pk.nonEmpty => HashUtil.sha256HexString(pk)
+      case _ => "pretend-to-be-a-public-key"
     }
 
     val range = 0 until elementCount
     for (i <- range) {
-      val timestamp = Some(newestDateTime.minus(i * intervalMillis))
+      val timestamp = newestDateTime.minus(i * intervalMillis)
       val deviceData = data(messageId = messageId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey, payload = payload)
       rawDataList.+=:(deviceData)
     }

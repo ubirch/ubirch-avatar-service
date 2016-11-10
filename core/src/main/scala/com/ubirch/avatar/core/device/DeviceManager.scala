@@ -44,13 +44,15 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
 
     val devWithDefaults = device.copy(
       hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
-      deviceProperties = Some(
+      deviceProperties = Some(device.deviceProperties.getOrElse(
         DeviceUtil.defaultProps(device.deviceTypeKey)
-      ),
-      deviceConfig = Some(
+      )),
+      deviceConfig = Some(device.deviceConfig.getOrElse(
         DeviceUtil.defaultConf(device.deviceTypeKey)
-      ),
-      tags = DeviceUtil.defaultTags(device.deviceTypeKey)
+      )),
+      tags = if (device.tags.isEmpty)
+        DeviceUtil.defaultTags(device.deviceTypeKey)
+      else device.tags
     )
 
     Json4sUtil.any2jvalue(devWithDefaults) match {

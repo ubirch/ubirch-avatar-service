@@ -33,10 +33,10 @@ class MainRoute {
               deviceStubId.route ~
               deviceStub.route ~
               deviceState.route ~
-              deviceId.route ~
-              device.route ~
+              deviceDataHistory.route ~
               deviceDataRaw.route ~
-              deviceDataHistory.route
+              deviceId.route ~
+              device.route
           }
         }
       }

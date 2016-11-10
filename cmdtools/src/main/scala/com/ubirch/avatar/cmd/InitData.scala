@@ -37,7 +37,7 @@ object InitData extends App with LazyLogging {
       val (k, s) = DeviceUtil.sign(payLoadJson, dev)
       val rawMsg = DeviceDataRaw(
         a = dev.hashedHwDeviceId,
-        k = Some(k),
+        k = k,
         s = s,
         p = payLoadJson
       )

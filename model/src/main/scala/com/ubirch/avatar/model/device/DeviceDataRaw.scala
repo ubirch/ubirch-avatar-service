@@ -24,8 +24,8 @@ case class DeviceDataRaw(
                           id: UUID = UUIDUtil.uuid, // messageId
                           v: String = "0.0.3",
                           a: String,
-                          k: Option[String] = None,
-                          ts: Option[DateTime] = None,
+                          k: String,
+                          ts: DateTime = DateTime.now(),
                           s: String,
                           p: JValue
                         ) {
