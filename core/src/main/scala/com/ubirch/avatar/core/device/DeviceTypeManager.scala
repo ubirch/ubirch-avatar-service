@@ -94,13 +94,35 @@ object DeviceTypeManager extends LazyLogging {
     * Update a [[DeviceType]].
     *
     * @param deviceType deviceType to update
-    * @return updated deviceType; None if something went wrong
+    * @return updated deviceType; None if no record exists or something went wrong
     */
   def update(deviceType: DeviceType): Future[Option[DeviceType]] = {
 
     // TODO integration tests
-    // TODO implementation
-    Future(Some(deviceType))
+    val key = deviceType.key
+    Json4sUtil.any2jvalue(deviceType) match {
+
+      case Some(doc) =>
+        getByKey(key) flatMap {
+
+          case Some(dbRecord) =>
+            DeviceTypeStorage.storeDoc(
+              docIndex = index,
+              docType = esType,
+              docIdOpt = Some(key),
+              doc = doc
+            ) map { jv =>
+              Some(jv.extract[DeviceType])
+            }
+
+          case None =>Future(None)
+
+        }
+
+      case None =>
+        logger.error(s"failed to convert DeviceType to JSON: deviceType=$deviceType")
+        Future(None)
+    }
 
   }
 

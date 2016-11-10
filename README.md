@@ -154,32 +154,52 @@ Query all available device types:
 Create device type:
 
     curl -XPOST localhost:8080/api/avatarService/v1/device/deviceType -d '{
-      key: "unknownDeviceTypeKey",
-      name: {
-        de: "unbekannterDeviceTyp",
-        en: "unknownDeviceType"
+      "key": "lightsSensor",
+      "name": {
+        "de": "Lichtsensor",
+        "en": "Light Sensor"
       },
-      icon: "ion-help-circled",
-      defaults: {
-        properties: {},
-        config: {},
-        tags: []
+      "icon": "lightsSensor",
+      "defaults": {
+        "properties": {
+          "storesdata": "true"
+        },
+        "config": {
+          "i": 900,
+          "s": 0,
+          "ir": 20
+        },
+        "tags": [
+          "ubirch#0",
+          "sensor",
+          "btcDemo"
+        ]
       }
     }'
 
 Update device type:
 
     curl -XPUT localhost:8080/api/avatarService/v1/device/deviceType -d '{
-      key: "unknownDeviceTypeKey",
-      name: {
-        de: "unbekannterDeviceTyp",
-        en: "unknownDeviceType"
+      "key": "lightsSensor",
+      "name": {
+        "de": "Lichtsensor",
+        "en": "Light Sensor"
       },
-      icon: "ion-help-circled",
-      defaults: {
-        properties: {},
-        config: {},
-        tags: []
+      "icon": "lightsSensor",
+      "defaults": {
+        "properties": {
+          "storesdata": "true"
+        },
+        "config": {
+          "i": 900,
+          "s": 0,
+          "ir": 20
+        },
+        "tags": [
+          "ubirch#0",
+          "sensor",
+          "btcDemo"
+        ]
       }
     }'
 
