@@ -44,7 +44,5 @@ class MainRoute {
       pathSingleSlash {
         welcome.route
       }
-
   }
-
 }

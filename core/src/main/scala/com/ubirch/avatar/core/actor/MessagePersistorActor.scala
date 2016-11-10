@@ -14,9 +14,7 @@ class MessagePersistorActor extends Actor with ActorLogging {
       val s = sender
       log.debug(s"received message: $drd")
       DeviceDataRawManager.store(drd)
-
     case _ =>
       log.error("received unknown message")
   }
-
 }
