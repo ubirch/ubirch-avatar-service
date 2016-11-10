@@ -1,0 +1,1 @@
+addSbtPlugin("com.zavakid.sbt" % "sbt-one-log" % "1.0.1")

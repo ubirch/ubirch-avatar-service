@@ -22,7 +22,7 @@ object InitData extends App with LazyLogging {
     hwDeviceId = UUIDUtil.uuidStr
   )
 
-  Await.result(DeviceManager.create(device), 5 seconds) match {
+  Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
     case Some(dev) =>
       logger.info(s"created: $dev")
       val payload =

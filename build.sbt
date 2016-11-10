@@ -35,6 +35,7 @@ lazy val avatarService = (project in file("."))
 lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
+  .enablePlugins(SbtOneLog)
   .dependsOn(core, config, testBase % "test")
   .settings(
     description := "REST interface and Akka HTTP specific code",
@@ -51,6 +52,7 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
+  .enablePlugins(SbtOneLog)
   .dependsOn(core)
   .settings(
     description := "command line tools",
@@ -59,6 +61,7 @@ lazy val cmdtools = project
 
 lazy val core = project
   .settings(commonSettings: _*)
+  .enablePlugins(SbtOneLog)
   .dependsOn(config, aws, transformer, model, testBase % "test")
   .settings(
     description := "business logic",
