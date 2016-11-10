@@ -9,13 +9,15 @@ import com.ubirch.avatar.model.device.{Device, DeviceStub}
 object DeviceStubManger {
 
   def create(device: Device): DeviceStub = {
+
     val awsSyncState = AwsShadowService.getSyncState(device.awsDeviceThingId)
+
     DeviceStub(
       deviceId = device.deviceId,
       deviceName = device.deviceName,
       deviceTypeKey = device.deviceTypeKey,
       deviceLastUpdated = device.deviceLastUpdated,
-      syncState = awsSyncState
+      inSync = awsSyncState
     )
   }
 }
