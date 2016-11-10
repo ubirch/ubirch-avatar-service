@@ -4,10 +4,9 @@ import java.security._
 import java.util.Base64
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
-
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.{DeviceTypeDefaults, DeviceType, DeviceTypeName, Device}
+import com.ubirch.avatar.model.device.{Device, DeviceType, DeviceTypeDefaults, DeviceTypeName}
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec, EdDSAPublicKeySpec}
@@ -197,25 +196,44 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
   def defaultTranslation(deviceType: String): DeviceTypeName = {
 
     deviceType match {
-      case Const.LIGHTSSENSOR => DeviceTypeName("Lichtsensor", "Light Sensor")
-      case Const.LIGHTSLAMP => DeviceTypeName("Lampe", "Lamp")
-      case Const.ENVIRONMENTSENSOR => DeviceTypeName("Umweltsensor", "Environment Sensor")
-      case _ => DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
+      case Const.LIGHTSSENSOR =>
+        DeviceTypeName("Lichtsensor", "Light Sensor")
+      case Const.LIGHTSLAMP =>
+        DeviceTypeName("Lampe", "Lamp")
+      case Const.ENVIRONMENTSENSOR =>
+        DeviceTypeName("Umweltsensor", "Environment Sensor")
+      case _ =>
+        DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
     }
 
   }
 
-  def defaultDeviceTypes: Set[DeviceType] = defaultDeviceTypesSet map defaultDevice
+  def defaultDeviceTypes: Set[DeviceType] = defaultDeviceTypesSet map defaultDeviceType
 
-  def defaultDevice(deviceType: String): DeviceType = {
+  def defaultDeviceType(deviceType: String): DeviceType = {
     DeviceType(
-      deviceType,
-      defaultTranslation(deviceType),
-      deviceType,
-      DeviceTypeDefaults(
+      key = deviceType,
+      name = defaultTranslation(deviceType),
+      icon = deviceType,
+      transformerQueue = Some(s"ubirch.transformer.${deviceType.toLowerCase.trim}"),
+      defaults = DeviceTypeDefaults(
         defaultProps(deviceType),
         defaultConf(deviceType),
         defaultTags(deviceType)
+      )
+    )
+  }
+
+  def defaultDeviceType(): DeviceType = {
+    DeviceType(
+      key = "defaultDeviceType",
+      name = defaultTranslation("defaultDeviceType"),
+      icon = "defaultDeviceType",
+      transformerQueue = Some(s"ubirch.transformer.defaultDeviceType"),
+      defaults = DeviceTypeDefaults(
+        defaultProps("defaultDeviceType"),
+        defaultConf("defaultDeviceType"),
+        defaultTags("defaultDeviceType")
       )
     )
   }
