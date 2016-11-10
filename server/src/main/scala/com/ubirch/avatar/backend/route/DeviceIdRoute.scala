@@ -34,7 +34,7 @@ trait DeviceIdRoute extends CORSDirective
   private val deviceApiActor = system.actorOf(Props[DeviceApiActor], "device-api")
 
   val route: Route = {
-    path(Segment) { deviceId =>
+    path(JavaUUID) { deviceId =>
 
       // TODO authentication for all three methods
 
