@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.test.base.ElasticsearchSpec
+import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.MyJsonProtocol
 
 import scala.concurrent.Await
@@ -64,8 +65,9 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
   feature("update()") {
 
-    ignore("index does not exist") {
-      // TODO implement test
+    scenario("index does not exist") {
+      val defaultDeviceType = DeviceUtil.defaultDeviceType()
+      Await.result(DeviceTypeManager.update(defaultDeviceType), 1 second) should be(None)
     }
 
     ignore("index exists; no record with given key exists --> update fails") {
