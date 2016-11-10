@@ -8,7 +8,7 @@ import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.core.server.util.RouteConstants._
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
@@ -41,7 +41,7 @@ trait DeviceUpdateRoute extends MyJsonProtocol
             onComplete(validatorActor ? sdm) {
               case Success(resp) =>
                 resp match {
-                  case dm: DeviceDataRaw =>
+                  case dm: DeviceStateUpdate =>
                     complete(dm)
                   case jer: JsonErrorResponse =>
                     complete(requestErrorResponse(jer))

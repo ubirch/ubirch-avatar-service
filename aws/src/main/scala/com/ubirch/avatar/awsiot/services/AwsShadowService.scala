@@ -25,7 +25,7 @@ object AwsShadowService extends MyJsonProtocol with LazyLogging {
     */
   def getCurrentDeviceState(awsDeviceShadowId: String): ThingShadowState = {
     ThingShadowState(
-      syncState = getSyncState(awsDeviceShadowId),
+      inSync = getSyncState(awsDeviceShadowId),
       desired = getDesired(awsDeviceShadowId),
       reported = getReported(awsDeviceShadowId),
       delta = getDelta(awsDeviceShadowId),

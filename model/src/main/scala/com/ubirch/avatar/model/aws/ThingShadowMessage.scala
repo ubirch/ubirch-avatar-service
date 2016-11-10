@@ -12,7 +12,7 @@ case class ThingShadowMessage(
 
 
 case class ThingShadowState(
-                             syncState: Option[Boolean] = None,
+                             inSync: Option[Boolean] = None,
                              desired: Option[JValue] = None,
                              reported: Option[JValue] = None,
                              delta: Option[JValue] = None,
