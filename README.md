@@ -113,7 +113,7 @@ TODO: description
 
 Raw data comes directly from devices and is not yet human readable.
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device/data/raw -d '{
+    curl -XPOST localhost:8080/api/avatarService/v1/device/data/raw -H "Content-Type: application/json" -d '{
       "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
       "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
       "deviceType": "lightsLamp",
@@ -153,7 +153,7 @@ Query all available device types:
 
 Create device type:
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device/deviceType -d '{
+    curl -XPOST localhost:8080/api/avatarService/v1/device/deviceType -H "Content-Type: application/json" -d '{
       "key": "lightsSensor",
       "name": {
         "de": "Lichtsensor",
@@ -179,7 +179,7 @@ Create device type:
 
 Update device type:
 
-    curl -XPUT localhost:8080/api/avatarService/v1/device/deviceType -d '{
+    curl -XPUT localhost:8080/api/avatarService/v1/device/deviceType -H "Content-Type: application/json" -d '{
       "key": "lightsSensor",
       "name": {
         "de": "Lichtsensor",
