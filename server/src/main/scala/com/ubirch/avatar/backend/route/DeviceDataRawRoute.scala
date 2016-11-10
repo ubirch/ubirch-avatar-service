@@ -26,7 +26,7 @@ trait DeviceDataRawRoute extends MyJsonProtocol
 
     // TODO authentication
 
-    path(device / data / raw) {
+    path(data / raw) {
       respondWithCORS {
         post {
           entity(as[DeviceDataRaw]) { deviceMessage =>
