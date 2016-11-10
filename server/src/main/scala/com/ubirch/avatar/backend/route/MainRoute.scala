@@ -35,9 +35,8 @@ class MainRoute {
               deviceState.route ~
               deviceDataHistory.route ~
               deviceDataRaw.route ~
-              deviceId.route
-          } ~ path(RouteConstants.device) {
-            device.route
+              deviceId.route ~
+              device.route
           }
         }
       }
