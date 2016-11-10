@@ -218,7 +218,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
       // verify
       (from.isDefined && from.get < 0) || (size.isDefined && size.get < 0) match {
 
-        case true => verifyMethodNotAllowed()
+        case true => verifyNotFound()
 
         case false =>
 
@@ -273,7 +273,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
       // verify
       (from.isDefined && from.get < 0) || (size.isDefined && size.get < 0) match {
 
-        case true => verifyMethodNotAllowed()
+        case true => verifyNotFound()
 
         case false =>
 
@@ -305,8 +305,8 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   }
 
-  private def verifyMethodNotAllowed(): Unit = {
-    status shouldEqual MethodNotAllowed
+  private def verifyNotFound(): Unit = {
+    status shouldEqual NotFound
     verifyCORSHeader(exist = false)
   }
 
