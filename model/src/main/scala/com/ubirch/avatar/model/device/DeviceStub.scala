@@ -10,5 +10,5 @@ case class DeviceStub(
                        deviceName: String,
                        deviceTypeKey: String = "unknownDeviceTypeKey",
                        deviceLastUpdated: Option[DateTime],
-                       syncState: Option[Boolean]
+                       inSync: Option[Boolean]
                      )
