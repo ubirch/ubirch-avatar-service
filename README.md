@@ -147,63 +147,121 @@ Query historic device data (CAUTION: `from` and `page_size` may be zero or large
 
 Devices have types and this set of methods allows us to manage them.
 
-Query all available device types:
+#### Query all available device types
 
     curl -XGET localhost:8080/api/avatarService/v1/device/deviceType
 
-Create device type:
+#### Create device type
 
     curl -XPOST localhost:8080/api/avatarService/v1/device/deviceType -H "Content-Type: application/json" -d '{
-      "key": "lightsSensor",
-      "name": {
-        "de": "Lichtsensor",
-        "en": "Light Sensor"
-      },
-      "icon": "lightsSensor",
-      "defaults": {
-        "properties": {
-          "storesdata": "true"
+        "key": "trackle",
+        "name": {
+          "de": "Trackle",
+          "en": "Trackle"
         },
-        "config": {
-          "i": 900,
-          "s": 0,
-          "ir": 20
-        },
-        "tags": [
-          "ubirch#0",
-          "sensor",
-          "btcDemo"
-        ]
-      }
-    }'
+        "icon": "trackle",
+        "defaults": {
+          "properties": {},
+          "config": {
+            "i": 60
+          },
+          "tags": [
+            "ubirch#1",
+            "actor",
+            "trackle"
+          ]
+        }
+      }'
 
-Update device type:
+##### Response (Success)
+
+    HTTP/1.1 200 OK
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+    Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Accept-Language, Host, Referer, User-Agent
+    Access-Control-Allow-Credentials: true
+    Server: ubirch-avatar-service
+    Date: Thu, 10 Nov 2016 16:30:51 GMT
+    Content-Type: application/json
+    Content-Length: 158
+    
+    {"key":"trackle","name":{"de":"Trackle","en":"Trackle"},"icon":"trackle","defaults":{"properties":{},"config":{"i":60},"tags":["ubirch#1","actor","trackle"]}}
+
+##### Response (Error)
+
+    HTTP/1.1 400 Bad Request
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+    Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Accept-Language, Host, Referer, User-Agent
+    Access-Control-Allow-Credentials: true
+    Server: ubirch-avatar-service
+    Date: Thu, 10 Nov 2016 16:35:40 GMT
+    Content-Type: application/json
+    Content-Length: 199
+    
+    {
+      "version" : "1.0",
+      "status" : "NOK",
+      "errorType" : "CreateError",
+      "errorMessage": "another deviceType with key=trackle already exists or otherwise something else on the server went wrong"
+    }
+
+#### Update Device Type
 
     curl -XPUT localhost:8080/api/avatarService/v1/device/deviceType -H "Content-Type: application/json" -d '{
-      "key": "lightsSensor",
-      "name": {
-        "de": "Lichtsensor",
-        "en": "Light Sensor"
-      },
-      "icon": "lightsSensor",
-      "defaults": {
-        "properties": {
-          "storesdata": "true"
+        "key": "trackle",
+        "name": {
+          "de": "Trackle",
+          "en": "Trackle"
         },
-        "config": {
-          "i": 900,
-          "s": 0,
-          "ir": 20
-        },
-        "tags": [
-          "ubirch#0",
-          "sensor",
-          "btcDemo"
-        ]
-      }
-    }'
+        "icon": "trackle",
+        "defaults": {
+          "properties": {},
+          "config": {
+            "i": 120
+          },
+          "tags": [
+            "ubirch#0",
+            "actor",
+            "trackle"
+          ]
+        }
+      }'
 
-Create default device types but only if no other types exist in the database:
+##### Response (Success)
+
+    HTTP/1.1 200 OK
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+    Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Accept-Language, Host, Referer, User-Agent
+    Access-Control-Allow-Credentials: true
+    Server: ubirch-avatar-service
+    Date: Thu, 10 Nov 2016 16:33:24 GMT
+    Content-Type: application/json
+    Content-Length: 159
+    
+    {"key":"trackle","name":{"de":"Trackle","en":"Trackle"},"icon":"trackle","defaults":{"properties":{},"config":{"i":120},"tags":["ubirch#0","actor","trackle"]}}
+
+##### Response (Error)
+
+    HTTP/1.1 400 Bad Request
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+    Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Accept-Language, Host, Referer, User-Agent
+    Access-Control-Allow-Credentials: true
+    Server: ubirch-avatar-service
+    Date: Thu, 10 Nov 2016 16:27:31 GMT
+    Content-Type: application/json
+    Content-Length: 186
+    
+    {
+      "version" : "1.0",
+      "status" : "NOK",
+      "errorType" : "UpdateError",
+      "errorMessage": "no deviceType with key=trackle exists or otherwise something else on the server went wrong"
+    }
+
+#### Create default device types but only if no other types exist in the database:
 
     curl -XGET localhost:8080/api/avatarService/v1/device/deviceType/init
 
