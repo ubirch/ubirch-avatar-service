@@ -86,6 +86,16 @@ object Config extends ConfigBase {
   def esDeviceDataProcessedType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_TYPE)
 
   /**
+    * @return Elasticsearch deviceType index
+    */
+  def esDeviceTypeIndex: String = config.getString(ConfigKeys.ES_DEVICE_TYPE_INDEX)
+
+  /**
+    * @return Elasticsearch deviceType type
+    */
+  def esDeviceTypeType: String = config.getString(ConfigKeys.ES_DEVICE_TYPE_TYPE)
+
+  /**
     * @return ElasticSearch default size in regards to pagination
     */
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
