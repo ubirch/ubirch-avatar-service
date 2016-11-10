@@ -29,7 +29,7 @@ trait DeviceStubIdRoute
 
   // TODO authentication
 
-    path(stub / Segment) { deviceId =>
+    path(stub / JavaUUID) { deviceId =>
       respondWithCORS {
         get {
           onComplete(DeviceManager.stub(deviceId)) {

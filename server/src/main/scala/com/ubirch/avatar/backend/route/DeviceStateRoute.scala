@@ -1,5 +1,7 @@
 package com.ubirch.avatar.backend.route
 
+import java.util.UUID
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
@@ -30,7 +32,7 @@ trait DeviceStateRoute extends MyJsonProtocol
 
   val route: Route = {
 
-    path(Segment / state) { deviceId =>
+    path(JavaUUID / state) { deviceId =>
       respondWithCORS {
         get {
           onSuccess(queryState(deviceId)) {
@@ -52,7 +54,7 @@ trait DeviceStateRoute extends MyJsonProtocol
 
   }
 
-  private def queryState(deviceId: String): Future[Option[ThingShadowState]] = {
+  private def queryState(deviceId: UUID): Future[Option[ThingShadowState]] = {
     DeviceManager.info(deviceId).map {
       case Some(dvc) =>
         Some(AwsShadowService.getCurrentDeviceState(dvc.awsDeviceThingId))
@@ -61,9 +63,9 @@ trait DeviceStateRoute extends MyJsonProtocol
     }
   }
 
-  private def storeState(deviceId: String, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
+  private def storeState(deviceId: UUID, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
 
-  private def errorResponse(deviceId: String,
+  private def errorResponse(deviceId: UUID,
                             fromOpt: Option[Long] = None,
                             sizeOpt: Option[Long] = None
                            ): HttpResponse = {

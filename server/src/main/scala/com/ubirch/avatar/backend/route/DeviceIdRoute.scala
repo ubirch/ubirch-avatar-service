@@ -76,7 +76,7 @@ trait DeviceIdRoute extends CORSDirective
                     errorType = "UpdateError",
                     errorMessage = s"update non existing device: deviceId=$deviceId"
                   )
-                case Some(dev) if deviceId != device.deviceId =>
+                case Some(dev) if deviceId.toString != device.deviceId =>
                   requestErrorResponse(
                     errorType = "UpdateError",
                     errorMessage = s"deviceId mismatch $deviceId <-> device: deviceId=$deviceId"

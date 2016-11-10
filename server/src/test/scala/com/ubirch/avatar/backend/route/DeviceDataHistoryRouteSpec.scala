@@ -7,6 +7,7 @@ import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.util.uuid.UUIDUtil
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
@@ -263,7 +264,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
     if (indexExists) {
       DeviceDataProcessedTestUtil.storeSeries(1)
     }
-    val deviceId = "1234asdf"
+    val deviceId = UUIDUtil.uuidStr
     val url = urlForTest(deviceId, from, size)
 
     // test

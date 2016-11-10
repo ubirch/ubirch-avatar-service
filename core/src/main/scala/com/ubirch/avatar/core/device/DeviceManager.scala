@@ -154,8 +154,8 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
     }
   }
 
-  def stub(deviceId: String): Future[Option[DeviceStub]] = {
-    info(deviceId: String).map {
+  def stub(deviceId: UUID): Future[Option[DeviceStub]] = {
+    info(deviceId).map {
       case Some(device) =>
         Some(DeviceStubManger.create(device = device))
       case None =>

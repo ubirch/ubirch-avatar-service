@@ -1,5 +1,7 @@
 package com.ubirch.avatar.backend.route
 
+import java.util.UUID
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
@@ -30,7 +32,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
     // TODO authentication
 
-    pathPrefix(Segment / data) { deviceId =>
+    pathPrefix(JavaUUID / data) { deviceId =>
 
       path(history) {
         respondWithCORS {
@@ -73,7 +75,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
   }
 
   //TODO refactor this, put it into an actor
-  private def queryHistory(deviceId: String,
+  private def queryHistory(deviceId: UUID,
                            fromOpt: Option[Int] = None,
                            sizeOpt: Option[Int] = None
                           ): Future[Option[Seq[DeviceDataProcessed]]] = {
@@ -82,11 +84,11 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
       case Some(from) =>
         sizeOpt match {
-          case Some(size) => DeviceDataProcessedManager.history(deviceId, from, size)
-          case None => DeviceDataProcessedManager.history(deviceId, from)
+          case Some(size) => DeviceDataProcessedManager.history(deviceId.toString, from, size)
+          case None => DeviceDataProcessedManager.history(deviceId.toString, from)
         }
 
-      case None => DeviceDataProcessedManager.history(deviceId)
+      case None => DeviceDataProcessedManager.history(deviceId.toString)
 
     }
 
@@ -97,7 +99,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
   }
 
-  private def errorResponseHistory(deviceId: String,
+  private def errorResponseHistory(deviceId: UUID,
                                    fromOpt: Option[Long] = None,
                                    sizeOpt: Option[Long] = None
                                   ): HttpResponse = {
