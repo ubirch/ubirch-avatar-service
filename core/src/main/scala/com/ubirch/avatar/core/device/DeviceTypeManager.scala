@@ -111,7 +111,7 @@ object DeviceTypeManager extends LazyLogging {
               Some(jv.extract[DeviceType])
             }
 
-          case None =>Future(None)
+          case None => Future(None)
 
         }
 
