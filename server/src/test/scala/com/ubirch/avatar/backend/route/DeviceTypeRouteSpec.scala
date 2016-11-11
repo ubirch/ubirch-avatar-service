@@ -1,6 +1,7 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.core.server.util.RouteConstants
+import com.ubirch.avatar.core.test.util.DeviceTypeTestUtil
 import com.ubirch.avatar.model.device.DeviceType
 import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
@@ -31,8 +32,24 @@ class DeviceTypeRouteSpec extends RouteSpec
       runTypeGetProducesEmptyResponse()
     }
 
-    ignore("some records exist") {
-      // TODO
+    scenario("some records exist") {
+
+      // prepare
+      val deviceTypes = DeviceTypeTestUtil.storeSeries()
+
+      // test
+      Get(RouteConstants.urlDeviceType) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual OK
+
+        verifyCORSHeader()
+
+        responseEntity.contentType should be(`application/json`)
+        responseAs[Seq[DeviceType]].sortWith(_.key < _.key) should be(deviceTypes)
+
+      }
+
     }
 
   }
@@ -48,8 +65,25 @@ class DeviceTypeRouteSpec extends RouteSpec
       runTypePostCreatesRecord()
     }
 
-    ignore("record with given key exists --> create fails") {
-      // TODO
+    scenario("record with given key exists --> create fails") {
+
+      // prepare
+      val deviceTypes = DeviceTypeTestUtil.storeSeries()
+      val deviceType = deviceTypes.head
+
+      // test
+      Post(RouteConstants.urlDeviceType, deviceType) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual BadRequest
+
+        verifyCORSHeader()
+
+        responseEntity.contentType should be(`application/json`)
+        responseAs[JsonErrorResponse] should be(JsonErrorResponse(errorType = "CreateError", errorMessage = s"another deviceType with key=${deviceType.key} already exists or otherwise something else on the server went wrong"))
+
+      }
+
     }
 
   }
@@ -65,8 +99,25 @@ class DeviceTypeRouteSpec extends RouteSpec
       runTypePutFails()
     }
 
-    ignore("record with given key exists --> update is successful") {
-      // TODO
+    scenario("record with given key exists --> update is successful") {
+
+      // prepare
+      val deviceType1 = DeviceTypeTestUtil.storeSeries().head
+      val deviceType = deviceType1.copy(icon = s"${deviceType1.icon}1")
+
+      // test
+      Put(RouteConstants.urlDeviceType, deviceType) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual OK
+
+        verifyCORSHeader()
+
+        responseEntity.contentType should be(`application/json`)
+        responseAs[DeviceType] should be(deviceType)
+
+      }
+
     }
 
   }
@@ -82,8 +133,24 @@ class DeviceTypeRouteSpec extends RouteSpec
       runTypeInitCreatesRecords()
     }
 
-    ignore("records exist --> no deviceTypes are created") {
-      // TODO
+    scenario("records exist --> no deviceTypes are created") {
+
+      // prepare
+      val deviceTypes = DeviceTypeTestUtil.storeSeries()
+
+      // test
+      Get(RouteConstants.urlDeviceTypeInit) ~> Route.seal(routes) ~> check {
+
+        // verify
+        status shouldEqual OK
+
+        verifyCORSHeader()
+
+        responseEntity.contentType should be(`application/json`)
+        responseAs[Seq[DeviceType]].sortWith(_.key < _.key) should be(deviceTypes)
+
+      }
+
     }
 
   }
