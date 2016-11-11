@@ -23,6 +23,8 @@ import scala.concurrent.Future
   */
 object DeviceUtil extends MyJsonProtocol with LazyLogging {
 
+  val defaultKey = "defaultDeviceType"
+
   private def createSimpleSignature(payload: JValue, device: Device): String = {
 
     createSimpleSignature(payload, device.hwDeviceId)
@@ -200,7 +202,7 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
 
   def defaultDeviceTypes: Set[DeviceType] = defaultDeviceTypesSet map defaultDeviceType
 
-  def defaultDeviceType(deviceType: String = "defaultDeviceType"): DeviceType = {
+  def defaultDeviceType(deviceType: String = defaultKey): DeviceType = {
     DeviceType(
       key = deviceType,
       name = defaultTranslation(deviceType),
