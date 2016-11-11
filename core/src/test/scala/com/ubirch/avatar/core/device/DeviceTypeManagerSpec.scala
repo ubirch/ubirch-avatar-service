@@ -1,5 +1,6 @@
 package com.ubirch.avatar.core.device
 
+import com.ubirch.avatar.core.test.util.DeviceTypeTestUtil
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.util.json.MyJsonProtocol
@@ -29,11 +30,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
     scenario("some records exist") {
 
       // prepare
-      val dataSeries = DeviceTypeUtil.dataSeries()
-      dataSeries foreach { dt =>
-        Await.result(DeviceTypeManager.create(dt), 1 second)
-      }
-      Thread.sleep(300 * dataSeries.size)
+      val dataSeries = DeviceTypeTestUtil.storeSeries()
 
       // test
       val all = Await.result(DeviceTypeManager.all(), 2 seconds)
@@ -60,9 +57,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
     scenario("record matching the given key exists") {
 
       // prepare
-      val deviceType = DeviceTypeUtil.defaultDeviceType()
-      Await.result(DeviceTypeManager.create(deviceType), 1 second) should be(Some(deviceType))
-      Thread.sleep(1500)
+      val deviceType = DeviceTypeTestUtil.storeSeries(elementCount = 1).head
 
       // test & verify
       Await.result(DeviceTypeManager.getByKey(deviceType.key), 1 second) should be(Some(deviceType))
@@ -141,9 +136,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
     scenario("record with given key exists --> update is successful") {
 
       // prepare
-      val deviceType = DeviceTypeUtil.defaultDeviceType()
-      Await.result(DeviceTypeManager.create(deviceType), 1 second)
-      Thread.sleep(1000)
+      val deviceType = DeviceTypeTestUtil.storeSeries(elementCount = 1).head
       Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
 
       val updatedDeviceType = deviceType.copy(icon = s"${deviceType.icon}-2")
@@ -183,11 +176,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
     scenario("records exist --> no deviceTypes are created") {
 
       // prepare
-      val deviceTypes = DeviceTypeUtil.dataSeries(prefix = "myDevice", elementCount = 2)
-      deviceTypes foreach { dt =>
-        Await.result(DeviceTypeManager.create(dt), 1 second)
-      }
-      Thread.sleep(1000)
+      val deviceTypes = DeviceTypeTestUtil.storeSeries(prefix = "myDevice", elementCount = 2)
 
       // test & verify
       Await.result(DeviceTypeManager.init(), 1 second) should be(deviceTypes)
