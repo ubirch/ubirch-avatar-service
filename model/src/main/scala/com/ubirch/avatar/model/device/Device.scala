@@ -8,7 +8,7 @@ import org.json4s.JValue
   * since: 2016-09-23
   */
 case class Device(deviceId: String,
-                  deviceTypeKey: String = "unknownDeviceTypeKey",
+                  deviceTypeKey: String = "unknownDeviceType",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",
                   hashedHwDeviceId: String = "unknownHwDeviceId",

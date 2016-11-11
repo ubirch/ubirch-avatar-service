@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 case class DeviceStub(
                        deviceId: String,
                        deviceName: String,
-                       deviceTypeKey: String = "unknownDeviceTypeKey",
+                       deviceTypeKey: String = "unknownDeviceType",
                        deviceLastUpdated: Option[DateTime],
                        inSync: Option[Boolean]
                      )

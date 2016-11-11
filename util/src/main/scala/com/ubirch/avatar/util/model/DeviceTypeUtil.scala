@@ -16,7 +16,7 @@ object DeviceTypeUtil {
 
   val defaultKey = "defaultDeviceType"
 
-  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR)
+  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.UNKNOWN_DEVICE)
 
   def dataSeries(prefix: String = defaultKey,
                  elementCount: Int = 5,
@@ -40,7 +40,7 @@ object DeviceTypeUtil {
     DeviceType(
       key = deviceType,
       name = defaultTranslation(deviceType),
-      icon = deviceType,
+      icon = defaultIcon(deviceType),
       transformerQueue = Some(s"ubirch.transformer.${deviceType.toLowerCase.trim}"),
       defaults = DeviceTypeDefaults(
         defaultProps(deviceType),
@@ -60,7 +60,23 @@ object DeviceTypeUtil {
 
       case Const.ENVIRONMENTSENSOR => DeviceTypeName("Umweltsensor", "Environment Sensor")
 
+      case Const.UNKNOWN_DEVICE => DeviceTypeName("unbekannter Geräte Typ", "unknown device type")
+
       case _ => DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
+
+    }
+
+  }
+
+  def defaultIcon(deviceType: String): String = {
+
+    deviceType match {
+
+      case Const.LIGHTSSENSOR => "ion-ios-sunny"
+      case Const.LIGHTSLAMP => "ion-ios-lightbulb"
+      case Const.ENVIRONMENTSENSOR => "ion-speedometer"
+      case Const.UNKNOWN_DEVICE => "ion-radio-waves"
+      case _ => "ion-radio-waves"
 
     }
 
@@ -79,6 +95,8 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_TRUE
         )
+
+      case Const.UNKNOWN_DEVICE => Map.empty
 
       case _ => Map.empty
 
@@ -122,6 +140,8 @@ object DeviceTypeUtil {
           Const.CONF_THRESHOLD -> 3600
         )
 
+      case Const.UNKNOWN_DEVICE => Map.empty
+
       case _ => Map(Const.CONF_INTERVALL -> (15 * 60))
 
     }
@@ -154,6 +174,8 @@ object DeviceTypeUtil {
           Const.TAG_SENSOR,
           Const.TAG_BTCD
         )
+
+      case Const.UNKNOWN_DEVICE => Set.empty
 
       case _ => Set(Const.TAG_UBB1)
 

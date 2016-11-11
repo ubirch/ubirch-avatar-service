@@ -16,6 +16,7 @@ object Const {
 
   final val LIGHTSSENSOR = "lightsSensor"
   final val ENVIRONMENTSENSOR = "envSensor"
+  final val UNKNOWN_DEVICE = "unknownDeviceType"
 
   final val LIGHTSLAMP = "lightsLamp"
 
