@@ -57,7 +57,8 @@ trait StorageCleanup {
     val mappings = Seq(
       deviceMappings,
       deviceDataRawMappings,
-      deviceDataProcessedMappings
+      deviceDataProcessedMappings,
+      deviceTypeMappings
     )
     mappings foreach storeMapping
 
@@ -163,6 +164,27 @@ trait StorageCleanup {
     val url = indexInfoDeviceHistory.url
 
     Mapping(url, deviceDataProcessedMapping)
+
+  }
+
+  private def deviceTypeMappings: Mapping = {
+
+    val deviceTypeMapping =
+      s"""{
+          |  "mappings": {
+          |    "${Config.esDeviceTypeType}" : {
+          |      "properties" : {
+          |        "key" : {
+          |          "type" : "string",
+          |          "index": "not_analyzed"
+          |        }
+          |      }
+          |    }
+          |  }
+          |}""".stripMargin
+    val url = indexInfoDeviceType.url
+
+    Mapping(url, deviceTypeMapping)
 
   }
 

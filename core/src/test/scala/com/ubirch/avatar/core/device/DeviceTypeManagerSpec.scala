@@ -26,8 +26,22 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
       Await.result(DeviceTypeManager.all(), 1 second) should be('isEmpty)
     }
 
-    ignore("some records exist") {
-      // TODO implement test
+    scenario("some records exist") {
+
+      // prepare
+      val dataSeries = DeviceTypeUtil.dataSeries()
+      dataSeries foreach { dt =>
+        Await.result(DeviceTypeManager.create(dt), 1 second)
+      }
+      Thread.sleep(300 * dataSeries.size)
+
+      // test
+      val all = Await.result(DeviceTypeManager.all(), 2 seconds)
+
+      // verify
+      all.size should be(dataSeries.size)
+      all foreach dataSeries.contains
+
     }
 
   }
@@ -43,8 +57,16 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
       Await.result(DeviceTypeManager.getByKey("unknownDevice"), 1 second) should be(None)
     }
 
-    ignore("record matching the given key exists") {
-      // TODO implement test
+    scenario("record matching the given key exists") {
+
+      // prepare
+      val deviceType = DeviceTypeUtil.defaultDeviceType()
+      Await.result(DeviceTypeManager.create(deviceType), 1 second) should be(Some(deviceType))
+      Thread.sleep(1000)
+
+      // test & verify
+      Await.result(DeviceTypeManager.getByKey(deviceType.key), 1 second) should be(Some(deviceType))
+
     }
 
   }
@@ -83,16 +105,17 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
     }
 
-    ignore("record with given key exists --> create fails") {
+    scenario("record with given key exists --> create fails") {
 
       // prepare
       val deviceType = DeviceTypeUtil.defaultDeviceType()
       Await.result(DeviceTypeManager.create(deviceType), 1 second)
-      Thread.sleep(1000)
+      Thread.sleep(2000)
       Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
 
       // test
       val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
+      Thread.sleep(1000)
 
       // verify
       result should be(None)
