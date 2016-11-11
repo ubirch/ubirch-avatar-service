@@ -17,12 +17,13 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
   feature("all()") {
 
-    scenario("index does not exist") {
+    scenario("index does not exist --> empty response") {
+      deleteIndexes()
       Await.result(DeviceTypeManager.all(), 1 second) should be('isEmpty)
     }
 
-    ignore("index exists; no records exist") {
-      // TODO implement test
+    scenario("index exists; no records exist --> empty response") {
+      Await.result(DeviceTypeManager.all(), 1 second) should be('isEmpty)
     }
 
     ignore("some records exist") {
@@ -33,12 +34,13 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
   feature("getByKey()") {
 
-    scenario("index does not exist") {
+    scenario("index does not exist --> result is None") {
+      deleteIndexes()
       Await.result(DeviceTypeManager.getByKey("unknownDevice"), 1 second) should be(None)
     }
 
-    ignore("index exists; no record matching the given key exist") {
-      // TODO implement test
+    scenario("index exists; no record matching the given key exist --> result is None") {
+      Await.result(DeviceTypeManager.getByKey("unknownDevice"), 1 second) should be(None)
     }
 
     ignore("record matching the given key exists") {
@@ -49,7 +51,8 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
   feature("create()") {
 
-    ignore("index does not exist") {
+    ignore("index does not exist --> create is successful") {
+      deleteIndexes()
       // TODO implement test
     }
 
@@ -65,13 +68,15 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
   feature("update()") {
 
-    scenario("index does not exist") {
+    scenario("index does not exist --> update fails") {
+      deleteIndexes()
       val defaultDeviceType = DeviceUtil.defaultDeviceType()
       Await.result(DeviceTypeManager.update(defaultDeviceType), 1 second) should be(None)
     }
 
-    ignore("index exists; no record with given key exists --> update fails") {
-      // TODO implement test
+    scenario("index exists; no record with given key exists --> update fails") {
+      val defaultDeviceType = DeviceUtil.defaultDeviceType()
+      Await.result(DeviceTypeManager.update(defaultDeviceType), 1 second) should be(None)
     }
 
     ignore("record with given key exists --> update is successful") {
@@ -83,6 +88,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("init()") {
 
     ignore("index does not exist --> default deviceTypes are created") {
+      deleteIndexes()
       // TODO implement test
     }
 
