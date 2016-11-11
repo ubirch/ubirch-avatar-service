@@ -51,17 +51,53 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
   feature("create()") {
 
-    ignore("index does not exist --> create is successful") {
+    scenario("index does not exist --> create is successful") {
+
+      // prepare
       deleteIndexes()
-      // TODO implement test
+      val deviceType = DeviceTypeUtil.defaultDeviceType()
+
+      // test
+      val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
+      Thread.sleep(2000)
+
+      // verify
+      result should be(Some(deviceType))
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+
     }
 
-    ignore("index exists; no record with given key exists --> create is successful") {
-      // TODO implement test
+    scenario("index exists; no record with given key exists --> create is successful") {
+
+      // prepare
+      deleteIndexes()
+      val deviceType = DeviceTypeUtil.defaultDeviceType()
+
+      // test
+      val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
+      Thread.sleep(2000)
+
+      // verify
+      result should be(Some(deviceType))
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+
     }
 
     ignore("record with given key exists --> create fails") {
-      // TODO implement test
+
+      // prepare
+      val deviceType = DeviceTypeUtil.defaultDeviceType()
+      Await.result(DeviceTypeManager.create(deviceType), 1 second)
+      Thread.sleep(1000)
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+
+      // test
+      val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
+
+      // verify
+      result should be(None)
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+
     }
 
   }
