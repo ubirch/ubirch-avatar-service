@@ -20,11 +20,11 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
     scenario("index does not exist --> empty response") {
       deleteIndexes()
-      Await.result(DeviceTypeManager.all(), 1 second) should be('isEmpty)
+      runAllReturnsEmpty()
     }
 
     scenario("index exists; no records exist --> empty response") {
-      Await.result(DeviceTypeManager.all(), 1 second) should be('isEmpty)
+      runAllReturnsEmpty()
     }
 
     scenario("some records exist") {
@@ -47,21 +47,16 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
     scenario("index does not exist --> result is None") {
       deleteIndexes()
-      Await.result(DeviceTypeManager.getByKey("unknownDevice"), 1 second) should be(None)
+      runGetByKeyResultsInNone()
     }
 
     scenario("index exists; no record matching the given key exist --> result is None") {
-      Await.result(DeviceTypeManager.getByKey("unknownDevice"), 1 second) should be(None)
+      runGetByKeyResultsInNone()
     }
 
     scenario("record matching the given key exists") {
-
-      // prepare
       val deviceType = DeviceTypeTestUtil.storeSeries(elementCount = 1).head
-
-      // test & verify
       Await.result(DeviceTypeManager.getByKey(deviceType.key), 1 second) should be(Some(deviceType))
-
     }
 
   }
@@ -69,35 +64,12 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("create()") {
 
     scenario("index does not exist --> create is successful") {
-
-      // prepare
       deleteIndexes()
-      val deviceType = DeviceTypeUtil.defaultDeviceType()
-
-      // test
-      val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
-      Thread.sleep(2000)
-
-      // verify
-      result should be(Some(deviceType))
-      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
-
+      runCreateSuccessful()
     }
 
     scenario("index exists; no record with given key exists --> create is successful") {
-
-      // prepare
-      deleteIndexes()
-      val deviceType = DeviceTypeUtil.defaultDeviceType()
-
-      // test
-      val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
-      Thread.sleep(2000)
-
-      // verify
-      result should be(Some(deviceType))
-      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
-
+      runCreateSuccessful()
     }
 
     scenario("record with given key exists --> create fails") {
@@ -124,13 +96,11 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
     scenario("index does not exist --> update fails") {
       deleteIndexes()
-      val defaultDeviceType = DeviceTypeUtil.defaultDeviceType()
-      Await.result(DeviceTypeManager.update(defaultDeviceType), 1 second) should be(None)
+      runUpdateFails()
     }
 
     scenario("index exists; no record with given key exists --> update fails") {
-      val defaultDeviceType = DeviceTypeUtil.defaultDeviceType()
-      Await.result(DeviceTypeManager.update(defaultDeviceType), 1 second) should be(None)
+      runUpdateFails()
     }
 
     scenario("record with given key exists --> update is successful") {
@@ -156,33 +126,52 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("init()") {
 
     scenario("index does not exist --> default deviceTypes are created") {
-
-      // prepare
       deleteIndexes()
-
-      // test
-      val result = Await.result(DeviceTypeManager.init(), 1 second)
-
-      // verify
-      result.toSet should be(DeviceTypeUtil.defaultDeviceTypes)
-
+      runInitDeviceTypesAreCreated()
     }
 
     scenario("index exists; no records exist --> default deviceTypes are created") {
-      val result = Await.result(DeviceTypeManager.init(), 1 second)
-      result.toSet should be(DeviceTypeUtil.defaultDeviceTypes)
+      runInitDeviceTypesAreCreated()
     }
 
     scenario("records exist --> no deviceTypes are created") {
-
-      // prepare
       val deviceTypes = DeviceTypeTestUtil.storeSeries(prefix = "myDevice", elementCount = 2)
-
-      // test & verify
       Await.result(DeviceTypeManager.init(), 1 second) should be(deviceTypes)
-
     }
 
+  }
+
+  private def runAllReturnsEmpty() = {
+    Await.result(DeviceTypeManager.all(), 1 second) should be('isEmpty)
+  }
+
+  private def runGetByKeyResultsInNone() = {
+    Await.result(DeviceTypeManager.getByKey("unknownDevice"), 1 second) should be(None)
+  }
+
+  private def runCreateSuccessful() = {
+
+    // (continue) prepare
+    val deviceType = DeviceTypeUtil.defaultDeviceType()
+
+    // test
+    val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
+    Thread.sleep(2000)
+
+    // verify
+    result should be(Some(deviceType))
+    Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+
+  }
+
+  private def runUpdateFails() = {
+    val defaultDeviceType = DeviceTypeUtil.defaultDeviceType()
+    Await.result(DeviceTypeManager.update(defaultDeviceType), 1 second) should be(None)
+  }
+
+  private def runInitDeviceTypesAreCreated() = {
+    val result = Await.result(DeviceTypeManager.init(), 1 second)
+    result.toSet should be(DeviceTypeUtil.defaultDeviceTypes)
   }
 
 }
