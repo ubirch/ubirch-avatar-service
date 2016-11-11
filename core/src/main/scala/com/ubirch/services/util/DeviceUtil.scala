@@ -90,18 +90,14 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
 
   def defaultProps(deviceTypeKey: String): JValue = {
     val props = deviceTypeKey match {
-      case Const.LIGHTSLAMP =>
-        Map[String, String]()
-      case Const.LIGHTSSENSOR =>
-        Map[String, String](
-          Const.STOREDATA -> Const.BOOL_TRUE
-        )
+      case Const.LIGHTSLAMP => Map.empty
+      case Const.LIGHTSSENSOR => Map(Const.STOREDATA -> Const.BOOL_TRUE)
       case Const.ENVIRONMENTSENSOR =>
-        Map[String, String](
+        Map(
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_TRUE
         )
-      case _ => Map[String, String]()
+      case _ => Map.empty
     }
     Json4sUtil.any2jvalue(props)
   }
@@ -109,27 +105,24 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
   def defaultTags(deviceTypeKey: String): Set[String] = {
     deviceTypeKey match {
       case Const.LIGHTSLAMP =>
-        Set[String](
+        Set(
           Const.TAG_UBB0,
           Const.TAG_ACTOR,
           Const.TAG_BTCD
         )
       case Const.LIGHTSSENSOR =>
-        Set[String](
+        Set(
           Const.TAG_UBB0,
           Const.TAG_SENSOR,
           Const.TAG_BTCD
         )
       case Const.ENVIRONMENTSENSOR =>
-        Set[String](
+        Set(
           Const.TAG_UBB1,
           Const.TAG_SENSOR,
           Const.TAG_BTCD
         )
-      case _ =>
-        Set[String](
-          Const.TAG_UBB1
-        )
+      case _ => Set(Const.TAG_UBB1)
     }
   }
 
@@ -147,25 +140,22 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
   def defaultConf(deviceType: String): JValue = {
     val conf = deviceType match {
       case Const.LIGHTSSENSOR =>
-        Map[String, Int](
+        Map(
           Const.CONF_INTERVALL -> (15 * 60),
           Const.CONF_SENSIVITY -> 0,
           Const.CONF_INFRARED -> 20
         )
       case Const.LIGHTSLAMP =>
-        Map[String, Int](
+        Map(
           Const.CONF_INTERVALL -> (15 * 60),
           Const.CONF_BLINKING -> 0
         )
       case Const.ENVIRONMENTSENSOR =>
-        Map[String, Int](
+        Map(
           Const.CONF_INTERVALL -> (15 * 60),
           Const.CONF_THRESHOLD -> 3600
         )
-      case _ =>
-        Map[String, Int](
-          Const.CONF_INTERVALL -> (15 * 60)
-        )
+      case _ => Map(Const.CONF_INTERVALL -> (15 * 60))
     }
     Json4sUtil.any2jvalue(conf)
   }
