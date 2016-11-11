@@ -18,7 +18,7 @@ object DeviceTypeTestUtil {
                   elementCount: Int = 5,
                   startIndex: Int = 0,
                   sleep: Int = 1000
-                 ): Seq[DeviceType] = {
+                 ): Set[DeviceType] = {
 
     val dataSeries = DeviceTypeUtil.dataSeries(
       prefix = prefix,

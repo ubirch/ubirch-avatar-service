@@ -36,8 +36,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
       val all = Await.result(DeviceTypeManager.all(), 2 seconds)
 
       // verify
-      all.size should be(dataSeries.size)
-      all foreach dataSeries.contains
+      all should be(dataSeries)
 
     }
 
@@ -78,7 +77,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
       val deviceType = DeviceTypeUtil.defaultDeviceType()
       Await.result(DeviceTypeManager.create(deviceType), 1 second)
       Thread.sleep(2000)
-      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Set(deviceType))
 
       // test
       val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
@@ -86,7 +85,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
       // verify
       result should be(None)
-      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Set(deviceType))
 
     }
 
@@ -107,7 +106,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
       // prepare
       val deviceType = DeviceTypeTestUtil.storeSeries(elementCount = 1).head
-      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Set(deviceType))
 
       val updatedDeviceType = deviceType.copy(icon = s"${deviceType.icon}-2")
 
@@ -117,7 +116,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
       // verify
       result should be(Some(updatedDeviceType))
-      Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(updatedDeviceType))
+      Await.result(DeviceTypeManager.all(), 1 second) should be(Set(updatedDeviceType))
 
     }
 
@@ -160,7 +159,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
     // verify
     result should be(Some(deviceType))
-    Await.result(DeviceTypeManager.all(), 1 second) should be(Seq(deviceType))
+    Await.result(DeviceTypeManager.all(), 1 second) should be(Set(deviceType))
 
   }
 

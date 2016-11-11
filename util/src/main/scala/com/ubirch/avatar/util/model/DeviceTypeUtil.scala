@@ -21,7 +21,7 @@ object DeviceTypeUtil {
   def dataSeries(prefix: String = defaultKey,
                  elementCount: Int = 5,
                  startIndex: Int = 0
-                ): Seq[DeviceType] = {
+                ): Set[DeviceType] = {
 
     val series: ListBuffer[DeviceType] = ListBuffer()
 
@@ -30,7 +30,7 @@ object DeviceTypeUtil {
       series += deviceType
     }
 
-    series.toSeq
+    series.toSet
 
   }
 

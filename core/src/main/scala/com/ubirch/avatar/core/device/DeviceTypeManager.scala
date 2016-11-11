@@ -28,10 +28,10 @@ object DeviceTypeManager extends LazyLogging {
   /**
     * @return all existing [[DeviceType]]s; empty if none exist
     */
-  def all(): Future[Seq[DeviceType]] = {
+  def all(): Future[Set[DeviceType]] = {
 
     DeviceTypeStorage.getDocs(index, esType) map { res =>
-      res.map(_.extract[DeviceType])
+      res.map(_.extract[DeviceType]).toSet
     }
 
   }
@@ -127,14 +127,14 @@ object DeviceTypeManager extends LazyLogging {
     *
     * @return deviceTypes currently in the database; never empty unless database is empty and the list of default deviceTypes is empty, too
     */
-  def init(): Future[Seq[DeviceType]] = {
+  def init(): Future[Set[DeviceType]] = {
 
     all() map { allTypes =>
 
       allTypes.isEmpty match {
 
         case true =>
-          val defaultTypes = DeviceTypeUtil.defaultDeviceTypes.toSeq
+          val defaultTypes = DeviceTypeUtil.defaultDeviceTypes
           defaultTypes foreach create
           defaultTypes
 

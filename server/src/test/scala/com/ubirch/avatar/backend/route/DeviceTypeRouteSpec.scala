@@ -46,7 +46,7 @@ class DeviceTypeRouteSpec extends RouteSpec
         verifyCORSHeader()
 
         responseEntity.contentType should be(`application/json`)
-        responseAs[Seq[DeviceType]].sortWith(_.key < _.key) should be(deviceTypes)
+        responseAs[Set[DeviceType]] should be(deviceTypes)
 
       }
 
@@ -147,7 +147,7 @@ class DeviceTypeRouteSpec extends RouteSpec
         verifyCORSHeader()
 
         responseEntity.contentType should be(`application/json`)
-        responseAs[Seq[DeviceType]].sortWith(_.key < _.key) should be(deviceTypes)
+        responseAs[Set[DeviceType]] should be(deviceTypes)
 
       }
 
