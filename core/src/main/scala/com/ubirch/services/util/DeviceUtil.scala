@@ -200,7 +200,7 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
 
   def defaultDeviceTypes: Set[DeviceType] = defaultDeviceTypesSet map defaultDeviceType
 
-  def defaultDeviceType(deviceType: String): DeviceType = {
+  def defaultDeviceType(deviceType: String = "defaultDeviceType"): DeviceType = {
     DeviceType(
       key = deviceType,
       name = defaultTranslation(deviceType),
@@ -210,20 +210,6 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
         defaultProps(deviceType),
         defaultConf(deviceType),
         defaultTags(deviceType)
-      )
-    )
-  }
-
-  def defaultDeviceType(): DeviceType = {
-    DeviceType(
-      key = "defaultDeviceType",
-      name = defaultTranslation("defaultDeviceType"),
-      icon = "defaultDeviceType",
-      transformerQueue = Some(s"ubirch.transformer.defaultDeviceType"),
-      defaults = DeviceTypeDefaults(
-        defaultProps("defaultDeviceType"),
-        defaultConf("defaultDeviceType"),
-        defaultTags("defaultDeviceType")
       )
     )
   }
