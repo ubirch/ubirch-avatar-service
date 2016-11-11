@@ -46,6 +46,7 @@ trait StorageCleanup {
     indexInfos foreach { indexTuple =>
       httpClient.delete(indexTuple.url)
     }
+    Thread.sleep(200)
 
   }
 
@@ -61,6 +62,7 @@ trait StorageCleanup {
       deviceTypeMappings
     )
     mappings foreach storeMapping
+    Thread.sleep(100)
 
   }
 
