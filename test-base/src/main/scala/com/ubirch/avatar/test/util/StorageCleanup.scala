@@ -40,7 +40,7 @@ trait StorageCleanup {
   /**
     * Delete all indexes.
     */
-  private def deleteIndexes(): Unit = {
+  final def deleteIndexes(): Unit = {
 
     val httpClient = new HttpClient
     indexInfos foreach { indexTuple =>
@@ -52,7 +52,7 @@ trait StorageCleanup {
   /**
     * Create all mappings.
     */
-  private def createMappings() = {
+  final def createMappings() = {
 
     val mappings = Seq(
       deviceMappings,
