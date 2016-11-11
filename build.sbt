@@ -61,7 +61,7 @@ lazy val cmdtools = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, model, testBase % "test")
+  .dependsOn(config, aws, model, util, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore
@@ -88,6 +88,14 @@ lazy val model = project
     name := "model",
     description := "JSON models",
     libraryDependencies ++= depModel
+  )
+
+lazy val util = project
+  .settings(commonSettings: _*)
+  .dependsOn(config, model)
+  .settings(
+    description := "ubirch-avatar-service specific utils",
+    libraryDependencies ++= depUtil
   )
 
 lazy val testBase = (project in file("test-base"))
@@ -143,6 +151,8 @@ lazy val depModel = Seq(
   json4sNative,
   ubirchUtilUUID
 ) ++ joda
+
+lazy val depUtil = json4s
 
 lazy val depTestBase = Seq(
   scalatest,

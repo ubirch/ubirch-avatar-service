@@ -4,8 +4,8 @@ import com.typesafe.scalalogging.LazyLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceType
+import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.services.storage.DeviceTypeStorage
-import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 
 import org.elasticsearch.index.query.QueryBuilders
@@ -134,7 +134,7 @@ object DeviceTypeManager extends LazyLogging {
       allTypes.isEmpty match {
 
         case true =>
-          val defaultTypes = DeviceUtil.defaultDeviceTypes.toSeq
+          val defaultTypes = DeviceTypeUtil.defaultDeviceTypes.toSeq
           defaultTypes foreach create
           defaultTypes
 

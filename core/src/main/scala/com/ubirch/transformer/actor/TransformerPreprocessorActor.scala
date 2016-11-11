@@ -1,10 +1,11 @@
 package com.ubirch.transformer.actor
 
+import com.ubirch.avatar.util.model.DeviceTypeUtil
+
 import akka.actor.{Actor, ActorLogging, Props}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw, DeviceDataRawEnvelope, DeviceType}
-import com.ubirch.services.util.DeviceUtil
+import com.ubirch.avatar.model.device.{Device, DeviceDataRaw, DeviceDataRawEnvelope}
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
 
@@ -26,7 +27,7 @@ class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorL
       log.debug(s"received device raw data message: $drd from device: $device")
       DeviceTypeManager.getByKey(device.deviceTypeKey).map { currentDeviceType =>
 
-        val dt = currentDeviceType.getOrElse(DeviceUtil.defaultDeviceType())
+        val dt = currentDeviceType.getOrElse(DeviceTypeUtil.defaultDeviceType())
 
         drd.v match {
           case Config.sdmV001 =>

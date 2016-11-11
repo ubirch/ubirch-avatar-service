@@ -8,9 +8,9 @@ import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.{Device, DeviceStub}
+import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.storage.DeviceStorage
-import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.elasticsearch.index.query.QueryBuilders
 
@@ -45,13 +45,13 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
     val devWithDefaults = device.copy(
       hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
       deviceProperties = Some(device.deviceProperties.getOrElse(
-        DeviceUtil.defaultProps(device.deviceTypeKey)
+        DeviceTypeUtil.defaultProps(device.deviceTypeKey)
       )),
       deviceConfig = Some(device.deviceConfig.getOrElse(
-        DeviceUtil.defaultConf(device.deviceTypeKey)
+        DeviceTypeUtil.defaultConf(device.deviceTypeKey)
       )),
       tags = if (device.tags.isEmpty)
-        DeviceUtil.defaultTags(device.deviceTypeKey)
+        DeviceTypeUtil.defaultTags(device.deviceTypeKey)
       else device.tags
     )
 

@@ -63,6 +63,15 @@ TODO
       "com.ubirch.avatar" %% "model" % "0.2.0-SNAPSHOT"
     )
 
+### `util`
+
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots")
+    )
+    libraryDependencies ++= Seq(
+      "com.ubirch.avatar" %% "util" % "0.2.0-SNAPSHOT"
+    )
+
 ## REST Methods
 
 ### Welcome / Health

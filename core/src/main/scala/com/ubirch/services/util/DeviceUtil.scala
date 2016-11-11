@@ -4,16 +4,17 @@ import java.security._
 import java.util.Base64
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
-import com.ubirch.avatar.config.Const
+
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.{Device, DeviceType, DeviceTypeDefaults, DeviceTypeName}
+import com.ubirch.avatar.model.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec, EdDSAPublicKeySpec}
-import net.i2p.crypto.eddsa.{EdDSAEngine, EdDSAPublicKey, KeyPairGenerator}
-import org.json4s.JsonDSL._
+
 import org.json4s._
 import org.json4s.native.Serialization._
+
+import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec, EdDSAPublicKeySpec}
+import net.i2p.crypto.eddsa.{EdDSAEngine, EdDSAPublicKey, KeyPairGenerator}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -23,13 +24,7 @@ import scala.concurrent.Future
   */
 object DeviceUtil extends MyJsonProtocol with LazyLogging {
 
-  val defaultKey = "defaultDeviceType"
-
-  private def createSimpleSignature(payload: JValue, device: Device): String = {
-
-    createSimpleSignature(payload, device.hwDeviceId)
-
-  }
+  private def createSimpleSignature(payload: JValue, device: Device): String = createSimpleSignature(payload, device.hwDeviceId)
 
   /**
     * @deprecated this code is legacy and will be deleted asap
@@ -90,78 +85,6 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
     }
   }
 
-  def defaultProps(deviceTypeKey: String): JValue = {
-    val props = deviceTypeKey match {
-      case Const.LIGHTSLAMP => Map.empty
-      case Const.LIGHTSSENSOR => Map(Const.STOREDATA -> Const.BOOL_TRUE)
-      case Const.ENVIRONMENTSENSOR =>
-        Map(
-          Const.STOREDATA -> Const.BOOL_TRUE,
-          Const.BLOCKC -> Const.BOOL_TRUE
-        )
-      case _ => Map.empty
-    }
-    Json4sUtil.any2jvalue(props)
-  }
-
-  def defaultTags(deviceTypeKey: String): Set[String] = {
-    deviceTypeKey match {
-      case Const.LIGHTSLAMP =>
-        Set(
-          Const.TAG_UBB0,
-          Const.TAG_ACTOR,
-          Const.TAG_BTCD
-        )
-      case Const.LIGHTSSENSOR =>
-        Set(
-          Const.TAG_UBB0,
-          Const.TAG_SENSOR,
-          Const.TAG_BTCD
-        )
-      case Const.ENVIRONMENTSENSOR =>
-        Set(
-          Const.TAG_UBB1,
-          Const.TAG_SENSOR,
-          Const.TAG_BTCD
-        )
-      case _ => Set(Const.TAG_UBB1)
-    }
-  }
-
-  /**
-    * The following fields can be included in default configs:
-    *
-    * * s = sensor sensitivity
-    * * ir = infrared filter
-    * * bf = 0/1
-    * * i = update interval
-    *
-    * @param deviceType device type the default config applies to
-    * @return default config for the given device type
-    */
-  def defaultConf(deviceType: String): JValue = {
-    val conf = deviceType match {
-      case Const.LIGHTSSENSOR =>
-        Map(
-          Const.CONF_INTERVALL -> (15 * 60),
-          Const.CONF_SENSIVITY -> 0,
-          Const.CONF_INFRARED -> 20
-        )
-      case Const.LIGHTSLAMP =>
-        Map(
-          Const.CONF_INTERVALL -> (15 * 60),
-          Const.CONF_BLINKING -> 0
-        )
-      case Const.ENVIRONMENTSENSOR =>
-        Map(
-          Const.CONF_INTERVALL -> (15 * 60),
-          Const.CONF_THRESHOLD -> 3600
-        )
-      case _ => Map(Const.CONF_INTERVALL -> (15 * 60))
-    }
-    Json4sUtil.any2jvalue(conf)
-  }
-
   def sign(payload: JValue, device: Device): (String, String) = {
     //TODO add private key management!!!
     val sgr: Signature = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
@@ -181,39 +104,6 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
 
     (Base64.getEncoder.encodeToString(pKey.getEncoded),
       Base64.getEncoder.encodeToString(signature))
-  }
-
-  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR)
-
-  def defaultTranslation(deviceType: String): DeviceTypeName = {
-
-    deviceType match {
-      case Const.LIGHTSSENSOR =>
-        DeviceTypeName("Lichtsensor", "Light Sensor")
-      case Const.LIGHTSLAMP =>
-        DeviceTypeName("Lampe", "Lamp")
-      case Const.ENVIRONMENTSENSOR =>
-        DeviceTypeName("Umweltsensor", "Environment Sensor")
-      case _ =>
-        DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
-    }
-
-  }
-
-  def defaultDeviceTypes: Set[DeviceType] = defaultDeviceTypesSet map defaultDeviceType
-
-  def defaultDeviceType(deviceType: String = defaultKey): DeviceType = {
-    DeviceType(
-      key = deviceType,
-      name = defaultTranslation(deviceType),
-      icon = deviceType,
-      transformerQueue = Some(s"ubirch.transformer.${deviceType.toLowerCase.trim}"),
-      defaults = DeviceTypeDefaults(
-        defaultProps(deviceType),
-        defaultConf(deviceType),
-        defaultTags(deviceType)
-      )
-    )
   }
 
 }
