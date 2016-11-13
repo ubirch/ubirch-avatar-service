@@ -210,6 +210,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
               val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
               val body = RequestBody(ddrString, APPLICATION_JSON)
               val resp = httpClient.post(new URL(avatarServiceUrl), Some(body))
+              Thread.sleep(100)
             //              DeviceDataRawManager.store(ddr)
             //                  logger.debug(s"$ddr")
             case None =>
