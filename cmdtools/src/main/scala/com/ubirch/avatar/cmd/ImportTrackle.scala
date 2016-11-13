@@ -13,9 +13,9 @@ import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
-import uk.co.bigbeeconsultants.http.{Config, HttpClient}
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.request.RequestBody
+import uk.co.bigbeeconsultants.http.{Config, HttpClient}
 
 import scala.collection._
 import scala.concurrent.Await
@@ -210,9 +210,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
               val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
               val body = RequestBody(ddrString, APPLICATION_JSON)
               val resp = httpClient.post(new URL(avatarServiceUrl), Some(body))
-              Thread.sleep(50)
             //              DeviceDataRawManager.store(ddr)
-
             //                  logger.debug(s"$ddr")
             case None =>
               logger.error(s"could not parse payload: $ldp")
