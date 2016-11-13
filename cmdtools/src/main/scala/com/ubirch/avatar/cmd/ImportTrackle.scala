@@ -13,7 +13,7 @@ import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
-import uk.co.bigbeeconsultants.http.HttpClient
+import uk.co.bigbeeconsultants.http.{Config, HttpClient}
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.request.RequestBody
 
@@ -33,7 +33,11 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
     */
   val googleDriveBasePath = s"${System.getProperty("user.home")}/"
 
-  val httpClient = new HttpClient
+  val httpClient = new HttpClient(commonConfig = Config(
+    connectTimeout = 15000,
+    readTimeout = 15000
+  ))
+
   val avatarServiceUrl = "http://localhost:8080/api/avatarService/v1/device/update"
 
   val hwDeviceId = UUIDUtil.uuidStr
@@ -202,10 +206,11 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
                 p = payload
               )
 
+              //TODO use throtteling, akka offers this for free
               val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
               val body = RequestBody(ddrString, APPLICATION_JSON)
-              httpClient.post(new URL(avatarServiceUrl), Some(body))
-              Thread.sleep(400)
+              val resp = httpClient.post(new URL(avatarServiceUrl), Some(body))
+              Thread.sleep(100)
             //              DeviceDataRawManager.store(ddr)
 
             //                  logger.debug(s"$ddr")

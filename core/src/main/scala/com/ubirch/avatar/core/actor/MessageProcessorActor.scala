@@ -1,10 +1,10 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
-import com.ubirch.services.util.DeviceUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 
 /**
@@ -12,9 +12,9 @@ import com.ubirch.transformer.actor.TransformerProducerActor
   */
 class MessageProcessorActor extends Actor with ActorLogging {
 
-  private val transformerActor = context.actorOf(Props[TransformerProducerActor], "transformer-producer")
+  private val transformerActor = context.actorOf(new RoundRobinPool(5).props(Props[TransformerProducerActor]), "transformer-producer")
 
-  private val persistorActor = context.actorOf(Props[MessagePersistorActor], "persistor-service")
+  private val persistorActor = context.actorOf(new RoundRobinPool(5).props(Props[MessagePersistorActor]), "persistor-service")
 
   private val notaryActor = context.actorOf(Props[MessageNotaryActor], "notatry-service")
 
@@ -26,8 +26,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
       persistorActor ! drd
 
       //TODO check notary config for device
-      if (DeviceUtil.checkNotaryUsage(device))
-        notaryActor ! drd
+      //      if (DeviceUtil.checkNotaryUsage(device))
+      //        notaryActor ! drd
 
       transformerActor ! drd.id
 
