@@ -15,6 +15,7 @@ object RouteConstants {
   val state = "state"
   val history = "history"
   val update = "update"
+  val bulk = "bulk"
   val data = "data"
   val raw = "raw"
   val deviceType = "deviceType"

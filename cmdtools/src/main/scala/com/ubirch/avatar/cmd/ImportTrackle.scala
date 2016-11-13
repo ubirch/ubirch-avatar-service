@@ -38,7 +38,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
     readTimeout = 15000
   ))
 
-  val avatarServiceUrl = "http://localhost:8080/api/avatarService/v1/device/update"
+  val avatarServiceUrl = "http://localhost:8080/api/avatarService/v1/device/bulk"
 
   val hwDeviceId = UUIDUtil.uuidStr
   val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
@@ -210,7 +210,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
               val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
               val body = RequestBody(ddrString, APPLICATION_JSON)
               val resp = httpClient.post(new URL(avatarServiceUrl), Some(body))
-              Thread.sleep(100)
+              Thread.sleep(50)
             //              DeviceDataRawManager.store(ddr)
 
             //                  logger.debug(s"$ddr")

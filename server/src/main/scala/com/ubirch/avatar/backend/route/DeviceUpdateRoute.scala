@@ -10,7 +10,7 @@ import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.core.server.util.RouteConstants._
 import com.ubirch.avatar.model.device.{DeviceDataRaw, DeviceStateUpdate}
-import com.ubirch.avatar.model.server.JsonErrorResponse
+import com.ubirch.avatar.model.server.{JsonErrorResponse, JsonResponse}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
@@ -62,6 +62,16 @@ trait DeviceUpdateRoute extends MyJsonProtocol
           }
         }
       }
-    }
+    } ~
+      path(bulk) {
+        respondWithCORS {
+          post {
+            entity(as[DeviceDataRaw]) { sdm =>
+              validatorActor ! sdm
+              complete(JsonResponse(message = "processing started"))
+            }
+          }
+        }
+      }
   }
 }
