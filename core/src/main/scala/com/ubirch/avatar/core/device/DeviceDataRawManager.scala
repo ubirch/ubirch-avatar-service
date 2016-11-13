@@ -84,6 +84,7 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
         val id = Some(data.id.toString)
+        //TODO we should use here ES bulk client
         DeviceDataRawStorage.storeDoc(
           docIndex = index,
           docType = esType,
