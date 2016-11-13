@@ -1,10 +1,11 @@
 package com.ubirch.avatar.cmd
 
 import java.io.File
+import java.net.URL
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.model.StorageCleanup
 import com.ubirch.crypto.hash.HashUtil
@@ -12,8 +13,9 @@ import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
-
 import uk.co.bigbeeconsultants.http.HttpClient
+import uk.co.bigbeeconsultants.http.header.MediaType._
+import uk.co.bigbeeconsultants.http.request.RequestBody
 
 import scala.collection._
 import scala.concurrent.Await
@@ -25,6 +27,11 @@ import scala.language.postfixOps
   * Created by derMicha on 13/11/16.
   */
 object ImportTrackle extends App with LazyLogging with StorageCleanup {
+
+  /**
+    * may be you have to fix that, usually Google Drive is a root folder inside your home folder
+    */
+  val googleDriveBasePath = s"${System.getProperty("user.home")}/"
 
   val httpClient = new HttpClient
   val avatarServiceUrl = "http://localhost:8080/api/avatarService/v1/device/update"
@@ -145,7 +152,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
     }
   }
 
-  val allDataFilenames = "/Users/derMicha/Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/allDatafiles.txt"
+  val allDataFilenames = s"${googleDriveBasePath}Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/allDatafiles.txt"
 
   val adf = Source.fromFile(allDataFilenames)(Codec.UTF8)
   adf.getLines().foreach { dfnLine =>
@@ -154,8 +161,8 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
     val logFilename = dfnLineSplitted(1)
     val csvFilename = dfnLineSplitted(2)
 
-    val csvFile = new File(s"$basePath/$csvFilename")
-    val logFile = new File(s"$basePath/$logFilename")
+    val csvFile = new File(s"$googleDriveBasePath$basePath/$csvFilename")
+    val logFile = new File(s"$googleDriveBasePath$basePath/$logFilename")
 
     if (csvFile.exists() && logFile.exists()) {
 
@@ -195,11 +202,11 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
                 p = payload
               )
 
-              //                val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
-              //                val body = RequestBody(ddrString, APPLICATION_JSON)
-              //                httpClient.post(new URL(avatarServiceUrl), Some(body))
-
-              DeviceDataRawManager.store(ddr)
+              val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
+              val body = RequestBody(ddrString, APPLICATION_JSON)
+              httpClient.post(new URL(avatarServiceUrl), Some(body))
+              Thread.sleep(400)
+            //              DeviceDataRawManager.store(ddr)
 
             //                  logger.debug(s"$ddr")
             case None =>

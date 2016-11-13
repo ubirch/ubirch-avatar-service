@@ -1,8 +1,10 @@
 package com.ubirch.avatar.cmd
 
+import java.net.URL
+
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.model.StorageCleanup
 import com.ubirch.services.util.DeviceUtil
@@ -23,7 +25,7 @@ import scala.util.Random
   */
 object InitData extends App with StrictLogging with StorageCleanup {
 
-  //cleanElasticsearch
+  cleanElasticsearch
   val httpClient = new HttpClient
   val avatarServiceUrl = "http://localhost:8080/api/avatarService/v1/device/update"
 
@@ -38,8 +40,8 @@ object InitData extends App with StrictLogging with StorageCleanup {
 
   val now = DateTime.now()
 
-  //  Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
-  Await.result(DeviceManager.create(device), 5 seconds) match {
+  Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
+    //  Await.result(DeviceManager.create(device), 5 seconds) match {
     case Some(dev) =>
       logger.info(s"created: $dev")
 
@@ -74,9 +76,9 @@ object InitData extends App with StrictLogging with StorageCleanup {
 
         val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
         val body = RequestBody(ddrString, APPLICATION_JSON)
-        //httpClient.post(new URL(avatarServiceUrl), Some(body))
-
-        DeviceDataRawManager.store(ddr)
+        httpClient.post(new URL(avatarServiceUrl), Some(body))
+        Thread.sleep(200)
+        //        DeviceDataRawManager.store(ddr)
       }
     case None =>
       logger.error("device could not be created")

@@ -3,6 +3,7 @@ package com.ubirch.avatar.backend.route
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
+import akka.routing.RoundRobinPool
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.LazyLogging
 import com.ubirch.avatar.backend.ResponseUtil
@@ -31,7 +32,7 @@ trait DeviceUpdateRoute extends MyJsonProtocol
   implicit val executionContext = system.dispatcher
   implicit val timeout = Timeout(15 seconds)
 
-  private val validatorActor = system.actorOf(Props[MessageValidatorActor], "message-validator")
+  private val validatorActor = system.actorOf(new RoundRobinPool(5).props(Props[MessageValidatorActor]), "message-validator")
 
   val route: Route = {
     path(update) {
