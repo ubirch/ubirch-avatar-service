@@ -52,10 +52,10 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
-  .dependsOn(core)
+  .dependsOn(core, util)
   .settings(
     description := "command line tools",
-    libraryDependencies ++= scalaLogging
+    libraryDependencies ++= depCmdtools
   )
 //.enablePlugins(SbtOneLog)
 
@@ -100,7 +100,7 @@ lazy val util = project
 
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(model, config)
+  .dependsOn(model, util, config)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -136,9 +136,12 @@ lazy val depServer = Seq(
 lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
   ubirchCrypto,
+  ubirchNotary,
   ubirchUtilUUID % "test",
   scalatest % "test"
 ) ++ akkaCamel ++ scalaLogging
+
+lazy val depCmdtools = scalaLogging
 
 lazy val depAws = Seq(
   ubirchUtilJson,
@@ -152,7 +155,7 @@ lazy val depModel = Seq(
   ubirchUtilUUID
 ) ++ joda
 
-lazy val depUtil = json4s
+lazy val depUtil = Seq(beeClient) ++ json4s
 
 lazy val depTestBase = Seq(
   scalatest,
@@ -216,13 +219,46 @@ lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
-lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1"
-lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3"
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.10"
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.2"
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2"
-lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3"
-lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1"
+lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.10" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.2" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.3" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
 
 /*
  * RESOLVER
@@ -245,6 +281,7 @@ lazy val mergeStrategy = Seq(
     case m if m.toLowerCase.endsWith("application.dev.conf") => MergeStrategy.first
     case m if m.toLowerCase.endsWith("application.base.conf") => MergeStrategy.first
     case m if m.toLowerCase.endsWith("logback.xml") => MergeStrategy.first
+    case m if m.toLowerCase.endsWith("logback-test.xml") => MergeStrategy.discard
     case "reference.conf" => MergeStrategy.concat
     case _ => MergeStrategy.first
   }

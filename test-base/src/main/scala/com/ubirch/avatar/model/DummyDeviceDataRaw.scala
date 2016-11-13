@@ -28,7 +28,7 @@ object DummyDeviceDataRaw {
            hashedPubKey: String = "pretend-to-be-a-public-key",
            payload: JValue = parse(s"""{"foo": ${random.nextInt(1000000)}, "bar": ${random.nextInt(1000000)}}""")
           ): DeviceDataRaw = {
-    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = pubKey, ts = timestamp, s = hashedPubKey, p = payload)
+    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = Some(pubKey), ts = timestamp, s = hashedPubKey, p = payload)
   }
 
   def dataSeries(messageId: UUID = UUIDUtil.uuid,

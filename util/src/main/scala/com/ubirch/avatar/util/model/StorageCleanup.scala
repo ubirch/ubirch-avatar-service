@@ -1,8 +1,9 @@
-package com.ubirch.avatar.test.util
+package com.ubirch.avatar.util.model
 
 import java.net.URL
 
 import com.ubirch.avatar.config.Config
+
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.request.RequestBody

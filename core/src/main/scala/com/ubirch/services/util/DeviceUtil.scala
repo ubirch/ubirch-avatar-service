@@ -4,17 +4,15 @@ import java.security._
 import java.util.Base64
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
-
+import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
-import org.json4s._
-import org.json4s.native.Serialization._
-
 import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec, EdDSAPublicKeySpec}
 import net.i2p.crypto.eddsa.{EdDSAEngine, EdDSAPublicKey, KeyPairGenerator}
+import org.json4s._
+import org.json4s.native.Serialization._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -29,7 +27,7 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
   /**
     * @deprecated this code is legacy and will be deleted asap
     */
-  private def createSimpleSignature(payload: JValue, hwDeviceId: String): String = {
+  def createSimpleSignature(payload: JValue, hwDeviceId: String): String = {
 
     val payloadString = Json4sUtil.jvalue2String(payload)
     val concatenated = s"$hwDeviceId$payloadString"
@@ -106,4 +104,22 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
       Base64.getEncoder.encodeToString(signature))
   }
 
+  /**
+    * checks whether notary service should be used for this device
+    *
+    * @param device
+    * @return
+    */
+  def checkNotaryUsage(device: Device): Boolean = {
+    if (device.deviceProperties.isDefined) {
+      (device.deviceProperties.get \ Const.BLOCKC).extractOpt[String] match {
+        case Some(ptx) if Const.BOOL_TRUE == ptx =>
+          true
+        case None =>
+          false
+      }
+    }
+    else
+      false
+  }
 }
