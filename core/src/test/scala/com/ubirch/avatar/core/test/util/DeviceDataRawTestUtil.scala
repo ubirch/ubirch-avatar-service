@@ -23,7 +23,7 @@ object DeviceDataRawTestUtil {
     */
   def storeSeries(elementCount: Int): (Device, List[DeviceDataRaw]) = {
 
-    val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)
+    val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)()
     val storedSeries: ListBuffer[DeviceDataRaw] = ListBuffer()
 
     dataSeries foreach { deviceData =>

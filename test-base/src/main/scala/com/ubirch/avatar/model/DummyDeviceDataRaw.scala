@@ -25,24 +25,22 @@ object DummyDeviceDataRaw {
            device: Device,
            pubKey: String = "pretend-to-be-a-public-key",
            timestamp: DateTime = DateTime.now,
-           hashedPubKey: String = "pretend-to-be-a-public-key",
-           payload: Option[JValue] = None
-          ): DeviceDataRaw = {
-    val p = payload match {
-      case None => randomPayload()
-      case Some(pl) => pl
-    }
-    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = Some(pubKey), ts = timestamp, s = hashedPubKey, p = p)
+           hashedPubKey: String = "pretend-to-be-a-public-key"
+          )
+          (payload: () => JValue = () => randomPayload())
+  : DeviceDataRaw = {
+    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = Some(pubKey), ts = timestamp, s = hashedPubKey, p = payload())
   }
 
   def dataSeries(messageId: Option[UUID] = None,
                  device: Device = DummyDevices.minimalDevice(),
                  pubKey: String = "pretend-to-be-a-public-key",
-                 payload: Option[JValue] = None,
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
                  elementCount: Int = 5
-                ): (Device, List[DeviceDataRaw]) = {
+                )
+                (payload: () => JValue = () => randomPayload())
+  : (Device, List[DeviceDataRaw]) = {
 
     val rawDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
@@ -59,7 +57,7 @@ object DummyDeviceDataRaw {
         case None => UUIDUtil.uuid
         case Some(m) => m
       }
-      val deviceData = data(messageId = msgId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey, payload = payload)
+      val deviceData = data(messageId = msgId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey)(payload)
       rawDataList.+=:(deviceData)
     }
 
@@ -69,14 +67,14 @@ object DummyDeviceDataRaw {
 
   def randomPayload(): JValue =
     parse(
-    s"""
-       |[
-       |{
-       |"t":${2000 + Random.nextInt(1500)},
-       |"p":${90000 + Random.nextInt(20000)},
-       |"h":${4000 + Random.nextInt(5500)}
-       |}
-       |]
+      s"""
+         |[
+         |{
+         |"t":${2000 + Random.nextInt(1500)},
+         |"p":${90000 + Random.nextInt(20000)},
+         |"h":${4000 + Random.nextInt(5500)}
+         |}
+         |]
         """.stripMargin
     )
 

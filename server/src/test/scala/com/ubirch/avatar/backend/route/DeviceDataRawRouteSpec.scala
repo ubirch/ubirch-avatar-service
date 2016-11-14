@@ -29,7 +29,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceRaw = DummyDeviceDataRaw.data(device = device)
+      val deviceRaw = DummyDeviceDataRaw.data(device = device)()
 
       // test
       Post(RouteConstants.urlDeviceDataRaw, deviceRaw) ~> Route.seal(routes) ~> check {
@@ -54,9 +54,9 @@ class DeviceDataRawRouteSpec extends RouteSpec
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val raw1 = DummyDeviceDataRaw.data(device = device)
+      val raw1 = DummyDeviceDataRaw.data(device = device)()
       val storedRaw1 = Await.result(DeviceDataRawManager.store(raw1), 1 second).get
-      val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)
+      val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)()
 
       // test
       Post(RouteConstants.urlDeviceDataRaw, raw2) ~> Route.seal(routes) ~> check {
