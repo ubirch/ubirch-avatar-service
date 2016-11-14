@@ -8,6 +8,7 @@ import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.services.storage.DeviceDataRawStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.uuid.UUIDUtil
 import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -77,13 +78,15 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
     * @return json of what we stored
     */
   def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
-    logger.debug(s"store data: $data")
-    Json4sUtil.any2jvalue(data) match {
+
+    val dataCopy = data.copy(id = UUIDUtil.uuid)
+    logger.debug(s"store data: $dataCopy")
+    Json4sUtil.any2jvalue(dataCopy) match {
 
       case Some(doc) =>
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
-        val id = Some(data.id.toString)
+        val id = Some(dataCopy.id.toString)
         //TODO we should use here ES bulk client
         DeviceDataRawStorage.storeDoc(
           docIndex = index,
