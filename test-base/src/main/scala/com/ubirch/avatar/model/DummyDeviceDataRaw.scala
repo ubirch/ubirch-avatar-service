@@ -7,7 +7,7 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}
-import org.json4s.JsonAST.JValue
+import org.json4s.JValue
 import org.json4s.native.JsonMethods._
 
 import scala.collection.mutable.ListBuffer
@@ -26,15 +26,19 @@ object DummyDeviceDataRaw {
            pubKey: String = "pretend-to-be-a-public-key",
            timestamp: DateTime = DateTime.now,
            hashedPubKey: String = "pretend-to-be-a-public-key",
-           payload: JValue = parse(s"""{"foo": ${random.nextInt(1000000)}, "bar": ${random.nextInt(1000000)}}""")
+           payload: Option[JValue] = None
           ): DeviceDataRaw = {
-    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = Some(pubKey), ts = timestamp, s = hashedPubKey, p = payload)
+    val p = payload match {
+      case None => randomPayload()
+      case Some(pl) => pl
+    }
+    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = Some(pubKey), ts = timestamp, s = hashedPubKey, p = p)
   }
 
   def dataSeries(messageId: Option[UUID] = None,
                  device: Device = DummyDevices.minimalDevice(),
                  pubKey: String = "pretend-to-be-a-public-key",
-                 payload: JValue = parse("""{"foo": 23, "bar": 42}"""),
+                 payload: Option[JValue] = None,
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
                  elementCount: Int = 5
@@ -62,5 +66,18 @@ object DummyDeviceDataRaw {
     (device, rawDataList.toList)
 
   }
+
+  def randomPayload(): JValue =
+    parse(
+    s"""
+       |[
+       |{
+       |"t":${2000 + Random.nextInt(1500)},
+       |"p":${90000 + Random.nextInt(20000)},
+       |"h":${4000 + Random.nextInt(5500)}
+       |}
+       |]
+        """.stripMargin
+    )
 
 }
