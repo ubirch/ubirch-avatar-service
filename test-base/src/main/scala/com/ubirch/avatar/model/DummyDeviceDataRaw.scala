@@ -36,7 +36,7 @@ object DummyDeviceDataRaw {
                  device: Device = DummyDevices.minimalDevice(),
                  pubKey: String = "pretend-to-be-a-public-key",
                  intervalMillis: Long = 1000 * 10, // 10s
-                 timestampOffset: Long = -1000 * 60 * 60, // 1h
+                 timestampOffset: Long = -1000 * 60 * 60, // -1h
                  elementCount: Int = 5
                 )
                 (payload: () => JValue = () => randomPayload())
