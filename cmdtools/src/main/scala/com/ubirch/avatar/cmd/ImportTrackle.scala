@@ -43,7 +43,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
   val hwDeviceId = UUIDUtil.uuidStr
   val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
 
-  cleanElasticsearch
+  cleanElasticsearch()
 
   val device = Device(
     deviceId = UUIDUtil.uuidStr,
@@ -79,7 +79,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
 
     def id: String = s"$trackleId-$timestamp"
 
-    def dateTime = DateTime.parse(s"${day}T${time}")
+    def dateTime = DateTime.parse(s"${day}T$time")
   }
 
   object CsvData {
@@ -206,7 +206,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
                 p = payload
               )
 
-              //TODO use throtteling, akka offers this for free
+              //TODO use throttling, akka offers this for free
               val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
               val body = RequestBody(ddrString, APPLICATION_JSON)
               val resp = httpClient.post(new URL(avatarServiceUrl), Some(body))
