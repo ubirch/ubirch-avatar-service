@@ -52,7 +52,7 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
-  .dependsOn(core, util)
+  .dependsOn(core, util, testBase)
   .settings(
     description := "command line tools",
     libraryDependencies ++= depCmdtools
