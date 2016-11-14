@@ -20,6 +20,20 @@ object DummyDevices {
 
   }
 
+  def device(deviceId: String = UUIDUtil.uuidStr,
+             deviceName: String = "testHans001",
+             hwDeviceId: String = UUIDUtil.uuidStr,
+             deviceTypeKey: String
+            ): Device = {
+
+    Device(deviceId = deviceId,
+      deviceName = deviceName,
+      hwDeviceId = hwDeviceId,
+      deviceTypeKey = deviceTypeKey
+    )
+
+  }
+
   lazy val all: Seq[Device] = Seq(device1, device2, device3, device4)
 
   lazy val deviceMap: Map[String, Device] = Map(
