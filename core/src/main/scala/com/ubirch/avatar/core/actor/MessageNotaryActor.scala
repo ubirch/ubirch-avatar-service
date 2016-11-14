@@ -16,17 +16,17 @@ class MessageNotaryActor extends Actor with StrictLogging {
       val s = sender
       logger.debug(s"received message: $drd")
 
-    //      val payloadStr = Json4sUtil.jvalue2String(drd.p)
-    //
-    //      NotaryClient.notarize(
-    //        blockHash = "payloadStr",
-    //        dataIsHash = false
-    //      ) match {
-    //        case Some(resp) =>
-    //          logger.debug(s"btx hash for message ${drd.id} is ${resp.hash}")
-    //        case None =>
-    //          logger.error(s"notarize failed for: $drd")
-    //      }
+      val payloadStr = Json4sUtil.jvalue2String(drd.p)
+
+      NotaryClient.notarize(
+        blockHash = "payloadStr",
+        dataIsHash = false
+      ) match {
+        case Some(resp) =>
+          logger.debug(s"btx hash for message ${drd.id} is ${resp.hash}")
+        case None =>
+          logger.error(s"notarize failed for: $drd")
+      }
 
     case _ =>
       logger.error("received unknown message")

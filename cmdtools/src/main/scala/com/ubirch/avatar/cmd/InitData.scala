@@ -77,7 +77,7 @@ object InitData extends App with StrictLogging with StorageCleanup {
         val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
         val body = RequestBody(ddrString, APPLICATION_JSON)
         httpClient.post(new URL(avatarServiceUrl), Some(body))
-        Thread.sleep(200)
+        Thread.sleep(500)
         //        DeviceDataRawManager.store(ddr)
       }
     case None =>

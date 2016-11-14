@@ -5,6 +5,7 @@ import akka.routing.RoundRobinPool
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.services.util.DeviceUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 
 /**
@@ -26,8 +27,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
       persistorActor ! drd
 
       //TODO check notary config for device
-      //      if (DeviceUtil.checkNotaryUsage(device))
-      //        notaryActor ! drd
+      if (DeviceUtil.checkNotaryUsage(device))
+        notaryActor ! drd
 
       transformerActor ! drd.id
 
@@ -38,9 +39,6 @@ class MessageProcessorActor extends Actor with ActorLogging {
       s ! DeviceStateManager.currentDeviceState(device)
 
     case _ =>
-
       log.error("received unknown message")
-
   }
-
 }
