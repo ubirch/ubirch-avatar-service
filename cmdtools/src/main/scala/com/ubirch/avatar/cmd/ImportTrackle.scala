@@ -9,7 +9,7 @@ import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.model.StorageCleanup
 import com.ubirch.crypto.hash.HashUtil
-import com.ubirch.services.util.DeviceUtil
+import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
@@ -202,7 +202,7 @@ object ImportTrackle extends App with LazyLogging with StorageCleanup {
                 v = "0.0.1",
                 a = hashedHwDeviceId,
                 ts = cdp.dateTime,
-                s = DeviceUtil.createSimpleSignature(payload, hwDeviceId),
+                s = DeviceCoreUtil.createSimpleSignature(payload, hwDeviceId),
                 p = payload
               )
 

@@ -155,7 +155,10 @@ lazy val depModel = Seq(
   ubirchUtilUUID
 ) ++ joda
 
-lazy val depUtil = Seq(beeClient) ++ json4s
+lazy val depUtil = Seq(
+  beeClient,
+  ubirchCrypto
+) ++ json4s
 
 lazy val depTestBase = Seq(
   scalatest,

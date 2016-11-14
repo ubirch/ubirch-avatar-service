@@ -5,7 +5,7 @@ import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.server.JsonErrorResponse
-import com.ubirch.services.util.DeviceUtil
+import com.ubirch.services.util.DeviceCoreUtil
 
 /**
   * Created by derMicha on 28/10/16.
@@ -24,7 +24,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
 
       log.debug(s"received message with version ${drd.v}")
 
-      DeviceUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s, payload = drd.p).map {
+      DeviceCoreUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s, payload = drd.p).map {
         case Some(dev) =>
           processorActor ! (s, drd, dev)
         case None =>
@@ -36,7 +36,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
 
       log.debug(s"received message version: $drd")
       if (drd.k.isDefined)
-        DeviceUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p).map {
+        DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p).map {
           case Some(dev) =>
             processorActor ! (s, drd, dev)
           case None =>

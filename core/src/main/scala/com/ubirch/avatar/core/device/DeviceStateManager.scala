@@ -1,17 +1,13 @@
 package com.ubirch.avatar.core.device
 
-import java.security._
-import java.util.Base64
-
 import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.model.device.{Device, DeviceStateUpdate}
-import com.ubirch.services.util.DeviceUtil
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
-import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec}
-import net.i2p.crypto.eddsa.{EdDSAEngine, KeyPairGenerator}
-import org.joda.time.DateTime
+
 import org.json4s._
 import org.json4s.native.Serialization._
 

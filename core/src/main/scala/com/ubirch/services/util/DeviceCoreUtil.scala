@@ -4,15 +4,18 @@ import java.security._
 import java.util.Base64
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec, EdDSAPublicKeySpec}
-import net.i2p.crypto.eddsa.{EdDSAEngine, EdDSAPublicKey, KeyPairGenerator}
+
 import org.json4s._
 import org.json4s.native.Serialization._
+
+import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec, EdDSAPublicKeySpec}
+import net.i2p.crypto.eddsa.{EdDSAEngine, EdDSAPublicKey}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -20,7 +23,7 @@ import scala.concurrent.Future
 /**
   * Created by derMicha on 02/11/16.
   */
-object DeviceUtil extends MyJsonProtocol with LazyLogging {
+object DeviceCoreUtil extends MyJsonProtocol with LazyLogging {
 
   private def createSimpleSignature(payload: JValue, device: Device): String = createSimpleSignature(payload, device.hwDeviceId)
 
@@ -83,31 +86,10 @@ object DeviceUtil extends MyJsonProtocol with LazyLogging {
     }
   }
 
-  def sign(payload: JValue, device: Device): (String, String) = {
-    //TODO add private key management!!!
-    val sgr: Signature = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
-    val spec: EdDSAParameterSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.CURVE_ED25519_SHA512)
-    val kpg: KeyPairGenerator = new KeyPairGenerator
-
-    kpg.initialize(spec, new SecureRandom(java.util.UUID.randomUUID.toString.getBytes))
-
-    val kp: KeyPair = kpg.generateKeyPair
-
-    val sKey: PrivateKey = kp.getPrivate
-    val pKey: PublicKey = kp.getPublic
-
-    sgr.initSign(sKey)
-    sgr.update(write(payload).getBytes)
-    val signature: Array[Byte] = sgr.sign
-
-    (Base64.getEncoder.encodeToString(pKey.getEncoded),
-      Base64.getEncoder.encodeToString(signature))
-  }
-
   /**
     * checks whether notary service should be used for this device
     *
-    * @param device
+    * @param device the device on which to to perform the check
     * @return
     */
   def checkNotaryUsage(device: Device): Boolean = {

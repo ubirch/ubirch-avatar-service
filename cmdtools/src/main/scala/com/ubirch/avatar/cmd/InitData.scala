@@ -8,7 +8,6 @@ import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.util.model.StorageCleanup
-import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.Json4sUtil
 
 import org.joda.time.DateTime
@@ -50,10 +49,7 @@ object InitData extends App with StrictLogging with StorageCleanup {
 
       series foreach { dataRaw =>
 
-        val (k, s) = DeviceUtil.sign(dataRaw.p, dev)
-        val withSignedData = dataRaw.copy(k = Some(k), s = s)
-
-        val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(withSignedData).get)
+        val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(dataRaw).get)
         logger.info(s"msg: $msg")
 
         val body = RequestBody(msg, APPLICATION_JSON)

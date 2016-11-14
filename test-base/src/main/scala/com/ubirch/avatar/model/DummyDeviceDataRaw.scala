@@ -3,6 +3,7 @@ package com.ubirch.avatar.model
 import java.util.UUID
 
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 
@@ -29,7 +30,19 @@ object DummyDeviceDataRaw {
           )
           (payload: () => JValue = () => randomPayload())
   : DeviceDataRaw = {
-    DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = Some(pubKey), ts = timestamp, s = hashedPubKey, p = payload())
+
+    val p = payload()
+    val (k, s) = DeviceUtil.sign(p, device)
+
+    DeviceDataRaw(
+      id = messageId,
+      a = device.hwDeviceId,
+      k = Some(k),
+      ts = timestamp,
+      s = s,
+      p = p
+    )
+
   }
 
   def dataSeries(messageId: Option[UUID] = None,
@@ -52,13 +65,22 @@ object DummyDeviceDataRaw {
 
     val range = 0 until elementCount
     for (i <- range) {
+
       val timestamp = newestDateTime.minus(i * intervalMillis)
       val msgId = messageId match {
         case None => UUIDUtil.uuid
         case Some(m) => m
       }
-      val deviceData = data(messageId = msgId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey)(payload)
+
+      val deviceData = data(messageId = msgId,
+        device = device,
+        pubKey = pubKey,
+        timestamp = timestamp,
+        hashedPubKey = hashedPubKey
+      )(payload)
+
       rawDataList.+=:(deviceData)
+
     }
 
     (device, rawDataList.toList)
