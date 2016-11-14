@@ -157,7 +157,8 @@ lazy val depModel = Seq(
 
 lazy val depUtil = Seq(
   beeClient,
-  ubirchCrypto
+  ubirchCrypto,
+  ubirchUtilJson
 ) ++ json4s
 
 lazy val depTestBase = Seq(
