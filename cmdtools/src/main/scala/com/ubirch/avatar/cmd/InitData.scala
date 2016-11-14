@@ -3,14 +3,16 @@ package com.ubirch.avatar.cmd
 import java.net.URL
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.util.model.StorageCleanup
 import com.ubirch.services.util.DeviceUtil
 import com.ubirch.util.json.Json4sUtil
-import com.ubirch.util.uuid.UUIDUtil
+
 import org.joda.time.DateTime
+
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.request.RequestBody
@@ -25,61 +27,41 @@ import scala.util.Random
   */
 object InitData extends App with StrictLogging with StorageCleanup {
 
-  cleanElasticsearch
+  cleanElasticsearch()
   val httpClient = new HttpClient
   val avatarServiceUrl = "http://localhost:8080/api/avatarService/v1/device/update"
 
   Random.setSeed(DateTime.now.getMillisOfDay)
 
-  val device = Device(
-    deviceId = UUIDUtil.uuidStr,
-    deviceName = "testHans001",
-    hwDeviceId = UUIDUtil.uuidStr,
-    deviceTypeKey = Const.ENVIRONMENTSENSOR
-  )
+  val device = DummyDevices.device(deviceTypeKey = Const.ENVIRONMENTSENSOR)
 
   val now = DateTime.now()
 
   Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
-    //  Await.result(DeviceManager.create(device), 5 seconds) match {
     case Some(dev) =>
+
       logger.info(s"created: $dev")
 
-      (1 to 50).foreach { i =>
+      val (_, series) = DummyDeviceDataRaw.dataSeries(device = device,
+        elementCount = 50,
+        intervalMillis = 1000 * 60 * 5, // 5 mins
+        timestampOffset = 0
+      )()
 
-        val t = 2000 + Random.nextInt(1500)
-        val p = 90000 + Random.nextInt(20000)
-        val h = 4000 + Random.nextInt(5500)
+      series foreach { dataRaw =>
 
-        val payload =
-          s"""
-             |[
-             |{
-             |"t":$t,
-             |"p":$p,
-             |"h":$h
-             |}
-             |]
-        """.stripMargin
-        val payLoadJson = Json4sUtil.string2JValue(payload).get
-        val (k, s) = DeviceUtil.sign(payLoadJson, dev)
-        val ddr = DeviceDataRaw(
-          a = dev.hashedHwDeviceId,
-          k = Some(k),
-          s = s,
-          ts = now.minusMinutes(i * 5),
-          p = payLoadJson
-        )
+        val (k, s) = DeviceUtil.sign(dataRaw.p, dev)
+        val withSignedData = dataRaw.copy(k = Some(k), s = s)
 
-        val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
+        val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(withSignedData).get)
         logger.info(s"msg: $msg")
 
-        val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
-        val body = RequestBody(ddrString, APPLICATION_JSON)
+        val body = RequestBody(msg, APPLICATION_JSON)
         httpClient.post(new URL(avatarServiceUrl), Some(body))
         Thread.sleep(500)
-        //        DeviceDataRawManager.store(ddr)
+
       }
+
     case None =>
       logger.error("device could not be created")
   }
