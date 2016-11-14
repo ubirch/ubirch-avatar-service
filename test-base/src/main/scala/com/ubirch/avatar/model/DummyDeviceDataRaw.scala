@@ -31,7 +31,7 @@ object DummyDeviceDataRaw {
     DeviceDataRaw(id = messageId, a = device.hwDeviceId, k = Some(pubKey), ts = timestamp, s = hashedPubKey, p = payload)
   }
 
-  def dataSeries(messageId: UUID = UUIDUtil.uuid,
+  def dataSeries(messageId: Option[UUID] = None,
                  device: Device = DummyDevices.minimalDevice(),
                  pubKey: String = "pretend-to-be-a-public-key",
                  payload: JValue = parse("""{"foo": 23, "bar": 42}"""),
@@ -51,7 +51,11 @@ object DummyDeviceDataRaw {
     val range = 0 until elementCount
     for (i <- range) {
       val timestamp = newestDateTime.minus(i * intervalMillis)
-      val deviceData = data(messageId = messageId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey, payload = payload)
+      val msgId = messageId match {
+        case None => UUIDUtil.uuid
+        case Some(m) => m
+      }
+      val deviceData = data(messageId = msgId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey, payload = payload)
       rawDataList.+=:(deviceData)
     }
 
