@@ -392,8 +392,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
      
     2. if using a terminaml, change inside the project folder and
         
-        ./sbt /sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
+        ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
         
 3. now you should find one device "testHans001" and 50 datapoints 
- 
+
  
