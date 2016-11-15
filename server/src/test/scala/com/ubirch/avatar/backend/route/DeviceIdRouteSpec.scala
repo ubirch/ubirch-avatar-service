@@ -4,8 +4,8 @@ import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
-import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.RouteSpec
+import com.ubirch.avatar.util.server.RouteConstants
 
 import org.scalatest.{BeforeAndAfterAll, Matchers}
 
@@ -23,10 +23,10 @@ class DeviceIdRouteSpec extends RouteSpec
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDevice}/:deviceId") {
+  feature(s"GET ${RouteConstants.pathDevice}/:deviceId") {
 
     scenario("without deviceId") {
-      Get(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
+      Get(RouteConstants.pathDeviceWithId("")) ~> routes ~> check {
         handled shouldEqual false
       }
     }
@@ -36,7 +36,7 @@ class DeviceIdRouteSpec extends RouteSpec
       val device = DummyDevices.device1
       val deviceId = device.deviceId
 
-      Get(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+      Get(RouteConstants.pathDeviceWithId(deviceId)) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Device] shouldEqual device
@@ -49,7 +49,7 @@ class DeviceIdRouteSpec extends RouteSpec
 
       val deviceId = DummyDevices.device1.deviceId + "-does-not-exist"
 
-      Get(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+      Get(RouteConstants.pathDeviceWithId(deviceId)) ~> routes ~> check {
 
         val s = status
         val r = response
@@ -67,10 +67,10 @@ class DeviceIdRouteSpec extends RouteSpec
 
   }
 
-  feature(s"PUT ${RouteConstants.urlDevice}/:deviceId") {
+  feature(s"PUT ${RouteConstants.pathDevice}/:deviceId") {
 
     scenario("without deviceId") {
-      Put(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
+      Put(RouteConstants.pathDeviceWithId("")) ~> routes ~> check {
         handled shouldEqual false
       }
     }
@@ -80,7 +80,7 @@ class DeviceIdRouteSpec extends RouteSpec
       val device = DummyDevices.device1
       val deviceId = device.deviceId
 
-      Put(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+      Put(RouteConstants.pathDeviceWithId(deviceId)) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Device] shouldEqual device
@@ -93,7 +93,7 @@ class DeviceIdRouteSpec extends RouteSpec
 
       val deviceId = DummyDevices.device1.deviceId + "-does-not-exist"
 
-      Put(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+      Put(RouteConstants.pathDeviceWithId(deviceId)) ~> routes ~> check {
 
         status shouldEqual BadRequest
 
@@ -109,10 +109,10 @@ class DeviceIdRouteSpec extends RouteSpec
 
   }
 
-  feature(s"DELETE ${RouteConstants.urlDevice}/:deviceId") {
+  feature(s"DELETE ${RouteConstants.pathDevice}/:deviceId") {
 
     scenario("without deviceId") {
-      Delete(RouteConstants.urlDeviceWithId("")) ~> routes ~> check {
+      Delete(RouteConstants.pathDeviceWithId("")) ~> routes ~> check {
         handled shouldEqual false
       }
     }
@@ -122,7 +122,7 @@ class DeviceIdRouteSpec extends RouteSpec
       val device = DummyDevices.device1
       val deviceId = device.deviceId
 
-      Delete(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+      Delete(RouteConstants.pathDeviceWithId(deviceId)) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Device] shouldEqual device
@@ -135,7 +135,7 @@ class DeviceIdRouteSpec extends RouteSpec
 
       val deviceId = DummyDevices.device1.deviceId + "-does-not-exist"
 
-      Delete(RouteConstants.urlDeviceWithId(deviceId)) ~> routes ~> check {
+      Delete(RouteConstants.pathDeviceWithId(deviceId)) ~> routes ~> check {
 
         status shouldEqual BadRequest
 

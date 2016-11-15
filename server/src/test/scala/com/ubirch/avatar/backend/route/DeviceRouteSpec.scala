@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.device.Device
-import com.ubirch.avatar.server.util.RouteConstants
+import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
@@ -18,10 +18,10 @@ class DeviceRouteSpec extends RouteSpec {
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDevice}") {
+  feature(s"GET ${RouteConstants.pathDevice}") {
 
     scenario("call") {
-      Get(RouteConstants.urlDevice) ~> routes ~> check {
+      Get(RouteConstants.pathDevice) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         val deviceList = responseAs[Seq[Device]]
@@ -32,13 +32,13 @@ class DeviceRouteSpec extends RouteSpec {
 
   }
 
-  feature(s"POST ${RouteConstants.urlDevice}") {
+  feature(s"POST ${RouteConstants.pathDevice}") {
 
     scenario("with device json") {
 
       val deviceInput = DummyDevices.device1
 
-      Post(RouteConstants.urlDevice, deviceInput) ~> routes ~> check {
+      Post(RouteConstants.pathDevice, deviceInput) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Device] should be(deviceInput)
@@ -48,7 +48,7 @@ class DeviceRouteSpec extends RouteSpec {
 
     scenario("without device json") {
 
-      Post(RouteConstants.urlDevice) ~> Route.seal(routes) ~> check {
+      Post(RouteConstants.pathDevice) ~> Route.seal(routes) ~> check {
 
         status shouldEqual BadRequest
         responseEntity.contentType should be(`text/plain(UTF-8)`)

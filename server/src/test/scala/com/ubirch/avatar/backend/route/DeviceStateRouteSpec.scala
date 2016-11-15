@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.avatar.util.server.RouteConstants
 
 /**
   * author: cvandrei
@@ -12,7 +12,7 @@ class DeviceStateRouteSpec extends RouteSpec
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDeviceState(":deviceId")}") {
+  feature(s"GET ${RouteConstants.pathDeviceState(":deviceId")}") {
 
     ignore("deviceId does not exist") {
       // TODO write test
@@ -28,7 +28,7 @@ class DeviceStateRouteSpec extends RouteSpec
 
   }
 
-  feature(s"POST ${RouteConstants.urlDeviceState(":deviceId")}") {
+  feature(s"POST ${RouteConstants.pathDeviceState(":deviceId")}") {
 
     ignore("deviceId does not exist") {
       // TODO write test

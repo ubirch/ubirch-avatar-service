@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.server.util.RouteConstants
+import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route

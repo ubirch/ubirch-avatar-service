@@ -3,9 +3,9 @@ package com.ubirch.avatar.backend.route
 import com.ubirch.avatar.core.test.util.DeviceTypeTestUtil
 import com.ubirch.avatar.model.device.DeviceType
 import com.ubirch.avatar.model.server.JsonErrorResponse
-import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
+import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
@@ -21,7 +21,7 @@ class DeviceTypeRouteSpec extends RouteSpec
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDeviceType}") {
+  feature(s"GET ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> empty response") {
       deleteIndexes()
@@ -38,7 +38,7 @@ class DeviceTypeRouteSpec extends RouteSpec
       val deviceTypes = DeviceTypeTestUtil.storeSeries()
 
       // test
-      Get(RouteConstants.urlDeviceType) ~> Route.seal(routes) ~> check {
+      Get(RouteConstants.pathDeviceType) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual OK
@@ -54,7 +54,7 @@ class DeviceTypeRouteSpec extends RouteSpec
 
   }
 
-  feature(s"POST ${RouteConstants.urlDeviceType}") {
+  feature(s"POST ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> create is successful") {
       deleteIndexes()
@@ -72,7 +72,7 @@ class DeviceTypeRouteSpec extends RouteSpec
       val deviceType = deviceTypes.head
 
       // test
-      Post(RouteConstants.urlDeviceType, deviceType) ~> Route.seal(routes) ~> check {
+      Post(RouteConstants.pathDeviceType, deviceType) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual BadRequest
@@ -88,7 +88,7 @@ class DeviceTypeRouteSpec extends RouteSpec
 
   }
 
-  feature(s"PUT ${RouteConstants.urlDeviceType}") {
+  feature(s"PUT ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> update fails") {
       deleteIndexes()
@@ -106,7 +106,7 @@ class DeviceTypeRouteSpec extends RouteSpec
       val deviceType = deviceType1.copy(icon = s"${deviceType1.icon}1")
 
       // test
-      Put(RouteConstants.urlDeviceType, deviceType) ~> Route.seal(routes) ~> check {
+      Put(RouteConstants.pathDeviceType, deviceType) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual OK
@@ -122,7 +122,7 @@ class DeviceTypeRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.urlDeviceTypeInit}") {
+  feature(s"GET ${RouteConstants.pathDeviceTypeInit}") {
 
     scenario("index does not exist --> default deviceTypes are created") {
       deleteIndexes()
@@ -139,7 +139,7 @@ class DeviceTypeRouteSpec extends RouteSpec
       val deviceTypes = DeviceTypeTestUtil.storeSeries()
 
       // test
-      Get(RouteConstants.urlDeviceTypeInit) ~> Route.seal(routes) ~> check {
+      Get(RouteConstants.pathDeviceTypeInit) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual OK
@@ -158,7 +158,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   private def runTypeGetProducesEmptyResponse() = {
 
     // test
-    Get(RouteConstants.urlDeviceType) ~> Route.seal(routes) ~> check {
+    Get(RouteConstants.pathDeviceType) ~> Route.seal(routes) ~> check {
 
       // verify
       status shouldEqual OK
@@ -178,7 +178,7 @@ class DeviceTypeRouteSpec extends RouteSpec
     val deviceType = DeviceTypeUtil.defaultDeviceType()
 
     // test
-    Post(RouteConstants.urlDeviceType, deviceType) ~> Route.seal(routes) ~> check {
+    Post(RouteConstants.pathDeviceType, deviceType) ~> Route.seal(routes) ~> check {
 
       // verify
       status shouldEqual OK
@@ -198,7 +198,7 @@ class DeviceTypeRouteSpec extends RouteSpec
     val deviceType = DeviceTypeUtil.defaultDeviceType()
 
     // test
-    Put(RouteConstants.urlDeviceType, deviceType) ~> Route.seal(routes) ~> check {
+    Put(RouteConstants.pathDeviceType, deviceType) ~> Route.seal(routes) ~> check {
 
       // verify
       status shouldEqual BadRequest
@@ -215,7 +215,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   private def runTypeInitCreatesRecords() = {
 
     // test
-    Get(RouteConstants.urlDeviceTypeInit) ~> Route.seal(routes) ~> check {
+    Get(RouteConstants.pathDeviceTypeInit) ~> Route.seal(routes) ~> check {
 
       // verify
       status shouldEqual OK

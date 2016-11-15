@@ -1,6 +1,7 @@
 package com.ubirch.avatar.test.base
 
-import com.ubirch.avatar.util.model.StorageCleanup
+import com.ubirch.avatar.util.storage.StorageCleanup
+
 import org.scalatest.BeforeAndAfterEach
 
 /**

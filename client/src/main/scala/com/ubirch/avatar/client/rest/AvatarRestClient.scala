@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
-import com.ubirch.avatar.server.util.RouteConstants
+import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.json.Json4sUtil
 
 import uk.co.bigbeeconsultants.http.HttpClient
@@ -27,9 +27,15 @@ object AvatarRestClient extends StrictLogging {
 
   private def baseUrl = s"${Config.protocol}${Config.interface}:${Config.port}"
 
-  def deviceUpdate(deviceDataRaw: DeviceDataRaw): Response = {
+  /**
+    * Update a device by POSTing raw device data.
+    *
+    * @param deviceDataRaw raw data to POST
+    * @return http response
+    */
+  def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw): Response = {
 
-    val url = new URL(s"$baseUrl${RouteConstants.urlDeviceUpdate}")
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
     val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
     logger.info(s"msg: $msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
@@ -38,9 +44,15 @@ object AvatarRestClient extends StrictLogging {
 
   }
 
-  def deviceBulk(deviceDataRaw: DeviceDataRaw): Response = {
+  /**
+    * Bulk update a device by POSTing raw device data.
+    *
+    * @param deviceDataRaw raw data to POST
+    * @return http response
+    */
+  def deviceBulkPOST(deviceDataRaw: DeviceDataRaw): Response = {
 
-    val url = new URL(s"$baseUrl${RouteConstants.urlDeviceBulk}")
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
     val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
     logger.info(s"msg: $msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))

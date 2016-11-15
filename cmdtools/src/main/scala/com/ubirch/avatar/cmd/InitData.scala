@@ -6,7 +6,7 @@ import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
-import com.ubirch.avatar.util.model.StorageCleanup
+import com.ubirch.avatar.util.storage.StorageCleanup
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -34,7 +34,7 @@ object InitData extends App with StrictLogging with StorageCleanup {
       )()
 
       series foreach { dataRaw =>
-        AvatarRestClient.deviceUpdate(dataRaw)
+        AvatarRestClient.deviceUpdatePOST(dataRaw)
         Thread.sleep(500)
       }
 

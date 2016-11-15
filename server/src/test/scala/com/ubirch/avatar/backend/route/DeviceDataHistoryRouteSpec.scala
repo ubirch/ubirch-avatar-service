@@ -5,8 +5,8 @@ import com.ubirch.avatar.core.test.util.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
-import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.uuid.UUIDUtil
 
 import akka.http.scaladsl.model.ContentTypes._
@@ -25,7 +25,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}") {
+  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}") {
 
     scenario("deviceId exists; elementCount < defaultPageSize") {
       testGetHistoryDeviceExists(Config.esDefaultPageSize - 1, None, None)
@@ -49,7 +49,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}/:from") {
+  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from") {
 
     scenario("deviceId exists; from < 0") {
       testGetHistoryDeviceExists(3, Some(-1), None)
@@ -89,7 +89,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}/:from/:size") {
+  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from/:size") {
 
     scenario("deviceId exists; from < 0; size < 0") {
       testGetHistoryDeviceExists(1, Some(-1), Some(-1))
@@ -295,11 +295,11 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
       case Some(from) =>
         sizeOpt match {
-          case Some(sizeValue) => RouteConstants.urlDeviceHistoryFromSize(deviceId, from, sizeValue)
-          case None => RouteConstants.urlDeviceHistoryFrom(deviceId, from)
+          case Some(sizeValue) => RouteConstants.pathDeviceHistoryFromSize(deviceId, from, sizeValue)
+          case None => RouteConstants.pathDeviceHistoryFrom(deviceId, from)
         }
 
-      case None => RouteConstants.urlDeviceDataHistory(deviceId)
+      case None => RouteConstants.pathDeviceDataHistory(deviceId)
 
     }
 
