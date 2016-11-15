@@ -2,9 +2,11 @@
 
 ubirch device-configuration and -dataflow service
 
+
 ## General Information
 
 TODO
+
 
 ## Scala Dependencies
 
@@ -92,6 +94,7 @@ TODO
     libraryDependencies ++= Seq(
       "com.ubirch.avatar" %% "util" % "0.2.0-SNAPSHOT"
     )
+
 
 ## REST Methods
 
@@ -295,6 +298,7 @@ Devices have types and this set of methods allows us to manage them.
 
     curl -XGET localhost:8080/api/avatarService/v1/device/deviceType/init
 
+
 ## Configuration
 
 TODO
@@ -396,46 +400,48 @@ The service requires the following mappings for things to work as expected:
       }
     }'
 
+
 ## Automated Tests
 
 TODO
+
 
 ## Local Setup
 
 TODO
 
-## create docker image
+
+## Create Docker Image
 
     ./sbt server/docker
 
-## generate test data
+
+## Generate Test Data
 
 Running this removes all your local ElasticSearch indexes and recreates them!! 
-  
- 1. start server, e.g. in a terminal
- 
-    1. set AWS env vars:
-        
-        export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-    
-        export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
- 
-    2. if using a terminaml, change inside the project folder and
-    
-        ./sbt server/run
-    
- 2. start test data tool
-  
-    1. set AWS env vars:
-            
-        export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-            
-        export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
-     
-    2. if using a terminaml, change inside the project folder and
-        
-        ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
-        
-3. now you should find one device "testHans001" and 50 datapoints 
 
- 
+ 1. start server, e.g. in a terminal
+
+    1. set AWS env vars:
+
+        export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
+    
+        export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
+
+    2. if using a terminaml, change inside the project folder and
+
+        ./sbt server/run
+
+ 2. start test data tool
+
+    1. set AWS env vars:
+
+        export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
+        
+        export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
+
+    2. if using a terminaml, change inside the project folder and
+
+        ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
+
+3. now you should find one device "testHans001" and 50 datapoints 
