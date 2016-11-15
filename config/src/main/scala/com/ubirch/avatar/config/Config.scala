@@ -17,6 +17,11 @@ object Config extends ConfigBase {
   final val sdmV003 = "0.0.3"
 
   /**
+    * @return http protocol
+    */
+  def protocol: String = config.getString(ConfigKeys.HTTPPROTOCOL)
+
+  /**
     * The interface the server runs on.
     *
     * @return interface
@@ -29,11 +34,6 @@ object Config extends ConfigBase {
     * @return port number
     */
   def port: Int = config.getInt(ConfigKeys.HTTPPORT)
-
-  /**
-    * @return Elasticsearch host
-    */
-  def esProtocol: String = config.getString(ConfigKeys.ES_PROTOCOL)
 
   /**
     * @return Elasticsearch host
@@ -145,4 +145,15 @@ object Config extends ConfigBase {
   def awsSecretAccessKey: String = config.getString(ConfigKeys.AWS_SECRET_ACCESS_KEY)
 
   def awsSqsQueueTransformer: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER)
+
+  /**
+    * @return REST Client connection timeout in milliseconds
+    */
+  def restClientTimeoutConnect: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_CONNECT)
+
+  /**
+    * @return REST Client read timeout in milliseconds
+    */
+  def restClientTimeoutRead: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_READ)
+
 }

@@ -1,9 +1,10 @@
 package com.ubirch.avatar.cmd
 
 import java.io.File
-import java.net.URL
 
-import com.typesafe.scalalogging.slf4j.{LazyLogging, StrictLogging}
+import com.typesafe.scalalogging.slf4j.StrictLogging
+
+import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
@@ -12,10 +13,8 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
+
 import org.joda.time.DateTime
-import uk.co.bigbeeconsultants.http.header.MediaType._
-import uk.co.bigbeeconsultants.http.request.RequestBody
-import uk.co.bigbeeconsultants.http.{Config, HttpClient}
 
 import scala.collection._
 import scala.concurrent.Await
@@ -31,28 +30,20 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
   /**
     * may be you have to fix that, usually Google Drive is a root folder inside your home folder
     */
-  val googleDriveBasePath = s"${System.getProperty("user.home")}/"
+  private val googleDriveBasePath = s"${System.getProperty("user.home")}/"
 
-  val httpClient = new HttpClient(commonConfig = Config(
-    connectTimeout = 15000,
-    readTimeout = 15000
-  ))
-
-  val avatarServiceUrl = "http://localhost:8080/api/avatarService/v1/device/bulk"
-
-  val hwDeviceId = UUIDUtil.uuidStr
-  val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
+  private val hwDeviceId = UUIDUtil.uuidStr
+  private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
 
   cleanElasticsearch()
 
-  val device = Device(
+  private val device = Device(
     deviceId = UUIDUtil.uuidStr,
     deviceName = "trackle Sensor 001",
     hwDeviceId = hwDeviceId,
     deviceTypeKey = Const.TRACLESENSOR
   )
 
-  //    Await.result(DeviceManager.createWithShadow(device), 5 seconds)
   Await.result(DeviceManager.create(device), 5 seconds)
 
   /**
@@ -156,9 +147,9 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
     }
   }
 
-  val allDataFilenames = s"${googleDriveBasePath}Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/allDatafiles.txt"
+  private val allDataFilenames = s"${googleDriveBasePath}Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/allDatafiles.txt"
 
-  val adf = Source.fromFile(allDataFilenames)(Codec.UTF8)
+  private val adf = Source.fromFile(allDataFilenames)(Codec.UTF8)
   adf.getLines().foreach { dfnLine =>
     val dfnLineSplitted = dfnLine.split(";")
     val basePath = dfnLineSplitted(0)
@@ -207,12 +198,9 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
               )
 
               //TODO use throttling, akka offers this for free
-              val ddrString = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(ddr).get)
-              val body = RequestBody(ddrString, APPLICATION_JSON)
-              val resp = httpClient.post(new URL(avatarServiceUrl), Some(body))
+              AvatarRestClient.deviceBulk(ddr)
               Thread.sleep(100)
-            //              DeviceDataRawManager.store(ddr)
-            //                  logger.debug(s"$ddr")
+
             case None =>
               logger.error(s"could not parse payload: $ldp")
           }

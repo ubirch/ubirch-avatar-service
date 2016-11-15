@@ -25,6 +25,7 @@ object RouteConstants {
 
   val urlDevice = s"$urlPrefix/$device"
 
+  val urlDeviceBulk = s"$urlDevice/$bulk"
   val urlDeviceType = s"$urlDevice/$deviceType"
   val urlDeviceTypeInit = s"$urlDeviceType/$init"
 

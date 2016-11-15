@@ -20,13 +20,27 @@ import uk.co.bigbeeconsultants.http.response.Response
   */
 object AvatarRestClient extends StrictLogging {
 
-  val httpClient = new HttpClient
+  private val httpClient = new HttpClient(commonConfig = uk.co.bigbeeconsultants.http.Config(
+    connectTimeout = Config.restClientTimeoutConnect,
+    readTimeout = Config.restClientTimeoutRead
+  ))
 
-  def esRestUrl = s"${Config.esProtocol}${Config.esHost}:${Config.esPortHttp}"
+  private def baseUrl = s"${Config.protocol}${Config.interface}:${Config.port}"
 
   def deviceUpdate(deviceDataRaw: DeviceDataRaw): Response = {
 
-    val url = new URL(s"$esRestUrl${RouteConstants.urlDeviceUpdate}")
+    val url = new URL(s"$baseUrl${RouteConstants.urlDeviceUpdate}")
+    val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
+    logger.info(s"msg: $msg")
+    val body = Some(RequestBody(msg, APPLICATION_JSON))
+
+    httpClient.post(url, body)
+
+  }
+
+  def deviceBulk(deviceDataRaw: DeviceDataRaw): Response = {
+
+    val url = new URL(s"$baseUrl${RouteConstants.urlDeviceBulk}")
     val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
     logger.info(s"msg: $msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
