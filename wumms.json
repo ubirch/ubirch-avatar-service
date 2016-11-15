@@ -1,24 +1,13 @@
 {
   "v": "0.0.3",
-  "a": "WKJqLyBC4AFpU39rDjdGkqe5RgoSuZnhUuA+x1OXGGUHENiXdeOOgX7qoDongLwuvQlpSxGhLSOMTIW0R9EDeg==",
-  "k": "MC0wCAYDK2VkCgEBAyEAC5RtExr7BLyiNTPeJomI2/cNMjef0F8OfLjRyIkZ90Y=",
-  "ts": "2016-11-10T17:37:10.691Z",
-  "s": "08r+8bD6zDrN+I1USxsga4neBuIWlOjgUo8+9luBrJyK5AfsiCo7k/Cfdq3N4dlUfi3WPaHF/4KCrQ6fpAqhDw==",
+  "a": "77f75a63-e330-40a0-a51e-492a72448560",
+  "k": "MC0wCAYDK2VkCgEBAyEAAJz3Zi2PVc4dOLHof/JI0W0PqR1rGyekjUb13bWnof0=",
+  "s": "bJHY7Rtf+/+LHMhsJmXe7Rsn0f2UuVU50RRxx5iEhK2jVXDq0eK9GXe5mfosNSimu2levQCsGQJaC2isWS/eBA==",
   "p": [
     {
-      "a": 1,
-      "b": 3,
-      "c": 7
-    },
-    {
-      "a": 2,
-      "b": 13,
-      "c": 11
-    },
-    {
-      "a": 3,
-      "b": 8,
-      "c": 6
+      "t": 2457,
+      "p": 109416,
+      "h": 6276
     }
   ]
 }
