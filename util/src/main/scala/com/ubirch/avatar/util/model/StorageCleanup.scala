@@ -84,7 +84,7 @@ trait StorageCleanup {
     val deviceMapping =
       s"""{
           |  "mappings": {
-          |    "${Config.esDeviceIndex}" : {
+          |    "${Config.esDeviceType}" : {
           |      "properties" : {
           |        "deviceId" : {
           |          "type" : "string",
