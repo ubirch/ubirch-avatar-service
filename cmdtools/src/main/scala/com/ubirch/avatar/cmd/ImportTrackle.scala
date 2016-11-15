@@ -3,7 +3,7 @@ package com.ubirch.avatar.cmd
 import java.io.File
 import java.net.URL
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.{LazyLogging, StrictLogging}
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
@@ -26,7 +26,7 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 13/11/16.
   */
-object ImportTrackle extends App with LazyLogging with StorageCleanup {
+object ImportTrackle extends App with StrictLogging with StorageCleanup {
 
   /**
     * may be you have to fix that, usually Google Drive is a root folder inside your home folder

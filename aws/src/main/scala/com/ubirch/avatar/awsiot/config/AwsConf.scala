@@ -1,7 +1,6 @@
 package com.ubirch.avatar.awsiot.config
 
 import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.services.iot.AWSIotClient
 import com.amazonaws.services.iotdata.AWSIotDataClient
 import com.amazonaws.services.sqs.AmazonSQSClient
@@ -24,8 +23,9 @@ object AwsConf extends LazyLogging {
   lazy val awsIotDataClient: AWSIotDataClient = {
     Config.awsLocalMode match {
       case true =>
-        val pcp = new ProfileCredentialsProvider()
-        new AWSIotDataClient(pcp)
+        //        val cred = new ProfileCredentialsProvider()
+        val cred = new BasicAWSCredentials(accessKey, secretKey)
+        new AWSIotDataClient(cred)
       case _ =>
         new AWSIotDataClient()
     }
@@ -35,7 +35,9 @@ object AwsConf extends LazyLogging {
 
     Config.awsLocalMode match {
       case true =>
-        new AWSIotClient(new ProfileCredentialsProvider())
+        //        val cred = new ProfileCredentialsProvider()
+        val cred = new BasicAWSCredentials(accessKey, secretKey)
+        new AWSIotClient(cred)
       case _ => new
           AWSIotClient()
     }
@@ -45,7 +47,9 @@ object AwsConf extends LazyLogging {
 
     Config.awsLocalMode match {
       case true =>
-        new AmazonSQSClient(new ProfileCredentialsProvider())
+        //        val cred = new ProfileCredentialsProvider()
+        val cred = new BasicAWSCredentials(accessKey, secretKey)
+        new AmazonSQSClient(cred)
       case _ => new
           AmazonSQSClient()
     }
