@@ -29,7 +29,8 @@ object DummyDevices {
     Device(deviceId = deviceId,
       deviceName = deviceName,
       hwDeviceId = hwDeviceId,
-      deviceTypeKey = deviceTypeKey
+      deviceTypeKey = deviceTypeKey,
+      hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
     )
 
   }
