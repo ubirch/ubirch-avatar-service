@@ -34,7 +34,7 @@ object InitData extends App with StrictLogging with StorageCleanup {
       )()
 
       series foreach { dataRaw =>
-        AvatarRestClient.deviceUpdate(dataRaw)
+        AvatarRestClient.deviceUpdatePOST(dataRaw)
         Thread.sleep(500)
       }
 

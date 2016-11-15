@@ -198,7 +198,7 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
               )
 
               //TODO use throttling, akka offers this for free
-              AvatarRestClient.deviceBulk(ddr)
+              AvatarRestClient.deviceBulkPOST(ddr)
               Thread.sleep(100)
 
             case None =>

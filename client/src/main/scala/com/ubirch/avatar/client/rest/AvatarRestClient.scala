@@ -27,7 +27,13 @@ object AvatarRestClient extends StrictLogging {
 
   private def baseUrl = s"${Config.protocol}${Config.interface}:${Config.port}"
 
-  def deviceUpdate(deviceDataRaw: DeviceDataRaw): Response = {
+  /**
+    * Update a device by POSTing raw device data.
+    *
+    * @param deviceDataRaw raw data to POST
+    * @return http response
+    */
+  def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
     val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
@@ -38,7 +44,13 @@ object AvatarRestClient extends StrictLogging {
 
   }
 
-  def deviceBulk(deviceDataRaw: DeviceDataRaw): Response = {
+  /**
+    * Bulk update a device by POSTing raw device data.
+    *
+    * @param deviceDataRaw raw data to POST
+    * @return http response
+    */
+  def deviceBulkPOST(deviceDataRaw: DeviceDataRaw): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
     val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
