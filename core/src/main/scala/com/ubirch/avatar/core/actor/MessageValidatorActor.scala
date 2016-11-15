@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.server.JsonErrorResponse
@@ -14,8 +15,8 @@ class MessageValidatorActor extends Actor with ActorLogging {
 
   implicit val executionContext = context.dispatcher
 
-  //  private val processorActor = context.actorOf(new RoundRobinPool(5).props(Props[MessageProcessorActor]), "message-processor")
-  private val processorActor = context.actorOf(Props[MessageProcessorActor], "message-processor")
+  private val processorActor = context.actorOf(new RoundRobinPool(5).props(Props[MessageProcessorActor]), "message-processor")
+  //  private val processorActor = context.actorOf(Props[MessageProcessorActor], "message-processor")
 
   override def receive: Receive = {
 
