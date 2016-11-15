@@ -24,6 +24,7 @@ object ConfigKeys {
 
   final val awsPrefix = s"$prefix.aws"
   // Connection
+  final val ES_PROTOCOL = s"$esPrefix.protocol"
   final val ESHOST = s"$esPrefix.host"
   final val ESPORT_BINARY = s"$esPortPrefix.binary"
   final val ESPORT_REST = s"$esPortPrefix.rest"

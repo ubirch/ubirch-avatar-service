@@ -33,6 +33,11 @@ object Config extends ConfigBase {
   /**
     * @return Elasticsearch host
     */
+  def esProtocol: String = config.getString(ConfigKeys.ES_PROTOCOL)
+
+  /**
+    * @return Elasticsearch host
+    */
   def esHost: String = config.getString(ConfigKeys.ESHOST)
 
   /**

@@ -22,7 +22,7 @@ object AvatarRestClient extends StrictLogging {
 
   val httpClient = new HttpClient
 
-  def esRestUrl = s"${Config.esHost}:${Config.esPortHttp}"
+  def esRestUrl = s"${Config.esProtocol}${Config.esHost}:${Config.esPortHttp}"
 
   def deviceUpdate(deviceDataRaw: DeviceDataRaw): Response = {
 
