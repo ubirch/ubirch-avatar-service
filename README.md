@@ -8,6 +8,34 @@ TODO
 
 ## Scala Dependencies
 
+### `aws`
+
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots")
+    )
+    libraryDependencies ++= Seq(
+      "com.ubirch.avatar" %% "aws" % "0.2.0-SNAPSHOT"
+    )
+
+### `client`
+
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots"),
+      Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
+    )
+    libraryDependencies ++= Seq(
+      "com.ubirch.avatar" %% "client" % "0.2.0-SNAPSHOT"
+    )
+
+### `cmdtools`
+
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots")
+    )
+    libraryDependencies ++= Seq(
+      "com.ubirch.avatar" %% "cmdtools" % "0.2.0-SNAPSHOT"
+    )
+
 ### `config`
 
     resolvers ++= Seq(
@@ -26,24 +54,15 @@ TODO
       "com.ubirch.avatar" %% "core" % "0.2.0-SNAPSHOT"
     )
 
-### `model-rest`
+### `model`
 
     resolvers ++= Seq(
       Resolver.sonatypeRepo("snapshots")
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "model-rest" % "0.2.0-SNAPSHOT"
+      "com.ubirch.avatar" %% "model" % "0.2.0-SNAPSHOT"
     )
 
-### `model-db`
-
-    resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots")
-    )
-    libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "model-db" % "0.2.0-SNAPSHOT"
-    )
-        
 ### `server`
 
     resolvers ++= Seq(
@@ -54,13 +73,15 @@ TODO
       "com.ubirch.avatar" %% "server" % "0.2.0-SNAPSHOT"
     )
         
-### `server`
+### `test-base`
 
     resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots")
+      Resolver.sonatypeRepo("snapshots"),
+      Resolver.bintrayRepo("hseeberger", "maven"),
+      Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
     )
     libraryDependencies ++= Seq(
-      "com.ubirch.avatar" %% "model" % "0.2.0-SNAPSHOT"
+      "com.ubirch.avatar" %% "test-base" % "0.2.0-SNAPSHOT"
     )
 
 ### `util`
