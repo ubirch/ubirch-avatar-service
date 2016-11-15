@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.avatar.util.server.RouteConstants
 
 /**
   * author: cvandrei

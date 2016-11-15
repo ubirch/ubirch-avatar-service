@@ -4,8 +4,8 @@ import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
-import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.RouteSpec
+import com.ubirch.avatar.util.server.RouteConstants
 
 import org.scalatest.{BeforeAndAfterAll, Matchers}
 

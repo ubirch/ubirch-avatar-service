@@ -3,7 +3,7 @@ package com.ubirch.avatar.backend.route
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
-import com.ubirch.avatar.server.util.RouteConstants
+import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._

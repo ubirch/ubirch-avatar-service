@@ -5,7 +5,7 @@ import java.util.UUID
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.model.util.ErrorFactory
-import com.ubirch.avatar.server.util.RouteConstants._
+import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 

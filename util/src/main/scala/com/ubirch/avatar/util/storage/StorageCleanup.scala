@@ -1,4 +1,4 @@
-package com.ubirch.avatar.util.model
+package com.ubirch.avatar.util.storage
 
 import java.net.URL
 

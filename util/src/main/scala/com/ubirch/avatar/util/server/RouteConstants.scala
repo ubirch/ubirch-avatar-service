@@ -1,4 +1,4 @@
-package com.ubirch.avatar.server.util
+package com.ubirch.avatar.util.server
 
 /**
   * author: cvandrei

@@ -3,8 +3,8 @@ package com.ubirch.avatar.backend.route
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
-import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
