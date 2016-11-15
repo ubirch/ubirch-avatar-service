@@ -23,7 +23,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"POST ${RouteConstants.urlDeviceDataRaw}") {
+  feature(s"POST ${RouteConstants.pathDeviceDataRaw}") {
 
     scenario("insert message (messageId does not exist yet)") {
 
@@ -32,7 +32,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
       val deviceRaw = DummyDeviceDataRaw.data(device = device)()
 
       // test
-      Post(RouteConstants.urlDeviceDataRaw, deviceRaw) ~> Route.seal(routes) ~> check {
+      Post(RouteConstants.pathDeviceDataRaw, deviceRaw) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual OK
@@ -59,7 +59,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
       val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)()
 
       // test
-      Post(RouteConstants.urlDeviceDataRaw, raw2) ~> Route.seal(routes) ~> check {
+      Post(RouteConstants.pathDeviceDataRaw, raw2) ~> Route.seal(routes) ~> check {
 
         // verify
         status shouldEqual OK

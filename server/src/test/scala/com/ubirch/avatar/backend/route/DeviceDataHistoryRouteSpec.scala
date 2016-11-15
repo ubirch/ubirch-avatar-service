@@ -25,7 +25,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}") {
+  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}") {
 
     scenario("deviceId exists; elementCount < defaultPageSize") {
       testGetHistoryDeviceExists(Config.esDefaultPageSize - 1, None, None)
@@ -49,7 +49,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}/:from") {
+  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from") {
 
     scenario("deviceId exists; from < 0") {
       testGetHistoryDeviceExists(3, Some(-1), None)
@@ -89,7 +89,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.urlDeviceDataHistory(":deviceId")}/:from/:size") {
+  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from/:size") {
 
     scenario("deviceId exists; from < 0; size < 0") {
       testGetHistoryDeviceExists(1, Some(-1), Some(-1))
@@ -295,11 +295,11 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
       case Some(from) =>
         sizeOpt match {
-          case Some(sizeValue) => RouteConstants.urlDeviceHistoryFromSize(deviceId, from, sizeValue)
-          case None => RouteConstants.urlDeviceHistoryFrom(deviceId, from)
+          case Some(sizeValue) => RouteConstants.pathDeviceHistoryFromSize(deviceId, from, sizeValue)
+          case None => RouteConstants.pathDeviceHistoryFrom(deviceId, from)
         }
 
-      case None => RouteConstants.urlDeviceDataHistory(deviceId)
+      case None => RouteConstants.pathDeviceDataHistory(deviceId)
 
     }
 

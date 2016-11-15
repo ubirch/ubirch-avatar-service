@@ -29,7 +29,7 @@ object AvatarRestClient extends StrictLogging {
 
   def deviceUpdate(deviceDataRaw: DeviceDataRaw): Response = {
 
-    val url = new URL(s"$baseUrl${RouteConstants.urlDeviceUpdate}")
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
     val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
     logger.info(s"msg: $msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
@@ -40,7 +40,7 @@ object AvatarRestClient extends StrictLogging {
 
   def deviceBulk(deviceDataRaw: DeviceDataRaw): Response = {
 
-    val url = new URL(s"$baseUrl${RouteConstants.urlDeviceBulk}")
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
     val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
     logger.info(s"msg: $msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))

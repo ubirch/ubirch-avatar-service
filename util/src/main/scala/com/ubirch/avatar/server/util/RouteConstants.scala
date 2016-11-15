@@ -21,24 +21,24 @@ object RouteConstants {
   val deviceType = "deviceType"
   val init = "init"
 
-  val urlPrefix = s"/$apiPrefix/$serviceName/$currentVersion"
+  val pathPrefix = s"/$apiPrefix/$serviceName/$currentVersion"
 
-  val urlDevice = s"$urlPrefix/$device"
+  val pathDevice = s"$pathPrefix/$device"
 
-  val urlDeviceBulk = s"$urlDevice/$bulk"
-  val urlDeviceType = s"$urlDevice/$deviceType"
-  val urlDeviceTypeInit = s"$urlDeviceType/$init"
+  val pathDeviceBulk = s"$pathDevice/$bulk"
+  val pathDeviceType = s"$pathDevice/$deviceType"
+  val pathDeviceTypeInit = s"$pathDeviceType/$init"
 
-  def urlDeviceWithId(id: String): String = s"$urlDevice/$id"
+  def pathDeviceWithId(id: String): String = s"$pathDevice/$id"
 
-  val urlDeviceStubWithIdPrefix = s"$urlDevice/$stub"
-  def urlDeviceStubWithId(id: String): String = s"$urlDeviceStubWithIdPrefix/$id"
+  val pathDeviceStubWithIdPrefix = s"$pathDevice/$stub"
+  def pathDeviceStubWithId(id: String): String = s"$pathDeviceStubWithIdPrefix/$id"
 
-  def urlDeviceState(id: String): String = s"${urlDeviceWithId(id)}/$state"
-  val urlDeviceDataRaw: String = s"$urlDevice/$data/$raw"
-  def urlDeviceDataHistory(id: String): String = s"${urlDeviceWithId(id)}/$data/$history"
-  val urlDeviceUpdate: String = s"$urlDevice/$update"
-  def urlDeviceHistoryFrom(id: String, from: Int): String = s"${urlDeviceDataHistory(id)}/$from"
-  def urlDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${urlDeviceDataHistory(id)}/$from/$size"
+  def pathDeviceState(id: String): String = s"${pathDeviceWithId(id)}/$state"
+  val pathDeviceDataRaw: String = s"$pathDevice/$data/$raw"
+  def pathDeviceDataHistory(id: String): String = s"${pathDeviceWithId(id)}/$data/$history"
+  val pathDeviceUpdate: String = s"$pathDevice/$update"
+  def pathDeviceHistoryFrom(id: String, from: Int): String = s"${pathDeviceDataHistory(id)}/$from"
+  def pathDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${pathDeviceDataHistory(id)}/$from/$size"
 
 }

@@ -18,10 +18,10 @@ class DeviceStubIdRouteSpec extends RouteSpec {
 
   private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.urlDevice}") {
+  feature(s"GET ${RouteConstants.pathDevice}") {
 
     scenario("without deviceId") {
-      Get(RouteConstants.urlDeviceStubWithId("")) ~> routes ~> check {
+      Get(RouteConstants.pathDeviceStubWithId("")) ~> routes ~> check {
         handled shouldEqual false
       }
     }
@@ -31,7 +31,7 @@ class DeviceStubIdRouteSpec extends RouteSpec {
       val device = DummyDevices.device1
       val deviceId = device.deviceId
 
-      Get(RouteConstants.urlDeviceStubWithId(deviceId)) ~> routes ~> check {
+      Get(RouteConstants.pathDeviceStubWithId(deviceId)) ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
         responseAs[Device] shouldEqual device
@@ -44,7 +44,7 @@ class DeviceStubIdRouteSpec extends RouteSpec {
 
       val deviceId = DummyDevices.device1.deviceId + "-does-not-exist"
 
-      Get(RouteConstants.urlDeviceStubWithId(deviceId)) ~> routes ~> check {
+      Get(RouteConstants.pathDeviceStubWithId(deviceId)) ~> routes ~> check {
 
         status shouldEqual BadRequest
 
