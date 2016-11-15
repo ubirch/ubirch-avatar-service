@@ -52,12 +52,23 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
-  .dependsOn(core, util, testBase)
+  .dependsOn(core, client, testBase)
   .settings(
     description := "command line tools",
     libraryDependencies ++= depCmdtools
   )
 //.enablePlugins(SbtOneLog)
+
+lazy val client = project
+  .settings(commonSettings: _*)
+    .dependsOn(config, model, util)
+  .settings(
+    description := "REST client for the avatarService",
+    libraryDependencies ++= depClient,
+    resolvers ++= Seq(
+      resolverBeeClient
+    )
+  )
 
 lazy val core = project
   .settings(commonSettings: _*)
@@ -142,6 +153,10 @@ lazy val depCore = Seq(
 ) ++ akkaCamel ++ scalaLogging
 
 lazy val depCmdtools = scalaLogging
+
+lazy val depClient = Seq(
+  beeClient
+) ++ scalaLogging
 
 lazy val depAws = Seq(
   ubirchUtilJson,

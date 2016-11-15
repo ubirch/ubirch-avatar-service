@@ -1,8 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.server.util.RouteConstants
+
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.core.server.util.RouteConstants
 
 /**
   * author: cvandrei

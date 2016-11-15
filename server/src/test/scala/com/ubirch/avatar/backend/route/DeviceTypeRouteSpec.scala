@@ -1,9 +1,9 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.core.server.util.RouteConstants
 import com.ubirch.avatar.core.test.util.DeviceTypeTestUtil
 import com.ubirch.avatar.model.device.DeviceType
 import com.ubirch.avatar.model.server.JsonErrorResponse
+import com.ubirch.avatar.server.util.RouteConstants
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 
