@@ -18,7 +18,7 @@ class AwsConsumerActor extends Consumer with ActorLogging {
 
   override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey"
 
-  override def autoAck: Boolean = true
+  override def autoAck: Boolean = false
 
   val transformerActor = context.actorOf(Props[TransformerPreprocessorActor], "transformer-pre-actor")
 
