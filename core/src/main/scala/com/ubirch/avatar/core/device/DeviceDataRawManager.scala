@@ -79,14 +79,13 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
     */
   def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
 
-    val dataCopy = data.copy(id = UUIDUtil.uuid)
-    logger.debug(s"store data: $dataCopy")
-    Json4sUtil.any2jvalue(dataCopy) match {
+    logger.debug(s"store data: $data")
+    Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
-        val id = Some(dataCopy.id.toString)
+        val id = Some(data.id.toString)
         //TODO we should use here ES bulk client
         DeviceDataRawStorage.storeDoc(
           docIndex = index,
