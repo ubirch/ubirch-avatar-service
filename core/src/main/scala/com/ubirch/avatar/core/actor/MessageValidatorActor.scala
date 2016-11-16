@@ -42,21 +42,21 @@ class MessageValidatorActor extends Actor with ActorLogging {
           case Some(dev) =>
             processorActor ! (s, drd, dev)
           case None =>
-            val errorMessage = s"invalid ecc signature: ${drd.a} / ${drd.s}"
-            log.error(errorMessage)
-            s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
+            s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
         }
       else {
         log.error("valid pubKey missing")
         s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"valid  pubKey missing: ${drd.a} / ${drd.s}")
       }
     case drd: DeviceDataRaw =>
-      val errorMessage = s"received unknown message version: ${drd.v}"
-      log.error(errorMessage)
-      sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
+      sender ! logAndCreateErrorResponse(s"received unknown message version: ${drd.v}", "ValidationError")
     case _ =>
-      val errorMessage = "received unknown message"
-      log.error(errorMessage)
-      sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
+      sender ! logAndCreateErrorResponse("received unknown message", "ValidationError")
   }
+
+  private def logAndCreateErrorResponse(msg: String, errType: String): JsonErrorResponse = {
+    log.error(msg)
+    JsonErrorResponse(errorType = errType, errorMessage = msg)
+  }
+
 }
