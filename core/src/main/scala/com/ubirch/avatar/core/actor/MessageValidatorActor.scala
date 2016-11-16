@@ -42,9 +42,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
           case Some(dev) =>
             processorActor ! (s, drd, dev)
           case None =>
-            val errorMessage = s"invalid ecc signature: ${drd.a} / ${drd.s}"
-            log.error(errorMessage)
-            s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
+            s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
         }
       else {
         log.error("valid pubKey missing")
@@ -59,4 +57,10 @@ class MessageValidatorActor extends Actor with ActorLogging {
       log.error(errorMessage)
       sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
   }
+
+  private def logAndCreateErrorResponse(msg: String, errType: String: JsonErrorResponse = {
+    log.error(msg)
+    JsonErrorResponse(errorType = errType, errorMessage = msg)
+  }
+
 }
