@@ -58,7 +58,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
       sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
   }
 
-  private def logAndCreateErrorResponse(msg: String, errType: String: JsonErrorResponse = {
+  private def logAndCreateErrorResponse(msg: String, errType: String): JsonErrorResponse = {
     log.error(msg)
     JsonErrorResponse(errorType = errType, errorMessage = msg)
   }
