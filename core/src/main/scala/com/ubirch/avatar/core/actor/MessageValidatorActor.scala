@@ -32,7 +32,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
           s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid simple signature: ${drd.a} / ${drd.s}")
       }
 
-    case drd: DeviceDataRaw =>
+    case drd: DeviceDataRaw if drd.v == Config.sdmV002 || drd.v == Config.sdmV003 =>
       val s = sender()
 
       log.debug(s"received message version: ${drd.v}")
@@ -50,8 +50,13 @@ class MessageValidatorActor extends Actor with ActorLogging {
         log.error("valid pubKey missing")
         s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"valid  pubKey missing: ${drd.a} / ${drd.s}")
       }
-
+    case drd: DeviceDataRaw =>
+      val errorMessage = s"received unknown message version: ${drd.v}"
+      log.error(errorMessage)
+      sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
     case _ =>
-      log.error("received unknown message")
+      val errorMessage = "received unknown message"
+      log.error(errorMessage)
+      sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = errorMessage)
   }
 }
