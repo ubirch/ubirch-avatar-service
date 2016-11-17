@@ -135,8 +135,6 @@ lazy val depServer = Seq(
 
   //testing
   scalatest % "test",
-  akkaG %% "akka-testkit" % akkaV % "test",
-  akkaHttpTestkit % "test",
 
   ubirchUtilJson,
   ubirchUtilJsonAutoConvert,
@@ -178,7 +176,7 @@ lazy val depUtil = Seq(
 
 lazy val depTestBase = Seq(
   scalatest,
-  akkaHttpTestkit,
+  ubirchUtilRestAkkaHttpTest,
   beeClient,
   ubirchUtilUUID,
   ubirchCrypto
@@ -264,6 +262,11 @@ lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2
   ExclusionRule(organization = "ch.qos.logback")
   )
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+  )
+lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
