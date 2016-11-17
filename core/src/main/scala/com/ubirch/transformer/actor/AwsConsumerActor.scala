@@ -24,6 +24,8 @@ class AwsConsumerActor extends Consumer with ActorLogging {
 
   implicit val executionContext = context.dispatcher
 
+
+  //TODO fix error handling, in case of errora the message should be resend later?
   override def receive = {
     case msg: CamelMessage =>
       msg.body match {

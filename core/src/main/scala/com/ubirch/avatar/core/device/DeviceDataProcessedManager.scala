@@ -73,18 +73,18 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
   /**
     * Store a [[DeviceDataProcessed]].
     *
-    * @param data a device's processed data to store (messageId will be ignored)
+    * @param data a device's processed data to store
     * @return json of what we stored
     */
   def store(data: DeviceDataProcessed): Future[Option[DeviceDataProcessed]] = {
 
-    val toStore = data.copy(messageId = UUIDUtil.uuid)
-    Json4sUtil.any2jvalue(toStore) match {
+
+    Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
         val index = Config.esDeviceDataProcessedIndex
         val esType = Config.esDeviceDataProcessedType
-        val id = Some(toStore.messageId.toString)
+        val id = Some(data.messageId.toString)
         DeviceDataProcessedStorage.storeDoc(
           docIndex = index,
           docType = esType,
