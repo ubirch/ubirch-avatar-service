@@ -1,9 +1,10 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.device.Device
-import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
+import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.avatar.util.server.RouteConstants
 
@@ -19,7 +20,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   */
 class DeviceIdRouteSpec extends RouteSpec
   with Matchers
-  with BeforeAndAfterAll {
+  with BeforeAndAfterAll
+  with ResponseUtil {
 
   private val routes = (new MainRoute).myRoute
 
@@ -55,9 +57,9 @@ class DeviceIdRouteSpec extends RouteSpec
         val r = response
         s shouldEqual BadRequest
 
-        val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId")
+        val expectedError = requestErrorResponse("QueryError", s"deviceId not found: deviceId=$deviceId")
         responseEntity.contentType should be(`application/json`)
-        responseAs[ErrorResponse] shouldEqual expectedError
+        responseAs[JsonErrorResponse] shouldEqual expectedError
 
         verifyCORSHeader()
 
@@ -97,9 +99,9 @@ class DeviceIdRouteSpec extends RouteSpec
 
         status shouldEqual BadRequest
 
-        val expectedError = ErrorFactory.create("UpdateError", s"failed to update device: deviceId=$deviceId")
+        val expectedError = requestErrorResponse("UpdateError", s"failed to update device: deviceId=$deviceId")
         responseEntity.contentType should be(`application/json`)
-        responseAs[ErrorResponse] shouldEqual expectedError
+        responseAs[JsonErrorResponse] shouldEqual expectedError
 
         verifyCORSHeader()
 
@@ -139,9 +141,9 @@ class DeviceIdRouteSpec extends RouteSpec
 
         status shouldEqual BadRequest
 
-        val expectedError = ErrorFactory.create("DeleteError", s"failed to delete device: deviceId=$deviceId")
+        val expectedError = requestErrorResponse("DeleteError", s"failed to delete device: deviceId=$deviceId")
         responseEntity.contentType should be(`application/json`)
-        responseAs[ErrorResponse] shouldEqual expectedError
+        responseAs[JsonErrorResponse] shouldEqual expectedError
 
         verifyCORSHeader()
 

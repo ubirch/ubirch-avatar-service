@@ -1,10 +1,11 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.test.util.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.device.DeviceDataProcessed
-import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
+import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.uuid.UUIDUtil
@@ -21,7 +22,8 @@ import scala.language.postfixOps
   * since: 2016-09-30
   */
 class DeviceDataHistoryRouteSpec extends RouteSpec
-  with ElasticsearchSpec {
+  with ElasticsearchSpec
+  with ResponseUtil {
 
   private val routes = (new MainRoute).myRoute
 
@@ -319,9 +321,9 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
     status shouldEqual BadRequest
 
-    val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId, from=$from, size=$size")
+    val expectedError = requestErrorResponse("QueryError", s"deviceId not found: deviceId=$deviceId, from=$from, size=$size")
     responseEntity.contentType should be(`application/json`)
-    responseAs[ErrorResponse] shouldEqual expectedError
+    responseAs[JsonErrorResponse] shouldEqual expectedError
 
     verifyCORSHeader()
 

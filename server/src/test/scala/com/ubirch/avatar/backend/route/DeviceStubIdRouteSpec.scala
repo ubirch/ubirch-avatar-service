@@ -1,8 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.device.Device
-import com.ubirch.avatar.model.util.{ErrorFactory, ErrorResponse}
+import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.http.scaladsl.model.ContentTypes._
@@ -14,7 +15,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceStubIdRouteSpec extends RouteSpec {
+class DeviceStubIdRouteSpec extends RouteSpec
+  with ResponseUtil {
 
   private val routes = (new MainRoute).myRoute
 
@@ -48,9 +50,9 @@ class DeviceStubIdRouteSpec extends RouteSpec {
 
         status shouldEqual BadRequest
 
-        val expectedError = ErrorFactory.create("QueryError", s"deviceId not found: deviceId=$deviceId")
+        val expectedError = requestErrorResponse("QueryError", s"deviceId not found: deviceId=$deviceId")
         responseEntity.contentType should be(`application/json`)
-        responseAs[ErrorResponse] shouldEqual expectedError
+        responseAs[JsonErrorResponse] shouldEqual expectedError
 
         verifyCORSHeader()
 

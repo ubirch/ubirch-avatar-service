@@ -2,17 +2,15 @@ package com.ubirch.avatar.backend.route
 
 import java.util.UUID
 
+import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device.DeviceDataProcessed
-import com.ubirch.avatar.model.util.ErrorFactory
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
+import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -23,7 +21,8 @@ import scala.concurrent.Future
   * since: 2016-09-30
   */
 trait DeviceDataHistoryRoute extends MyJsonProtocol
-  with CORSDirective {
+  with CORSDirective
+  with ResponseUtil {
 
   implicit val system = ActorSystem()
 
@@ -104,7 +103,6 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
                                    fromOpt: Option[Long] = None,
                                    sizeOpt: Option[Long] = None
                                   ): HttpResponse = {
-    val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
-    HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
+    requestErrorResponse("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
   }
 }
