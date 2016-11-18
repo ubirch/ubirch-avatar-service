@@ -226,13 +226,12 @@ lazy val json4sNative = json4sG %% "json4s-native" % json4sV
 lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
 lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
-// seed for all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
+// list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 
 lazy val awsIotSdk = Seq(
   awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor")
 )
 lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
-//lazy val awsSdk = Seq(awsG % "aws-java-sdk" % awsSdkV)
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
