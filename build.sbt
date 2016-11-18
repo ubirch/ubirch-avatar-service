@@ -213,7 +213,7 @@ lazy val scalaLogging = Seq(
 
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
-  "org.apache.camel" % "camel-aws" % camelV,
+  "org.apache.camel" % "camel-aws" % camelV exclude(awsG, "aws-java-sdk"),
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
@@ -227,7 +227,6 @@ lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
 lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
 // list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
-
 lazy val awsIotSdk = Seq(
   awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor")
 )
@@ -278,7 +277,8 @@ lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1" excludeAll(
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.5" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
+  ExclusionRule(organization = "ch.qos.logback"),
+  ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")
   )
 
 /*
