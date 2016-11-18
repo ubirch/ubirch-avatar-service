@@ -41,7 +41,6 @@ class DeviceDataRawRouteSpec extends RouteSpec
         storedRaw shouldEqual deviceRaw.copy(id = storedRaw.id)
 
         Thread.sleep(1000)
-
         val rawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
         rawList.size should be(1)
         rawList.head should be(storedRaw)
