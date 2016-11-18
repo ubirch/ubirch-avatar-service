@@ -14,6 +14,8 @@ import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
+import scala.util.{Failure, Success}
+
 /**
   * author: cvandrei
   * since: 2016-11-02
@@ -28,19 +30,24 @@ trait DeviceDataRawRoute extends MyJsonProtocol
     // TODO authentication
 
     path(data / raw) {
-      respondWithCORS {
-        post {
+      post {
+        respondWithCORS {
           entity(as[DeviceDataRaw]) { deviceMessage =>
-            onSuccess(DeviceDataRawManager.store(deviceMessage)) {
-              case None => complete(errorResponseMessage(deviceMessage))
-              case Some(storedMessage) => complete(storedMessage)
+
+            onComplete(DeviceDataRawManager.store(deviceMessage)) {
+
+              case Success(res) => res match {
+                case None => complete(errorResponseMessage(deviceMessage))
+                case Some(storedMessage) => complete(storedMessage)
+              }
+
+              case Failure(t) => complete(errorResponseMessage(deviceMessage))
+
             }
-            //TODO onFailure is missing!! use better onComplete ...
+
           }
         }
-
       }
-
     }
 
   }
