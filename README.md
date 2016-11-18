@@ -306,6 +306,11 @@ TODO
 
 ## AWS
 
+### AWS Console Account
+
+Login on https://console.aws.amazon.com with your AWS account. Without an account or not having logged AWS connections
+might not work.
+
 ### AWS CLI
 
 On MacOS you can install the aws-cli tool through brew:
