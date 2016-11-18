@@ -1,16 +1,13 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.device.DeviceDataRaw
-import com.ubirch.avatar.model.util.ErrorFactory
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -21,7 +18,8 @@ import scala.util.{Failure, Success}
   * since: 2016-11-02
   */
 trait DeviceDataRawRoute extends MyJsonProtocol
-  with CORSDirective {
+  with CORSDirective
+  with ResponseUtil {
 
   implicit val system = ActorSystem()
 
@@ -37,11 +35,11 @@ trait DeviceDataRawRoute extends MyJsonProtocol
             onComplete(DeviceDataRawManager.store(deviceMessage)) {
 
               case Success(res) => res match {
-                case None => complete(errorResponseMessage(deviceMessage))
+                case None => complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
                 case Some(storedMessage) => complete(storedMessage)
               }
 
-              case Failure(t) => complete(errorResponseMessage(deviceMessage))
+              case Failure(t) => complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
 
             }
 
@@ -52,9 +50,4 @@ trait DeviceDataRawRoute extends MyJsonProtocol
 
   }
 
-  //TODO refactor this, we have a trait for that
-  private def errorResponseMessage(deviceMessage: DeviceDataRaw): HttpResponse = {
-    val error = ErrorFactory.createString("CreateError", s"failed to persist message")
-    HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
-  }
 }
