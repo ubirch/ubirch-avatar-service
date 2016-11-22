@@ -106,7 +106,10 @@ lazy val util = project
   .dependsOn(config, model)
   .settings(
     description := "ubirch-avatar-service specific utils",
-    libraryDependencies ++= depUtil
+    libraryDependencies ++= depUtil,
+    resolvers ++= Seq(
+      resolverBeeClient
+    )
   )
 
 lazy val testBase = (project in file("test-base"))
