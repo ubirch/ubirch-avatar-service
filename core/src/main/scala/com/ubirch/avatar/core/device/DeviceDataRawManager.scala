@@ -43,9 +43,7 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
     val sort = Some(SortUtil.sortBuilder("ts", asc = false))
 
     DeviceDataRawStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
-      res.map { jv =>
-        jv.extract[DeviceDataRaw]
-      }
+      res.map(_.extract[DeviceDataRaw])
     }
 
   }
@@ -65,9 +63,7 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
     val query = Some(QueryBuilders.termQuery("id", id.toString))
 
     DeviceDataRawStorage.getDocs(index, esType, query).map { res =>
-      res.map { jv =>
-        jv.extract[DeviceDataRaw]
-      }.headOption
+      res.map(_.extract[DeviceDataRaw]).headOption
     }
   }
 
@@ -92,9 +88,7 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
           docType = esType,
           docIdOpt = id,
           doc = doc
-        ) map { jv =>
-          Some(jv.extract[DeviceDataRaw])
-        }
+        ) map(_.extractOpt[DeviceDataRaw])
 
       case None => Future(None)
 

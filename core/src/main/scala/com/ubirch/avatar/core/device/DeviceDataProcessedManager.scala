@@ -42,9 +42,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
     DeviceDataProcessedStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
-      res.map { jv =>
-        jv.extract[DeviceDataProcessed]
-      }
+      res.map(_.extract[DeviceDataProcessed])
     }
 
   }
@@ -64,9 +62,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
 
     DeviceDataRawStorage.getDocs(index, esType, query).map { res =>
-      res.map { jv =>
-        jv.extract[DeviceDataProcessed]
-      }.headOption
+      res.map(_.extract[DeviceDataProcessed]).headOption
     }
   }
 
@@ -90,9 +86,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
           docType = esType,
           docIdOpt = id,
           doc = doc
-        ) map { jv =>
-          Some(jv.extract[DeviceDataProcessed])
-        }
+        ) map(_.extractOpt[DeviceDataProcessed])
 
       case None => Future(None)
 

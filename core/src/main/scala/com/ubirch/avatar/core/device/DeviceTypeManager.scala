@@ -74,9 +74,7 @@ object DeviceTypeManager extends LazyLogging {
               docType = esType,
               docIdOpt = Some(key),
               doc = doc
-            ) map { jv =>
-              Some(jv.extract[DeviceType])
-            }
+            ) map(_.extractOpt[DeviceType])
 
         }
 
@@ -101,15 +99,13 @@ object DeviceTypeManager extends LazyLogging {
       case Some(doc) =>
         getByKey(key) flatMap {
 
-          case Some(dbRecord) =>
+          case Some(_) =>
             DeviceTypeStorage.storeDoc(
               docIndex = index,
               docType = esType,
               docIdOpt = Some(key),
               doc = doc
-            ) map { jv =>
-              Some(jv.extract[DeviceType])
-            }
+            ) map(_.extractOpt[DeviceType])
 
           case None => Future(None)
 

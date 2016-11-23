@@ -26,9 +26,7 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
 
   def all(): Future[Seq[Device]] = {
     DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
-      res.map { jv =>
-        jv.extract[Device]
-      }
+      res.map(_.extract[Device])
     }
   }
 
@@ -56,16 +54,15 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
     )
 
     Json4sUtil.any2jvalue(devWithDefaults) match {
+
       case Some(devJval) =>
         DeviceStorage.storeDoc(
           docIndex = Config.esDeviceIndex,
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
-        ).map { resJval =>
-          Some(resJval.extract[Device])
+        ) map(_.extractOpt[Device])
 
-        }
       case None =>
         Future(None)
     }
@@ -87,16 +84,17 @@ object DeviceManager extends MyJsonProtocol with LazyLogging {
   }
 
   def update(device: Device): Future[Option[Device]] = {
+
     Json4sUtil.any2jvalue(device) match {
+
       case Some(devJval) =>
         DeviceStorage.storeDoc(
           docIndex = Config.esDeviceIndex,
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
-        ).map { resJval =>
-          Some(resJval.extract[Device])
-        }
+        ).map(_.extractOpt[Device])
+
       case None =>
         Future(None)
     }
