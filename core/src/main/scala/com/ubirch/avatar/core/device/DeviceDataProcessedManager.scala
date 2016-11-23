@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataProcessed
-import com.ubirch.services.storage.{DeviceDataProcessedStorage, DeviceDataRawStorage}
+import com.ubirch.services.storage.DeviceDataProcessedStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
@@ -61,7 +61,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     val esType = Config.esDeviceDataProcessedType
     val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
 
-    DeviceDataRawStorage.getDocs(index, esType, query).map { res =>
+    DeviceDataProcessedStorage.getDocs(index, esType, query).map { res =>
       res.map(_.extract[DeviceDataProcessed]).headOption
     }
   }
