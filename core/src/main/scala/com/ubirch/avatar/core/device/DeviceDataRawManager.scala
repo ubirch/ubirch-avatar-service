@@ -102,6 +102,4 @@ object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
 
   }
 
-
-
 }
