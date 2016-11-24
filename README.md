@@ -451,7 +451,7 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
     
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
 
-    2. if using a terminaml, change inside the project folder and
+    2. if using a terminal, change inside the project folder and
 
         ./sbt server/run
 
@@ -463,8 +463,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
         
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
 
-    2. if using a terminaml, change inside the project folder and
+    2. if using a terminal, change inside the project folder and
 
         ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
 
-3. now you should find one device "testHans001" and 50 datapoints 
+3. now you should find one device "testHans001" and 50 data points 
