@@ -17,7 +17,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.0"
+  "com.ubirch.avatar" %% "aws" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -29,7 +29,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.0"
+  "com.ubirch.avatar" %% "client" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -40,7 +40,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.0"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -51,7 +51,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.0"
+  "com.ubirch.avatar" %% "config" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -62,7 +62,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.0"
+  "com.ubirch.avatar" %% "core" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -73,7 +73,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.0"
+  "com.ubirch.avatar" %% "model" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -85,7 +85,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.0"
+  "com.ubirch.avatar" %% "server" % "0.3.3-SNAPSHOT"
 )
 ```
         
@@ -98,7 +98,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.0"
+  "com.ubirch.avatar" %% "test-base" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -109,7 +109,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.0"
+  "com.ubirch.avatar" %% "util" % "0.3.3-SNAPSHOT"
 )
 ```
 
@@ -451,7 +451,7 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
     
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
 
-    2. if using a terminaml, change inside the project folder and
+    2. if using a terminal, change inside the project folder and
 
         ./sbt server/run
 
@@ -463,8 +463,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
         
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
 
-    2. if using a terminaml, change inside the project folder and
+    2. if using a terminal, change inside the project folder and
 
         ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
 
-3. now you should find one device "testHans001" and 50 datapoints 
+3. now you should find one device "testHans001" and 50 data points 

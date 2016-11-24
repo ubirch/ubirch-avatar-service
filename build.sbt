@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.0",
+  version := "0.3.3-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -48,20 +48,17 @@ lazy val server = project
       generateDockerFile(baseDirectory.value / ".." / "Dockerfile", name.value, version.value)
     }.taskValue
   )
-//.enablePlugins(SbtOneLog)
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
   .dependsOn(core, client, testBase)
   .settings(
-    description := "command line tools",
-    libraryDependencies ++= depCmdtools
+    description := "command line tools"
   )
-//.enablePlugins(SbtOneLog)
 
 lazy val client = project
   .settings(commonSettings: _*)
-    .dependsOn(config, model, util)
+  .dependsOn(config, model, util)
   .settings(
     description := "REST client for the avatarService",
     libraryDependencies ++= depClient,
@@ -75,7 +72,10 @@ lazy val core = project
   .dependsOn(config, aws, model, util, testBase % "test")
   .settings(
     description := "business logic",
-    libraryDependencies ++= depCore
+    libraryDependencies ++= depCore,
+    resolvers ++= Seq(
+      resolverRoundEights
+    )
   )
 
 lazy val aws = project
@@ -108,7 +108,8 @@ lazy val util = project
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
-      resolverBeeClient
+      resolverBeeClient,
+      resolverRoundEights
     )
   )
 
@@ -153,8 +154,6 @@ lazy val depCore = Seq(
   scalatest % "test"
 ) ++ akkaCamel ++ scalaLogging
 
-lazy val depCmdtools = scalaLogging
-
 lazy val depClient = Seq(
   beeClient
 ) ++ scalaLogging
@@ -193,8 +192,8 @@ lazy val depTestBase = Seq(
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.2"
 lazy val awsSdkV = "1.11.51"
-lazy val scalaTestV = "3.0.0"
 lazy val camelV = "2.18.0"
+lazy val scalaTestV = "3.0.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -211,12 +210,13 @@ lazy val scalaLogging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" exclude("org.slf4j", "slf4j-api"),
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
   "ch.qos.logback" % "logback-core" % "1.1.7",
-  "ch.qos.logback" % "logback-classic" % "1.1.7"
+  "ch.qos.logback" % "logback-classic" % "1.1.7",
+  "com.internetitem" % "logback-elasticsearch-appender" % "1.4"
 )
 
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
-  "org.apache.camel" % "camel-aws" % camelV exclude(awsG, "aws-java-sdk"),
+  "org.apache.camel" % "camel-aws" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
@@ -233,7 +233,9 @@ lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 lazy val awsIotSdk = Seq(
   awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor")
 )
-lazy val awsSqsSdk = Seq(awsG % "aws-java-sdk-sqs" % awsSdkV)
+lazy val awsSqsSdk = Seq(
+  awsG % "aws-java-sdk-sqs" % awsSdkV
+)
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
@@ -241,48 +243,48 @@ lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.10" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.2" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.5" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
   ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")
-  )
+)
 
 /*
  * RESOLVER
@@ -318,9 +320,9 @@ def generateDockerFile(file: File, nameString: String, versionString: String): S
   val jar = "./server/target/scala-2.11/server-assembly-0.3.0-SNAPSHOT.jar"
   val contents =
     s"""FROM java
-        |ADD $jar /app/$jar
-        |ENTRYPOINT ["java", "-jar", "$jar"]
-        |""".stripMargin
+       |ADD $jar /app/$jar
+       |ENTRYPOINT ["java", "-jar", "$jar"]
+       |""".stripMargin
   IO.write(file, contents)
   Seq(file)
 

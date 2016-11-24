@@ -1,9 +1,9 @@
 package com.ubirch.transformer.actor
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Props}
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device._
-import com.ubirch.util.json.MyJsonProtocol
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 /**
   * Created by derMicha on 28/10/16.
@@ -11,6 +11,8 @@ import com.ubirch.util.json.MyJsonProtocol
 class TransformerPostprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
   implicit val executionContext = context.dispatcher
+
+  val outProducerActor = context.actorOf(Props[TransformerOutProducerActor], "out-producer")
 
   override def receive: Receive = {
 
@@ -29,6 +31,14 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
         deviceDataRaw = Some(sdrd)
       )
       DeviceDataProcessedManager.store(ddp)
+
+      val jval = Json4sUtil.any2jvalue(ddp) match {
+        case Some(jval) =>
+          outProducerActor ! Json4sUtil.jvalue2String(jval)
+        case None =>
+          log.error(s"could not parse to json: $ddp")
+      }
+
 
     case _ =>
       log.error("received unknown message")

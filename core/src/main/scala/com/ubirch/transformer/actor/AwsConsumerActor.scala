@@ -4,6 +4,7 @@ import java.util.UUID
 
 import akka.actor.{ActorLogging, Props}
 import akka.camel.{CamelMessage, Consumer}
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
 
@@ -18,9 +19,9 @@ class AwsConsumerActor extends Consumer with ActorLogging {
 
   override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey"
 
-  override def autoAck: Boolean = false
+  override def autoAck: Boolean = true
 
-  val transformerActor = context.actorOf(Props[TransformerPreprocessorActor], "transformer-pre-actor")
+  val transformerActor = context.actorOf(new RoundRobinPool(3).props(Props[TransformerPreprocessorActor]), "transformer-pre-actor")
 
   implicit val executionContext = context.dispatcher
 
