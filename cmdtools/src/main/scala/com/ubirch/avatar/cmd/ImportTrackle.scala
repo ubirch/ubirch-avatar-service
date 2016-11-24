@@ -3,7 +3,6 @@ package com.ubirch.avatar.cmd
 import java.io.File
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
@@ -13,7 +12,6 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 
 import scala.collection._
@@ -147,7 +145,8 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
     }
   }
 
-  private val allDataFilenames = s"${googleDriveBasePath}Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/allDatafiles.txt"
+  //  private val allDataFilenames = s"${googleDriveBasePath}Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/allDatafiles.txt"
+  private val allDataFilenames = "./data/datafiles.txt"
 
   private val adf = Source.fromFile(allDataFilenames)(Codec.UTF8)
   adf.getLines().foreach { dfnLine =>
@@ -163,7 +162,6 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
 
       val csvData: mutable.HashMap[String, CsvData] = new mutable.HashMap()
       val logData: mutable.HashMap[String, LogData] = new mutable.HashMap()
-
 
 
       val csvSource = Source.fromFile(csvFile)(Codec.UTF8)

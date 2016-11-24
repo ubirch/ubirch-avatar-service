@@ -80,6 +80,7 @@ object ConfigKeys {
 
   // AWS SQS queues
   final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"
+  final val AWS_SQS_QUEUES_TRANSFORMER_OUT = s"$awsPrefix.sqs.queues.transformer_out"
 
   /* REST Client Related Config Keys
    **********************************************************************/
