@@ -4,7 +4,7 @@ echo "starting avatar service"
 
 java="java"
 
-jar="./server/target/scala-2.11/server-assembly-0.3.3-SNAPSHOT.jar"
+jar="./server/target/scala-2.11/server-assembly-0.3.4-SNAPSHOT.jar"
 
 params="-Dconfig.resource=application.prod.conf -Dlogback.configurationFile=logback.prod.xml"
 
