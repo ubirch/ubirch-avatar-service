@@ -48,16 +48,13 @@ lazy val server = project
       generateDockerFile(baseDirectory.value / ".." / "Dockerfile", name.value, version.value)
     }.taskValue
   )
-//.enablePlugins(SbtOneLog)
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
   .dependsOn(core, client, testBase)
   .settings(
-    description := "command line tools",
-    libraryDependencies ++= depCmdtools
+    description := "command line tools"
   )
-//.enablePlugins(SbtOneLog)
 
 lazy val client = project
   .settings(commonSettings: _*)
@@ -153,8 +150,6 @@ lazy val depCore = Seq(
   scalatest % "test"
 ) ++ akkaCamel ++ scalaLogging
 
-lazy val depCmdtools = scalaLogging
-
 lazy val depClient = Seq(
   beeClient
 ) ++ scalaLogging
@@ -216,7 +211,7 @@ lazy val scalaLogging = Seq(
 
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
-  "org.apache.camel" % "camel-aws" % camelV exclude(awsG, "aws-java-sdk"),
+  "org.apache.camel" % "camel-aws" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
