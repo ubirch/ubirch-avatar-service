@@ -17,7 +17,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "aws" % "0.3.3"
 )
 ```
 
@@ -29,7 +29,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "client" % "0.3.3"
 )
 ```
 
@@ -40,7 +40,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.3"
 )
 ```
 
@@ -51,7 +51,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "config" % "0.3.3"
 )
 ```
 
@@ -62,7 +62,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "core" % "0.3.3"
 )
 ```
 
@@ -73,7 +73,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "model" % "0.3.3"
 )
 ```
 
@@ -85,7 +85,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "server" % "0.3.3"
 )
 ```
         
@@ -98,7 +98,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "test-base" % "0.3.3"
 )
 ```
 
@@ -109,7 +109,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.3-SNAPSHOT"
+  "com.ubirch.avatar" %% "util" % "0.3.3"
 )
 ```
 
