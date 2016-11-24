@@ -211,7 +211,7 @@ lazy val scalaLogging = Seq(
 
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
-  "org.apache.camel" % "camel-aws" % camelV exclude(awsG, "aws-java-sdk"),
+  "org.apache.camel" % "camel-aws" % camelV
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
