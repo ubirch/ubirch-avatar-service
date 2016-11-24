@@ -1,0 +1,1 @@
+Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/20160601;20160601_terminal.txt;20160601_trackle_log.csv
