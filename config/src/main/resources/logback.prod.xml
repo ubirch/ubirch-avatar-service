@@ -9,7 +9,7 @@
     </appender>
 
     <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
-        <url>search-ubirch-storage-service-oexhx3affoffn3tc4fe3wie4f4.us-east-1.es.amazonaws.com/_bulk</url>
+        <url>http://localhost:9200/_bulk</url>
         <index>avatar-service-logs-%date{yyyy-MM-dd}</index>
         <type>log</type>
         <loggerName>es-logger</loggerName> <!-- optional -->
