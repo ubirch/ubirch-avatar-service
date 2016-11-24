@@ -1,11 +1,11 @@
 package com.ubirch.transformer.actor
 
-import com.ubirch.avatar.util.model.DeviceTypeUtil
-
 import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw, DeviceDataRawEnvelope}
+import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
 
@@ -16,7 +16,7 @@ class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorL
 
   implicit val executionContext = context.dispatcher
 
-  val transformPostActor = context.actorOf(Props[TransformerPostprocessorActor], "transformer-post-actor")
+  val transformPostActor = context.actorOf(new RoundRobinPool(5).props(Props[TransformerPostprocessorActor]), "transformer-post-actor")
 
   override def receive: Receive = {
 

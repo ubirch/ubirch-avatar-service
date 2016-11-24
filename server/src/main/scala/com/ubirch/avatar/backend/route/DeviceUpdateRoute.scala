@@ -34,7 +34,7 @@ trait DeviceUpdateRoute extends MyJsonProtocol
   implicit val executionContext = system.dispatcher
   implicit val timeout = Timeout(15 seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(5).props(Props[MessageValidatorActor]), "message-validator")
+  private val validatorActor = system.actorOf(new RoundRobinPool(3).props(Props[MessageValidatorActor]), "message-validator")
 
   val route: Route = {
     path(update) {

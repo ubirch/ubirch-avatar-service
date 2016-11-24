@@ -58,7 +58,7 @@ lazy val cmdtools = project
 
 lazy val client = project
   .settings(commonSettings: _*)
-    .dependsOn(config, model, util)
+  .dependsOn(config, model, util)
   .settings(
     description := "REST client for the avatarService",
     libraryDependencies ++= depClient,
@@ -210,7 +210,8 @@ lazy val scalaLogging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" exclude("org.slf4j", "slf4j-api"),
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
   "ch.qos.logback" % "logback-core" % "1.1.7",
-  "ch.qos.logback" % "logback-classic" % "1.1.7"
+  "ch.qos.logback" % "logback-classic" % "1.1.7",
+  "com.internetitem" % "logback-elasticsearch-appender" % "1.4"
 )
 
 lazy val akkaCamel = Seq(
@@ -242,48 +243,48 @@ lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.2.10" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.2" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
-  )
+)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.5" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
   ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")
-  )
+)
 
 /*
  * RESOLVER
@@ -319,9 +320,9 @@ def generateDockerFile(file: File, nameString: String, versionString: String): S
   val jar = "./server/target/scala-2.11/server-assembly-0.3.0-SNAPSHOT.jar"
   val contents =
     s"""FROM java
-        |ADD $jar /app/$jar
-        |ENTRYPOINT ["java", "-jar", "$jar"]
-        |""".stripMargin
+       |ADD $jar /app/$jar
+       |ENTRYPOINT ["java", "-jar", "$jar"]
+       |""".stripMargin
   IO.write(file, contents)
   Seq(file)
 
