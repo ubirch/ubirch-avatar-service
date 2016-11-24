@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.1",
+  version := "0.3.3-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -72,7 +72,10 @@ lazy val core = project
   .dependsOn(config, aws, model, util, testBase % "test")
   .settings(
     description := "business logic",
-    libraryDependencies ++= depCore
+    libraryDependencies ++= depCore,
+    resolvers ++= Seq(
+      resolverRoundEights
+    )
   )
 
 lazy val aws = project
@@ -105,7 +108,8 @@ lazy val util = project
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
-      resolverBeeClient
+      resolverBeeClient,
+      resolverRoundEights
     )
   )
 
@@ -188,8 +192,8 @@ lazy val depTestBase = Seq(
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.2"
 lazy val awsSdkV = "1.11.51"
-lazy val scalaTestV = "3.0.0"
 lazy val camelV = "2.18.0"
+lazy val scalaTestV = "3.0.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"

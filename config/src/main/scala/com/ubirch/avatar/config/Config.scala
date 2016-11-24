@@ -146,6 +146,8 @@ object Config extends ConfigBase {
 
   def awsSqsQueueTransformer: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER)
 
+  def awsSqsQueueTransformerOut: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER_OUT)
+
   /**
     * @return REST Client connection timeout in milliseconds
     */
