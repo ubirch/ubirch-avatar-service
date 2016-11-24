@@ -155,8 +155,10 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
     val logFilename = dfnLineSplitted(1)
     val csvFilename = dfnLineSplitted(2)
 
-    val csvFile = new File(s"$googleDriveBasePath$basePath/$csvFilename")
-    val logFile = new File(s"$googleDriveBasePath$basePath/$logFilename")
+    //    val csvFile = new File(s"$googleDriveBasePath$basePath/$csvFilename")
+    val csvFile = new File(s"$basePath/$csvFilename")
+    //    val logFile = new File(s"$googleDriveBasePath$basePath/$logFilename")
+    val logFile = new File(s"$basePath/$logFilename")
 
     if (csvFile.exists() && logFile.exists()) {
 
