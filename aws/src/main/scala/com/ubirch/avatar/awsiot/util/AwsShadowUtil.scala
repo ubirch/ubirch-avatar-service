@@ -4,7 +4,7 @@ import java.nio.ByteBuffer
 
 import com.amazonaws.services.iot.model.{CreateThingRequest, DeleteThingRequest}
 import com.amazonaws.services.iotdata.model.PublishRequest
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.model.aws.{ThingShadowMessage, ThingShadowState}
 import com.ubirch.avatar.model.device.Device
@@ -16,7 +16,7 @@ import org.json4s.native.Serialization._
 /**
   * Created by derMicha on 21/04/16.
   */
-object AwsShadowUtil extends LazyLogging {
+object AwsShadowUtil extends StrictLogging {
 
   implicit val formats = JsonFormats.default
 

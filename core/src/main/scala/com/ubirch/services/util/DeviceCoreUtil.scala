@@ -3,7 +3,7 @@ package com.ubirch.services.util
 import java.security._
 import java.util.Base64
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
@@ -23,7 +23,7 @@ import scala.concurrent.Future
 /**
   * Created by derMicha on 02/11/16.
   */
-object DeviceCoreUtil extends MyJsonProtocol with LazyLogging {
+object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
 
   private def createSimpleSignature(payload: JValue, device: Device): String = createSimpleSignature(payload, device.hwDeviceId)
 

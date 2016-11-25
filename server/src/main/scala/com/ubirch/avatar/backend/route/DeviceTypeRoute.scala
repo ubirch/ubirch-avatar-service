@@ -4,7 +4,7 @@ import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.model.device.DeviceType
@@ -21,7 +21,7 @@ import scala.util.{Failure, Success}
 trait DeviceTypeRoute extends CORSDirective
   with MyJsonProtocol
   with ResponseUtil
-  with LazyLogging {
+  with StrictLogging {
 
   implicit val system = ActorSystem()
 

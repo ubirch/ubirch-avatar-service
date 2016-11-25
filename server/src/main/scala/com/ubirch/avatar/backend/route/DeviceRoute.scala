@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.route
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.backend.Actor.{CreateDevice, DeviceApiActor}
 import com.ubirch.avatar.backend.ResponseUtil
@@ -27,7 +27,7 @@ import scala.util.{Failure, Success}
 trait DeviceRoute extends MyJsonProtocol
   with CORSDirective
   with ResponseUtil
-  with LazyLogging {
+  with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val executionContext = system.dispatcher

@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
@@ -20,7 +20,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-23
   */
-object DeviceManager extends MyJsonProtocol with LazyLogging {
+object DeviceManager extends MyJsonProtocol with StrictLogging {
 
   implicit val ec = scala.concurrent.ExecutionContext.global
 

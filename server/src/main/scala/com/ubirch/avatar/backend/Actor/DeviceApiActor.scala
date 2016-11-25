@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.Actor
 
 import akka.actor.Actor
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.avatar.model.server.{JsonErrorResponse, JsonResponse}
@@ -12,7 +12,7 @@ import com.ubirch.avatar.model.server.{JsonErrorResponse, JsonResponse}
 
 case class CreateDevice(device: Device)
 
-class DeviceApiActor extends Actor with LazyLogging {
+class DeviceApiActor extends Actor with StrictLogging {
 
   import context.dispatcher
 

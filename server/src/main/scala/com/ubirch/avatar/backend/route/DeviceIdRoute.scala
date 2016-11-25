@@ -4,7 +4,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.Actor.{CreateDevice, DeviceApiActor}
 import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.core.device.DeviceManager
@@ -25,7 +25,7 @@ import scala.util.{Failure, Success}
 trait DeviceIdRoute extends CORSDirective
   with MyJsonProtocol
   with ResponseUtil
-  with LazyLogging {
+  with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val executionContext = system.dispatcher

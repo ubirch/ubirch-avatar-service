@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.services.storage.DeviceDataRawStorage
@@ -18,7 +18,7 @@ import scala.concurrent.{ExecutionException, Future}
   * author: cvandrei
   * since: 2016-09-30
   */
-object DeviceDataRawManager extends MyJsonProtocol with LazyLogging {
+object DeviceDataRawManager extends MyJsonProtocol with StrictLogging {
 
   /**
     * Query the history of deviceDataRaw for a specified device.

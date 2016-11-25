@@ -7,7 +7,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
 import com.ubirch.transformer.TransformerManager
@@ -20,7 +20,7 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-09-20
   */
-object Boot extends App with LazyLogging {
+object Boot extends App with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val materializer: ActorMaterializer = ActorMaterializer()

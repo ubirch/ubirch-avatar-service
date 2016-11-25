@@ -4,13 +4,13 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.iot.AWSIotClient
 import com.amazonaws.services.iotdata.AWSIotDataClient
 import com.amazonaws.services.sqs.AmazonSQSClient
-import com.typesafe.scalalogging.slf4j.LazyLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
 
 /**
   * Created by derMicha on 04/04/16.
   */
-object AwsConf extends LazyLogging {
+object AwsConf extends StrictLogging {
 
   val region: String = "us-east-1"
 

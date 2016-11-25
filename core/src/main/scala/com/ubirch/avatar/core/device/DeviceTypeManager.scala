@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.device
 
-import com.typesafe.scalalogging.LazyLogging
+import com.typesafe.scalalogging.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceType
@@ -18,7 +18,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-11-09
   */
-object DeviceTypeManager extends LazyLogging {
+object DeviceTypeManager extends StrictLogging {
 
   private implicit def formats: Formats = JsonFormats.default
 
