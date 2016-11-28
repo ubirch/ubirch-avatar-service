@@ -150,7 +150,6 @@ lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
   ubirchCrypto,
   ubirchNotary,
-  ubirchUtilUUID % "test",
   scalatest % "test"
 ) ++ akkaCamel ++ scalaLogging
 
@@ -249,7 +248,7 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.3.3" excludeAll(
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.3.4" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
@@ -274,7 +273,7 @@ lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1" excludeAll(
+lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
