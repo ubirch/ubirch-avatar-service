@@ -39,7 +39,7 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
     deviceId = UUIDUtil.uuidStr,
     deviceName = "trackle Sensor 001",
     hwDeviceId = hwDeviceId,
-    deviceTypeKey = Const.TRACLESENSOR
+    deviceTypeKey = Const.TRACKLESENSOR
   )
 
   Await.result(DeviceManager.create(device), 5 seconds)
