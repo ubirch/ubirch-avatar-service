@@ -14,12 +14,10 @@ object Const {
 
   final val HASHDEFAULT = HASHSHA512
 
-  final val LIGHTSSENSOR = "lightsSensor"
-  final val ENVIRONMENTSENSOR = "envSensor"
   final val UNKNOWN_DEVICE = "unknownDeviceType"
-
+  final val LIGHTSSENSOR = "lightsSensor"
   final val LIGHTSLAMP = "lightsLamp"
-
+  final val ENVIRONMENTSENSOR = "envSensor"
   final val TRACKLESENSOR = "trackleSensor"
 
   final val LEDRGB = 1

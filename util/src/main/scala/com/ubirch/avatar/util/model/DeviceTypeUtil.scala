@@ -15,7 +15,8 @@ object DeviceTypeUtil {
 
   val defaultKey = "defaultDeviceType"
 
-  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.UNKNOWN_DEVICE, Const.TRACKLESENSOR)
+  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.UNKNOWN_DEVICE, Const.TRACKLESENSOR
+  )
 
   def dataSeries(prefix: String = defaultKey,
                  elementCount: Int = 5,

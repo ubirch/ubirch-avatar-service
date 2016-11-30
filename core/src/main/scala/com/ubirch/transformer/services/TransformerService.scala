@@ -24,34 +24,34 @@ object TransformerService
     */
   def transform(deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw): DeviceDataProcessed = {
 
-    val tp = deviceType.key match {
-      case Const.ENVIRONMENTSENSOR =>
-        drd.p.extractOpt[EnvSensorRawPayload] match {
-          case Some(envRawP) =>
-            val envP = EnvSensorPayload(
-              temperature = envRawP.t / 100,
-              presure = envRawP.p / 100,
-              humidity = envRawP.h / 100,
-              batteryLevel = envRawP.ba,
-              latitude = envRawP.la.toDouble,
-              longitude = envRawP.lo.toDouble,
-              altitude = envRawP.a / 100,
-              loops = envRawP.lp,
-              errorCode = envRawP.e
-            )
+    logger.debug(s"$deviceType / $device")
 
-            Json4sUtil.any2jvalue(envP) match {
-              case Some(jval) =>
-                jval
-              case _ =>
-                drd.p
-            }
-          case _ =>
-            drd.p
-        }
-      case _ =>
-        drd.p
-    }
+    val tp = if (deviceType.key == Const.ENVIRONMENTSENSOR)
+      drd.p.extractOpt[EnvSensorRawPayload] match {
+        case Some(envRawP) =>
+          val envP = EnvSensorPayload(
+            temperature = envRawP.t / 100,
+            presure = envRawP.p / 100,
+            humidity = envRawP.h / 100,
+            batteryLevel = envRawP.ba,
+            latitude = envRawP.la.toDouble,
+            longitude = envRawP.lo.toDouble,
+            altitude = envRawP.a / 100,
+            loops = envRawP.lp,
+            errorCode = envRawP.e
+          )
+
+          Json4sUtil.any2jvalue(envP) match {
+            case Some(jval) =>
+              jval
+            case _ =>
+              drd.p
+          }
+        case _ =>
+          drd.p
+      }
+    else
+      drd.p
 
     DeviceDataProcessed(
       deviceId = device.deviceId,

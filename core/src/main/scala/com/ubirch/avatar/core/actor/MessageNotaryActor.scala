@@ -19,7 +19,7 @@ class MessageNotaryActor extends Actor with StrictLogging {
       val payloadStr = Json4sUtil.jvalue2String(drd.p)
 
       NotaryClient.notarize(
-        blockHash = "payloadStr",
+        blockHash = payloadStr,
         dataIsHash = false
       ) match {
         case Some(resp) =>
