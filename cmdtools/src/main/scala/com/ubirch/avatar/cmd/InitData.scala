@@ -1,11 +1,12 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
-import com.ubirch.avatar.util.storage.StorageCleanup
+import com.ubirch.avatar.storage.StorageCleanup
 
 import scala.concurrent.Await
 import scala.concurrent.duration._

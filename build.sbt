@@ -108,7 +108,6 @@ lazy val util = project
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
-      resolverBeeClient,
       resolverRoundEights
     )
   )
@@ -170,7 +169,6 @@ lazy val depModel = Seq(
 ) ++ joda
 
 lazy val depUtil = Seq(
-  beeClient,
   ubirchCrypto,
   ubirchUtilJson
 ) ++ json4s
