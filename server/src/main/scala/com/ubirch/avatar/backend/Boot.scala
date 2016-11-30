@@ -10,6 +10,7 @@ import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.transformer.TransformerManager
 
 import scala.concurrent.Future
@@ -33,6 +34,7 @@ object Boot extends App with StrictLogging {
   val bindingFuture = start()
 
   TransformerManager.init()
+  DeviceTypeManager.init()
 
   Runtime.getRuntime.addShutdownHook(new Thread() {
     override def run() = {

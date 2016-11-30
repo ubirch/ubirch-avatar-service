@@ -3,6 +3,7 @@ package com.ubirch.transformer.actor
 import akka.actor.{Actor, ActorLogging, Props}
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device._
+import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 /**
@@ -20,16 +21,15 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
       self forward(deviceType, device, drd, drd)
     case (deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw) =>
       log.debug(s"received device raw data message: $drd with deviceKeyType: $deviceType")
-      val ddp = DeviceDataProcessed(
-        deviceId = device.deviceId,
-        messageId = drd.id,
-        deviceDataRawId = sdrd.id,
-        deviceType = deviceType.key,
-        timestamp = drd.ts,
-        deviceTags = device.tags,
-        deviceMessage = drd.p,
-        deviceDataRaw = Some(sdrd)
+
+
+      val ddp = TransformerService.transform(
+        deviceType = deviceType,
+        device = device,
+        drd = drd,
+        sdrd = sdrd
       )
+
       DeviceDataProcessedManager.store(ddp)
 
       val jval = Json4sUtil.any2jvalue(ddp) match {

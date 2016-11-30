@@ -3,7 +3,6 @@ package com.ubirch.avatar.util.model
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.device.{DeviceType, DeviceTypeDefaults, DeviceTypeName}
 import com.ubirch.util.json.Json4sUtil
-
 import org.json4s.JValue
 
 import scala.collection.mutable.ListBuffer
@@ -16,7 +15,7 @@ object DeviceTypeUtil {
 
   val defaultKey = "defaultDeviceType"
 
-  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.UNKNOWN_DEVICE)
+  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.UNKNOWN_DEVICE, Const.TRACKLESENSOR)
 
   def dataSeries(prefix: String = defaultKey,
                  elementCount: Int = 5,
@@ -42,6 +41,7 @@ object DeviceTypeUtil {
       name = defaultTranslation(deviceType),
       icon = defaultIcon(deviceType),
       transformerQueue = Some(s"ubirch.transformer.${deviceType.toLowerCase.trim}"),
+      displayKeys = Some(defaultDisplayKeys(deviceType)),
       defaults = DeviceTypeDefaults(
         defaultProps(deviceType),
         defaultConf(deviceType),
@@ -104,6 +104,16 @@ object DeviceTypeUtil {
 
     Json4sUtil.any2jvalue(props).get
 
+  }
+
+  def defaultDisplayKeys(deviceTypeKey: String): Array[String] = {
+    deviceTypeKey match {
+      case Const.ENVIRONMENTSENSOR =>
+        Array("temperature", "presure", "humidity", "batteryLevel")
+      case Const.LIGHTSSENSOR =>
+        Array("r", "g", "b", "ba")
+      case _ => Array()
+    }
   }
 
   /**

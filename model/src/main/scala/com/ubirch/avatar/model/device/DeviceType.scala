@@ -14,6 +14,7 @@ case class DeviceType(
                        key: String,
                        name: DeviceTypeName,
                        icon: String,
+                       displayKeys: Option[Array[String]] = Some(Array()),
                        transformerQueue: Option[String] = None,
                        defaults: DeviceTypeDefaults
                      ) {
