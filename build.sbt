@@ -141,7 +141,8 @@ lazy val depServer = Seq(
 
   ubirchUtilJson,
   ubirchUtilJsonAutoConvert,
-  ubirchUtilRestAkkaHttp
+  ubirchUtilRestAkkaHttp,
+  ubirchUtilResponse
 
 ) ++ scalaLogging
 
@@ -149,6 +150,7 @@ lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
   ubirchCrypto,
   ubirchNotary,
+  ubirchUtilResponse,
   scalatest % "test"
 ) ++ akkaCamel ++ scalaLogging
 
@@ -272,6 +274,11 @@ lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.
   ExclusionRule(organization = "ch.qos.logback")
 )
 lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+)
+lazy val ubirchUtilResponse = ubirchUtilG %% "responseutil" % "0.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")

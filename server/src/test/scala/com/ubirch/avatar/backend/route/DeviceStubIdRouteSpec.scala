@@ -1,14 +1,13 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.backend.ResponseUtil
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.device.Device
-import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.avatar.util.server.RouteConstants
-
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.test.base.RouteSpec
+import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.model.JsonErrorResponse
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**

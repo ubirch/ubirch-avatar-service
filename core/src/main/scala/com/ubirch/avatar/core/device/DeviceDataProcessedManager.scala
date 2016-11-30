@@ -27,7 +27,6 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     * @param from     paging parameter: skip the first x elements
     * @param size     paging parameter: return up to x elements
     * @return result list; empty if no messages were found
-    * @throws ExecutionException something went wrong (e.g. no document matching our query exists yet)
     */
   def history(deviceId: String,
               from: Int = 0,

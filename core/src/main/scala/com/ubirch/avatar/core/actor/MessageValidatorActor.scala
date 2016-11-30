@@ -4,8 +4,8 @@ import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
-import com.ubirch.avatar.model.server.JsonErrorResponse
 import com.ubirch.services.util.DeviceCoreUtil
+import com.ubirch.util.model.JsonErrorResponse
 
 /**
   * Created by derMicha on 28/10/16.

@@ -4,7 +4,8 @@ import akka.actor.Actor
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.Device
-import com.ubirch.avatar.model.server.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.model.JsonErrorResponse
+
 
 /**
   * Created by derMicha on 30/10/16.

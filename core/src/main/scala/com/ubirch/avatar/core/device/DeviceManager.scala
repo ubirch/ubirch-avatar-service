@@ -7,7 +7,7 @@ import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
-import com.ubirch.avatar.model.device.{Device, DeviceStub}
+import com.ubirch.avatar.model.device.{Device, DeviceInfo}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.storage.DeviceStorage
@@ -30,7 +30,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def allStubs(): Future[Seq[DeviceStub]] = {
+  def allStubs(): Future[Seq[DeviceInfo]] = {
     DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
       res.map { jv =>
         DeviceStubManger.create(device = jv.extract[Device])
@@ -152,7 +152,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def stub(deviceId: UUID): Future[Option[DeviceStub]] = {
+  def stub(deviceId: UUID): Future[Option[DeviceInfo]] = {
     info(deviceId).map {
       case Some(device) =>
         Some(DeviceStubManger.create(device = device))
