@@ -108,7 +108,6 @@ lazy val util = project
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
-      resolverBeeClient,
       resolverRoundEights
     )
   )
@@ -170,7 +169,6 @@ lazy val depModel = Seq(
 ) ++ joda
 
 lazy val depUtil = Seq(
-  beeClient,
   ubirchCrypto,
   ubirchUtilJson
 ) ++ json4s
@@ -248,7 +246,7 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.3.4" excludeAll(
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.3.5" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")

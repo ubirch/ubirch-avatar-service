@@ -1,4 +1,4 @@
-package com.ubirch.avatar.util.storage
+package com.ubirch.avatar.storage
 
 import java.net.URL
 
@@ -54,7 +54,7 @@ trait StorageCleanup {
   /**
     * Create all mappings.
     */
-  final def createMappings() = {
+  final def createMappings(): Unit = {
 
     val mappings = Seq(
       deviceMappings,
