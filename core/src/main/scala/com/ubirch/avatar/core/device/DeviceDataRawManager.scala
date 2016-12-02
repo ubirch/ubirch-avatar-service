@@ -93,7 +93,5 @@ object DeviceDataRawManager extends MyJsonProtocol with StrictLogging {
       case None => Future(None)
 
     }
-
   }
-
 }

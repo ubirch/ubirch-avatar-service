@@ -26,19 +26,19 @@ object TransformerService
 
     logger.debug(s"$deviceType / $device")
 
-    val tp = if (deviceType.key == Const.ENVIRONMENTSENSOR)
+    val tp = if (device.deviceTypeKey == Const.ENVIRONMENTSENSOR)
       drd.p.extractOpt[EnvSensorRawPayload] match {
         case Some(envRawP) =>
           val envP = EnvSensorPayload(
-            temperature = envRawP.t / 100,
-            presure = envRawP.p / 100,
-            humidity = envRawP.h / 100,
+            temperature = envRawP.t.toDouble / 100.0,
+            presure = envRawP.p.toDouble / 100.0,
+            humidity = envRawP.h.toDouble / 100.0,
             batteryLevel = envRawP.ba,
-            latitude = envRawP.la.toDouble,
-            longitude = envRawP.lo.toDouble,
-            altitude = envRawP.a / 100,
-            loops = envRawP.lp,
-            errorCode = envRawP.e
+            latitude = if (envRawP.la.isDefined) Some(envRawP.la.get.toDouble) else None,
+            longitude = if (envRawP.lo.isDefined) Some(envRawP.lo.get.toDouble) else None,
+            altitude = if (envRawP.a.isDefined) Some(envRawP.a.get.toDouble / 100.0) else None,
+            loops = if (envRawP.lp.isDefined) Some(envRawP.lp.get) else None,
+            errorCode = if (envRawP.e.isDefined) Some(envRawP.e.getOrElse(0)) else None
           )
 
           Json4sUtil.any2jvalue(envP) match {

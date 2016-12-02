@@ -7,22 +7,22 @@ final case class EnvSensorPayload(
                                    temperature: Double,
                                    presure: Double,
                                    humidity: Double,
-                                   batteryLevel: Int,
-                                   latitude: Double,
-                                   longitude: Double,
-                                   loops: Long,
-                                   altitude: Double,
-                                   errorCode: Int
+                                   batteryLevel: Option[Int],
+                                   latitude: Option[Double],
+                                   longitude: Option[Double],
+                                   loops: Option[Long],
+                                   altitude: Option[Double],
+                                   errorCode: Option[Int]
                                  )
 
 final case class EnvSensorRawPayload(
                                       t: Int,
                                       p: Int,
                                       h: Int,
-                                      ba: Int,
-                                      la: String,
-                                      lo: String,
-                                      lp: Long,
-                                      a: Double,
-                                      e: Int
+                                      ba: Option[Int],
+                                      la: Option[String],
+                                      lo: Option[String],
+                                      lp: Option[Long],
+                                      a: Option[Double],
+                                      e: Option[Int]
                                     )
