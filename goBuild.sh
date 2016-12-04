@@ -20,7 +20,11 @@ function init() {
 
 function build_software() {
 	
-  docker run --user `id -u`:`id -g` --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY  --volume=${PWD}:/build ubirch/sbt-build:${SBT_CONTAINER_VERSION} clean compile test
+	# get local .ivy2
+	rsync -rv ~/.ivy2 ./.ivy2
+  	docker run --user `id -u`:`id -g` --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY  --volume=${PWD}:/build ubirch/sbt-build:${SBT_CONTAINER_VERSION} clean compile test
+	# write back to local .ivy2
+  	rsync -rv ./.ivy2 ~/.ivy2 
   if [ $? -ne 0 ]; then
       echo "Docker build failed"
       exit 1
