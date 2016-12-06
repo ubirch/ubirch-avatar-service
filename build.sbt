@@ -1,3 +1,5 @@
+import sbtdocker.DockerPlugin.autoImport.dockerfile
+
 packagedArtifacts in file(".") := Map.empty // disable publishing of root/default project
 
 // see http://www.scala-sbt.org/0.13/docs/Parallel-Execution.html for details
@@ -36,6 +38,7 @@ lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
   .dependsOn(core, config, testBase % "test")
+  .enablePlugins(DockerPlugin)
   .settings(
     description := "REST interface and Akka HTTP specific code",
     libraryDependencies ++= depServer,
@@ -44,9 +47,20 @@ lazy val server = project
       resolverSeebergerJson
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
-    resourceGenerators in Compile += Def.task {
-      generateDockerFile(baseDirectory.value / ".." / "Dockerfile", name.value, version.value)
-    }.taskValue
+    docker <<= (docker dependsOn assembly),
+    dockerfile in docker := {
+      val jarFilename = (assemblyOutputPath in assembly).value
+      val jarTargetPath = s"/opt/jar/${jarFilename.name}"
+      val appParams = "-Dconfig.file=/opt/etc/application.conf -Dlogback.configurationFile=/opt/etc/logback.xml"
+      val jvmParams = "-Xms1g -Xmx2g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+DisableExplicitGC -Dfile.encoding=UTF-8"
+
+      new Dockerfile {
+        from("ubirch/java")
+        expose(8080)
+        add(jarFilename, jarTargetPath)
+        entryPoint("java", jvmParams, "-jar", jarFilename.name, appParams)
+      }
+    }
   )
 
 lazy val cmdtools = project
@@ -316,18 +330,3 @@ lazy val mergeStrategy = Seq(
     case _ => MergeStrategy.first
   }
 )
-
-def generateDockerFile(file: File, nameString: String, versionString: String): Seq[File] = {
-
-  //  val jar = "avatarService-%s-assembly-%s.jar".format(nameString, versionString)
-  //assembleArtifact.
-  val jar = "./server/target/scala-2.11/server-assembly-0.3.0-SNAPSHOT.jar"
-  val contents =
-    s"""FROM java
-       |ADD $jar /app/$jar
-       |ENTRYPOINT ["java", "-jar", "$jar"]
-       |""".stripMargin
-  IO.write(file, contents)
-  Seq(file)
-
-}
