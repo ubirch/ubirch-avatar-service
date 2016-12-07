@@ -1,4 +1,4 @@
-import sbtdocker.DockerPlugin.autoImport.dockerfile
+
 
 packagedArtifacts in file(".") := Map.empty // disable publishing of root/default project
 
@@ -47,20 +47,9 @@ lazy val server = project
       resolverSeebergerJson
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
-    docker <<= (docker dependsOn assembly),
-    dockerfile in docker := {
-      val jarFilename = (assemblyOutputPath in assembly).value
-      val jarTargetPath = s"/opt/jar/${jarFilename.name}"
-      val appParams = "-Dconfig.file=/opt/etc/application.conf -Dlogback.configurationFile=/opt/etc/logback.xml"
-      val jvmParams = "-Xms1g -Xmx2g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+DisableExplicitGC -Dfile.encoding=UTF-8"
-
-      new Dockerfile {
-        from("ubirch/java")
-        expose(8080)
-        add(jarFilename, jarTargetPath)
-        entryPoint("java", jvmParams, "-jar", jarFilename.name, appParams)
-      }
-    }
+    resourceGenerators in Compile += Def.task {
+      generateDockerFile(baseDirectory.value / ".." / "Dockerfile", name.value, version.value, (assemblyOutputPath in assembly).value)
+    }.taskValue
   )
 
 lazy val cmdtools = project
@@ -330,3 +319,17 @@ lazy val mergeStrategy = Seq(
     case _ => MergeStrategy.first
   }
 )
+
+def generateDockerFile(file: File, nameString: String, versionString: String, jarFile: sbt.File): Seq[File] = {
+  val jarTargetPath = s"/opt/jar/${jarFile.name}"
+  val appParams = "-Dconfig.file=/opt/etc/application.conf -Dlogback.configurationFile=/opt/etc/logback.xml"
+  val jvmParams = "-Xms1g -Xmx2g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+DisableExplicitGC -Dfile.encoding=UTF-8"
+  val contents =
+    s"""FROM java
+       	    |ADD ${jarFile.getAbsoluteFile} /app/${jarFile.name}
+       |EXPOSE 8080
+       	    |ENTRYPOINT ["java", "$jvmParams", "-jar", "$jarTargetPath", "$appParams"]
+       	    |""".stripMargin
+  IO.write(file, contents)
+  Seq(file)
+}
