@@ -323,12 +323,12 @@ lazy val mergeStrategy = Seq(
 def generateDockerFile(file: File, nameString: String, versionString: String, jarFile: sbt.File): Seq[File] = {
   val jarTargetPath = s"/opt/jar/${jarFile.name}"
   val appParams = "-Dconfig.file=/opt/etc/application.conf -Dlogback.configurationFile=/opt/etc/logback.xml"
-  val jvmParams = "-Xms1g -Xmx2g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+DisableExplicitGC -Dfile.encoding=UTF-8"
+  val jvmParams = ""
   val contents =
-    s"""FROM java
-       	    |ADD ${jarFile.getName} /app/${jarFile.name}
-       |EXPOSE 8080
-       	    |ENTRYPOINT ["java", "$jvmParams", "-jar", "$jarTargetPath", "$appParams"]
+    s"""FROM ubirch/java
+       	    |ADD server/target/scala-2.11/${jarFile.getName} $jarTargetPath
+            |EXPOSE 8080
+       	    |ENTRYPOINT ["java","-jar", "$jarTargetPath","-Dfile.encoding=UTF-8", "-XX:+UseCMSInitiatingOccupancyOnly","-XX:+DisableExplicitGC","-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseParNewGC","-XX:+UseConcMarkSweepGC", "-Xms1g", "-Xmx2g", "-Djava.awt.headless=true", "$appParams"]
        	    |""".stripMargin
   IO.write(file, contents)
   Seq(file)
