@@ -326,7 +326,7 @@ def generateDockerFile(file: File, nameString: String, versionString: String, ja
   val jvmParams = "-Xms1g -Xmx2g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+DisableExplicitGC -Dfile.encoding=UTF-8"
   val contents =
     s"""FROM java
-       	    |ADD ${jarFile.getAbsoluteFile} /app/${jarFile.name}
+       	    |ADD ${jarFile.getName} /app/${jarFile.name}
        |EXPOSE 8080
        	    |ENTRYPOINT ["java", "$jvmParams", "-jar", "$jarTargetPath", "$appParams"]
        	    |""".stripMargin
