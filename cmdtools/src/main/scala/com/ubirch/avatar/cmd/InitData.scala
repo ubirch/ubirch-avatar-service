@@ -1,12 +1,10 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
-import com.ubirch.avatar.storage.StorageCleanup
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -15,9 +13,9 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 09/11/16.
   */
-object InitData extends App with StrictLogging with StorageCleanup {
-
-  cleanElasticsearch()
+object InitData
+  extends App
+    with StrictLogging {
 
   DeviceTypeManager.init()
 
@@ -43,5 +41,4 @@ object InitData extends App with StrictLogging with StorageCleanup {
     case None =>
       logger.error("device could not be created")
   }
-
 }

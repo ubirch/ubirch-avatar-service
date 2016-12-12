@@ -1,15 +1,32 @@
 {
-  "id": "a04cf8ee-3666-4b4d-bf83-7ec1113e5654",
-  "v": "0.0.3",
-  "a": "67cc1a6e-d78b-49eb-ad41-fcd84671e0f9",
-  "k": "MC0wCAYDK2VkCgEBAyEAdk+wJqVr3H1RwAQ23oPswGwBQwmDSwpvpWAVJ17XSOU=",
-  "ts": "2016-11-15T17:31:49.378Z",
-  "s": "MDcack4na/hZqA6ZviO2LGqKAfPh4Q+A6eg9hdR+075AntHQPtf2jKdAC8r9bpk8EHUGMdDSzRj7GWO4o3EsDg==",
-  "p": [
-    {
-      "t": 3026,
-      "p": 102080,
-      "h": 8097
-    }
-  ]
+  "deviceId": "8d553238-8971-453e-acdc-f1724a05885c",
+  "messageId": "9874ba44-449e-4b2f-bf99-9386b009051d",
+  "deviceDataRawId": "9874ba44-449e-4b2f-bf99-9386b009051d",
+  "deviceType": "envSensor",
+  "timestamp": "2016-12-12T09:31:59.548Z",
+  "deviceTags": [
+    "ubirch#1",
+    "sensor",
+    "btcDemo"
+  ],
+  "deviceMessage": {
+    "temperature": 30.71,
+    "presure": 948.43,
+    "humidity": 88.02
+  },
+  "deviceDataRaw": {
+    "id": "9874ba44-449e-4b2f-bf99-9386b009051d",
+    "v": "0.0.3",
+    "a": "g/vdnYhkXd5UgpAWiBsgooAVB3MZrEtXz5qxmeLRstM7qSi0SXAQa09KguSp5TC4TeHoDgHjjZPzbzZEXScBVg==",
+    "k": "MC0wCAYDK2VkCgEBAyEAIgw0W4BTUGu0BiIt1/22GOsr3CUxV7pu+DUpRQ8ebTk=",
+    "ts": "2016-12-12T09:31:59.548Z",
+    "s": "nYt7KSpvCTZTzi+WKo8xvUOAtRyf6ui1MTOTZ2ibaZ9agJqLGW4PgPXrxuSH+6SgQJmUKkOYU+arqi/XcspiDg==",
+    "p": [
+      {
+        "t": 3071,
+        "p": 94843,
+        "h": 8802
+      }
+    ]
+  }
 }

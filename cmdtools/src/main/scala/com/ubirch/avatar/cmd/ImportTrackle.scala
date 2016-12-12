@@ -3,17 +3,14 @@ package com.ubirch.avatar.cmd
 import java.io.File
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
-import com.ubirch.avatar.storage.StorageCleanup
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 
 import scala.collection._
@@ -25,7 +22,9 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 13/11/16.
   */
-object ImportTrackle extends App with StrictLogging with StorageCleanup {
+object ImportTrackle
+  extends App
+    with StrictLogging {
 
   /**
     * may be you have to fix that, usually Google Drive is a root folder inside your home folder
@@ -34,8 +33,6 @@ object ImportTrackle extends App with StrictLogging with StorageCleanup {
 
   private val hwDeviceId = UUIDUtil.uuidStr
   private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
-
-  cleanElasticsearch()
 
   private val device = Device(
     deviceId = UUIDUtil.uuidStr,
