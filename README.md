@@ -2,11 +2,24 @@
 
 ubirch device-configuration and -dataflow service
 
-
 ## General Information
 
-TODO
+ubirch Avatar Service is responsilble for:
 
+* offering ubirch IoT devices an endpoint to sync their state
+* processing incomming raw data from ubirch IoT devices
+** validating signatures 
+** transforming raw data 
+* offering CRUD API to manage ubirch IoT Devices
+* managing device states using Amazon AWS IoT
+* publishing processed data for further processing (AWS SQS)
+
+## Release History
+
+### Version 0.3.4 (2016-12-13)
+
+* added first version of raw data -> history data transformation 
+* extended DeviceType, which is contains now displayKeys: Array[String]  
 
 ## Scala Dependencies
 
