@@ -150,9 +150,13 @@ object ImportTrackle
   private val adf = Source.fromFile(allDataFilenames)(Codec.UTF8)
   adf.getLines().foreach { dfnLine =>
     val dfnLineSplitted = dfnLine.split(";")
-    val basePath = dfnLineSplitted(0)
-    val logFilename = dfnLineSplitted(1)
-    val csvFilename = dfnLineSplitted(2)
+
+    val rootPath = dfnLineSplitted(0)
+    val dayString = dfnLineSplitted(1)
+
+    val basePath = s"$rootPath/$dayString"
+    val csvFilename = s"${dayString}_trackle_log.csv"
+    val logFilename = s"${dayString}_terminal.txt"
 
     //    val csvFile = new File(s"$googleDriveBasePath$basePath/$csvFilename")
     val csvFile = new File(s"$basePath/$csvFilename")
