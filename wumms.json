@@ -1,32 +1,25 @@
 {
-  "deviceId": "8d553238-8971-453e-acdc-f1724a05885c",
-  "messageId": "9874ba44-449e-4b2f-bf99-9386b009051d",
-  "deviceDataRawId": "9874ba44-449e-4b2f-bf99-9386b009051d",
-  "deviceType": "envSensor",
-  "timestamp": "2016-12-12T09:31:59.548Z",
-  "deviceTags": [
-    "ubirch#1",
-    "sensor",
-    "btcDemo"
-  ],
-  "deviceMessage": {
-    "temperature": 30.71,
-    "presure": 948.43,
-    "humidity": 88.02
+  "id": "67364d3e-caab-4d4b-844f-42e82aca8d04",
+  "deviceId": "c81dc22a-988a-496e-a7d8-5d37c6e4b912",
+  "periodBegin": "2016-12-13T18:08:45.851Z",
+  "periodEnd": {
+    "timestamp": "2016-12-18T18:08:45.851Z",
+    "prognosis": true
   },
-  "deviceDataRaw": {
-    "id": "9874ba44-449e-4b2f-bf99-9386b009051d",
-    "v": "0.0.3",
-    "a": "g/vdnYhkXd5UgpAWiBsgooAVB3MZrEtXz5qxmeLRstM7qSi0SXAQa09KguSp5TC4TeHoDgHjjZPzbzZEXScBVg==",
-    "k": "MC0wCAYDK2VkCgEBAyEAIgw0W4BTUGu0BiIt1/22GOsr3CUxV7pu+DUpRQ8ebTk=",
-    "ts": "2016-12-12T09:31:59.548Z",
-    "s": "nYt7KSpvCTZTzi+WKo8xvUOAtRyf6ui1MTOTZ2ibaZ9agJqLGW4PgPXrxuSH+6SgQJmUKkOYU+arqi/XcspiDg==",
-    "p": [
-      {
-        "t": 3071,
-        "p": 94843,
-        "h": 8802
-      }
-    ]
+  "cycleEnd": {
+    "timestamp": "2017-01-10T18:08:45.851Z",
+    "prognosis": true
+  },
+  "ovulation": {
+    "timestamp": "2016-12-27T18:08:45.851Z",
+    "prognosis": true
+  },
+  "fertileBegin": {
+    "timestamp": "2016-12-22T18:08:45.851Z",
+    "prognosis": true
+  },
+  "fertileEnd": {
+    "timestamp": "2016-12-29T18:08:45.851Z",
+    "prognosis": true
   }
 }
