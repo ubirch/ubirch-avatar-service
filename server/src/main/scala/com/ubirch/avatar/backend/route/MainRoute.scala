@@ -1,9 +1,8 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.util.server.RouteConstants
-
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import com.ubirch.avatar.util.server.RouteConstants
 
 /**
   * author: cvandrei
@@ -39,7 +38,10 @@ class MainRoute {
               deviceId.route
           } ~ path(RouteConstants.device) {
             device.route
-          }
+          } ~
+            pathEndOrSingleSlash {
+              welcome.route
+            }
         }
       }
     } ~
