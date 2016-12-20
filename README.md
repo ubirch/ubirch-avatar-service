@@ -137,39 +137,74 @@ If server is healthy response is:
 
     200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService"}
 
-### Device Information
+### Device CRUD
 
-#### TODO: title
+#### LIST all devices
 
-TODO: description
+returns an array of all devices the authenticated user has connected
 
     curl -XGET localhost:8080/api/avatarService/v1/device
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device
+to list devices as short info objects use stub endpoint
+    
+    curl -XGET localhost:8080/api/avatarService/v1/device/stub
 
-#### TODO: title
 
-TODO: description
+#### CREATE device
+
+creates a new device
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device -H "Content-Type: application/json" -d '{
+        "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+        "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
+        "deviceName":"new device",
+        "deviceTypeKey":"lightsLamp",
+        "deviceProperties":{},
+        "deviceConfig":{
+            "i":900,
+            "bf":0
+        },
+        "tags":[
+            "ubirch#0",
+            "actor","btcDemo"
+        ]}'
+
+
+#### READ, EDIT, DELETE device with ID
+
+READ device with given id
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
+UPDATE device with given id
+
+    curl -XPUT localhost:8080/api/avatarService/v1/device/<DEVICE_ID>  -H "Content-Type: application/json" -d '{
+          "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+          "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
+          "deviceName":"new device",
+          "deviceTypeKey":"lightsLamp",
+          "deviceProperties":{},
+          "deviceConfig":{
+              "i":900,
+              "bf":0
+          },
+          "tags":[
+              "ubirch#0",
+              "actor","btcDemo"
+          ]}'
+
+DELETE device with given id
 
     curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
 
 #### Device State
 
-TODO: description
+get state of device with given id
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
 
     curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
 
-#### TODO: title
-
-TODO: description
-
-    curl -XGET localhost:8080/api/avatarService/v1/device/stub/<DEVICE_ID>
 
 ### Device Data
 
