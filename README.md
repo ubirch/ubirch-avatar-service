@@ -203,9 +203,6 @@ get state of device with given id
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
-
-
 ### Device Data
 
 #### Raw
