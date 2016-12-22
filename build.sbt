@@ -326,7 +326,10 @@ def generateDockerFile(file: File, nameString: String, versionString: String, ja
   val jvmParams = ""
   val contents =
     s"""FROM ubirch/java
+		  |RUN mkdir -p /opt/ubirch/etc
        	  |ADD server/target/scala-2.11/${jarFile.getName} $jarTargetPath
+		  |ADD config/src/main/resources/application.docker.conf /opt/ubirch/etc/application.conf
+		  |ADD config/src/main/resources/logback.docker.xml /opt/ubirch/etc/logback.xml
        |EXPOSE 8080
        	  |ENTRYPOINT ["java", "$appParams","-jar", "$jarTargetPath","-Dfile.encoding=UTF-8", "-XX:+UseCMSInitiatingOccupancyOnly","-XX:+DisableExplicitGC","-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseParNewGC","-XX:+UseConcMarkSweepGC", "-Xms1g", "-Xmx2g", "-Djava.awt.headless=true"]
        	  |""".stripMargin
