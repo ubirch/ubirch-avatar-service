@@ -322,8 +322,6 @@ lazy val mergeStrategy = Seq(
 
 def generateDockerFile(file: File, nameString: String, versionString: String, jarFile: sbt.File): Seq[File] = {
   val jarTargetPath = s"/opt/jar/${jarFile.name}"
-  val appParams = "-Dconfig.file=/opt/etc/application.conf -Dlogback.configurationFile=/opt/etc/logback.xml"
-  val jvmParams = ""
   val contents =
     s"""FROM ubirch/java
 		  |RUN mkdir -p /opt/ubirch/etc
@@ -331,7 +329,7 @@ def generateDockerFile(file: File, nameString: String, versionString: String, ja
 		  |ADD config/src/main/resources/application.docker.conf /opt/ubirch/etc/application.conf
 		  |ADD config/src/main/resources/logback.docker.xml /opt/ubirch/etc/logback.xml
        |EXPOSE 8080
-       	  |ENTRYPOINT ["java", "$appParams","-jar", "$jarTargetPath","-Dfile.encoding=UTF-8", "-XX:+UseCMSInitiatingOccupancyOnly","-XX:+DisableExplicitGC","-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseParNewGC","-XX:+UseConcMarkSweepGC", "-Xms1g", "-Xmx2g", "-Djava.awt.headless=true"]
+       	  |ENTRYPOINT ["java","-Dlogback.configurationFile=/opt/ubirch/etc/logback.xml", "-Dconfig.file=/opt/ubirch/etc/application.conf","-jar", "$jarTargetPath","-Dfile.encoding=UTF-8", "-XX:+UseCMSInitiatingOccupancyOnly","-XX:+DisableExplicitGC","-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseParNewGC","-XX:+UseConcMarkSweepGC", "-Xms1g", "-Xmx2g", "-Djava.awt.headless=true"]
        	  |""".stripMargin
   IO.write(file, contents)
   Seq(file)
