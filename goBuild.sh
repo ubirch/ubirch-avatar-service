@@ -50,6 +50,8 @@ filename=`awk '/^ADD.*server-assembly.*/{ print$2}' Dockerfile`
   fi
 
 }
+
+
 case "$1" in
     build)
         init
