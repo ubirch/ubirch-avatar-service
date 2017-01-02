@@ -1,12 +1,12 @@
 version: '2'
 services:
   elasticsearch:
-    image: elasticsearch
+    image: elasticsearch:2.4.2
     ports:
     - "9200:9200"
     - "9300:9300"
   kibana:
-    image: kibana
+    image: kibana:4
     ports:
       - "5601:5601"
     links:

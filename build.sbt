@@ -325,7 +325,8 @@ def generateDockerFile(file: File, nameString: String, versionString: String, ja
   val contents =
     s"""FROM ubirch/java
 		  |RUN mkdir -p /opt/ubirch/etc
-       	  |ADD server/target/scala-2.11/${jarFile.getName} $jarTargetPath
+      |ADD server/target/scala-2.11/${jarFile.getName} $jarTargetPath
+      |ADD tools/start.sh /opt/start.sh
 		  |ADD config/src/main/resources/application.docker.conf /opt/ubirch/etc/application.conf
 		  |ADD config/src/main/resources/logback.docker.xml /opt/ubirch/etc/logback.xml
        |EXPOSE 8080

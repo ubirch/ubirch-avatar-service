@@ -36,11 +36,12 @@ function build_software() {
 
 function build_container() {
   # copy artefacts to TMP directory for faster build
+  rm -rf TMP/
   mkdir -p TMP
   # get artefact name from Dockerfile
 filename=`awk '/^ADD.*server-assembly.*/{ print$2}' Dockerfile`
   tar cvf - $filename | (cd TMP; tar xvf - )
-  tar cvf - config/src/main/resources/ | (cd TMP; tar xvf - )
+  tar cvf - config/src/main/resources/ tools/ | (cd TMP; tar xvf - )
   cp Dockerfile TMP/
   cd TMP
   docker build -t ubirch-avatar-service .
