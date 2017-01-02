@@ -25,3 +25,4 @@ services:
      - ES_PORT_TCP=9300
      - SQS_UBIRCH_TRANSFORMER_INBOX=2016-12-24-test-inbox
      - SQS_UBIRCH_TRANSFORMER_OUTBOX=2016-12-24-test-outbox
+     - DEBUG=true

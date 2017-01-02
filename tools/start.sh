@@ -17,8 +17,10 @@ echo "starting avatar service"
 
 JVM_PARAMS="-Dfile.encoding=UTF-8 -XX:+UseCMSInitiatingOccupancyOnly -XX:+DisableExplicitGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -Xms1g -Xmx2g -Djava.awt.headless=true"
 
-APP_PARAMS="-Dlogback.configurationFile=/opt/ubirch/etc/logback.xml -Dconfig.file=/opt/ubirch/etc/application.conf"
-
-
+if [ -z $DEBUG  ]; then
+  APP_PARAMS="-Dlogback.configurationFile=/opt/ubirch/etc/logback.xml -Dconfig.file=/opt/ubirch/etc/application.conf"
+else
+  APP_PARAMS="-Dlogback.configurationFile=logback.test.xml -Dconfig.file=/opt/ubirch/etc/application.conf"
+fi
 
 java  $JVM_PARAMS $APP_PARAMS -jar /opt/jar/server-assembly-0.3.5-SNAPSHOT.jar
