@@ -330,7 +330,7 @@ def generateDockerFile(file: File, nameString: String, versionString: String, ja
 		  |ADD config/src/main/resources/application.docker.conf /opt/ubirch/etc/application.conf
 		  |ADD config/src/main/resources/logback.docker.xml /opt/ubirch/etc/logback.xml
        |EXPOSE 8080
-       	  |ENTRYPOINT ["java","-Dlogback.configurationFile=/opt/ubirch/etc/logback.xml", "-Dconfig.file=/opt/ubirch/etc/application.conf","-jar", "$jarTargetPath","-Dfile.encoding=UTF-8", "-XX:+UseCMSInitiatingOccupancyOnly","-XX:+DisableExplicitGC","-XX:CMSInitiatingOccupancyFraction=75", "-XX:+UseParNewGC","-XX:+UseConcMarkSweepGC", "-Xms1g", "-Xmx2g", "-Djava.awt.headless=true"]
+       	  |ENTRYPOINT ["/opt/start.sh"]
        	  |""".stripMargin
   IO.write(file, contents)
   Seq(file)
