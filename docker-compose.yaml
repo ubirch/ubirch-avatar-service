@@ -11,3 +11,18 @@ services:
       - "5601:5601"
     links:
       - elasticsearch
+  avatar:
+    image: ubirch-avatar-service:latest
+    ports:
+     - "8080:8080"
+    links:
+     - elasticsearch
+    environment:
+     - AWS_ACCESS_KEY_ID
+     - AWS_SECRET_ACCESS_KEY
+     - ES_HOST=elasticsearch
+     - ES_PORT_HTTP=9200
+     - ES_PORT_TCP=9300
+     - SQS_UBIRCH_TRANSFORMER_INBOX=2016-12-24-test-inbox
+     - SQS_UBIRCH_TRANSFORMER_OUTBOX=2016-12-24-test-outbox
+     - DEBUG=true
