@@ -140,7 +140,7 @@ object Config extends ConfigBase {
   def awsStatesTimestamp: String = config.getString(ConfigKeys.AWS_STATES_TIMESTAMP)
 
 
-  def awsAccessKey: String = config.getString(ConfigKeys.AWS_ACCESS_KEY_ID)
+  def awsAccessKey: String = config.getString(ConfigKeys.AWS_ACCESS_KEY)
 
   def awsSecretAccessKey: String = config.getString(ConfigKeys.AWS_SECRET_ACCESS_KEY)
 

@@ -73,7 +73,7 @@ object ConfigKeys {
   final val AWS_STATES_TIMESTAMP = s"$awsPrefix.states.timestamp"
 
   // AWS Auth keys
-  final val AWS_ACCESS_KEY_ID = s"$awsPrefix.awsaccesskeyid"
+  final val AWS_ACCESS_KEY = s"$awsPrefix.awsaccesskey"
 
   // AWS Auth keys
   final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
