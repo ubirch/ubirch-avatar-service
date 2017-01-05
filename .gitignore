@@ -21,3 +21,5 @@ Dockerfile
 
 .ivy2
 ?
+.sbt.ivy.lock
+.sbt.cache.lock
