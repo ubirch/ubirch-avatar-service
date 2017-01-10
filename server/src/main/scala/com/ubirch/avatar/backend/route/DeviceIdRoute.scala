@@ -57,10 +57,8 @@ trait DeviceIdRoute extends CORSDirective
               onComplete(deviceApiActor ? CreateDevice(device = device)) {
                 case Success(resp) =>
                   resp match {
-                    case dev: Device =>
-                      complete(dev)
-                    case jer: JsonErrorResponse =>
-                      complete(requestErrorResponse(jer))
+                    case dev: Device => complete(dev)
+                    case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
                   }
                 case Failure(t) =>
                   logger.error("device creation failed", t)
