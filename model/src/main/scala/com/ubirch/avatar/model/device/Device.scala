@@ -37,7 +37,7 @@ case class Device(deviceId: String,
 
   override def hashCode(): Int = this.deviceId.hashCode
 
-  def awsDeviceThingId = this.deviceId.replaceAll("-", "").replaceAll(" ", "").trim.toLowerCase()
+  def awsDeviceThingId: String = this.deviceId.replaceAll("-", "").replaceAll(" ", "").trim.toLowerCase()
 }
 
 case class AvatarState(desired: Option[JValue],
