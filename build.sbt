@@ -37,7 +37,7 @@ lazy val avatarService = (project in file("."))
 lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
-  .dependsOn(core, config, testBase % "test")
+  .dependsOn(util, core, config, testBase % "test")
   .enablePlugins(DockerPlugin)
   .settings(
     description := "REST interface and Akka HTTP specific code",
@@ -111,6 +111,7 @@ lazy val util = project
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
+      resolverBeeClient,
       resolverRoundEights
     )
   )
@@ -175,8 +176,9 @@ lazy val depModel = Seq(
 
 lazy val depUtil = Seq(
   ubirchCrypto,
-  ubirchUtilJson
-) ++ json4s
+  ubirchUtilJson,
+  beeClient
+) ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
   scalatest,
