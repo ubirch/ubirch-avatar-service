@@ -177,7 +177,7 @@ lazy val depModel = Seq(
 lazy val depUtil = Seq(
   ubirchCrypto,
   ubirchUtilJson,
-  beeClient
+  ubirchElasticsearchUtil
 ) ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
@@ -254,6 +254,11 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "ch.qos.logback")
 )
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.3.5" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+)
+lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "0.1.0" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
