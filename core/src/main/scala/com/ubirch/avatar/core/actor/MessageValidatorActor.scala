@@ -7,16 +7,17 @@ import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
 
+import scala.concurrent.ExecutionContextExecutor
+
 /**
   * Created by derMicha on 28/10/16.
-  * This Actor checks incomming messages
+  * This Actor checks incoming messages
   */
 class MessageValidatorActor extends Actor with ActorLogging {
 
-  implicit val executionContext = context.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   private val processorActor = context.actorOf(new RoundRobinPool(5).props(Props[MessageProcessorActor]), "message-processor")
-  //  private val processorActor = context.actorOf(Props[MessageProcessorActor], "message-processor")
 
   override def receive: Receive = {
 
