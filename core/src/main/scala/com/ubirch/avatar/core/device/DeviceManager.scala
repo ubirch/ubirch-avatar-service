@@ -31,7 +31,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
   }
 
   def allStubs(): Future[Seq[DeviceInfo]] = {
-    DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
+    DeviceStorage.getDocs(docIndex = Config.esDeviceIndex, docType = Config.esDeviceType, size = Some(100)).map { res =>
       res.map { jv =>
         DeviceStubManger.create(device = jv.extract[Device])
       }
