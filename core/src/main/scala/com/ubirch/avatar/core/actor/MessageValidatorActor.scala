@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
@@ -39,11 +40,18 @@ class MessageValidatorActor extends Actor with ActorLogging {
       log.debug(s"received message version: ${drd.v}")
 
       if (drd.k.isDefined)
-        DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p).map {
+        DeviceManager.infoByHashedHwId(drd.a).map {
           case Some(dev) =>
-            processorActor ! (s, drd, dev)
+
+            if (DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p)) {
+
+              processorActor ! (s, drd, dev)
+            }
+            else {
+              s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+            }
           case None =>
-            s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+            s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
         }
       else {
         log.error("valid pubKey missing")

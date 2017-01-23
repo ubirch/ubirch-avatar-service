@@ -54,7 +54,7 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
-  .dependsOn(core, client, testBase)
+  .dependsOn(core, client, util, testBase)
   .settings(
     description := "command line tools"
   )
@@ -83,7 +83,7 @@ lazy val core = project
 
 lazy val aws = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, testBase % "test")
+  .dependsOn(config, model, util, testBase % "test")
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
@@ -104,25 +104,25 @@ lazy val model = project
     libraryDependencies ++= depModel
   )
 
-lazy val util = project
+lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(config, model)
+  .dependsOn(model, config, util)
   .settings(
-    description := "ubirch-avatar-service specific utils",
-    libraryDependencies ++= depUtil,
+    name := "test-base",
+    description := "test tools",
+    libraryDependencies ++= depTestBase,
     resolvers ++= Seq(
       resolverBeeClient,
       resolverRoundEights
     )
   )
 
-lazy val testBase = (project in file("test-base"))
+lazy val util = project
   .settings(commonSettings: _*)
-  .dependsOn(model, util, config)
+  .dependsOn(config, model)
   .settings(
-    name := "test-base",
-    description := "test tools",
-    libraryDependencies ++= depTestBase,
+    description := "ubirch-avatar-service specific utils",
+    libraryDependencies ++= depUtil,
     resolvers ++= Seq(
       resolverBeeClient,
       resolverRoundEights
@@ -177,7 +177,9 @@ lazy val depModel = Seq(
 lazy val depUtil = Seq(
   ubirchCrypto,
   ubirchUtilJson,
-  ubirchElasticsearchUtil
+  ubirchElasticsearchUtil,
+  ubirchUtilUUID % "test",
+  scalatest % "test"
 ) ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
@@ -186,7 +188,7 @@ lazy val depTestBase = Seq(
   beeClient,
   ubirchUtilUUID,
   ubirchCrypto
-)
+) ++ json4s ++ scalaLogging
 
 /*
  * DEPENDENCIES
