@@ -5,12 +5,12 @@ import java.util.UUID
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.util.server.RouteConstants._
+import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.server.Route
-import com.ubirch.util.http.response.ResponseUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.Future
@@ -25,8 +25,6 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
   implicit val system = ActorSystem()
 
-  import system.dispatcher
-
   val route: Route = {
 
     // TODO authentication
@@ -36,9 +34,8 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
       path(history) {
         respondWithCORS {
           get {
-            onSuccess(queryHistory(deviceId)) {
-              case None => complete(errorResponseHistory(deviceId))
-              case Some(deviceData) => complete(deviceData)
+            onSuccess(queryHistory(deviceId)) { deviceData =>
+              complete(deviceData)
             }
           }
         }
@@ -48,9 +45,8 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
         path(IntNumber) { from =>
           respondWithCORS {
             get {
-              onSuccess(queryHistory(deviceId, Some(from))) {
-                case None => complete(errorResponseHistory(deviceId, Some(from)))
-                case Some(deviceData) => complete(deviceData)
+              onSuccess(queryHistory(deviceId, Some(from))) { deviceData =>
+                complete(deviceData)
               }
             }
           }
@@ -58,9 +54,8 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
         } ~ path(IntNumber / IntNumber) { (from, size) =>
           respondWithCORS {
             get {
-              onSuccess(queryHistory(deviceId, Some(from), Some(size))) {
-                case None => complete(errorResponseHistory(deviceId, Some(from), Some(size)))
-                case Some(deviceData) => complete(deviceData)
+              onSuccess(queryHistory(deviceId, Some(from), Some(size))) { deviceData =>
+                complete(deviceData)
               }
             }
 
@@ -77,9 +72,9 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
   private def queryHistory(deviceId: UUID,
                            fromOpt: Option[Int] = None,
                            sizeOpt: Option[Int] = None
-                          ): Future[Option[Seq[DeviceDataProcessed]]] = {
+                          ): Future[Seq[DeviceDataProcessed]] = {
 
-    val deviceData: Future[Seq[DeviceDataProcessed]] = fromOpt match {
+    fromOpt match {
 
       case Some(from) =>
         sizeOpt match {
@@ -91,17 +86,6 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
     }
 
-    deviceData map {
-      case seq if seq.isEmpty => None
-      case seq => Some(seq)
-    }
-
   }
 
-  private def errorResponseHistory(deviceId: UUID,
-                                   fromOpt: Option[Long] = None,
-                                   sizeOpt: Option[Long] = None
-                                  ): HttpResponse = {
-    requestErrorResponse("QueryError", s"found no messages: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
-  }
 }
