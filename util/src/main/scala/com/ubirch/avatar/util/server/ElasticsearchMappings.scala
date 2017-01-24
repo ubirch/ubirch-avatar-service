@@ -57,6 +57,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |  "mappings": {
          |    "${Config.esDeviceDataRawType}" : {
          |      "properties" : {
+         |        "timestamp": {
+         |            "type": "date",
+         |            "format": "strict_date_optional_time||epoch_millis"
+         |        },
          |        "a" : {
          |          "type" : "string",
          |          "index": "not_analyzed"
@@ -82,6 +86,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |  "mappings": {
          |    "${Config.esDeviceDataProcessedType}" : {
          |      "properties" : {
+         |         "timestamp": {
+         |            "type": "date",
+         |            "format": "strict_date_optional_time||epoch_millis"
+         |          },
          |        "deviceId" : {
          |          "type" : "string",
          |          "index": "not_analyzed"
