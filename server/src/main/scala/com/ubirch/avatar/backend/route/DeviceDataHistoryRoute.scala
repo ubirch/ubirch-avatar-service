@@ -102,6 +102,6 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
                                    fromOpt: Option[Long] = None,
                                    sizeOpt: Option[Long] = None
                                   ): HttpResponse = {
-    requestErrorResponse("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
+    requestErrorResponse("QueryError", s"found no messages: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
   }
 }
