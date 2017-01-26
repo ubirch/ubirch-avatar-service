@@ -4,10 +4,10 @@ ubirch device-configuration and -dataflow service
 
 ## General Information
 
-ubirch Avatar Service is responsilble for:
+ubirch Avatar Service is responsible for:
 
 * offering ubirch IoT devices an endpoint to sync their state
-* processing incomming raw data from ubirch IoT devices
+* processing incoming raw data from ubirch IoT devices
 ** validating signatures 
 ** transforming raw data 
 * offering CRUD API to manage ubirch IoT Devices
