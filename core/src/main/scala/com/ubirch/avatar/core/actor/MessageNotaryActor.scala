@@ -23,7 +23,8 @@ class MessageNotaryActor extends Actor with StrictLogging {
         dataIsHash = false
       ) match {
         case Some(resp) =>
-          logger.debug(s"btx hash for message ${drd.id} is ${resp.hash}")
+          logger.info(s"btx hash for message ${drd.id} is ${resp.hash}")
+        //@TODO store result
         case None =>
           logger.error(s"notarize failed for: $drd")
       }

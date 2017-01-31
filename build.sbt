@@ -155,6 +155,7 @@ lazy val depCore = Seq(
   ubirchCrypto,
   ubirchNotary,
   ubirchUtilResponse,
+  spireMath,
   scalatest % "test"
 ) ++ akkaCamel ++ scalaLogging
 
@@ -200,6 +201,7 @@ lazy val json4sV = "3.4.2"
 lazy val awsSdkV = "1.11.51"
 lazy val camelV = "2.18.0"
 lazy val scalaTestV = "3.0.0"
+lazy val spireV = "0.13.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -235,6 +237,8 @@ lazy val json4sNative = json4sG %% "json4s-native" % json4sV
 lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
 lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 
+lazy val spireMath = "org.spire-math" %% "spire" % spireV
+
 // list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 lazy val awsIotSdk = Seq(
   awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor")
@@ -255,7 +259,8 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.3.5" excludeAll(
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.4.1" excludeAll(
+  //lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.5.0" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
