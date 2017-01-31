@@ -14,15 +14,18 @@ class PtxTrackleTransformerServiceTest extends FeatureSpec
   with MyJsonProtocol {
 
   feature("PTX") {
-    scenario("simple case") {
+    scenario("temp gt 0") {
       val adc1: BigDecimal = 21285.0
-      val adc2: BigDecimal = 10.0
-
       val t1: BigDecimal = 24.69
-      val t2: BigDecimal = -241.91
 
       PtxTransformerService.pt100_temperature(r = adc1).setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe t1
-      PtxTransformerService.pt100_temperature(r = adc2).setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe t2
+    }
+
+    scenario("temp lt 0") {
+      val adc1: BigDecimal = 10.0
+      val t1: BigDecimal = -241.91
+
+      PtxTransformerService.pt100_temperature(r = adc1).setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe t1
     }
   }
 }
