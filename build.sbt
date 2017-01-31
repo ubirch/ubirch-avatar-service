@@ -32,7 +32,7 @@ lazy val commonSettings = Seq(
 
 lazy val avatarService = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(server, core, config, model, testBase)
+  .aggregate(server, cmdtools, client, core, aws, config, model, testBase, util)
 
 lazy val server = project
   .settings(commonSettings: _*)
