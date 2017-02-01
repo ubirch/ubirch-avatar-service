@@ -10,6 +10,9 @@ object PtxTransformerService {
 
   case class PTCoefficientStandard(a: BigDecimal, b: BigDecimal, c: BigDecimal)
 
+  /*
+
+   */
   private val ptxITS90 = PTCoefficientStandard(BigDecimal(3.9083E-03), BigDecimal(-5.7750E-07), BigDecimal(-4.1830E-12))
   //  val ptxITS90 = PTCoefficientStandard(dec"3.9083".exp(), BigDecimal(dec"-5.7750"), BigDecimal(dec"-4.1830"))
 
@@ -21,26 +24,43 @@ object PtxTransformerService {
     1 -> -1.61875985E-01,
     0 -> 4.84112370
   )
-  private val poly = Polynomial[BigDecimal](
-    k
-  )
 
+  private val poly = Polynomial[BigDecimal](k)
+
+  /**
+    *
+    * @param adcval raw adc resisistence value
+    * @return resisistence value
+    */
   private def resistance(adcval: BigDecimal): BigDecimal = ((adcval * 1.35 / 65536.0) / 0.0005) / 8.0
 
-  def pt100_temperature(r: BigDecimal, standard: PTCoefficientStandard = ptxITS90): BigDecimal = {
-    ptx_temperature(100.0, r, standard)
+  /**
+    *
+    * @param adc
+    * @param standard
+    * @return
+    */
+  def pt100_temperature(adc: BigDecimal, standard: PTCoefficientStandard = ptxITS90): BigDecimal = {
+    ptx_temperature(100.0, adc, standard)
   }
 
-  def ptx_temperature(r0: BigDecimal, r: BigDecimal, standard: PTCoefficientStandard = ptxITS90): BigDecimal = {
+  /**
+    *
+    * @param r0
+    * @param adc
+    * @param standard
+    * @return
+    */
+  def ptx_temperature(r0: BigDecimal, adc: BigDecimal, standard: PTCoefficientStandard = ptxITS90): BigDecimal = {
     val (a, b) = (standard.a, standard.b)
 
-    val res = resistance(r)
+    val r = resistance(adc)
 
-    val v = ((r0 * r0) * (a * a)) - (4 * r0 * b * (r0 - res))
+    val v = ((r0 * r0) * (a * a)) - (4 * r0 * b * (r0 - r))
     val t = ((-r0 * a) + v.sqrt()) / (2.0 * r0 * b)
 
-    if (res < r0) {
-      val p = poly(res)
+    if (r < r0) {
+      val p = poly(r)
 
 
       t + p

@@ -1,25 +1,21 @@
 {
-  "id": "67364d3e-caab-4d4b-844f-42e82aca8d04",
-  "deviceId": "c81dc22a-988a-496e-a7d8-5d37c6e4b912",
-  "periodBegin": "2016-12-13T18:08:45.851Z",
-  "periodEnd": {
-    "timestamp": "2016-12-18T18:08:45.851Z",
-    "prognosis": true
-  },
-  "cycleEnd": {
-    "timestamp": "2017-01-10T18:08:45.851Z",
-    "prognosis": true
-  },
-  "ovulation": {
-    "timestamp": "2016-12-27T18:08:45.851Z",
-    "prognosis": true
-  },
-  "fertileBegin": {
-    "timestamp": "2016-12-22T18:08:45.851Z",
-    "prognosis": true
-  },
-  "fertileEnd": {
-    "timestamp": "2016-12-29T18:08:45.851Z",
-    "prognosis": true
+  "id": "600160fc-f1fa-456e-9c1f-2c1c4460b9c3",
+  "v": "0.0.2",
+  "a": "Tf9Oo0DwqCPxXT9PAati6uDl2lecy4Ufjbnf6ExYsrN7iZA6dA4e4XLaeTpuedVg5ff5vQWKEqKAQz7W+kZRCg==",
+  "k": "ltFWVRo3/gzF++Hv0XScx8uVYd078cJhQwssLarnseY=",
+  "ts": "2017-01-14T13:44:19.451Z",
+  "s": "V3EbZMqK0pISsmuWbqWJMaT20A1YJ+lDakoMgdTmCRBgQpWMHYYNzDgdCurunSJXqF0KbkPc0XubmdS3AR/PBQ==",
+  "p": {
+    "ts": 261,
+    "pc": 215,
+    "t1": 21212,
+    "t2": 44415,
+    "t3": 3016,
+    "st": 64,
+    "vb": 2263,
+    "rs": 19,
+    "la": "52.487202",
+    "lo": "13.463557",
+    "ba": 100,
+    "e": 0
   }
-}

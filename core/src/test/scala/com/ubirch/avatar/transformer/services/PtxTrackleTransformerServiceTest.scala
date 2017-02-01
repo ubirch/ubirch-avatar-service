@@ -18,14 +18,14 @@ class PtxTrackleTransformerServiceTest extends FeatureSpec
       val adc1: BigDecimal = 21285.0
       val t1: BigDecimal = 24.69
 
-      PtxTransformerService.pt100_temperature(r = adc1).setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe t1
+      PtxTransformerService.pt100_temperature(adc = adc1).setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe t1
     }
 
     scenario("temp lt 0") {
       val adc1: BigDecimal = 10.0
       val t1: BigDecimal = -241.91
 
-      PtxTransformerService.pt100_temperature(r = adc1).setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe t1
+      PtxTransformerService.pt100_temperature(adc = adc1).setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe t1
     }
   }
 }

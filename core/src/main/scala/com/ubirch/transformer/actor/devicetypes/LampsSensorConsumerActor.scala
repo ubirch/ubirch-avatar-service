@@ -1,4 +1,4 @@
-package com.ubirch.transformer.actor.devicertypes
+package com.ubirch.transformer.actor.devicetypes
 
 import akka.actor.ActorLogging
 import akka.camel.{CamelMessage, Consumer}
