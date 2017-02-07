@@ -16,6 +16,15 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
+### Version 0.3.5 (2017-02-07)
+
+* minor refactorings
+* delete route: POST /device/<DEVICE_ID>
+* fix: read AWS from config instead of System.getenv()
+* fixed `ClearDb`
+* updated some of the dependencies
+* added PTX temperature conversions
+
 ### Version 0.3.4 (2016-12-13)
 
 * added first version of raw data -> history data transformation 
