@@ -18,3 +18,8 @@ project/plugins/project/
 .idea
 Dockerfile
 *.iml
+
+.ivy2
+?
+.sbt.ivy.lock
+.sbt.cache.lock

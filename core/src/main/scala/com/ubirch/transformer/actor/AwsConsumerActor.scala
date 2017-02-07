@@ -13,11 +13,11 @@ import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
   */
 class AwsConsumerActor extends Consumer with ActorLogging {
 
-  val accessKey = System.getenv().get(Config.awsAccessKey)
+  val accessKey = Config.awsAccessKey
 
-  val secretKey = System.getenv().get(Config.awsSecretAccessKey)
+  val secretKey = Config.awsSecretAccessKey
 
-  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey"
+  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=10"
 
   override def autoAck: Boolean = true
 

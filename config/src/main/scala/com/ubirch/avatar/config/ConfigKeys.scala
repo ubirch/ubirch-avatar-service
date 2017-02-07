@@ -73,7 +73,7 @@ object ConfigKeys {
   final val AWS_STATES_TIMESTAMP = s"$awsPrefix.states.timestamp"
 
   // AWS Auth keys
-  final val AWS_ACCESS_KEY_ID = s"$awsPrefix.awsaccesskeyid"
+  final val AWS_ACCESS_KEY = s"$awsPrefix.awsaccesskey"
 
   // AWS Auth keys
   final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
@@ -90,5 +90,15 @@ object ConfigKeys {
 
   final val REST_CLIENT_TIMEOUT_CONNECT = s"$restClientTimeout.connect"
   final val REST_CLIENT_TIMEOUT_READ = s"$restClientTimeout.read"
+
+  /* MQTT Related Config Keys
+ **********************************************************************/
+
+  final val mqttPrefix = s"$prefix.mqtt"
+
+  final val MQTT_USER_KEY = s"$mqttPrefix.credentials.user"
+
+  final val MQTT_PASSWORD_KEY = s"$mqttPrefix.credentials.password"
+
 
 }

@@ -23,7 +23,7 @@ object AwsShadowUtil extends StrictLogging {
   private val iotDataClient = AwsConf.awsIotDataClient
   private val iotClient = AwsConf.awsIotClient
 
-  def publish(topic: String, thingShadowMessage: ThingShadowMessage) {
+  def publish(topic: String, thingShadowMessage: ThingShadowMessage): Unit = {
     val republishRequest = new PublishRequest()
       .withTopic(topic)
       .withPayload(ByteBuffer.wrap(write(thingShadowMessage).getBytes("UTF-8")))
@@ -56,23 +56,31 @@ object AwsShadowUtil extends StrictLogging {
     iotClient.deleteThing(deleteSensorRequest)
   }
 
-  def setReported(device: Device, newState: JValue) = {
+  def setReported(device: Device, newState: JValue): Unit = {
+    setReported(device.awsDeviceThingId, newState = newState)
+  }
+
+  def setReported(awsDeviceThingId: String, newState: JValue): Unit = {
     val thingShadowMessage = ThingShadowMessage(
       state =
         ThingShadowState(
           reported = Some(newState)
         )
     )
-    publish(AwsThingTopicUtil.getUpdateTopic(device.awsDeviceThingId), thingShadowMessage)
+    publish(AwsThingTopicUtil.getUpdateTopic(awsDeviceThingId), thingShadowMessage)
   }
 
-  def setDesired(device: Device, newState: JValue) = {
+  def setDesired(device: Device, newState: JValue): Unit = {
+    setDesired(device.awsDeviceThingId, newState = newState)
+  }
+
+  def setDesired(awsDeviceThingId: String, newState: JValue): Unit = {
     val thingShadowMessage = ThingShadowMessage(
       state =
         ThingShadowState(
           desired = Some(newState)
         )
     )
-    publish(AwsThingTopicUtil.getUpdateTopic(device.awsDeviceThingId), thingShadowMessage)
+    publish(AwsThingTopicUtil.getUpdateTopic(awsDeviceThingId), thingShadowMessage)
   }
 }

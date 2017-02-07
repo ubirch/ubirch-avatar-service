@@ -3,6 +3,7 @@ package com.ubirch.transformer.services
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.device._
+import com.ubirch.avatar.model.payload.{EnvSensorPayload, EnvSensorRawPayload, TrackleSensorPayload, TrackleSensorPayloadOut}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 /**
@@ -26,7 +27,7 @@ object TransformerService
 
     logger.debug(s"$deviceType / $device")
 
-    val tp = if (device.deviceTypeKey == Const.ENVIRONMENTSENSOR)
+    val transformedPayload = if (device.deviceTypeKey == Const.ENVIRONMENTSENSOR)
       drd.p.extractOpt[EnvSensorRawPayload] match {
         case Some(envRawP) =>
           val envP = EnvSensorPayload(
@@ -48,6 +49,34 @@ object TransformerService
               drd.p
           }
         case _ =>
+          logger.error("invalid envSensore payload")
+          drd.p
+      }
+    else if (device.deviceTypeKey == Const.TRACKLESENSOR)
+      drd.p.extractOpt[TrackleSensorPayload] match {
+        case Some(tracklePayload) =>
+          val trackleP = TrackleSensorPayloadOut(
+            ts = tracklePayload.ts,
+            ba = tracklePayload.ba,
+            pc = tracklePayload.pc,
+            t1Adc = tracklePayload.t1,
+            t2Adc = tracklePayload.t2,
+            t3Adc = tracklePayload.t3,
+            t1 = PtxTransformerService.pt100_temperature(tracklePayload.t1).toDouble,
+            t2 = PtxTransformerService.pt100_temperature(tracklePayload.t2).toDouble,
+            t3 = PtxTransformerService.pt100_temperature(tracklePayload.t3).toDouble,
+            la = tracklePayload.la,
+            lo = tracklePayload.lo,
+            e = tracklePayload.e
+          )
+          Json4sUtil.any2jvalue(trackleP) match {
+            case Some(jval) =>
+              jval
+            case _ =>
+              drd.p
+          }
+        case _ =>
+          logger.error("invalid trackle payload")
           drd.p
       }
     else
@@ -60,7 +89,7 @@ object TransformerService
       deviceType = deviceType.key,
       timestamp = drd.ts,
       deviceTags = device.tags,
-      deviceMessage = tp,
+      deviceMessage = transformedPayload,
       deviceDataRaw = Some(sdrd)
     )
   }

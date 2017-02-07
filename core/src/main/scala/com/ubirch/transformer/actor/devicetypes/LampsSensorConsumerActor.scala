@@ -1,4 +1,4 @@
-package com.ubirch.transformer.actor.devicertypes
+package com.ubirch.transformer.actor.devicetypes
 
 import akka.actor.ActorLogging
 import akka.camel.{CamelMessage, Consumer}
@@ -13,7 +13,7 @@ class LampsSensorConsumerActor extends Consumer with ActorLogging {
 
   val secretKey = System.getenv().get(Config.awsSecretAccessKey)
 
-  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey"
+  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=10"
 
   override def autoAck: Boolean = true
 

@@ -16,6 +16,6 @@ case class ThingShadowState(
                              desired: Option[JValue] = None,
                              reported: Option[JValue] = None,
                              delta: Option[JValue] = None,
-                             deviceLastUpdated: Option[DateTime] = None,
-                             avatarLastUpdated: Option[DateTime] = None
+                             deviceLastUpdated: Option[DateTime] = Some(DateTime.now()),
+                             avatarLastUpdated: Option[DateTime] = Some(DateTime.now())
                            )

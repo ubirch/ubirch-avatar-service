@@ -5,6 +5,7 @@ import akka.routing.RoundRobinPool
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 
 /**
@@ -26,8 +27,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
       persistenceActor ! drd
 
       //TODO check notary config for device
-      //      if (DeviceCoreUtil.checkNotaryUsage(device))
-      //        notaryActor ! drd
+      if (DeviceCoreUtil.checkNotaryUsage(device))
+        notaryActor ! drd
 
       transformerActor ! drd.id
 

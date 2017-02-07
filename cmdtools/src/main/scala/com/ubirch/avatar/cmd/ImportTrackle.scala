@@ -7,6 +7,7 @@ import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.payload.TrackleSensorPayload
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.Json4sUtil
@@ -150,9 +151,13 @@ object ImportTrackle
   private val adf = Source.fromFile(allDataFilenames)(Codec.UTF8)
   adf.getLines().foreach { dfnLine =>
     val dfnLineSplitted = dfnLine.split(";")
-    val basePath = dfnLineSplitted(0)
-    val logFilename = dfnLineSplitted(1)
-    val csvFilename = dfnLineSplitted(2)
+
+    val rootPath = dfnLineSplitted(0)
+    val dayString = dfnLineSplitted(1)
+
+    val basePath = s"$rootPath/$dayString"
+    val csvFilename = s"${dayString}_trackle_log.csv"
+    val logFilename = s"${dayString}_terminal.txt"
 
     //    val csvFile = new File(s"$googleDriveBasePath$basePath/$csvFilename")
     val csvFile = new File(s"$basePath/$csvFilename")
@@ -185,7 +190,20 @@ object ImportTrackle
         if (logDataPoint.isDefined && csvDataPoint.isDefined) {
           val cdp = csvDataPoint.get
           val ldp = logDataPoint.get
-          Json4sUtil.any2jvalue(ldp) match {
+
+          val tracklePayload = TrackleSensorPayload(
+            ts = ldp.timestamp,
+            ba = ldp.batteryPower,
+            pc = ldp.paketCounter,
+            t1 = ldp.t1Adc,
+            t2 = ldp.t2Adc,
+            t3 = ldp.t2Adc,
+            la = "0.0",
+            lo = "0.0",
+            e = 0
+          )
+
+          Json4sUtil.any2jvalue(tracklePayload) match {
             case Some(payload) =>
               val ddr = DeviceDataRaw(
                 id = UUIDUtil.uuid,

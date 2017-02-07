@@ -4,10 +4,10 @@ ubirch device-configuration and -dataflow service
 
 ## General Information
 
-ubirch Avatar Service is responsilble for:
+ubirch Avatar Service is responsible for:
 
 * offering ubirch IoT devices an endpoint to sync their state
-* processing incomming raw data from ubirch IoT devices
+* processing incoming raw data from ubirch IoT devices
 ** validating signatures 
 ** transforming raw data 
 * offering CRUD API to manage ubirch IoT Devices
@@ -22,6 +22,8 @@ ubirch Avatar Service is responsilble for:
 * delete route: POST /device/<DEVICE_ID>
 * fix: read AWS from config instead of System.getenv()
 * fixed `ClearDb`
+* updated some of the dependencies
+* added PTX temperature conversions
 
 ### Version 0.3.4 (2016-12-13)
 
@@ -34,10 +36,10 @@ ubirch Avatar Service is responsilble for:
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.5"
+  "com.ubirch.avatar" %% "aws" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -45,11 +47,11 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.5"
+  "com.ubirch.avatar" %% "client" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -57,10 +59,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.5"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -68,10 +70,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.5"
+  "com.ubirch.avatar" %% "config" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -79,10 +81,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.5"
+  "com.ubirch.avatar" %% "core" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -90,10 +92,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.5"
+  "com.ubirch.avatar" %% "model" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -101,11 +103,11 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.5"
+  "com.ubirch.avatar" %% "server" % "0.3.4-SNAPSHOT"
 )
 ```
         
@@ -113,12 +115,12 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("hseeberger", "maven"),
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.5"
+  "com.ubirch.avatar" %% "test-base" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -126,10 +128,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.5"
+  "com.ubirch.avatar" %% "util" % "0.3.4-SNAPSHOT"
 )
 ```
 
@@ -144,39 +146,71 @@ If server is healthy response is:
 
     200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService"}
 
-### Device Information
+### Device CRUD
 
-#### TODO: title
+#### LIST all devices
 
-TODO: description
+returns an array of all devices the authenticated user has connected
 
     curl -XGET localhost:8080/api/avatarService/v1/device
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device
+to list devices as short info objects use stub endpoint
+    
+    curl -XGET localhost:8080/api/avatarService/v1/device/stub
 
-#### TODO: title
 
-TODO: description
+#### CREATE device
+
+creates a new device
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device -H "Content-Type: application/json" -d '{
+        "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+        "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
+        "deviceName":"new device",
+        "deviceTypeKey":"lightsLamp",
+        "deviceProperties":{},
+        "deviceConfig":{
+            "i":900,
+            "bf":0
+        },
+        "tags":[
+            "ubirch#0",
+            "actor","btcDemo"
+        ]}'
+
+
+#### READ, EDIT, DELETE device with ID
+
+READ device with given id
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
+UPDATE device with given id
+
+    curl -XPUT localhost:8080/api/avatarService/v1/device/<DEVICE_ID>  -H "Content-Type: application/json" -d '{
+          "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+          "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
+          "deviceName":"new device",
+          "deviceTypeKey":"lightsLamp",
+          "deviceProperties":{},
+          "deviceConfig":{
+              "i":900,
+              "bf":0
+          },
+          "tags":[
+              "ubirch#0",
+              "actor","btcDemo"
+          ]}'
+
+DELETE device with given id
 
     curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
 
 #### Device State
 
-TODO: description
+get state of device with given id
 
     curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
-
-    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
-
-#### TODO: title
-
-TODO: description
-
-    curl -XGET localhost:8080/api/avatarService/v1/device/stub/<DEVICE_ID>
 
 ### Device Data
 

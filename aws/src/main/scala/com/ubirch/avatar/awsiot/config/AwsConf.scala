@@ -14,9 +14,9 @@ object AwsConf extends StrictLogging {
 
   val region: String = "us-east-1"
 
-  val accessKey = System.getenv().get("AWS_ACCESS_KEY_ID")
+  val accessKey = Config.awsAccessKey
 
-  val secretKey = System.getenv().get("AWS_SECRET_ACCESS_KEY")
+  val secretKey = Config.awsSecretAccessKey
 
   val awsCredentials = new BasicAWSCredentials(accessKey, secretKey)
 

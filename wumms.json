@@ -1,32 +1,21 @@
 {
-  "deviceId": "8d553238-8971-453e-acdc-f1724a05885c",
-  "messageId": "9874ba44-449e-4b2f-bf99-9386b009051d",
-  "deviceDataRawId": "9874ba44-449e-4b2f-bf99-9386b009051d",
-  "deviceType": "envSensor",
-  "timestamp": "2016-12-12T09:31:59.548Z",
-  "deviceTags": [
-    "ubirch#1",
-    "sensor",
-    "btcDemo"
-  ],
-  "deviceMessage": {
-    "temperature": 30.71,
-    "presure": 948.43,
-    "humidity": 88.02
-  },
-  "deviceDataRaw": {
-    "id": "9874ba44-449e-4b2f-bf99-9386b009051d",
-    "v": "0.0.3",
-    "a": "g/vdnYhkXd5UgpAWiBsgooAVB3MZrEtXz5qxmeLRstM7qSi0SXAQa09KguSp5TC4TeHoDgHjjZPzbzZEXScBVg==",
-    "k": "MC0wCAYDK2VkCgEBAyEAIgw0W4BTUGu0BiIt1/22GOsr3CUxV7pu+DUpRQ8ebTk=",
-    "ts": "2016-12-12T09:31:59.548Z",
-    "s": "nYt7KSpvCTZTzi+WKo8xvUOAtRyf6ui1MTOTZ2ibaZ9agJqLGW4PgPXrxuSH+6SgQJmUKkOYU+arqi/XcspiDg==",
-    "p": [
-      {
-        "t": 3071,
-        "p": 94843,
-        "h": 8802
-      }
-    ]
+  "id": "600160fc-f1fa-456e-9c1f-2c1c4460b9c3",
+  "v": "0.0.2",
+  "a": "Tf9Oo0DwqCPxXT9PAati6uDl2lecy4Ufjbnf6ExYsrN7iZA6dA4e4XLaeTpuedVg5ff5vQWKEqKAQz7W+kZRCg==",
+  "k": "ltFWVRo3/gzF++Hv0XScx8uVYd078cJhQwssLarnseY=",
+  "ts": "2017-01-14T13:44:19.451Z",
+  "s": "V3EbZMqK0pISsmuWbqWJMaT20A1YJ+lDakoMgdTmCRBgQpWMHYYNzDgdCurunSJXqF0KbkPc0XubmdS3AR/PBQ==",
+  "p": {
+    "ts": 261,
+    "pc": 215,
+    "t1": 21212,
+    "t2": 44415,
+    "t3": 3016,
+    "st": 64,
+    "vb": 2263,
+    "rs": 19,
+    "la": "52.487202",
+    "lo": "13.463557",
+    "ba": 100,
+    "e": 0
   }
-}

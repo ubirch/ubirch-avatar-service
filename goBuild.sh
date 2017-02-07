@@ -34,6 +34,24 @@ function build_software() {
   fi
 }
 
+function build_container() {
+  # copy artefacts to TMP directory for faster build
+  mkdir -p TMP
+  # get artefact name from Dockerfile
+filename=`awk '/^ADD.*server-assembly.*/{ print$2}' Dockerfile`
+  tar cvf - $filename | (cd TMP; tar xvf - )
+  tar cvf - config/src/main/resources/ | (cd TMP; tar xvf - )
+  cp Dockerfile TMP/
+  cd TMP
+  docker build -t ubirch-avatar-service .
+  if [ $? -ne 0 ]; then
+    echo "Docker build failed"
+    exit 1
+  fi
+
+}
+
+
 case "$1" in
     build)
         init
@@ -42,8 +60,11 @@ case "$1" in
     assembly)
         build_software "clean server/assembly"
         ;;
+    containerbuild)
+        build_container
+        ;;
     *)
-        echo "Usage: $0 {build|publish}"
+        echo "Usage: $0 {build|assembly|containerbuild}"
         exit 1
 esac
 

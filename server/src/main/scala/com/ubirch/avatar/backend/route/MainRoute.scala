@@ -1,9 +1,8 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.util.server.RouteConstants
-
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import com.ubirch.avatar.util.server.RouteConstants
 
 /**
   * author: cvandrei
@@ -23,6 +22,8 @@ class MainRoute {
   val deviceDataHistory = new DeviceDataHistoryRoute {}
   val deviceType = new DeviceTypeRoute {}
 
+  val forbidden = new ForbiddenRoute {}
+
   val myRoute: Route = {
 
     pathPrefix(RouteConstants.apiPrefix) {
@@ -37,9 +38,15 @@ class MainRoute {
               deviceDataHistory.route ~
               deviceDataRaw.route ~
               deviceId.route
-          } ~ path(RouteConstants.device) {
-            device.route
-          }
+          } ~
+            pathPrefix("wumms") {
+              pathEndOrSingleSlash {
+                forbidden.route
+              }
+            } ~
+            pathEndOrSingleSlash {
+              welcome.route
+            }
         }
       }
     } ~
