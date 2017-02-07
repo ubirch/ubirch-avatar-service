@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.5-SNAPSHOT",
+  version := "0.3.5",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -77,7 +77,8 @@ lazy val core = project
     description := "business logic",
     libraryDependencies ++= depCore,
     resolvers ++= Seq(
-      resolverRoundEights
+      resolverRoundEights,
+      resolverEclipse
     )
   )
 
@@ -199,7 +200,7 @@ lazy val depTestBase = Seq(
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.2"
 lazy val awsSdkV = "1.11.51"
-lazy val camelV = "2.18.0"
+lazy val camelV = "2.18.1"
 lazy val scalaTestV = "3.0.0"
 lazy val spireV = "0.13.0"
 
@@ -225,6 +226,7 @@ lazy val scalaLogging = Seq(
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
   "org.apache.camel" % "camel-aws" % camelV,
+  "org.apache.camel" % "camel-paho" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
@@ -314,6 +316,7 @@ lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.5" excludeAll(
 lazy val resolverSeebergerJson = Resolver.bintrayRepo("hseeberger", "maven")
 lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
 lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
+lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
 
 /*
  * MISC

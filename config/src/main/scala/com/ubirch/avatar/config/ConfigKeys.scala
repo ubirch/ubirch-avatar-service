@@ -91,4 +91,14 @@ object ConfigKeys {
   final val REST_CLIENT_TIMEOUT_CONNECT = s"$restClientTimeout.connect"
   final val REST_CLIENT_TIMEOUT_READ = s"$restClientTimeout.read"
 
+  /* MQTT Related Config Keys
+ **********************************************************************/
+
+  final val mqttPrefix = s"$prefix.mqtt"
+
+  final val MQTT_USER_KEY = s"$mqttPrefix.credentials.user"
+
+  final val MQTT_PASSWORD_KEY = s"$mqttPrefix.credentials.password"
+
+
 }

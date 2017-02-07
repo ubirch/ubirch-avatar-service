@@ -158,4 +158,10 @@ object Config extends ConfigBase {
     */
   def restClientTimeoutRead: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_READ)
 
+  /* mqtt */
+
+  def mqttUser: String = config.getString(ConfigKeys.MQTT_USER_KEY)
+
+  def mqttPassword: String = config.getString(ConfigKeys.MQTT_PASSWORD_KEY)
+
 }
