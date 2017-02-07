@@ -18,7 +18,10 @@ ubirch Avatar Service is responsilble for:
 
 ### Version 0.3.5 (2017-02-07)
 
-???
+* minor refactorings
+* delete route: POST /device/<DEVICE_ID>
+* fix: read AWS from config instead of System.getenv()
+* fixed `ClearDb`
 
 ### Version 0.3.4 (2016-12-13)
 
