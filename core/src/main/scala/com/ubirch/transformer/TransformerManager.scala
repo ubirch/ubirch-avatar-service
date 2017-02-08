@@ -1,7 +1,7 @@
 package com.ubirch.transformer
 
 import akka.actor.{ActorSystem, Props}
-import com.ubirch.transformer.actor.AwsConsumerActor
+import com.ubirch.transformer.actor.{AwsConsumerActor, MqttDeviceConsumerActor}
 
 /**
   * Created by derMicha on 30/10/16.
@@ -17,7 +17,9 @@ object TransformerManager {
     //    val ctx = new DefaultCamelContext()
     //    ctx.addComponent()
     //    ctx.bind("client", client);
+
     system.actorOf(Props[AwsConsumerActor], "transformer-consumer")
+    system.actorOf(Props[MqttDeviceConsumerActor], "mqtt-consumer")
 
   }
 }
