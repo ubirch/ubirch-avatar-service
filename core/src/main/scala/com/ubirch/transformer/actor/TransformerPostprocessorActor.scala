@@ -22,7 +22,6 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
     case (deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw) =>
       log.debug(s"received device raw data message: $drd with deviceKeyType: $deviceType")
 
-
       val ddp = TransformerService.transform(
         deviceType = deviceType,
         device = device,

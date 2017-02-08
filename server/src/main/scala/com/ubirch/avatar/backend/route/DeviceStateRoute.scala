@@ -8,12 +8,14 @@ import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
 import com.ubirch.util.http.response.ResponseUtil
+
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
   * author: cvandrei
@@ -24,7 +26,7 @@ trait DeviceStateRoute extends MyJsonProtocol
   with CORSDirective {
 
   implicit val system = ActorSystem()
-  implicit val executionContext = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   val route: Route = {
 
@@ -59,13 +61,5 @@ trait DeviceStateRoute extends MyJsonProtocol
   }
 
   //  private def storeState(deviceId: UUID, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
-  //
-  //  private def errorResponse(deviceId: UUID,
-  //                            fromOpt: Option[Long] = None,
-  //                            sizeOpt: Option[Long] = None
-  //                           ): HttpResponse = {
-  //    val error = ErrorFactory.createString("QueryError", s"deviceId not found: deviceId=$deviceId, from=$fromOpt, size=$sizeOpt")
-  //    HttpResponse(status = BadRequest, entity = HttpEntity(`application/json`, error))
-  //  }
-  //  //  private def storeState(deviceId: String, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
+
 }

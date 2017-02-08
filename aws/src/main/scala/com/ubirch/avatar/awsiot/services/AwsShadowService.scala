@@ -8,7 +8,7 @@ import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s._
 
 /**
@@ -79,7 +79,9 @@ object AwsShadowService extends MyJsonProtocol with StrictLogging {
       case Some(jint) =>
         jint.extractOpt[Int] match {
           case Some(ts) =>
-            Some(new DateTime(ts * 1000))
+            val datezone = DateTimeZone.UTC
+            val d = new DateTime(ts.toLong * 1000, datezone)
+            Some(d)
           case None =>
             None
         }

@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.5-SNAPSHOT",
+  version := "0.3.6",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -32,12 +32,12 @@ lazy val commonSettings = Seq(
 
 lazy val avatarService = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(server, core, config, model, testBase)
+  .aggregate(server, cmdtools, client, core, aws, config, model, testBase, util)
 
 lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
-  .dependsOn(core, config, testBase % "test")
+  .dependsOn(util, core, config, testBase % "test")
   .enablePlugins(DockerPlugin)
   .settings(
     description := "REST interface and Akka HTTP specific code",
@@ -54,7 +54,7 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings: _*)
-  .dependsOn(core, client, testBase)
+  .dependsOn(core, client, util, testBase)
   .settings(
     description := "command line tools"
   )
@@ -77,13 +77,14 @@ lazy val core = project
     description := "business logic",
     libraryDependencies ++= depCore,
     resolvers ++= Seq(
-      resolverRoundEights
+      resolverRoundEights,
+      resolverEclipse
     )
   )
 
 lazy val aws = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, testBase % "test")
+  .dependsOn(config, model, util, testBase % "test")
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
@@ -104,24 +105,25 @@ lazy val model = project
     libraryDependencies ++= depModel
   )
 
+lazy val testBase = (project in file("test-base"))
+  .settings(commonSettings: _*)
+  .dependsOn(model, config, util)
+  .settings(
+    name := "test-base",
+    description := "test tools",
+    libraryDependencies ++= depTestBase,
+    resolvers ++= Seq(
+      resolverBeeClient,
+      resolverRoundEights
+    )
+  )
+
 lazy val util = project
   .settings(commonSettings: _*)
   .dependsOn(config, model)
   .settings(
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
-    resolvers ++= Seq(
-      resolverRoundEights
-    )
-  )
-
-lazy val testBase = (project in file("test-base"))
-  .settings(commonSettings: _*)
-  .dependsOn(model, util, config)
-  .settings(
-    name := "test-base",
-    description := "test tools",
-    libraryDependencies ++= depTestBase,
     resolvers ++= Seq(
       resolverBeeClient,
       resolverRoundEights
@@ -154,6 +156,7 @@ lazy val depCore = Seq(
   ubirchCrypto,
   ubirchNotary,
   ubirchUtilResponse,
+  spireMath,
   scalatest % "test"
 ) ++ akkaCamel ++ scalaLogging
 
@@ -175,8 +178,11 @@ lazy val depModel = Seq(
 
 lazy val depUtil = Seq(
   ubirchCrypto,
-  ubirchUtilJson
-) ++ json4s
+  ubirchUtilJson,
+  ubirchElasticsearchUtil,
+  ubirchUtilUUID % "test",
+  scalatest % "test"
+) ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
   scalatest,
@@ -184,7 +190,7 @@ lazy val depTestBase = Seq(
   beeClient,
   ubirchUtilUUID,
   ubirchCrypto
-)
+) ++ json4s ++ scalaLogging
 
 /*
  * DEPENDENCIES
@@ -194,8 +200,9 @@ lazy val depTestBase = Seq(
 lazy val akkaV = "2.4.11"
 lazy val json4sV = "3.4.2"
 lazy val awsSdkV = "1.11.51"
-lazy val camelV = "2.18.0"
+lazy val camelV = "2.18.1"
 lazy val scalaTestV = "3.0.0"
+lazy val spireV = "0.13.0"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -219,6 +226,7 @@ lazy val scalaLogging = Seq(
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
   "org.apache.camel" % "camel-aws" % camelV,
+  "org.apache.camel" % "camel-paho" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
@@ -230,6 +238,8 @@ lazy val json4s = Seq(json4sNative, json4sExt, json4sJackson)
 lazy val json4sNative = json4sG %% "json4s-native" % json4sV
 lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
 lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
+
+lazy val spireMath = "org.spire-math" %% "spire" % spireV
 
 // list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 lazy val awsIotSdk = Seq(
@@ -251,7 +261,13 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.3.5" excludeAll(
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.4.1" excludeAll(
+  //lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.5.0" excludeAll(
+  ExclusionRule(organization = "com.typesafe.scala-logging"),
+  ExclusionRule(organization = "org.slf4j"),
+  ExclusionRule(organization = "ch.qos.logback")
+)
+lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "0.1.0" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
@@ -286,7 +302,7 @@ lazy val ubirchUtilResponse = ubirchUtilG %% "responseutil" % "0.1" excludeAll(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.5" excludeAll(
+lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.6" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
@@ -300,6 +316,7 @@ lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.5" excludeAll(
 lazy val resolverSeebergerJson = Resolver.bintrayRepo("hseeberger", "maven")
 lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
 lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
+lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
 
 /*
  * MISC

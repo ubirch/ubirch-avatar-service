@@ -1,8 +1,10 @@
 package com.ubirch.avatar.transformer.services
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.DummyDevices
-import com.ubirch.avatar.model.device.{DeviceDataRaw, EnvSensorPayload, EnvSensorRawPayload}
+import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.payload.{EnvSensorPayload, EnvSensorRawPayload}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -11,12 +13,12 @@ import org.scalatest.{FeatureSpec, Matchers}
 /**
   * Created by derMicha on 30/11/16.
   */
-class TransformerServiceTest extends FeatureSpec
+class TransformerServiceEnvSensorTest extends FeatureSpec
   with Matchers
   with StrictLogging
   with MyJsonProtocol {
 
-  val deviceType = DeviceTypeUtil.defaultDeviceType(deviceType = "envSensor")
+  val deviceTypeEnvSensor = DeviceTypeUtil.defaultDeviceType(deviceType = Const.ENVIRONMENTSENSOR)
 
   val ddrEnvSensorStr =
     s"""{
@@ -45,7 +47,7 @@ class TransformerServiceTest extends FeatureSpec
   lazy val ddrEnvSensor = ddrEnvSensorJVal.extract[DeviceDataRaw]
 
   lazy val device = DummyDevices.device(
-    deviceTypeKey = deviceType.key
+    deviceTypeKey = deviceTypeEnvSensor.key
   )
 
   lazy val payload = ddrEnvSensor.p.extract[EnvSensorRawPayload]
@@ -55,7 +57,7 @@ class TransformerServiceTest extends FeatureSpec
 
       val trd = TransformerService.transform(
         device = device,
-        deviceType = deviceType,
+        deviceType = deviceTypeEnvSensor,
         drd = ddrEnvSensor,
         sdrd = ddrEnvSensor
       )
@@ -63,9 +65,9 @@ class TransformerServiceTest extends FeatureSpec
       val tPayload = trd.deviceMessage.extractOpt[EnvSensorPayload]
 
       tPayload.isDefined shouldBe true
-      tPayload.get.temperature shouldBe (payload.t / 100)
-      tPayload.get.humidity shouldBe (payload.h / 100)
-      tPayload.get.presure shouldBe (payload.p / 100)
+      tPayload.get.temperature shouldBe (payload.t.toDouble / 100)
+      tPayload.get.humidity shouldBe (payload.h.toDouble / 100)
+      tPayload.get.presure shouldBe (payload.p.toDouble / 100)
 
     }
   }

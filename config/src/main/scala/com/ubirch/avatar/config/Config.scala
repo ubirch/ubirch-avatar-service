@@ -140,7 +140,7 @@ object Config extends ConfigBase {
   def awsStatesTimestamp: String = config.getString(ConfigKeys.AWS_STATES_TIMESTAMP)
 
 
-  def awsAccessKey: String = config.getString(ConfigKeys.AWS_ACCESS_KEY_ID)
+  def awsAccessKey: String = config.getString(ConfigKeys.AWS_ACCESS_KEY)
 
   def awsSecretAccessKey: String = config.getString(ConfigKeys.AWS_SECRET_ACCESS_KEY)
 
@@ -157,5 +157,11 @@ object Config extends ConfigBase {
     * @return REST Client read timeout in milliseconds
     */
   def restClientTimeoutRead: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_READ)
+
+  /* mqtt */
+
+  def mqttUser: String = config.getString(ConfigKeys.MQTT_USER_KEY)
+
+  def mqttPassword: String = config.getString(ConfigKeys.MQTT_PASSWORD_KEY)
 
 }

@@ -8,9 +8,11 @@ import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
+import com.ubirch.avatar.util.server.ElasticsearchMappings
 import com.ubirch.transformer.TransformerManager
 
 import scala.concurrent.Future
@@ -21,7 +23,9 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-09-20
   */
-object Boot extends App with StrictLogging {
+object Boot extends App
+  with ElasticsearchMappings
+  with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -30,6 +34,8 @@ object Boot extends App with StrictLogging {
   logger.info("ubirchAvatarService started")
 
   implicit val timeout = Timeout(15 seconds)
+
+  createElasticsearchMappings()
 
   val bindingFuture = start()
 

@@ -1,19 +1,21 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.backend.Actor.{CreateDevice, DeviceApiActor}
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
-import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.rest.akka.directives.CORSDirective
+import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.util.Timeout
+
+import com.ubirch.avatar.backend.Actor.{CreateDevice, DeviceApiActor}
+import com.ubirch.util.model.JsonErrorResponse
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
+import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
@@ -28,7 +30,7 @@ trait DeviceIdRoute extends CORSDirective
   with StrictLogging {
 
   implicit val system = ActorSystem()
-  implicit val executionContext = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(15 seconds)
 
   private val deviceApiActor = system.actorOf(Props[DeviceApiActor], "device-api")
@@ -51,23 +53,24 @@ trait DeviceIdRoute extends CORSDirective
                 Some(device)
             }
           }
-        } ~
-          post {
-            entity(as[Device]) { device =>
-              onComplete(deviceApiActor ? CreateDevice(device = device)) {
-                case Success(resp) =>
-                  resp match {
-                    case dev: Device =>
-                      complete(dev)
-                    case jer: JsonErrorResponse =>
-                      complete(requestErrorResponse(jer))
-                  }
-                case Failure(t) =>
-                  logger.error("device creation failed", t)
-                  complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
-              }
+        } ~ post {
+          entity(as[Device]) { device =>
+            onComplete(deviceApiActor ? CreateDevice(device = device)) {
+              case Success(resp) =>
+                resp match {
+                  case dev: Device =>
+                    complete(dev)
+                  case jer: JsonErrorResponse =>
+                    complete(requestErrorResponse(jer))
+                  case _ =>
+                    complete("doof")
+                }
+              case Failure(t) =>
+                logger.error("device creation failed", t)
+                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
             }
-          } ~ put {
+          }
+        } ~ put {
           entity(as[Device]) { device =>
             complete {
               DeviceManager.info(deviceId).map {

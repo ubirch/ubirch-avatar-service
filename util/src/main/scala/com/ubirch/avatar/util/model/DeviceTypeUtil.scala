@@ -61,9 +61,13 @@ object DeviceTypeUtil {
 
       case Const.ENVIRONMENTSENSOR => DeviceTypeName("Umweltsensor", "Environment Sensor")
 
-      case Const.UNKNOWN_DEVICE => DeviceTypeName("unbekannter Geräte Typ", "unknown device type")
+      case Const.TRACKLESENSOR => DeviceTypeName("trackle", "trackle Sensor")
 
-      case _ => DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
+      case Const.UNKNOWN_DEVICE =>
+        DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
+
+      case _ =>
+        DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
 
     }
 

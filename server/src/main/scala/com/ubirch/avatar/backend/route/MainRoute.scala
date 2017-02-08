@@ -22,6 +22,8 @@ class MainRoute {
   val deviceDataHistory = new DeviceDataHistoryRoute {}
   val deviceType = new DeviceTypeRoute {}
 
+  val forbidden = new ForbiddenRoute {}
+
   val myRoute: Route = {
 
     pathPrefix(RouteConstants.apiPrefix) {
@@ -36,9 +38,12 @@ class MainRoute {
               deviceDataHistory.route ~
               deviceDataRaw.route ~
               deviceId.route
-          } ~ path(RouteConstants.device) {
-            device.route
           } ~
+            pathPrefix("wumms") {
+              pathEndOrSingleSlash {
+                forbidden.route
+              }
+            } ~
             pathEndOrSingleSlash {
               welcome.route
             }

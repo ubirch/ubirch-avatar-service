@@ -9,9 +9,9 @@ import com.ubirch.avatar.config.Config
   */
 class TransformerProducerActor extends Actor with Producer {
 
-  val accessKey = System.getenv().get(Config.awsAccessKey)
+  val accessKey = Config.awsAccessKey
 
-  val secretKey = System.getenv().get(Config.awsSecretAccessKey)
+  val secretKey = Config.awsSecretAccessKey
 
   override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey"
 

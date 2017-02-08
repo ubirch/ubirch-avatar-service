@@ -3,20 +3,22 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
 
+import scala.concurrent.ExecutionContextExecutor
+
 /**
   * Created by derMicha on 28/10/16.
-  * This Actor checks incomming messages
+  * This Actor checks incoming messages
   */
 class MessageValidatorActor extends Actor with ActorLogging {
 
-  implicit val executionContext = context.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   private val processorActor = context.actorOf(new RoundRobinPool(5).props(Props[MessageProcessorActor]), "message-processor")
-  //  private val processorActor = context.actorOf(Props[MessageProcessorActor], "message-processor")
 
   override def receive: Receive = {
 
@@ -38,11 +40,18 @@ class MessageValidatorActor extends Actor with ActorLogging {
       log.debug(s"received message version: ${drd.v}")
 
       if (drd.k.isDefined)
-        DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p).map {
+        DeviceManager.infoByHashedHwId(drd.a).map {
           case Some(dev) =>
-            processorActor ! (s, drd, dev)
+
+            if (DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p)) {
+
+              processorActor ! (s, drd, dev)
+            }
+            else {
+              s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+            }
           case None =>
-            s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+            s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
         }
       else {
         log.error("valid pubKey missing")

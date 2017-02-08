@@ -7,12 +7,11 @@ import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.services.storage.DeviceDataProcessedStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.uuid.UUIDUtil
 
 import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionException, Future}
+import scala.concurrent.Future
 
 /**
   * author: cvandrei

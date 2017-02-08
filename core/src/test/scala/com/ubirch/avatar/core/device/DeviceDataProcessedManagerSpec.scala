@@ -7,8 +7,8 @@ import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionException}
 import scala.language.postfixOps
 
 /**
@@ -72,7 +72,7 @@ class DeviceDataProcessedManagerSpec
 
     scenario("deviceId does not exist; index does not exist") {
       val deviceId = UUIDUtil.uuidStr
-      an[ExecutionException] should be thrownBy Await.result(DeviceDataProcessedManager.history(deviceId), 1 seconds)
+      Await.result(DeviceDataProcessedManager.history(deviceId), 1 seconds) should be('isEmpty)
     }
 
     scenario("deviceId does not exist; index exists") {
