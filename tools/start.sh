@@ -23,4 +23,4 @@ else
   APP_PARAMS="-Dlogback.configurationFile=logback.test.xml -Dconfig.file=/opt/ubirch/etc/application.conf"
 fi
 
-java  $JVM_PARAMS $APP_PARAMS -jar /opt/jar/server-assembly-0.3.5-SNAPSHOT.jar
+java  $JVM_PARAMS $APP_PARAMS -jar /opt/jar/@@build-artefact@@

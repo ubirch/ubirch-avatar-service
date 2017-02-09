@@ -2,7 +2,7 @@
 *.log
 
 # sbt specific
-.cache
+.cache/
 .history
 .lib/
 dist/*
@@ -17,8 +17,9 @@ project/plugins/project/
 .worksheet
 .idea
 Dockerfile
+Dockerfile.input
 *.iml
-
+TMP/
 .ivy2
 ?
 .sbt.ivy.lock

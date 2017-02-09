@@ -48,7 +48,7 @@ lazy val server = project
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
     resourceGenerators in Compile += Def.task {
-      generateDockerFile(baseDirectory.value / ".." / "Dockerfile", name.value, version.value, (assemblyOutputPath in assembly).value)
+      generateDockerFile(baseDirectory.value / ".." / "Dockerfile.input", name.value, version.value, (assemblyOutputPath in assembly).value)
     }.taskValue
   )
 
@@ -340,15 +340,9 @@ lazy val mergeStrategy = Seq(
 def generateDockerFile(file: File, nameString: String, versionString: String, jarFile: sbt.File): Seq[File] = {
   val jarTargetPath = s"/opt/jar/${jarFile.name}"
   val contents =
-    s"""FROM ubirch/java
-		  |RUN mkdir -p /opt/ubirch/etc
-      |ADD server/target/scala-2.11/${jarFile.getName} $jarTargetPath
-      |ADD tools/start.sh /opt/start.sh
-		  |ADD config/src/main/resources/application.docker.conf /opt/ubirch/etc/application.conf
-		  |ADD config/src/main/resources/logback.docker.xml /opt/ubirch/etc/logback.xml
-       |EXPOSE 8080
-       	  |ENTRYPOINT ["/opt/start.sh"]
-       	  |""".stripMargin
+    s"""SOURCE=server/target/scala-2.11/${jarFile.getName}
+    |TARGET=${jarFile.getName}
+    |""".stripMargin
   IO.write(file, contents)
   Seq(file)
 }
