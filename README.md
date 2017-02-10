@@ -490,16 +490,9 @@ The service requires the following mappings for things to work as expected:
 
 TODO
 
-
 ## Local Setup
 
 TODO
-
-
-## Create Docker Image
-
-    ./sbt server/docker
-
 
 ## Generate Test Data
 
