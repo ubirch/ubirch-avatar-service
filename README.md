@@ -16,9 +16,13 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
-### Version 0.3.6 (tbd)
+### Version 0.3.7 (tbd)
 
 * tbd
+
+### Version 0.3.6 (2017-02-07)
+
+* update dependency "com.ubirch.notary:client:0.2.5" to 0.2.6 (getting rid of com.ubirch.util:json-auto-convert:0.1)
 
 ### Version 0.3.5 (2017-02-07)
 
@@ -43,7 +47,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "aws" % "0.3.7-SNAPSHOT"
 )
 ```
 
@@ -55,7 +59,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "client" % "0.3.7-SNAPSHOT"
 )
 ```
 
@@ -66,7 +70,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.7-SNAPSHOT"
 )
 ```
 
@@ -77,7 +81,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "config" % "0.3.7-SNAPSHOT"
 )
 ```
 
@@ -88,7 +92,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "core" % "0.3.7-SNAPSHOT"
 )
 ```
 
@@ -99,7 +103,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "model" % "0.3.7-SNAPSHOT"
 )
 ```
 
@@ -111,7 +115,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "server" % "0.3.7-SNAPSHOT"
 )
 ```
         
@@ -124,7 +128,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "test-base" % "0.3.7-SNAPSHOT"
 )
 ```
 
@@ -135,7 +139,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.5-SNAPSHOT"
+  "com.ubirch.avatar" %% "util" % "0.3.7-SNAPSHOT"
 )
 ```
 
