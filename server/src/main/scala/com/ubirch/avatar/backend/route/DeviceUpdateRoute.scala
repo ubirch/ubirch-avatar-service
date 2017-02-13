@@ -58,7 +58,7 @@ trait DeviceUpdateRoute extends MyJsonProtocol
                 logger.error("update device data failed", t)
                 complete(requestErrorResponse(
                   errorType = "UpdateDeviceError",
-                  errorMessage = s"update was not successfull for message ${sdm.id}, error occured: ${t.getMessage.replace("\"", "'")}")
+                  errorMessage = s"update failed for message ${sdm.id}, error occured: ${t.getMessage.replace("\"", "'")}")
                 )
             }
           }
