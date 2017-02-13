@@ -160,8 +160,12 @@ object Config extends ConfigBase {
 
   /* mqtt */
 
+  def mqttBrokerUrl: String = config.getString(ConfigKeys.MQTT_BROKER_URL)
+
   def mqttUser: String = config.getString(ConfigKeys.MQTT_USER_KEY)
 
   def mqttPassword: String = config.getString(ConfigKeys.MQTT_PASSWORD_KEY)
+
+  def mqttQueueDevicesIn: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_IN)
 
 }

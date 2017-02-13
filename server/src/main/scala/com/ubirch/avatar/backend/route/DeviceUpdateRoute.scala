@@ -42,8 +42,8 @@ trait DeviceUpdateRoute extends MyJsonProtocol
     path(update) {
       respondWithCORS {
         post {
-          entity(as[DeviceDataRaw]) { sdm =>
-            onComplete(validatorActor ? sdm) {
+          entity(as[DeviceDataRaw]) { ddr =>
+            onComplete(validatorActor ? ddr) {
               case Success(resp) =>
                 resp match {
                   case dm: DeviceStateUpdate => complete(dm)
@@ -58,7 +58,7 @@ trait DeviceUpdateRoute extends MyJsonProtocol
                 logger.error("update device data failed", t)
                 complete(requestErrorResponse(
                   errorType = "UpdateDeviceError",
-                  errorMessage = s"update failed for message ${sdm.id}, error occured: ${t.getMessage.replace("\"", "'")}")
+                  errorMessage = s"update was not successfull for message ${ddr.id}, error occured: ${t.getMessage.replace("\"", "'")}")
                 )
             }
           }

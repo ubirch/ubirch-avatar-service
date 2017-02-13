@@ -96,9 +96,12 @@ object ConfigKeys {
 
   final val mqttPrefix = s"$prefix.mqtt"
 
+  final val MQTT_BROKER_URL = s"$mqttPrefix.broker.url"
+
   final val MQTT_USER_KEY = s"$mqttPrefix.credentials.user"
 
   final val MQTT_PASSWORD_KEY = s"$mqttPrefix.credentials.password"
 
+  final val MQTT_QUEUES_DEVICES_IN = s"$mqttPrefix.queues.devicesin"
 
 }
