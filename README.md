@@ -18,7 +18,8 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.7 (tbd)
 
-* tbd
+* upgrade lib: `Akka HTTP` from version 2.4.11 (experimental) to 10.0.3 (stable)
+* upgrade lib: `Akka` from version 2.4.11 to 2.4.17
 
 ### Version 0.3.6 (2017-02-07)
 
