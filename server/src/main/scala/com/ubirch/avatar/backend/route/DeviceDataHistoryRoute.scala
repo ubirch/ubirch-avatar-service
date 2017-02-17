@@ -52,6 +52,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
           }
 
         } ~ path(IntNumber / IntNumber) { (from, size) =>
+
           respondWithCORS {
             get {
               onSuccess(queryHistory(deviceId, Some(from), Some(size))) { deviceData =>
@@ -60,6 +61,19 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
             }
 
           }
+
+        } ~ pathPrefix(byDate) {
+
+          path(from / Segment / to / Segment) { (fromString, toString) =>
+            complete(s"OK: from=$fromString, to=$toString") // TODO call HistoryManager
+          } ~ path(before / Segment) { beforeString =>
+            complete(s"OK: before=$beforeString") // TODO call HistoryManager
+          } ~ path(after / Segment) { afterString =>
+            complete(s"OK: after=$afterString") // TODO call HistoryManager
+          } ~ path(day / Segment) { dayString =>
+            complete(s"OK: day=$dayString") // TODO call HistoryManager
+          }
+
         }
 
       }
@@ -76,10 +90,10 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
     fromOpt match {
 
-      case Some(from) =>
+      case Some(fromInt) =>
         sizeOpt match {
-          case Some(size) => DeviceDataProcessedManager.history(deviceId.toString, from, size)
-          case None => DeviceDataProcessedManager.history(deviceId.toString, from)
+          case Some(size) => DeviceDataProcessedManager.history(deviceId.toString, fromInt, size)
+          case None => DeviceDataProcessedManager.history(deviceId.toString, fromInt)
         }
 
       case None => DeviceDataProcessedManager.history(deviceId.toString)
