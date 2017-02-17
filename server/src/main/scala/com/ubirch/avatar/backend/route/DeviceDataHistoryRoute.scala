@@ -65,13 +65,13 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
         } ~ pathPrefix(byDate) {
 
           path(from / Segment / to / Segment) { (fromString, toString) =>
-            complete(s"OK: from=$fromString, to=$toString") // TODO call HistoryManager
+            complete(s"OK: from=$fromString, to=$toString") // TODO call DeviceDataProcessedManager
           } ~ path(before / Segment) { beforeString =>
-            complete(s"OK: before=$beforeString") // TODO call HistoryManager
+            complete(s"OK: before=$beforeString") // TODO call DeviceDataProcessedManager
           } ~ path(after / Segment) { afterString =>
-            complete(s"OK: after=$afterString") // TODO call HistoryManager
+            complete(s"OK: after=$afterString") // TODO call DeviceDataProcessedManager
           } ~ path(day / Segment) { dayString =>
-            complete(s"OK: day=$dayString") // TODO call HistoryManager
+            complete(s"OK: day=$dayString") // TODO call DeviceDataProcessedManager
           }
 
         }
