@@ -20,6 +20,7 @@ ubirch Avatar Service is responsible for:
 
 * upgrade lib: `Akka HTTP` from version 2.4.11 (experimental) to 10.0.3 (stable)
 * upgrade lib: `Akka` from version 2.4.11 to 2.4.17
+* upgrade rest-akka-http* modules to version 0.3.3 (add `Authorization` to CORS allow-headers)
 
 ### Version 0.3.6 (2017-02-07)
 
