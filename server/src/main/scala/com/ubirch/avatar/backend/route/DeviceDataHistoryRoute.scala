@@ -83,6 +83,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
         } ~ pathPrefix(byDate) {
 
           path(from / Segment / to / Segment) { (fromString, toString) =>
+            // TODO automated tests
             respondWithCORS {
               get {
 
@@ -105,6 +106,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
               }
             }
           } ~ path(before / Segment) { beforeString =>
+            // TODO automated tests
             respondWithCORS {
               get {
 
@@ -126,6 +128,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
               }
             }
           } ~ path(after / Segment) { afterString =>
+            // TODO automated tests
             respondWithCORS {
               get {
 
@@ -147,6 +150,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
               }
             }
           } ~ path(day / Segment) { dayString =>
+            // TODO automated tests
             respondWithCORS {
               get {
 
