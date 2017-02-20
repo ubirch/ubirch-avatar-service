@@ -20,6 +20,9 @@ import scala.concurrent.Future
   */
 object DeviceDataProcessedManager extends MyJsonProtocol {
 
+  private val index = Config.esDeviceDataProcessedIndex
+  private val esType = Config.esDeviceDataProcessedType
+
   /**
     * Query the history of deviceDataHistory for a specified deviceId.
     *
@@ -35,8 +38,6 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
 
     require(deviceId.nonEmpty, "deviceId may not be empty")
 
-    val index = Config.esDeviceDataProcessedIndex
-    val esType = Config.esDeviceDataProcessedType
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
@@ -50,49 +51,104 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     * Search a device's history for all [[DeviceDataProcessed]] within a certain time interval.
     *
     * @param deviceId device whose history we query
-    * @param from lower interval boundary (included in interval)
-    * @param to upper interval boundary (included in interval)
-    * @return
+    * @param from     lower interval boundary (included in interval)
+    * @param to       upper interval boundary (included in interval)
+    * @return results ordered by "timestamp asc"
     */
   def byDate(deviceId: UUID, from: DateTime, to: DateTime): Future[Seq[DeviceDataProcessed]] = {
-    // TODO implement
-    Future(Seq.empty)
+
+    // TODO automated tests
+    val combinedQuery = QueryBuilders.boolQuery()
+      .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
+      .must(QueryBuilders.rangeQuery("timestamp").gte(from))
+      .must(QueryBuilders.rangeQuery("timestamp").lte(to))
+
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
+
+    DeviceDataProcessedStorage.getDocs(
+      docIndex = index,
+      docType = esType,
+      sort = sort,
+      query = Some(combinedQuery)
+    ) map { res =>
+      res.map(_.extract[DeviceDataProcessed])
+    }
+
   }
 
   /**
     * Search a device's history for all [[DeviceDataProcessed]] before a given timestamp.
     *
     * @param deviceId device whose history we query
-    * @param before search for messages before this timestamp
-    * @return
+    * @param before   search for messages before this timestamp
+    * @return results ordered by "timestamp asc"
     */
   def before(deviceId: UUID, before: DateTime): Future[Seq[DeviceDataProcessed]] = {
-    // TODO implement
-    Future(Seq.empty)
+
+    // TODO automated tests
+    val combinedQuery = QueryBuilders.boolQuery()
+      .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
+      .must(QueryBuilders.rangeQuery("timestamp").lt(before))
+
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
+
+    DeviceDataProcessedStorage.getDocs(
+      docIndex = index,
+      docType = esType,
+      sort = sort,
+      query = Some(combinedQuery)
+    ) map { res =>
+      res.map(_.extract[DeviceDataProcessed])
+    }
+
   }
 
   /**
     * Search a device's history for all [[DeviceDataProcessed]] after a given timestamp.
     *
     * @param deviceId device whose history we query
-    * @param after search for messages after this timestamp
-    * @return
+    * @param after    search for messages after this timestamp
+    * @return results ordered by "timestamp asc"
     */
   def after(deviceId: UUID, after: DateTime): Future[Seq[DeviceDataProcessed]] = {
-    // TODO implement
-    Future(Seq.empty)
+
+    // TODO automated tests
+    val combinedQuery = QueryBuilders.boolQuery()
+      .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
+      .must(QueryBuilders.rangeQuery("timestamp").gt(after))
+
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
+
+    DeviceDataProcessedStorage.getDocs(
+      docIndex = index,
+      docType = esType,
+      sort = sort,
+      query = Some(combinedQuery)
+    ) map { res =>
+      res.map(_.extract[DeviceDataProcessed])
+    }
+
   }
 
   /**
     * Search a device's history for all [[DeviceDataProcessed]] within a given day.
     *
     * @param deviceId device whose history we query
-    * @param day search for messages within this day
-    * @return
+    * @param day      search for messages within this day
+    * @return results ordered by "timestamp asc"
     */
   def byDay(deviceId: UUID, day: DateTime): Future[Seq[DeviceDataProcessed]] = {
-    // TODO implement
-    Future(Seq.empty)
+
+    // TODO automated tests
+    val from = day.withHourOfDay(0)
+      .withMinuteOfHour(0)
+      .withSecondOfMinute(0)
+      .withMillisOfSecond(0)
+
+    val to = from.plusDays(1).minusMillis(1)
+
+    byDate(deviceId, from, to)
+
   }
 
   /**
@@ -105,8 +161,6 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
 
     require(messageId != null, "raw data id may not be null")
 
-    val index = Config.esDeviceDataProcessedIndex
-    val esType = Config.esDeviceDataProcessedType
     val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
 
     DeviceDataProcessedStorage.getDocs(index, esType, query).map { res =>
@@ -122,19 +176,16 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     */
   def store(data: DeviceDataProcessed): Future[Option[DeviceDataProcessed]] = {
 
-
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-        val index = Config.esDeviceDataProcessedIndex
-        val esType = Config.esDeviceDataProcessedType
         val id = Some(data.messageId.toString)
         DeviceDataProcessedStorage.storeDoc(
           docIndex = index,
           docType = esType,
           docIdOpt = id,
           doc = doc
-        ) map(_.extractOpt[DeviceDataProcessed])
+        ) map (_.extractOpt[DeviceDataProcessed])
 
       case None => Future(None)
 
