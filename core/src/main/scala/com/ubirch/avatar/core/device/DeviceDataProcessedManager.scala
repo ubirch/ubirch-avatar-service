@@ -9,6 +9,7 @@ import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import org.elasticsearch.index.query.QueryBuilders
+import org.joda.time.DateTime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -43,6 +44,55 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
       res.map(_.extract[DeviceDataProcessed])
     }
 
+  }
+
+  /**
+    * Search a device's history for all [[DeviceDataProcessed]] within a certain time interval.
+    *
+    * @param deviceId device whose history we query
+    * @param from lower interval boundary (included in interval)
+    * @param to upper interval boundary (included in interval)
+    * @return
+    */
+  def byDate(deviceId: UUID, from: DateTime, to: DateTime): Future[Seq[DeviceDataProcessed]] = {
+    // TODO implement
+    Future(Seq.empty)
+  }
+
+  /**
+    * Search a device's history for all [[DeviceDataProcessed]] before a given timestamp.
+    *
+    * @param deviceId device whose history we query
+    * @param before search for messages before this timestamp
+    * @return
+    */
+  def before(deviceId: UUID, before: DateTime): Future[Seq[DeviceDataProcessed]] = {
+    // TODO implement
+    Future(Seq.empty)
+  }
+
+  /**
+    * Search a device's history for all [[DeviceDataProcessed]] after a given timestamp.
+    *
+    * @param deviceId device whose history we query
+    * @param after search for messages after this timestamp
+    * @return
+    */
+  def after(deviceId: UUID, after: DateTime): Future[Seq[DeviceDataProcessed]] = {
+    // TODO implement
+    Future(Seq.empty)
+  }
+
+  /**
+    * Search a device's history for all [[DeviceDataProcessed]] within a given day.
+    *
+    * @param deviceId device whose history we query
+    * @param day search for messages within this day
+    * @return
+    */
+  def byDay(deviceId: UUID, day: DateTime): Future[Seq[DeviceDataProcessed]] = {
+    // TODO implement
+    Future(Seq.empty)
   }
 
   /**

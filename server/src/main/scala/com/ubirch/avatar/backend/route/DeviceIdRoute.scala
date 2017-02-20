@@ -11,7 +11,7 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 
-import com.ubirch.avatar.backend.Actor.{CreateDevice, DeviceApiActor}
+import com.ubirch.avatar.backend.actor.{CreateDevice, DeviceApiActor}
 import com.ubirch.util.model.JsonErrorResponse
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 

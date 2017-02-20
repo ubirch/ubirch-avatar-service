@@ -12,6 +12,15 @@ object ConfigKeys {
   final val HTTPINTERFACE = s"$prefix.interface"
   final val HTTPPORT = s"$prefix.port"
 
+  /*
+   * Akka related configs
+   *********************************************************************************************/
+
+  private val akkaPrefix = s"$prefix.akka"
+
+  final val ACTOR_TIMEOUT = s"$akkaPrefix.actorTimeout"
+  final val AKKA_NUMBER_OF_WORKERS = s"$akkaPrefix.numberOfWorkers"
+
   /* Elasticsearch Related Config Keys
    **********************************************************************/
 
