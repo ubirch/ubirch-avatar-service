@@ -32,7 +32,7 @@ object Boot extends App
 
   logger.info("ubirchAvatarService started")
 
-  implicit val timeout = Timeout(15 seconds)
+  implicit val timeout = Timeout(Config.actorTimeout seconds)
 
   createElasticsearchMappings()
 

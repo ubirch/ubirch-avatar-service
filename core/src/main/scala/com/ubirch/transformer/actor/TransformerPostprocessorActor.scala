@@ -1,19 +1,22 @@
 package com.ubirch.transformer.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device._
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+
+import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by derMicha on 28/10/16.
   */
 class TransformerPostprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
-  implicit val executionContext = context.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  val outProducerActor = context.actorOf(Props[TransformerOutProducerActor], "out-producer")
+  val outProducerActor: ActorRef = context.actorOf(Props[TransformerOutProducerActor], ActorNames.OUT_PRODUCER)
 
   override def receive: Receive = {
 
