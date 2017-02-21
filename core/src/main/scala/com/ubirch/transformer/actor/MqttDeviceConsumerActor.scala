@@ -22,12 +22,17 @@ class MqttDeviceConsumerActor
     with MyJsonProtocol {
 
   val mqttUser: String = Config.mqttUser
+
   val mqttPassword: String = Config.mqttPassword
+
   val mqttBrokerUrl: String = Config.mqttBrokerUrl
 
-  val clientId = s"avatarService_${UUIDUtil.uuidStr}"
+  val clientId: String = s"avatarService_${UUIDUtil.uuidStr}"
 
-  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
+  //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
+  override def endpointUri = s"mqtt:" +
+    s"" +
+    s"heinz?host=$mqttBrokerUrl&subscribeTopicName=${Config.mqttQueueDevicesIn}&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
@@ -39,7 +44,7 @@ class MqttDeviceConsumerActor
   }
 
   //TODO fix error handling, in case of error the message should be resend later?
-  override def receive: PartialFunction[Any, Unit] = {
+  override def receive = {
     case msg: CamelMessage =>
       msg.body match {
         case dataStr: String =>

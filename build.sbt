@@ -228,6 +228,7 @@ lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
   "org.apache.camel" % "camel-aws" % camelV,
   "org.apache.camel" % "camel-paho" % camelV,
+  "org.apache.camel" % "camel-mqtt" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
