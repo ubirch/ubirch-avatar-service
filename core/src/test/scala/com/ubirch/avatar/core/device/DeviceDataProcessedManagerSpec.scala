@@ -404,51 +404,109 @@ class DeviceDataProcessedManagerSpec
       result should be('isEmpty)
     }
 
-    ignore("all records in interval") {
+    scenario("all records in interval") {
 
       // prepare
       val deviceId: UUID = UUIDUtil.uuid
-      val t1 = DateTime.now(DateTimeZone.UTC)
-      val t2 = DateTime.now(DateTimeZone.UTC)
-      val t3 = DateTime.now(DateTimeZone.UTC)
-      val d1 = DummyDeviceDataProcessed.data(
-        deviceId = deviceId.toString,
-        timestamp = t1
-      )
-      val d2 = DummyDeviceDataProcessed.data(
-        deviceId = deviceId.toString,
-        timestamp = t2
-      )
-      val d3 = DummyDeviceDataProcessed.data(
-        deviceId = deviceId.toString,
-        timestamp = t3
-      )
-      val dataSeries: Seq[DeviceDataProcessed] = Seq(d1, d2, d3)
-      DeviceDataProcessedTestUtil.store(dataSeries)
-      val day = dataSeries.head.timestamp.plusMillis(1) // TODO set correct day
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.plusHours(2)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
 
       // test
       val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
 
       // verify
-      result should be(dataSeries) // TODO set expectation
+      result should be(dataSeries)
 
     }
 
-    ignore("all records in interval; first at lower boundary") {
-      // TODO implement test
+    scenario("all records in interval; first at lower boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
     }
 
-    ignore("all records in interval; except for: first before lower boundary") {
-      // TODO implement test
+    scenario("all records in interval; except for: first before lower boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.minusMillis(1)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries.tail)
+
     }
 
-    ignore("all records in interval; last at upper boundary") {
-      // TODO implement test
+    scenario("all records in interval; last at upper boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.plusHours(2)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusDays(1).minusMillis(1)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
     }
 
-    ignore("all records in interval; except for: last after upper boundary") {
-      // TODO implement test
+    scenario("all records in interval; except for: last after upper boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.plusHours(2)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusDays(1)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(Seq(dataSeries.head, dataSeries(1)))
+
     }
 
   }
@@ -462,6 +520,14 @@ class DeviceDataProcessedManagerSpec
     // test && verify
     an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataProcessedManager.history(deviceId, from, size), 1 seconds)
 
+  }
+
+  private def firstSecondOfToday(): DateTime = {
+    DateTime.now(DateTimeZone.UTC)
+      .withHourOfDay(0)
+      .withMinuteOfHour(0)
+      .withSecondOfMinute(0)
+      .withMillisOfSecond(0)
   }
 
 }
