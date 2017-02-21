@@ -7,6 +7,8 @@ import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 
+import org.joda.time.DateTime
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -169,6 +171,86 @@ class DeviceDataProcessedManagerSpec
       result should be('isEmpty)
 
     }
+
+  }
+
+  feature("byDate()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.byDate(UUIDUtil.uuid, DateTime.now, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.byDate(UUIDUtil.uuid, DateTime.now, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    // TODO all records in interval
+    // TODO all records in interval; one at lower boundary
+    // TODO all records in interval; one before lower boundary
+    // TODO all records in interval; one at upper boundary
+    // TODO all records in interval; one after upper boundary
+
+  }
+
+  feature("before()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.before(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.before(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    // TODO all records in interval
+    // TODO all records in interval; one at upper boundary
+    // TODO all records in interval; one after upper boundary
+
+  }
+
+  feature("after()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.after(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.after(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    // TODO all records in interval
+    // TODO all records in interval; one at lower boundary
+    // TODO all records in interval; one before lower boundary
+
+  }
+
+  feature("byDay()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.byDay(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.byDay(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    // TODO all records in interval
+    // TODO all records in interval; one at lower boundary
+    // TODO all records in interval; one before lower boundary
+    // TODO all records in interval; one at upper boundary
+    // TODO all records in interval; one after upper boundary
 
   }
 

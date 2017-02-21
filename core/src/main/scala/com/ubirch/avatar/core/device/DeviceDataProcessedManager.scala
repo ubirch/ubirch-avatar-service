@@ -57,7 +57,6 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     */
   def byDate(deviceId: UUID, from: DateTime, to: DateTime): Future[Seq[DeviceDataProcessed]] = {
 
-    // TODO automated tests
     val combinedQuery = QueryBuilders.boolQuery()
       .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
       .must(QueryBuilders.rangeQuery("timestamp").gte(from))
@@ -85,7 +84,6 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     */
   def before(deviceId: UUID, before: DateTime): Future[Seq[DeviceDataProcessed]] = {
 
-    // TODO automated tests
     val combinedQuery = QueryBuilders.boolQuery()
       .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
       .must(QueryBuilders.rangeQuery("timestamp").lt(before))
@@ -112,7 +110,6 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     */
   def after(deviceId: UUID, after: DateTime): Future[Seq[DeviceDataProcessed]] = {
 
-    // TODO automated tests
     val combinedQuery = QueryBuilders.boolQuery()
       .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
       .must(QueryBuilders.rangeQuery("timestamp").gt(after))
@@ -139,7 +136,6 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     */
   def byDay(deviceId: UUID, day: DateTime): Future[Seq[DeviceDataProcessed]] = {
 
-    // TODO automated tests
     val from = day.withHourOfDay(0)
       .withMinuteOfHour(0)
       .withSecondOfMinute(0)
