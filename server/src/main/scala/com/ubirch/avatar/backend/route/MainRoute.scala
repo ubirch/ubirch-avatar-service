@@ -38,6 +38,8 @@ class MainRoute {
               deviceDataHistory.route ~
               deviceDataRaw.route ~
               deviceId.route
+          } ~ path(RouteConstants.device) {
+            device.route
           } ~
             pathPrefix("wumms") {
               pathEndOrSingleSlash {
