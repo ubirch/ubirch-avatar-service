@@ -35,6 +35,23 @@ object Config extends ConfigBase {
     */
   def port: Int = config.getInt(ConfigKeys.HTTPPORT)
 
+  /*
+   * Akka Related
+   ************************************************************************************************/
+
+  /**
+    * Default actor timeout.
+    *
+    * @return timeout in seconds
+    */
+  def actorTimeout: Int = config.getInt(ConfigKeys.ACTOR_TIMEOUT)
+
+  def akkaNumberOfWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_WORKERS)
+
+  /*
+   * Elasticsearch Related
+   ************************************************************************************************/
+
   /**
     * @return Elasticsearch host
     */

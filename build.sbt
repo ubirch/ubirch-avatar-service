@@ -138,8 +138,8 @@ lazy val depServer = Seq(
 
   //akka
   akkaG %% "akka-actor" % akkaV,
-  akkaG %% "akka-http-experimental" % akkaV,
   akkaG %% "akka-slf4j" % akkaV,
+  akkaG %% "akka-http" % akkaHttpV,
 
   //testing
   scalatest % "test",
@@ -197,7 +197,8 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-lazy val akkaV = "2.4.11"
+lazy val akkaV = "2.4.17"
+lazy val akkaHttpV = "10.0.3"
 lazy val json4sV = "3.4.2"
 lazy val awsSdkV = "1.11.51"
 lazy val camelV = "2.18.1"
@@ -282,12 +283,12 @@ lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3" excludeAll(
+lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3" excludeAll(
+lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.3" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
@@ -297,7 +298,7 @@ lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchUtilResponse = ubirchUtilG %% "responseutil" % "0.1" excludeAll(
+lazy val ubirchUtilResponse = ubirchUtilG %% "response-util" % "0.1.2" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")

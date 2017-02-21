@@ -210,7 +210,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
 
     // prepare
-    val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+    val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
     val deviceId = dataSeries.head.deviceId
     val url = urlForTest(deviceId, from, size)
 

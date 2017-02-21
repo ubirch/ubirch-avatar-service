@@ -1,5 +1,7 @@
 package com.ubirch.transformer
 
+import com.ubirch.avatar.util.actor.ActorNames
+
 import akka.actor.{ActorSystem, Props}
 import com.ubirch.transformer.actor.{AwsConsumerActor, MqttDeviceConsumerActor}
 
@@ -18,8 +20,8 @@ object TransformerManager {
     //    ctx.addComponent()
     //    ctx.bind("client", client);
 
-    system.actorOf(Props[AwsConsumerActor], "transformer-consumer")
-    system.actorOf(Props[MqttDeviceConsumerActor], "mqtt-consumer")
+    system.actorOf(Props[AwsConsumerActor], ActorNames.TRANSFORMER_CONSUMER)
+    system.actorOf(Props[MqttDeviceConsumerActor], ActorNames.MQTT_CONSUMER)
 
   }
 }

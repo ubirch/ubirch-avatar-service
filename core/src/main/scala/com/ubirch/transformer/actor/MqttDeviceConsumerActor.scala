@@ -6,8 +6,11 @@ import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
+
+import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by derMicha on 30/10/16.
@@ -18,19 +21,17 @@ class MqttDeviceConsumerActor
     with ActorLogging
     with MyJsonProtocol {
 
-  val mqttUser = Config.mqttUser
-
-  val mqttPassword = Config.mqttPassword
-
-  val mqttBrokerUrl = Config.mqttBrokerUrl
+  val mqttUser: String = Config.mqttUser
+  val mqttPassword: String = Config.mqttPassword
+  val mqttBrokerUrl: String = Config.mqttBrokerUrl
 
   val clientId = s"avatarService_${UUIDUtil.uuidStr}"
 
   override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
 
-  private val validatorActor = context.actorOf(new RoundRobinPool(3).props(Props[MessageValidatorActor]), "message-validator")
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  implicit val executionContext = context.dispatcher
+  private val validatorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageValidatorActor]), ActorNames.MSG_VALIDATOR)
 
   override def preStart(): Unit = {
     super.preStart()
@@ -38,7 +39,7 @@ class MqttDeviceConsumerActor
   }
 
   //TODO fix error handling, in case of error the message should be resend later?
-  override def receive = {
+  override def receive: PartialFunction[Any, Unit] = {
     case msg: CamelMessage =>
       msg.body match {
         case dataStr: String =>

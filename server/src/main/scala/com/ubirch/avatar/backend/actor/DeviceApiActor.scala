@@ -1,4 +1,4 @@
-package com.ubirch.avatar.backend.Actor
+package com.ubirch.avatar.backend.actor
 
 import akka.actor.Actor
 import com.typesafe.scalalogging.slf4j.StrictLogging
