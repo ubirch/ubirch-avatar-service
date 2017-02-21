@@ -24,9 +24,15 @@ object DeviceDataProcessedTestUtil {
   def storeSeries(elementCount: Int): List[DeviceDataProcessed] = {
 
     val dataSeries: List[DeviceDataProcessed] = DummyDeviceDataProcessed.dataSeries(elementCount = elementCount)
+    store(dataSeries)
+
+  }
+
+  def store(list: List[DeviceDataProcessed]): List[DeviceDataProcessed] = {
+
     val storedSeries: ListBuffer[DeviceDataProcessed] = ListBuffer()
 
-    dataSeries foreach { deviceData =>
+    list foreach { deviceData =>
       val storedRawData = Await.result(DeviceDataProcessedManager.store(deviceData), 1 seconds).get
       storedSeries += storedRawData
     }
