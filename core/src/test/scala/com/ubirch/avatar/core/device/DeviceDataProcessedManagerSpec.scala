@@ -9,7 +9,7 @@ import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -107,7 +107,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = 0
       val size = 0
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -124,7 +124,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = 0
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -144,7 +144,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = 1
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -163,7 +163,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = elementCount
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -192,7 +192,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val from = dataSeries.head.timestamp.minusSeconds(10)
       val to = dataSeries.last.timestamp.plusSeconds(10)
@@ -208,7 +208,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; first at lower boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val from = dataSeries.head.timestamp
       val to = dataSeries.last.timestamp.plusSeconds(10)
@@ -224,7 +224,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; except for: first before lower boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val from = dataSeries.head.timestamp.plusMillis(1)
       val to = dataSeries.last.timestamp.plusSeconds(10)
@@ -240,7 +240,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; last at upper boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val from = dataSeries.head.timestamp.minusSeconds(10)
       val to = dataSeries.last.timestamp
@@ -256,7 +256,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; except for: last after upper boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val from = dataSeries.head.timestamp.minusSeconds(10)
       val to = dataSeries.last.timestamp.minusMillis(1)
@@ -287,7 +287,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val before = dataSeries.last.timestamp.plusSeconds(10)
 
@@ -302,7 +302,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; except for: last at upper boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val before = dataSeries.last.timestamp
 
@@ -317,7 +317,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; except for: last after upper boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val before = dataSeries.last.timestamp.minusMillis(1)
 
@@ -347,7 +347,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val after = dataSeries.head.timestamp.minusSeconds(10)
 
@@ -362,7 +362,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; first at lower boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val after = dataSeries.head.timestamp.minusSeconds(10)
 
@@ -377,7 +377,7 @@ class DeviceDataProcessedManagerSpec
     scenario("all records in interval; except for: first before lower boundary") {
 
       // prepare
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
       val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
       val after = dataSeries.head.timestamp.plusMillis(1)
 
@@ -404,18 +404,59 @@ class DeviceDataProcessedManagerSpec
       result should be('isEmpty)
     }
 
-    // TODO all records in interval
-    // TODO all records in interval; first at lower boundary
-    // TODO all records in interval; except for: first before lower boundary
-    // TODO all records in interval; last at upper boundary
-    // TODO all records in interval; except for: last after upper boundary
+    ignore("all records in interval") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val t1 = DateTime.now(DateTimeZone.UTC)
+      val t2 = DateTime.now(DateTimeZone.UTC)
+      val t3 = DateTime.now(DateTimeZone.UTC)
+      val d1 = DummyDeviceDataProcessed.data(
+        deviceId = deviceId.toString,
+        timestamp = t1
+      )
+      val d2 = DummyDeviceDataProcessed.data(
+        deviceId = deviceId.toString,
+        timestamp = t2
+      )
+      val d3 = DummyDeviceDataProcessed.data(
+        deviceId = deviceId.toString,
+        timestamp = t3
+      )
+      val dataSeries: Seq[DeviceDataProcessed] = Seq(d1, d2, d3)
+      DeviceDataProcessedTestUtil.store(dataSeries)
+      val day = dataSeries.head.timestamp.plusMillis(1) // TODO set correct day
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries) // TODO set expectation
+
+    }
+
+    ignore("all records in interval; first at lower boundary") {
+      // TODO implement test
+    }
+
+    ignore("all records in interval; except for: first before lower boundary") {
+      // TODO implement test
+    }
+
+    ignore("all records in interval; last at upper boundary") {
+      // TODO implement test
+    }
+
+    ignore("all records in interval; except for: last after upper boundary") {
+      // TODO implement test
+    }
 
   }
 
   private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
 
     // prepare
-    val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
+    val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
     val deviceId: String = dataSeries.head.deviceId
 
     // test && verify

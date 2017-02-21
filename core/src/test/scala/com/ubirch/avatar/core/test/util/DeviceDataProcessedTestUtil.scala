@@ -21,14 +21,14 @@ object DeviceDataProcessedTestUtil {
     * @param elementCount number of elements to create and store
     * @return list of stored messages (ordered by: timestamp ASC)
     */
-  def storeSeries(elementCount: Int): List[DeviceDataProcessed] = {
+  def storeSeries(elementCount: Int): Seq[DeviceDataProcessed] = {
 
-    val dataSeries: List[DeviceDataProcessed] = DummyDeviceDataProcessed.dataSeries(elementCount = elementCount)
+    val dataSeries: Seq[DeviceDataProcessed] = DummyDeviceDataProcessed.dataSeries(elementCount = elementCount)
     store(dataSeries)
 
   }
 
-  def store(list: List[DeviceDataProcessed]): List[DeviceDataProcessed] = {
+  def store(list: Seq[DeviceDataProcessed]): Seq[DeviceDataProcessed] = {
 
     val storedSeries: ListBuffer[DeviceDataProcessed] = ListBuffer()
 
