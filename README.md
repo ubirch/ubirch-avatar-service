@@ -536,6 +536,10 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
         export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
     
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
+        
+        export MQTT_USER={MQTT-User}
+        
+        export MQTT_PASSWORD={MQTT-Password}
 
     2. if using a terminal, change inside the project folder and
 
