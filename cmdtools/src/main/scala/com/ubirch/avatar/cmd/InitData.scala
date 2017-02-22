@@ -23,10 +23,14 @@ object InitData
     with MyJsonProtocol
     with StrictLogging {
 
-  DeviceTypeManager.init()
-
   // NOTE if true this the NotaryService will be used. it is limited by it's wallet so please be careful when activating it.
   val notaryServiceEnabled = false
+
+  val numberOfRawMessages = 50
+
+  DeviceTypeManager.init()
+
+
   val properties: JValue = read[JValue](
     """{"blockChain":"true"}""".stripMargin
   )
@@ -47,7 +51,7 @@ object InitData
 
       val (_, series) = DummyDeviceDataRaw.dataSeries(
         device = device,
-        elementCount = 50,
+        elementCount = numberOfRawMessages,
         intervalMillis = 1000 * 60 * 5, // 5 mins
         timestampOffset = 0
       )()
