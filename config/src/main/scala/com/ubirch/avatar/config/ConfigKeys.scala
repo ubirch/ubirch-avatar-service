@@ -34,6 +34,7 @@ object ConfigKeys {
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
 
   // Connection
+  final val ESCLUSTERNAME = s"$esPrefix.clustername"
   final val ESHOST = s"$esPrefix.host"
   final val ESPORT_BINARY = s"$esPortPrefix.binary"
   final val ESPORT_REST = s"$esPortPrefix.rest"
@@ -92,6 +93,9 @@ object ConfigKeys {
 
   // AWS Auth keys
   final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
+
+  // AWS IoT
+  final val AWS_IOT_ENV_PREFIX = s"$awsPrefix.iot.env.prefix"
 
   // AWS SQS queues
   final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"

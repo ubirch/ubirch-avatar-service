@@ -1,5 +1,6 @@
 package com.ubirch.avatar.model.device
 
+import com.ubirch.avatar.config.Config
 import org.joda.time.DateTime
 import org.json4s.JValue
 
@@ -37,7 +38,11 @@ case class Device(deviceId: String,
 
   override def hashCode(): Int = this.deviceId.hashCode
 
-  def awsDeviceThingId: String = this.deviceId.replaceAll("-", "").replaceAll(" ", "").trim.toLowerCase()
+  def awsDeviceThingId: String = {
+    val awsId = this.deviceId.replaceAll("-", "").replaceAll(" ", "").trim.toLowerCase()
+    val prefix = Config.awsIotEnvPrefix
+    s"$prefix$awsId"
+  }
 }
 
 case class AvatarState(desired: Option[JValue],

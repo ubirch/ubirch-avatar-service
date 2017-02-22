@@ -99,6 +99,7 @@ lazy val config = project
 
 lazy val model = project
   .settings(commonSettings: _*)
+  .dependsOn(config)
   .settings(
     name := "model",
     description := "JSON models",
