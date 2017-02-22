@@ -56,7 +56,7 @@ echo "\n===ubirch-device-raw-data-anchored"
 echo "drop index: "
 curl -XDELETE http://localhost:9200/ubirch-device-raw-data-anchored
 echo "\ncreate index: "
-curl -XPOST "$ES_URL/ubirch-device-raw-data" -H "Content-Type: application/json" -d '{
+curl -XPOST "$ES_URL/ubirch-device-raw-data-anchored" -H "Content-Type: application/json" -d '{
   "mappings": {
     "devicemessage" : {
       "properties" : {
