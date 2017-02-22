@@ -41,7 +41,7 @@ case class Device(deviceId: String,
   def awsDeviceThingId: String = {
     val awsId = this.deviceId.replaceAll("-", "").replaceAll(" ", "").trim.toLowerCase()
     val prefix = Config.awsIotEnvPrefix
-    s"$prefix$awsId"
+    s"${prefix}_$awsId"
   }
 }
 
