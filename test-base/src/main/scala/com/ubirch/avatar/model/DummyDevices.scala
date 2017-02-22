@@ -3,7 +3,9 @@ package com.ubirch.avatar.model
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
+
 import org.joda.time.DateTime
+import org.json4s.JValue
 import org.json4s.native.JsonMethods._
 
 /**
@@ -23,14 +25,16 @@ object DummyDevices {
   def device(deviceId: String = UUIDUtil.uuidStr,
              deviceName: String = "testHans001",
              hwDeviceId: String = UUIDUtil.uuidStr,
-             deviceTypeKey: String
+             deviceTypeKey: String,
+             deviceProperties: Option[JValue] = None
             ): Device = {
 
     Device(deviceId = deviceId,
       deviceName = deviceName,
       hwDeviceId = hwDeviceId,
       deviceTypeKey = deviceTypeKey,
-      hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
+      hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId),
+      deviceProperties = deviceProperties
     )
 
   }
