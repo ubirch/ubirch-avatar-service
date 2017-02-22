@@ -16,7 +16,11 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
-### Version 0.3.7 (tbd)
+### Version 0.3.8 (tbd)
+
+* save bitcoin tx hashes in a new index: "ubirch-device-raw-data-anchored" (only relevant for raw data with NotaryService being used)
+
+### Version 0.3.7 (2017-02-22)
 
 * upgrade lib: `Akka HTTP` from version 2.4.11 (experimental) to 10.0.3 (stable)
 * upgrade lib: `Akka` from version 2.4.11 to 2.4.17
