@@ -473,6 +473,31 @@ The service requires the following mappings for things to work as expected:
       "mappings": {
         "devicemessage" : {
           "properties" : {
+            "timestamp": {
+                "type": "date",
+                "format": "strict_date_optional_time||epoch_millis"
+            },
+            "a" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            },
+            "id" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            }
+          }
+        }
+      }
+    }'
+
+    curl -XPOST 'localhost:9200/ubirch-device-raw-data-anchored' -H "Content-Type: application/json" -d '{
+      "mappings": {
+        "devicemessage" : {
+          "properties" : {
+            "timestamp": {
+                "type": "date",
+                "format": "strict_date_optional_time||epoch_millis"
+            },
             "a" : {
               "type" : "string",
               "index": "not_analyzed"
@@ -490,11 +515,27 @@ The service requires the following mappings for things to work as expected:
       "mappings": {
         "devicedata" : {
           "properties" : {
+            "timestamp": {
+              "type": "date",
+              "format": "strict_date_optional_time||epoch_millis"
+            },
             "deviceId" : {
               "type" : "string",
               "index": "not_analyzed"
             },
             "messageId" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            },
+            "deviceDataRawId" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            },
+            "id" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            },
+            "a" : {
               "type" : "string",
               "index": "not_analyzed"
             }
@@ -534,11 +575,11 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
     1. set AWS env vars:
 
         export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-    
+
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
-        
+
         export MQTT_USER={MQTT-User}
-        
+
         export MQTT_PASSWORD={MQTT-Password}
 
     2. if using a terminal, change inside the project folder and

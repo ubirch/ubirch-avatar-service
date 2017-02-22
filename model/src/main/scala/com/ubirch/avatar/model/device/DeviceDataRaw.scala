@@ -13,12 +13,13 @@ import org.json4s._
   * author: derMicha
   * since: 2016-10-28
   *
-  * @param v  message type version
-  * @param a  hashed hardware deviceId
-  * @param k  public key
-  * @param ts timestamp
-  * @param s  hashed auth token or public key
-  * @param p  payload
+  * @param v      message type version
+  * @param a      hashed hardware deviceId
+  * @param k      public key
+  * @param ts     timestamp
+  * @param s      hashed auth token or public key
+  * @param p      payload
+  * @param txHash optional hash of related blockchain anchor
   */
 case class DeviceDataRaw(
                           id: UUID = UUIDUtil.uuid, // messageId
@@ -27,7 +28,8 @@ case class DeviceDataRaw(
                           k: Option[String] = None,
                           ts: DateTime = DateTime.now(),
                           s: String,
-                          p: JValue
+                          p: JValue,
+                          txHash: Option[String] = None // related bitcoin transaction hash
                         ) {
   override def hashCode(): Int = id.hashCode()
 
@@ -41,7 +43,8 @@ case class DeviceDataRaw(
     }
   }
 
-  override def toString: String = s"id: $id / v: $v / p: $p"
+  override def toString: String = s"id: $id / v: $v / p: $p / txhash: $txHash"
+
 }
 
 case class DeviceDataRawEnvelope(

@@ -11,12 +11,14 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
 
   private val indexInfoDevice = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
   private val indexInfoDeviceRawData = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataRawIndex)
+  private val indexInfoDeviceRawDataAnchored = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataRawAnchoredIndex)
   private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataProcessedIndex)
   private val indexInfoDeviceType = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceTypeIndex)
 
   final val indexInfos: Seq[IndexInfo] = Seq(
     indexInfoDevice,
     indexInfoDeviceRawData,
+    indexInfoDeviceRawDataAnchored,
     indexInfoDeviceHistory,
     indexInfoDeviceType
   )
@@ -79,6 +81,35 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
 
   }
 
+  private val deviceDataRawAnchoredMappings: Mapping = {
+
+    val deviceDataRawMapping =
+      s"""{
+         |  "mappings": {
+         |    "${Config.esDeviceDataRawAnchoredType}" : {
+         |      "properties" : {
+         |        "timestamp": {
+         |            "type": "date",
+         |            "format": "strict_date_optional_time||epoch_millis"
+         |        },
+         |        "a" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
+         |        },
+         |        "id" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
+         |        }
+         |      }
+         |    }
+         |  }
+         |}""".stripMargin
+    val url = indexInfoDeviceRawData.url
+
+    Mapping(url, deviceDataRawMapping)
+
+  }
+
   private val deviceDataProcessedMappings: Mapping = {
 
     val deviceDataProcessedMapping =
@@ -86,10 +117,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |  "mappings": {
          |    "${Config.esDeviceDataProcessedType}" : {
          |      "properties" : {
-         |         "timestamp": {
-         |            "type": "date",
-         |            "format": "strict_date_optional_time||epoch_millis"
-         |          },
+         |        "timestamp": {
+         |          "type": "date",
+         |          "format": "strict_date_optional_time||epoch_millis"
+         |        },
          |        "deviceId" : {
          |          "type" : "string",
          |          "index": "not_analyzed"
@@ -144,6 +175,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
   final val mappings: Seq[Mapping] = Seq(
     deviceMappings,
     deviceDataRawMappings,
+    deviceDataRawAnchoredMappings,
     deviceDataProcessedMappings,
     deviceTypeMappings
   )

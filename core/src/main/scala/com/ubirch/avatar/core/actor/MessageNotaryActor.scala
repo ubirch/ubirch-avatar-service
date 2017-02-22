@@ -1,36 +1,47 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.Actor
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.notary.client.NotaryClient
 import com.ubirch.util.json.Json4sUtil
 
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
+
 /**
-  * Created by derMicha on 28/10/16.
+  * author: derMicha
+  * since: 2016-10-28
   */
-class MessageNotaryActor extends Actor with StrictLogging {
+class MessageNotaryActor extends Actor
+  with ActorLogging {
+
+  private val persistenceActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
 
   override def receive: Receive = {
-    case drd: DeviceDataRaw =>
-      val s = sender
-      logger.debug(s"received message: $drd")
 
+    case drd: DeviceDataRaw =>
+
+      log.debug(s"received message: $drd")
       val payloadStr = Json4sUtil.jvalue2String(drd.p)
 
       NotaryClient.notarize(
         blockHash = payloadStr,
         dataIsHash = false
       ) match {
+
         case Some(resp) =>
-          logger.info(s"btx hash for message ${drd.id} is ${resp.hash}")
-        //@TODO store result
-        case None =>
-          logger.error(s"notarize failed for: $drd")
+          val txHash = resp.hash
+          log.info(s"btx hash for message ${drd.id} is $txHash")
+          val anchored = drd.copy(txHash = Some(txHash))
+          persistenceActor ! AnchoredRawData(anchored)
+
+        case None => log.error(s"notarize failed for: rawData.id=${drd.id}")
+
       }
 
-    case _ =>
-      logger.error("received unknown message")
+    case _ => log.error("received unknown message")
+
   }
 
 }
