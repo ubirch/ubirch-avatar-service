@@ -104,7 +104,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |    }
          |  }
          |}""".stripMargin
-    val url = indexInfoDeviceRawData.url
+    val url = indexInfoDeviceRawDataAnchored.url
 
     Mapping(url, deviceDataRawMapping)
 
