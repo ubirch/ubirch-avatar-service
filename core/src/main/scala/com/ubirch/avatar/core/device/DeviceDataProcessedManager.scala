@@ -68,7 +68,8 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
       docIndex = index,
       docType = esType,
       sort = sort,
-      query = Some(combinedQuery)
+      query = Some(combinedQuery),
+      size = Some(Config.esLargePageSize)
     ) map { res =>
       res.map(_.extract[DeviceDataProcessed])
     }
@@ -94,7 +95,8 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
       docIndex = index,
       docType = esType,
       sort = sort,
-      query = Some(combinedQuery)
+      query = Some(combinedQuery),
+      size = Some(Config.esLargePageSize)
     ) map { res =>
       res.map(_.extract[DeviceDataProcessed])
     }
@@ -120,7 +122,8 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
       docIndex = index,
       docType = esType,
       sort = sort,
-      query = Some(combinedQuery)
+      query = Some(combinedQuery),
+      size = Some(Config.esLargePageSize)
     ) map { res =>
       res.map(_.extract[DeviceDataProcessed])
     }

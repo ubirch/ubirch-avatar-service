@@ -133,6 +133,11 @@ object Config extends ConfigBase {
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
   /**
+    * @return ElasticSearch size of large pages in regards to pagination
+    */
+  def esLargePageSize: Int = config.getInt(ConfigKeys.ES_LARGE_PAGE_SIZE)
+
+  /**
     * AWS local mode defines whether app is running on a locally or at AWS
     *
     * @return boolean value

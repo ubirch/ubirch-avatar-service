@@ -62,6 +62,7 @@ object ConfigKeys {
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
+  final val ES_LARGE_PAGE_SIZE = s"$esPrefix.largePageSize"
 
   /* AWS Related Config Keys
    **********************************************************************/
