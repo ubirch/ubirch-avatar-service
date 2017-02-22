@@ -9,7 +9,7 @@ import org.json4s._
   * author: cvandrei
   * since: 2016-11-02
   */
-case class DeviceDataProcessed(deviceId: String, // TODO why is this a String and not a UUID?
+case class DeviceDataProcessed(deviceId: String, // TODO why is this a String and not a UUID? --> Device.deviceId is a String, too
                                messageId: UUID,
                                deviceDataRawId: UUID,
                                deviceType: String,
