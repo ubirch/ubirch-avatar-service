@@ -4,7 +4,7 @@ import java.io.File
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.client.rest.AvatarRestClient
-import com.ubirch.avatar.config.Const
+import com.ubirch.avatar.config.{Config, Const}
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.model.payload.TrackleSensorPayload
@@ -207,10 +207,10 @@ object ImportTrackle
             case Some(payload) =>
               val ddr = DeviceDataRaw(
                 id = UUIDUtil.uuid,
-                v = "0.0.1",
+                v = Config.sdmV001,
                 a = hashedHwDeviceId,
                 ts = cdp.dateTime,
-                s = DeviceCoreUtil.createSimpleSignature(payload, hwDeviceId),
+                s = Some(DeviceCoreUtil.createSimpleSignature(payload, hwDeviceId)),
                 p = payload
               )
 

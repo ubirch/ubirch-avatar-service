@@ -23,12 +23,24 @@ class MessageValidatorActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
+    case drd: DeviceDataRaw if drd.v == Config.sdmV000 =>
+      val s = sender()
+
+      log.debug(s"received message with version ${drd.v}")
+
+      DeviceCoreUtil.validateSimpleMessage(hwDeviceId = drd.a).map {
+        case Some(dev) =>
+          processorActor ! (s, drd, dev)
+        case None =>
+          s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid hwDeviceId: ${drd.a}")
+      }
+
     case drd: DeviceDataRaw if drd.v == Config.sdmV001 =>
       val s = sender()
 
       log.debug(s"received message with version ${drd.v}")
 
-      DeviceCoreUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s, payload = drd.p).map {
+      DeviceCoreUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s.getOrElse("nosignature"), payload = drd.p).map {
         case Some(dev) =>
           processorActor ! (s, drd, dev)
         case None =>
@@ -44,7 +56,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
         DeviceManager.infoByHashedHwId(drd.a).map {
           case Some(dev) =>
 
-            if (DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.get, signature = drd.s, payload = drd.p)) {
+            if (DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.getOrElse("nokey"), signature = drd.s.getOrElse("nosignature"), payload = drd.p)) {
 
               processorActor ! (s, drd, dev)
             }

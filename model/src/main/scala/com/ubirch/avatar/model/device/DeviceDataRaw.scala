@@ -3,7 +3,6 @@ package com.ubirch.avatar.model.device
 import java.util.UUID
 
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 import org.json4s._
 
@@ -25,9 +24,9 @@ case class DeviceDataRaw(
                           id: UUID = UUIDUtil.uuid, // messageId
                           v: String = "0.0.3",
                           a: String,
-                          k: Option[String] = None,
                           ts: DateTime = DateTime.now(),
-                          s: String,
+                          k: Option[String] = None,
+                          s: Option[String] = None,
                           p: JValue,
                           txHash: Option[String] = None // related bitcoin transaction hash
                         ) {
