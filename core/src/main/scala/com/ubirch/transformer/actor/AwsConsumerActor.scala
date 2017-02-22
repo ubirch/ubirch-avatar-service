@@ -2,32 +2,34 @@ package com.ubirch.transformer.actor
 
 import java.util.UUID
 
-import akka.actor.{ActorLogging, Props}
-import akka.camel.{CamelMessage, Consumer}
-import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
+import com.ubirch.avatar.util.actor.ActorNames
+
+import akka.actor.{ActorLogging, ActorRef, Props}
+import akka.camel.{CamelMessage, Consumer}
+import akka.routing.RoundRobinPool
+
+import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by derMicha on 30/10/16.
   */
 class AwsConsumerActor extends Consumer with ActorLogging {
 
-  val accessKey = Config.awsAccessKey
-
-  val secretKey = Config.awsSecretAccessKey
+  val accessKey: String = Config.awsAccessKey
+  val secretKey: String = Config.awsSecretAccessKey
 
   override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=10"
 
   override def autoAck: Boolean = true
 
-  val transformerActor = context.actorOf(new RoundRobinPool(3).props(Props[TransformerPreprocessorActor]), "transformer-pre-actor")
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  implicit val executionContext = context.dispatcher
-
+  val transformerActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerPreprocessorActor]), ActorNames.TRANSFORMER_PRE)
 
   //TODO fix error handling, in case of error the message should be resend later?
-  override def receive = {
+  override def receive: Receive = {
     case msg: CamelMessage =>
       msg.body match {
         case idStr: String =>

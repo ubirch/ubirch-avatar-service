@@ -2,8 +2,10 @@ package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
@@ -34,16 +36,16 @@ trait DeviceUpdateRoute extends MyJsonProtocol
 
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(15 seconds)
+  implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(3).props(Props[MessageValidatorActor]), "message-validator")
+  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageValidatorActor]), ActorNames.MSG_VALIDATOR)
 
   val route: Route = {
     path(update) {
       respondWithCORS {
         post {
-          entity(as[DeviceDataRaw]) { sdm =>
-            onComplete(validatorActor ? sdm) {
+          entity(as[DeviceDataRaw]) { ddr =>
+            onComplete(validatorActor ? ddr) {
               case Success(resp) =>
                 resp match {
                   case dm: DeviceStateUpdate => complete(dm)
@@ -58,7 +60,7 @@ trait DeviceUpdateRoute extends MyJsonProtocol
                 logger.error("update device data failed", t)
                 complete(requestErrorResponse(
                   errorType = "UpdateDeviceError",
-                  errorMessage = s"update was not successfull for message ${sdm.id}, error occured: ${t.getMessage.replace("\"", "'")}")
+                  errorMessage = s"update failed for message ${ddr.id}, error occured: ${t.getMessage.replace("\"", "'")}")
                 )
             }
           }

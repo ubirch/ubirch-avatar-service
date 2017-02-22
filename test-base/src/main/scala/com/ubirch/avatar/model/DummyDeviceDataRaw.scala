@@ -94,7 +94,9 @@ object DummyDeviceDataRaw {
          |{
          |"t":${2000 + Random.nextInt(1500)},
          |"p":${90000 + Random.nextInt(20000)},
-         |"h":${4000 + Random.nextInt(5500)}
+         |"h":${4000 + Random.nextInt(5500)},
+         |"la":"52.5111${100 + Random.nextInt(200)}",
+         |"lo":"13.2112${100 + Random.nextInt(200)}",
          |}
          |]
         """.stripMargin

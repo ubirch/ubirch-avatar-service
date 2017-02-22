@@ -1,11 +1,15 @@
 package com.ubirch.avatar.core.device
 
+import java.util.UUID
+
 import com.ubirch.avatar.core.test.util.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.model.DummyDeviceDataProcessed
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
+
+import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -103,7 +107,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = 0
       val size = 0
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -120,7 +124,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = 0
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -140,7 +144,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = 1
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -159,7 +163,7 @@ class DeviceDataProcessedManagerSpec
       val elementCount = 3
       val from = elementCount
       val size = elementCount + 1
-      val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
       val deviceId: String = dataSeries.head.deviceId
 
       // test
@@ -172,15 +176,358 @@ class DeviceDataProcessedManagerSpec
 
   }
 
+  feature("byDate()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.byDate(UUIDUtil.uuid, DateTime.now, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.byDate(UUIDUtil.uuid, DateTime.now, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("all records in interval") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val from = dataSeries.head.timestamp.minusSeconds(10)
+      val to = dataSeries.last.timestamp.plusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDate(deviceId, from, to), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; first at lower boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val from = dataSeries.head.timestamp
+      val to = dataSeries.last.timestamp.plusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDate(deviceId, from, to), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; except for: first before lower boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val from = dataSeries.head.timestamp.plusMillis(1)
+      val to = dataSeries.last.timestamp.plusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDate(deviceId, from, to), 1 seconds)
+
+      // verify
+      result should be(dataSeries.tail)
+
+    }
+
+    scenario("all records in interval; last at upper boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val from = dataSeries.head.timestamp.minusSeconds(10)
+      val to = dataSeries.last.timestamp
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDate(deviceId, from, to), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; except for: last after upper boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val from = dataSeries.head.timestamp.minusSeconds(10)
+      val to = dataSeries.last.timestamp.minusMillis(1)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDate(deviceId, from, to), 1 seconds)
+
+      // verify
+      result should be(Seq(dataSeries.head, dataSeries(1)))
+
+    }
+
+  }
+
+  feature("before()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.before(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.before(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("all records in interval") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val before = dataSeries.last.timestamp.plusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.before(deviceId, before), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; except for: last at upper boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val before = dataSeries.last.timestamp
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.before(deviceId, before), 1 seconds)
+
+      // verify
+      result should be(Seq(dataSeries.head, dataSeries(1)))
+
+    }
+
+    scenario("all records in interval; except for: last after upper boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val before = dataSeries.last.timestamp.minusMillis(1)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.before(deviceId, before), 1 seconds)
+
+      // verify
+      result should be(Seq(dataSeries.head, dataSeries(1)))
+
+    }
+
+  }
+
+  feature("after()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.after(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.after(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("all records in interval") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val after = dataSeries.head.timestamp.minusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.after(deviceId, after), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; first at lower boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val after = dataSeries.head.timestamp.minusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.after(deviceId, after), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; except for: first before lower boundary") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val after = dataSeries.head.timestamp.plusMillis(1)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.after(deviceId, after), 1 seconds)
+
+      // verify
+      result should be(dataSeries.tail)
+
+    }
+
+  }
+
+  feature("byDay()") {
+
+    scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
+      val result = Await.result(DeviceDataProcessedManager.byDay(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("deviceId does not exist; index exists") {
+      val result = Await.result(DeviceDataProcessedManager.byDay(UUIDUtil.uuid, DateTime.now), 1 seconds)
+      result should be('isEmpty)
+    }
+
+    scenario("all records in interval") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.plusHours(2)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; first at lower boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; except for: first before lower boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.minusMillis(1)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries.tail)
+
+    }
+
+    scenario("all records in interval; last at upper boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.plusHours(2)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusDays(1).minusMillis(1)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("all records in interval; except for: last after upper boundary") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val midnight = firstSecondOfToday()
+
+      val t1 = midnight.plusHours(2)
+      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = midnight.plusDays(1)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      val day = midnight.plusHours(7)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+
+      // verify
+      result should be(Seq(dataSeries.head, dataSeries(1)))
+
+    }
+
+  }
+
   private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
 
     // prepare
-    val dataSeries: List[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
+    val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount)
     val deviceId: String = dataSeries.head.deviceId
 
     // test && verify
     an[IllegalArgumentException] should be thrownBy Await.result(DeviceDataProcessedManager.history(deviceId, from, size), 1 seconds)
 
+  }
+
+  private def firstSecondOfToday(): DateTime = {
+    DateTime.now(DateTimeZone.UTC)
+      .withHourOfDay(0)
+      .withMinuteOfHour(0)
+      .withSecondOfMinute(0)
+      .withMillisOfSecond(0)
   }
 
 }

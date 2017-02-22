@@ -1,22 +1,26 @@
 package com.ubirch.transformer.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw, DeviceDataRawEnvelope}
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.util.json.MyJsonProtocol
+
 import org.json4s.JValue
+
+import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by derMicha on 28/10/16.
   */
 class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
-  implicit val executionContext = context.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  val transformPostActor = context.actorOf(new RoundRobinPool(5).props(Props[TransformerPostprocessorActor]), "transformer-post-actor")
+  val transformPostActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerPostprocessorActor]), ActorNames.TRANSFORMER_POST)
 
   override def receive: Receive = {
 

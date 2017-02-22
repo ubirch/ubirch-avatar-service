@@ -8,7 +8,6 @@ import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
@@ -33,7 +32,7 @@ object Boot extends App
 
   logger.info("ubirchAvatarService started")
 
-  implicit val timeout = Timeout(15 seconds)
+  implicit val timeout = Timeout(Config.actorTimeout seconds)
 
   createElasticsearchMappings()
 

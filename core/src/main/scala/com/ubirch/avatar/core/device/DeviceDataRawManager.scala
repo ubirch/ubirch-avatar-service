@@ -3,12 +3,13 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.services.storage.DeviceDataRawStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.uuid.UUIDUtil
+
 import org.elasticsearch.index.query.QueryBuilders
 
 import scala.concurrent.ExecutionContext.Implicits.global

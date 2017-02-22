@@ -14,6 +14,12 @@ object RouteConstants {
   val devicestub = "devicestub"
   val state = "state"
   val history = "history"
+  val byDate = "byDate"
+  val from = "from"
+  val to = "to"
+  val before = "before"
+  val after = "after"
+  val day = "day"
   val update = "update"
   val bulk = "bulk"
   val data = "data"
@@ -40,5 +46,11 @@ object RouteConstants {
   val pathDeviceUpdate: String = s"$pathDevice/$update"
   def pathDeviceHistoryFrom(id: String, from: Int): String = s"${pathDeviceDataHistory(id)}/$from"
   def pathDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${pathDeviceDataHistory(id)}/$from/$size"
+
+  def pathDeviceHistoryByDatePrefix(id: String): String = s"${pathDeviceDataHistory(id)}/$byDate"
+  def pathDeviceHistoryByDateFromTo(id: String, fromDate: String, toDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$from/$fromDate/$to/$toDate"
+  def pathDeviceHistoryByDateBefore(id: String, beforeDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$before/$beforeDate"
+  def pathDeviceHistoryByDateAfter(id: String, afterDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$after/$afterDate"
+  def pathDeviceHistoryByDateDay(id: String, dayDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$day/$dayDate"
 
 }

@@ -2,18 +2,31 @@ package com.ubirch.avatar.backend.route
 
 import java.util.UUID
 
+import com.typesafe.scalalogging.slf4j.StrictLogging
+
+import com.ubirch.avatar.backend.actor.{HistoryActor, HistoryAfter, HistoryBefore, HistoryByDate, HistoryByDay}
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
-import akka.actor.ActorSystem
+import org.joda.time.DateTime
+
+import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.routing.RoundRobinPool
+import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
-import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 /**
   * author: cvandrei
@@ -21,9 +34,14 @@ import scala.concurrent.Future
   */
 trait DeviceDataHistoryRoute extends MyJsonProtocol
   with CORSDirective
-  with ResponseUtil {
+  with ResponseUtil
+  with StrictLogging {
 
   implicit val system = ActorSystem()
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  implicit val timeout = Timeout(Config.actorTimeout seconds)
+
+  private val historyActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[HistoryActor]), ActorNames.HISTORY)
 
   val route: Route = {
 
@@ -52,6 +70,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
           }
 
         } ~ path(IntNumber / IntNumber) { (from, size) =>
+
           respondWithCORS {
             get {
               onSuccess(queryHistory(deviceId, Some(from), Some(size))) { deviceData =>
@@ -60,6 +79,100 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
             }
 
           }
+
+        } ~ pathPrefix(byDate) {
+
+          path(from / Segment / to / Segment) { (fromString, toString) =>
+            // TODO automated tests
+            respondWithCORS {
+              get {
+
+                val from = DateTime.parse(fromString)
+                val to = DateTime.parse(toString)
+                onComplete(historyActor ? HistoryByDate(deviceId, from, to)) {
+
+                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history by date failed"))
+
+                  case Success(resp) =>
+                    resp match {
+                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case _ =>
+                        logger.error("querying device history by date resulted in unknown message")
+                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history by date failed"))
+                    }
+
+                }
+
+              }
+            }
+          } ~ path(before / Segment) { beforeString =>
+            // TODO automated tests
+            respondWithCORS {
+              get {
+
+                val before = DateTime.parse(beforeString)
+                onComplete(historyActor ? HistoryBefore(deviceId, before)) {
+
+                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/before failed"))
+
+                  case Success(resp) =>
+                    resp match {
+                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case _ =>
+                        logger.error("querying device history byDate/before resulted in unknown message")
+                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/before failed"))
+                    }
+
+                }
+
+              }
+            }
+          } ~ path(after / Segment) { afterString =>
+            // TODO automated tests
+            respondWithCORS {
+              get {
+
+                val after = DateTime.parse(afterString)
+                onComplete(historyActor ? HistoryAfter(deviceId, after)) {
+
+                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/after failed"))
+
+                  case Success(resp) =>
+                    resp match {
+                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case _ =>
+                        logger.error("querying device history/after resulted in unknown message")
+                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/after failed"))
+                    }
+
+                }
+
+              }
+            }
+          } ~ path(day / Segment) { dayString =>
+            // TODO automated tests
+            respondWithCORS {
+              get {
+
+                val day = DateTime.parse(dayString)
+                onComplete(historyActor ? HistoryByDay(deviceId, day)) {
+
+                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/day failed"))
+
+                  case Success(resp) =>
+                    resp match {
+                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case _ =>
+                        logger.error("querying device history/day resulted in unknown message")
+                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/day failed"))
+                    }
+
+                }
+
+              }
+            }
+          }
+
         }
 
       }
@@ -76,10 +189,10 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
     fromOpt match {
 
-      case Some(from) =>
+      case Some(fromInt) =>
         sizeOpt match {
-          case Some(size) => DeviceDataProcessedManager.history(deviceId.toString, from, size)
-          case None => DeviceDataProcessedManager.history(deviceId.toString, from)
+          case Some(size) => DeviceDataProcessedManager.history(deviceId.toString, fromInt, size)
+          case None => DeviceDataProcessedManager.history(deviceId.toString, fromInt)
         }
 
       case None => DeviceDataProcessedManager.history(deviceId.toString)

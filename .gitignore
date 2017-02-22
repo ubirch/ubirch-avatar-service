@@ -2,10 +2,10 @@
 *.log
 
 # sbt specific
-.cache/
+.cache
 .history
-.lib/
-dist/*
+.lib
+dist/
 target/
 lib_managed/
 src_managed/
@@ -19,7 +19,7 @@ project/plugins/project/
 Dockerfile
 Dockerfile.input
 *.iml
-TMP/
+TMP
 .ivy2
 ?
 .sbt.ivy.lock
