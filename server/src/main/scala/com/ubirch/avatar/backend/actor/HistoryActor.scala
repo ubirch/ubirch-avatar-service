@@ -33,7 +33,7 @@ class HistoryActor extends Actor
           log.error(t, s"failed to query history by date: $byDate")
           sender ! JsonErrorResponse(errorType = "ServerError", errorMessage = "failed to query history by date")
 
-        case Success(seq: Seq[DeviceDataProcessed]) => sender ! seq
+        case Success(seq: Seq[DeviceDataProcessed]) => sender ! HistorySeq(seq)
 
       }
 
@@ -46,7 +46,7 @@ class HistoryActor extends Actor
           log.error(t, s"failed to query history byDate/before: $before")
           sender ! JsonErrorResponse(errorType = "ServerError", errorMessage = "failed to query history byDate/before")
 
-        case Success(seq: Seq[DeviceDataProcessed]) => sender ! seq
+        case Success(seq: Seq[DeviceDataProcessed]) => sender ! HistorySeq(seq)
 
       }
 
@@ -59,7 +59,7 @@ class HistoryActor extends Actor
           log.error(t, s"failed to query history byDate/after: $after")
           sender ! JsonErrorResponse(errorType = "ServerError", errorMessage = "failed to query history byDate/after")
 
-        case Success(seq: Seq[DeviceDataProcessed]) => sender ! seq
+        case Success(seq: Seq[DeviceDataProcessed]) => sender ! HistorySeq(seq)
 
       }
 
@@ -72,7 +72,7 @@ class HistoryActor extends Actor
           log.error(t, s"failed to query history byDate/day: $day")
           sender ! JsonErrorResponse(errorType = "ServerError", errorMessage = "failed to query history byDate/day")
 
-        case Success(seq: Seq[DeviceDataProcessed]) => sender ! seq
+        case Success(seq: Seq[DeviceDataProcessed]) => sender ! HistorySeq(seq)
 
       }
 
@@ -91,3 +91,5 @@ case class HistoryBefore(deviceId: UUID, before: DateTime)
 case class HistoryAfter(deviceId: UUID, after: DateTime)
 
 case class HistoryByDay(deviceId: UUID, day: DateTime)
+
+case class HistorySeq(seq: Seq[DeviceDataProcessed])

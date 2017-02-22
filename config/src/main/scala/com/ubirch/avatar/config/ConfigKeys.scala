@@ -29,10 +29,12 @@ object ConfigKeys {
   final val esPortPrefix = s"$esPrefix.port"
   final val esDevicePrefix = s"$esPrefix.device"
   final val esDeviceRawDataPrefix = s"$esPrefix.devicerawdata"
+  final val esDeviceRawDataAnchoredPrefix = s"$esPrefix.devicerawdataAnchored"
   final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
 
   // Connection
+  final val ESCLUSTERNAME = s"$esPrefix.clustername"
   final val ESHOST = s"$esPrefix.host"
   final val ESPORT_BINARY = s"$esPortPrefix.binary"
   final val ESPORT_REST = s"$esPortPrefix.rest"
@@ -47,6 +49,10 @@ object ConfigKeys {
   final val ES_DEVICE_DATA_RAW_INDEX = s"$esDeviceRawDataPrefix.index"
   final val ES_DEVICE_DATA_RAW_TYPE = s"$esDeviceRawDataPrefix.type"
 
+  // anchored DeviceRawData (with txHash) Index & Type
+  final val ES_DEVICE_DATA_RAW_ANCHORED_INDEX = s"$esDeviceRawDataAnchoredPrefix.index"
+  final val ES_DEVICE_DATA_RAW_ANCHORED_TYPE = s"$esDeviceRawDataAnchoredPrefix.type"
+
   // DeviceHistory Index & Type
   final val ES_DEVICE_DATA_PROCESSED_INDEX = s"$esDeviceHistoryPrefix.index"
   final val ES_DEVICE_DATA_PROCESSED_TYPE = s"$esDeviceHistoryPrefix.type"
@@ -57,6 +63,7 @@ object ConfigKeys {
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
+  final val ES_LARGE_PAGE_SIZE = s"$esPrefix.largePageSize"
 
   /* AWS Related Config Keys
    **********************************************************************/
@@ -86,6 +93,9 @@ object ConfigKeys {
 
   // AWS Auth keys
   final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
+
+  // AWS IoT
+  final val AWS_IOT_ENV_PREFIX = s"$awsPrefix.iot.env.prefix"
 
   // AWS SQS queues
   final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"

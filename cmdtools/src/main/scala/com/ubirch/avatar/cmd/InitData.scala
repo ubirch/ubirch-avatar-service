@@ -1,10 +1,15 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
+import com.ubirch.util.json.MyJsonProtocol
+
+import org.json4s.JValue
+import org.json4s.native.Serialization.read
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -15,11 +20,29 @@ import scala.language.postfixOps
   */
 object InitData
   extends App
+    with MyJsonProtocol
     with StrictLogging {
+
+  // NOTE if true this the NotaryService will be used. it is limited by it's wallet so please be careful when activating it.
+  val notaryServiceEnabled = false
+
+  val numberOfRawMessages = 50
 
   DeviceTypeManager.init()
 
-  val device = DummyDevices.device(deviceTypeKey = Const.ENVIRONMENTSENSOR)
+
+  val properties: JValue = read[JValue](
+    """{"blockChain":"true"}""".stripMargin
+  )
+
+  val device = if (notaryServiceEnabled) {
+    DummyDevices.device(
+      deviceTypeKey = Const.ENVIRONMENTSENSOR,
+      deviceProperties = Some(properties)
+    )
+  } else {
+    DummyDevices.device(deviceTypeKey = Const.ENVIRONMENTSENSOR)
+  }
 
   Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
     case Some(dev) =>
@@ -28,7 +51,7 @@ object InitData
 
       val (_, series) = DummyDeviceDataRaw.dataSeries(
         device = device,
-        elementCount = 50,
+        elementCount = numberOfRawMessages,
         intervalMillis = 1000 * 60 * 5, // 5 mins
         timestampOffset = 0
       )()

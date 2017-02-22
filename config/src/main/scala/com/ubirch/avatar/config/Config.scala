@@ -55,6 +55,11 @@ object Config extends ConfigBase {
   /**
     * @return Elasticsearch host
     */
+  def esClusterName: String = config.getString(ConfigKeys.ESCLUSTERNAME)
+
+  /**
+    * @return Elasticsearch host
+    */
   def esHost: String = config.getString(ConfigKeys.ESHOST)
 
   /**
@@ -98,6 +103,16 @@ object Config extends ConfigBase {
   def esDeviceDataRawType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_TYPE)
 
   /**
+    * @return Elasticsearch anchored raw device data (with txHash) index
+    */
+  def esDeviceDataRawAnchoredIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_ANCHORED_INDEX)
+
+  /**
+    * @return Elasticsearch anchored raw device data (with txHash) type
+    */
+  def esDeviceDataRawAnchoredType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_ANCHORED_TYPE)
+
+  /**
     * @return Elasticsearch processed device data index
     */
   def esDeviceDataProcessedIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_INDEX)
@@ -121,6 +136,18 @@ object Config extends ConfigBase {
     * @return ElasticSearch default size in regards to pagination
     */
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
+
+  /**
+    * defines a prefix for AWS IoT Shadownames
+    *
+    * @return
+    */
+  def awsIotEnvPrefix = config.getString(ConfigKeys.AWS_IOT_ENV_PREFIX)
+
+  /**
+    * @return ElasticSearch size of large pages in regards to pagination
+    */
+  def esLargePageSize: Int = config.getInt(ConfigKeys.ES_LARGE_PAGE_SIZE)
 
   /**
     * AWS local mode defines whether app is running on a locally or at AWS

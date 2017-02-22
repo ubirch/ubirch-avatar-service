@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.7-SNAPSHOT",
+  version := "0.3.8-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -99,6 +99,7 @@ lazy val config = project
 
 lazy val model = project
   .settings(commonSettings: _*)
+  .dependsOn(config)
   .settings(
     name := "model",
     description := "JSON models",

@@ -11,25 +11,26 @@ import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 
 /**
-  * Created by derMicha on 28/10/16.
+  * author: derMicha
+  * since: 2016-10-28
   */
 class MessageProcessorActor extends Actor with ActorLogging {
 
   private val transformerActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerProducerActor]), ActorNames.TRANSFORMER_PRODUCER)
 
-  private val persistenceActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistorActor]), ActorNames.PERSISTENCE_SVC)
+  private val persistenceActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
 
   private val notaryActor = context.actorOf(Props[MessageNotaryActor], ActorNames.NOTARY_SVC)
 
   override def receive: Receive = {
+
     case (s: ActorRef, drd: DeviceDataRaw, device: Device) =>
 
       log.debug(s"received message: $drd")
 
       persistenceActor ! drd
 
-      //TODO check notary config for device
-      if (DeviceCoreUtil.checkNotaryUsage(device))
+      if (DeviceCoreUtil.checkNotaryUsage(device)) //TODO check notary config for device
         notaryActor ! drd
 
       transformerActor ! drd.id
@@ -40,7 +41,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
       //send back current device state
       s ! DeviceStateManager.currentDeviceState(device)
 
-    case _ =>
-      log.error("received unknown message")
+    case _ => log.error("received unknown message")
+
   }
+
 }

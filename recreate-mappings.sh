@@ -35,6 +35,35 @@ curl -XPOST "$ES_URL/ubirch-device-raw-data" -H "Content-Type: application/json"
   "mappings": {
     "devicemessage" : {
       "properties" : {
+        "timestamp": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+        },
+        "a" : {
+          "type" : "string",
+          "index": "not_analyzed"
+        },
+        "id" : {
+          "type" : "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}'
+
+echo "\n===ubirch-device-raw-data-anchored"
+echo "drop index: "
+curl -XDELETE http://localhost:9200/ubirch-device-raw-data-anchored
+echo "\ncreate index: "
+curl -XPOST "$ES_URL/ubirch-device-raw-data-anchored" -H "Content-Type: application/json" -d '{
+  "mappings": {
+    "devicemessage" : {
+      "properties" : {
+        "timestamp": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+        },
         "a" : {
           "type" : "string",
           "index": "not_analyzed"
@@ -56,11 +85,27 @@ curl -XPOST "$ES_URL/ubirch-device-history" -H "Content-Type: application/json" 
   "mappings": {
     "devicedata" : {
       "properties" : {
+        "timestamp": {
+          "type": "date",
+          "format": "strict_date_optional_time||epoch_millis"
+        },
         "deviceId" : {
           "type" : "string",
           "index": "not_analyzed"
         },
         "messageId" : {
+          "type" : "string",
+          "index": "not_analyzed"
+        },
+        "deviceDataRawId" : {
+          "type" : "string",
+          "index": "not_analyzed"
+        },
+        "id" : {
+          "type" : "string",
+          "index": "not_analyzed"
+        },
+        "a" : {
           "type" : "string",
           "index": "not_analyzed"
         }

@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-import com.ubirch.avatar.backend.actor.{HistoryActor, HistoryAfter, HistoryBefore, HistoryByDate, HistoryByDay}
+import com.ubirch.avatar.backend.actor.{HistoryActor, HistoryAfter, HistoryBefore, HistoryByDate, HistoryByDay, HistorySeq}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device.DeviceDataProcessed
@@ -95,7 +95,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
                   case Success(resp) =>
                     resp match {
-                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case seq: HistorySeq => complete(seq.seq)
                       case _ =>
                         logger.error("querying device history by date resulted in unknown message")
                         complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history by date failed"))
@@ -117,7 +117,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
                   case Success(resp) =>
                     resp match {
-                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case seq: HistorySeq => complete(seq.seq)
                       case _ =>
                         logger.error("querying device history byDate/before resulted in unknown message")
                         complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/before failed"))
@@ -139,7 +139,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
                   case Success(resp) =>
                     resp match {
-                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case seq: HistorySeq => complete(seq.seq)
                       case _ =>
                         logger.error("querying device history/after resulted in unknown message")
                         complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/after failed"))
@@ -161,7 +161,7 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
 
                   case Success(resp) =>
                     resp match {
-                      case seq: Seq[DeviceDataProcessed] => complete(seq)
+                      case seq: HistorySeq => complete(seq.seq)
                       case _ =>
                         logger.error("querying device history/day resulted in unknown message")
                         complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/day failed"))
