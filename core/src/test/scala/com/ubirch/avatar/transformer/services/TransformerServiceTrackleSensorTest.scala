@@ -1,13 +1,16 @@
 package com.ubirch.avatar.transformer.services
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.model.DummyDevices
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.device.{Device, DeviceDataRaw, DeviceType}
 import com.ubirch.avatar.model.payload.{TrackleSensorPayload, TrackleSensorPayloadOut}
+import com.ubirch.avatar.model.{DummyDevices, MessageVersion}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+
+import org.json4s.JValue
 import org.scalactic.TolerantNumerics
 import org.scalatest.{FeatureSpec, Matchers}
 
@@ -21,12 +24,12 @@ class TransformerServiceTrackleSensorTest extends FeatureSpec
   with StrictLogging
   with MyJsonProtocol {
 
-  val deviceTypeTrackleSensor = DeviceTypeUtil.defaultDeviceType(deviceType = Const.TRACKLESENSOR)
+  val deviceTypeTrackleSensor: DeviceType = DeviceTypeUtil.defaultDeviceType(deviceType = Const.TRACKLESENSOR)
 
-  val ddrTrackleSensorStr =
+  val ddrTrackleSensorStr: String =
     s"""{
        |  "id": "600160fc-f1fa-456e-9c1f-2c1c4460b9c3",
-       |  "v": "0.0.2",
+       |  "v": "${MessageVersion.v002}",
        |  "a": "Tf9Oo0DwqCPxXT9PAati6uDl2lecy4Ufjbnf6ExYsrN7iZA6dA4e4XLaeTpuedVg5ff5vQWKEqKAQz7W+kZRCg==",
        |  "k": "ltFWVRo3/gzF++Hv0XScx8uVYd078cJhQwssLarnseY=",
        |  "ts": "2017-01-14T13:44:19.451Z",
@@ -48,15 +51,15 @@ class TransformerServiceTrackleSensorTest extends FeatureSpec
        |}
        |""".stripMargin
 
-  val ddrTrackleSensorJVal = Json4sUtil.string2JValue(ddrTrackleSensorStr).get
+  val ddrTrackleSensorJVal: JValue = Json4sUtil.string2JValue(ddrTrackleSensorStr).get
 
-  lazy val ddrTrackleSensor = ddrTrackleSensorJVal.extract[DeviceDataRaw]
+  lazy val ddrTrackleSensor: DeviceDataRaw = ddrTrackleSensorJVal.extract[DeviceDataRaw]
 
-  lazy val device = DummyDevices.device(
+  lazy val device: Device = DummyDevices.device(
     deviceTypeKey = deviceTypeTrackleSensor.key
   )
 
-  lazy val payload = ddrTrackleSensor.p.extract[TrackleSensorPayload]
+  lazy val payload: TrackleSensorPayload = ddrTrackleSensor.p.extract[TrackleSensorPayload]
 
   feature("transform services for envSensor") {
     scenario("convert incoming data") {

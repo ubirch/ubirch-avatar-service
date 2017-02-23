@@ -21,16 +21,16 @@ function init() {
 function build_software() {
 
 	# get local .ivy2
-	rsync -r ~/.ivy2 ./
+	rsync -r ~/.ivy2/ ./.ivy2/
   	docker run --user `id -u`:`id -g` --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY  --volume=${PWD}:/build ubirch/sbt-build:${SBT_CONTAINER_VERSION} $1
 	# write back to local .ivy2
 
   if [ $? -ne 0 ]; then
-	  rsync -r ./.ivy2 ~/
+	  rsync -r ./.ivy2/ ~/.ivy2/
       echo "Docker build failed"
       exit 1
   else
-	  rsync -rv ./.ivy2 ~/
+	  rsync -r ./.ivy2/ ~/.ivy2/
   fi
 }
 
@@ -55,11 +55,18 @@ function build_container() {
   sed -i.bak "s%@@SOURCE@@%$SOURCE%g" TMP/Dockerfile
   sed -i.bak "s%@@TARGET@@%$TARGET%g" TMP/Dockerfile
   cd TMP
-  docker build -t ubirch-avatar-service .
+  docker build -t ubirch/ubirch-avatar-service .
   if [ $? -ne 0 ]; then
     echo "Docker build failed"
     exit 1
   fi
+  # push Docker image
+  docker push ubirch/ubirch-avatar-service
+  if [ $? -ne 0 ]; then
+    echo "Docker push failed"
+    exit 1
+  fi
+
 
 }
 
@@ -71,6 +78,7 @@ case "$1" in
         ;;
     assembly)
         build_software "clean server/assembly"
+        build_container
         ;;
     containerbuild)
         build_container
