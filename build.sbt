@@ -158,7 +158,8 @@ lazy val depCore = Seq(
   ubirchNotary,
   ubirchUtilResponse,
   spireMath,
-  scalatest % "test"
+  scalatest % "test",
+  akkaTestkit % "test"
 ) ++ akkaCamel ++ scalaLogging
 
 lazy val depClient = Seq(
@@ -214,7 +215,8 @@ lazy val awsG = "com.amazonaws"
 lazy val ubirchUtilG = "com.ubirch.util"
 
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
-lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaV
+lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaHttpV
+lazy val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % "1.7.21",
