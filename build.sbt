@@ -204,7 +204,7 @@ lazy val akkaHttpV = "10.0.3"
 lazy val json4sV = "3.4.2"
 lazy val awsSdkV = "1.11.51"
 lazy val camelV = "2.18.1"
-lazy val scalaTestV = "3.0.0"
+lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
 
 // GROUP NAMES
