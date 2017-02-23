@@ -78,6 +78,7 @@ case "$1" in
         ;;
     assembly)
         build_software "clean server/assembly"
+        build_container
         ;;
     containerbuild)
         build_container
