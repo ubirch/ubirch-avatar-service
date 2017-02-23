@@ -1,13 +1,15 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
+import com.ubirch.avatar.model.MessageVersion
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
+
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -23,7 +25,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
-    case drd: DeviceDataRaw if drd.v == Config.sdmV000 =>
+    case drd: DeviceDataRaw if drd.v == MessageVersion.v000 =>
       val s = sender()
 
       log.debug(s"received message with version ${drd.v}")
@@ -35,7 +37,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
           s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid hwDeviceId: ${drd.a}")
       }
 
-    case drd: DeviceDataRaw if drd.v == Config.sdmV001 =>
+    case drd: DeviceDataRaw if drd.v == MessageVersion.v001 =>
       val s = sender()
 
       log.debug(s"received message with version ${drd.v}")
@@ -47,7 +49,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
           s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid simple signature: ${drd.a} / ${drd.s}")
       }
 
-    case drd: DeviceDataRaw if drd.v == Config.sdmV002 || drd.v == Config.sdmV003 =>
+    case drd: DeviceDataRaw if drd.v == MessageVersion.v002 || drd.v == MessageVersion.v003 =>
       val s = sender()
 
       log.debug(s"received message version: ${drd.v}")

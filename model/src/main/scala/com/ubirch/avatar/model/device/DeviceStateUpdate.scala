@@ -2,7 +2,9 @@ package com.ubirch.avatar.model.device
 
 import java.util.UUID
 
+import com.ubirch.avatar.model.MessageVersion
 import com.ubirch.util.uuid.UUIDUtil
+
 import org.joda.time.DateTime
 import org.json4s._
 
@@ -20,7 +22,7 @@ import org.json4s._
   */
 case class DeviceStateUpdate(
                               id: UUID = UUIDUtil.uuid, // messageId
-                              v: String = "0.0.2",
+                              v: String = MessageVersion.v002,
                               k: String,
                               s: String,
                               p: JValue,

@@ -2,7 +2,9 @@ package com.ubirch.avatar.model.device
 
 import java.util.UUID
 
+import com.ubirch.avatar.model.MessageVersion
 import com.ubirch.util.uuid.UUIDUtil
+
 import org.joda.time.DateTime
 import org.json4s._
 
@@ -19,7 +21,7 @@ import org.json4s._
   * @param timestamp                timestamp of the original DeviceDataRaw
   */
 case class TransformedDeviceMessage(
-                                     version: String = "0.0.3",
+                                     version: String = MessageVersion.v003,
                                      messageId: UUID = UUIDUtil.uuid,
                                      deviceId: String,
                                      validationState: Option[String],
