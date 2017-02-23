@@ -30,7 +30,11 @@ trait SimpleStorage extends ElasticsearchStorage {
 
   private val address = new InetSocketTransportAddress(InetAddress.getByName(Config.esHost), Config.esPortBinary)
 
+  private val settings: Settings = Settings.builder()
+    .put("cluster.name", Config.esClusterName).build()
+
   override protected val esClient: TransportClient = TransportClient.builder()
+    .settings(settings)
     .build()
     .addTransportAddress(address)
 
