@@ -74,7 +74,7 @@ object DeviceDataProcessedTestUtil {
     val storedSeries: ListBuffer[DeviceDataProcessed] = ListBuffer()
 
     list foreach { deviceData =>
-      val storedRawData = Await.result(DeviceDataProcessedManager.store(deviceData), 1 seconds).get
+      val storedRawData = Await.result(DeviceDataProcessedManager.store(deviceData), 2 seconds).get
       storedSeries += storedRawData
     }
     Thread.sleep(3000)
