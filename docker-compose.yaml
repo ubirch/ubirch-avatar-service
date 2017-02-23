@@ -5,6 +5,8 @@ services:
     ports:
     - "9200:9200"
     - "9300:9300"
+    environment:
+    - CLUSTER_NAME=ubirch-es
   kibana:
     image: kibana:4
     ports:
@@ -23,6 +25,12 @@ services:
      - ES_HOST=elasticsearch
      - ES_PORT_HTTP=9200
      - ES_PORT_TCP=9300
-     - SQS_UBIRCH_TRANSFORMER_INBOX=2016-12-24-test-inbox
-     - SQS_UBIRCH_TRANSFORMER_OUTBOX=2016-12-24-test-outbox
+     - SQS_UBIRCH_TRANSFORMER_INBOX=2017-02-23-test1-inbox
+     - SQS_UBIRCH_TRANSFORMER_OUTBOX=2017-02-23-test1-outbox
+     - CLUSTER_NAME=ubirch-es
+     - UBIRCH_NOTARYSERVICE_URL=localhost
+     - MQTT_URL
+     - ENVID=testing
+     - MQTT_PASSWORD
+     - MQTT_USER
      - DEBUG=true
