@@ -19,6 +19,7 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.8 (tbd)
 
 * save bitcoin tx hashes in a new index: "ubirch-device-raw-data-anchored" (only relevant for raw data with NotaryService being used)
+* update `scalatest` from 3.0.0 to 3.0.1
 
 ### Version 0.3.7 (2017-02-22)
 

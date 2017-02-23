@@ -1,10 +1,12 @@
 package com.ubirch.avatar.core.device
 
+import java.util.UUID
+
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
-import com.ubirch.services.storage.DeviceDataRawAnchoredBulkStorage
+import com.ubirch.services.storage.{DeviceDataRawAnchoredBulkStorage, DeviceDataRawAnchoredStorage}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import org.joda.time.DateTime
@@ -19,6 +21,30 @@ import scala.concurrent.Future
 object DeviceDataRawAnchoredManager extends MyJsonProtocol
   with StrictLogging {
 
+  private val index = Config.esDeviceDataRawAnchoredIndex
+  private val esType = Config.esDeviceDataRawAnchoredType
+
+  /**
+    * Search an anchored [[DeviceDataRaw]] (with txHash) based on it's id.
+    *
+    * @param id id to search with
+    * @return None if nothing was found
+    */
+  def byId(id: UUID): Future[Option[DeviceDataRaw]] = {
+
+    logger.debug(s"query byId: id=$id")
+
+    DeviceDataRawAnchoredStorage.getDoc(
+      docIndex = index,
+      docType = esType,
+      docId = id.toString
+    ) map {
+      case Some(res) => Some(res.extract[DeviceDataRaw])
+      case None => None
+    }
+
+  }
+
   /**
     * Store an anchored [[DeviceDataRaw]] (field "txHash" is set).
     *
@@ -31,9 +57,6 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-
-        val index = Config.esDeviceDataRawAnchoredIndex
-        val esType = Config.esDeviceDataRawAnchoredType
 
         val id = data.id.toString
         DeviceDataRawAnchoredBulkStorage.storeDocBulk(
