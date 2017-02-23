@@ -6,7 +6,7 @@ import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.DummyDeviceDataProcessed
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
@@ -22,12 +22,26 @@ object DeviceDataProcessedTestUtil {
   /**
     * Creates a series of [[DeviceDataProcessed]] and stores them. All messages are from the same device.
     *
+    * The newest message's timestamp is about 23:59:59.000 and the interval between messages is small enough to fit more
+    * than 15.000 messages into one day. As an effect unless you create too many records all of their timestamps will be
+    * on the same day.
+    *
     * @param elementCount number of elements to create and store
     * @return list of stored messages (ordered by: timestamp ASC)
     */
   def storeSeries(elementCount: Int): Seq[DeviceDataProcessed] = {
 
-    val dataSeries: Seq[DeviceDataProcessed] = DummyDeviceDataProcessed.dataSeries(elementCount = elementCount)
+    val now = DateTime.now(DateTimeZone.UTC)
+    val midnight = now.withHourOfDay(23)
+      .withMinuteOfHour(59)
+      .withSecondOfMinute(59)
+      .withMillisOfSecond(0)
+
+    val dataSeries: Seq[DeviceDataProcessed] = DummyDeviceDataProcessed.dataSeries(
+      elementCount = elementCount,
+      intervalMillis = 1000 * 5, // 5s
+      timestampOffset = -1 * (midnight.getMillis - now.getMillis)
+    )
     store(dataSeries)
 
   }
