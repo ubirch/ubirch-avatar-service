@@ -1,22 +1,17 @@
 {
-  "id": "600160fc-f1fa-456e-9c1f-2c1c4460b9c3",
   "v": "0.0.2",
-  "a": "Tf9Oo0DwqCPxXT9PAati6uDl2lecy4Ufjbnf6ExYsrN7iZA6dA4e4XLaeTpuedVg5ff5vQWKEqKAQz7W+kZRCg==",
-  "k": "ltFWVRo3/gzF++Hv0XScx8uVYd078cJhQwssLarnseY=",
-  "ts": "2017-01-14T13:44:19.451Z",
-  "s": "V3EbZMqK0pISsmuWbqWJMaT20A1YJ+lDakoMgdTmCRBgQpWMHYYNzDgdCurunSJXqF0KbkPc0XubmdS3AR/PBQ==",
+  "a": "fmz/hStGkKblYjZ6PIDC0r6kDS1JmzFskp9TUAZo+wmsb3FM2NaCkb1+hBtkm2sYkfe2LH+h1ZaCZoQ3x5+uQg==",
+  "k": "p4NHQ1lebkpgZDhFSPNyoyRqWwnmTxAV1PXcTYF5iPk=",
+  "s": "ovBm8UfuS/P6szUZDY+6YBizcrCJ+MCFi2w6tNjhrLygeSDZS8rDawXh2yrwKUhefRRlxYmy3OoR6/NvqoYtBw==",
   "p": {
-    "ts": 261,
-    "pc": 215,
-    "t1": 21212,
-    "t2": 44415,
-    "t3": 3016,
-    "st": 64,
-    "vb": 2263,
-    "rs": 19,
-    "la": "52.487202",
-    "lo": "13.463557",
+    "t": 2086,
+    "p": 93876,
+    "h": 2101,
+    "a": 63948,
+    "la": "48.124100",
+    "lo": "11.601422",
     "ba": 100,
+    "lp": 28158,
     "e": 0
   }
 }

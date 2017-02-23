@@ -36,6 +36,10 @@ class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorL
         val dt = currentDeviceType.getOrElse(DeviceTypeUtil.defaultDeviceType())
 
         drd.v match {
+
+          case MessageVersion.`v000` =>
+            transformPostActor ! (dt, device, drd)
+
           case MessageVersion.`v001` =>
             transformPostActor ! (dt, device, drd)
 
