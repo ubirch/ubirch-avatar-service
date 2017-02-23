@@ -189,7 +189,7 @@ class DeviceDataProcessedManagerSpec
       result should be('isEmpty)
     }
 
-    scenario("all records in interval") {
+    scenario("all 3 records in interval") {
 
       // prepare
       val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
@@ -202,6 +202,22 @@ class DeviceDataProcessedManagerSpec
 
       // verify
       result should be(dataSeries)
+
+    }
+
+    scenario("5000 records in interval (ensure that Elasticsearch page size is not the default)") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(5000)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val from = dataSeries.head.timestamp.minusSeconds(10)
+      val to = dataSeries.last.timestamp.plusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDate(deviceId, from, to), 3 seconds)
+
+      // verify
+      result.size should be(dataSeries.size)
 
     }
 
@@ -284,7 +300,7 @@ class DeviceDataProcessedManagerSpec
       result should be('isEmpty)
     }
 
-    scenario("all records in interval") {
+    scenario("all 3 records in interval") {
 
       // prepare
       val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
@@ -296,6 +312,21 @@ class DeviceDataProcessedManagerSpec
 
       // verify
       result should be(dataSeries)
+
+    }
+
+    scenario("5000 records in interval (ensure that Elasticsearch page size is not the default)") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(5000)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val before = dataSeries.last.timestamp.plusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.before(deviceId, before), 3 seconds)
+
+      // verify
+      result.size should be(dataSeries.size)
 
     }
 
@@ -344,7 +375,7 @@ class DeviceDataProcessedManagerSpec
       result should be('isEmpty)
     }
 
-    scenario("all records in interval") {
+    scenario("all 3 records in interval") {
 
       // prepare
       val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(3)
@@ -356,6 +387,21 @@ class DeviceDataProcessedManagerSpec
 
       // verify
       result should be(dataSeries)
+
+    }
+
+    scenario("5000 records in interval (ensure that Elasticsearch page size is not the default)") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(5000)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val after = dataSeries.head.timestamp.minusSeconds(10)
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.after(deviceId, after), 3 seconds)
+
+      // verify
+      result.size should be(dataSeries.size)
 
     }
 
@@ -404,24 +450,58 @@ class DeviceDataProcessedManagerSpec
       result should be('isEmpty)
     }
 
-    scenario("all records in interval") {
+    scenario("all 3 records in interval (on the first millisecond of the day)") {
 
       // prepare
       val deviceId: UUID = UUIDUtil.uuid
-      val midnight = firstSecondOfToday()
+      val dayBegins = firstMillisecondOfToday()
 
-      val t1 = midnight.plusHours(2)
-      val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
-      val t3 = midnight.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val t1 = dayBegins.plusHours(2)
+      val t2 = dayBegins.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = dayBegins.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
       val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
 
-      val day = midnight.plusHours(7)
-
       // test
-      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 1 seconds)
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, dayBegins), 1 seconds)
 
       // verify
       result should be(dataSeries)
+
+    }
+
+    scenario("all 3 records in interval (on the last millisecond of the day)") {
+
+      // prepare
+      val deviceId: UUID = UUIDUtil.uuid
+      val dayBegins = firstMillisecondOfToday()
+      val dayEnds = dayBegins.plusDays(1).minusMillis(1)
+
+      val t1 = dayBegins.plusHours(2)
+      val t2 = dayBegins.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
+      val t3 = dayBegins.plusHours(21).plusMinutes(42).plusSeconds(27).plusMillis(46)
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeTimeBasedSeries(deviceId, Seq(t1, t2, t3))
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, dayEnds), 1 seconds)
+
+      // verify
+      result should be(dataSeries)
+
+    }
+
+    scenario("5000 records in interval (ensure that Elasticsearch page size is not the default)") {
+
+      // prepare
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(5000)
+      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+
+      val day = dataSeries.head.timestamp
+
+      // test
+      val result = Await.result(DeviceDataProcessedManager.byDay(deviceId, day), 3 seconds)
+
+      // verify
+      result.size should be(dataSeries.size)
 
     }
 
@@ -429,7 +509,7 @@ class DeviceDataProcessedManagerSpec
 
       // prepare
       val deviceId: UUID = UUIDUtil.uuid
-      val midnight = firstSecondOfToday()
+      val midnight = firstMillisecondOfToday()
 
       val t1 = midnight
       val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
@@ -450,7 +530,7 @@ class DeviceDataProcessedManagerSpec
 
       // prepare
       val deviceId: UUID = UUIDUtil.uuid
-      val midnight = firstSecondOfToday()
+      val midnight = firstMillisecondOfToday()
 
       val t1 = midnight.minusMillis(1)
       val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
@@ -471,7 +551,7 @@ class DeviceDataProcessedManagerSpec
 
       // prepare
       val deviceId: UUID = UUIDUtil.uuid
-      val midnight = firstSecondOfToday()
+      val midnight = firstMillisecondOfToday()
 
       val t1 = midnight.plusHours(2)
       val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
@@ -492,7 +572,7 @@ class DeviceDataProcessedManagerSpec
 
       // prepare
       val deviceId: UUID = UUIDUtil.uuid
-      val midnight = firstSecondOfToday()
+      val midnight = firstMillisecondOfToday()
 
       val t1 = midnight.plusHours(2)
       val t2 = midnight.plusHours(4).plusMinutes(10).plusSeconds(5).plusMillis(23)
@@ -522,7 +602,7 @@ class DeviceDataProcessedManagerSpec
 
   }
 
-  private def firstSecondOfToday(): DateTime = {
+  private def firstMillisecondOfToday(): DateTime = {
     DateTime.now(DateTimeZone.UTC)
       .withHourOfDay(0)
       .withMinuteOfHour(0)

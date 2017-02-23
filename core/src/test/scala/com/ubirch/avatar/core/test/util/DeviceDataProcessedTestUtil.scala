@@ -5,6 +5,7 @@ import java.util.UUID
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.DummyDeviceDataProcessed
 import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}
 
@@ -29,7 +30,9 @@ object DeviceDataProcessedTestUtil {
     * @param elementCount number of elements to create and store
     * @return list of stored messages (ordered by: timestamp ASC)
     */
-  def storeSeries(elementCount: Int): Seq[DeviceDataProcessed] = {
+  def storeSeries(elementCount: Int,
+                  deviceId: String = UUIDUtil.uuidStr
+                 ): Seq[DeviceDataProcessed] = {
 
     val now = DateTime.now(DateTimeZone.UTC)
     val midnight = now.withHourOfDay(23)
@@ -38,6 +41,7 @@ object DeviceDataProcessedTestUtil {
       .withMillisOfSecond(0)
 
     val dataSeries: Seq[DeviceDataProcessed] = DummyDeviceDataProcessed.dataSeries(
+      deviceId = deviceId,
       elementCount = elementCount,
       intervalMillis = 1000 * 5, // 5s
       timestampOffset = -1 * (midnight.getMillis - now.getMillis)
@@ -77,7 +81,7 @@ object DeviceDataProcessedTestUtil {
       val storedRawData = Await.result(DeviceDataProcessedManager.store(deviceData), 2 seconds).get
       storedSeries += storedRawData
     }
-    Thread.sleep(3000)
+    Thread.sleep(1500 + list.size)
 
     storedSeries.toList
 
