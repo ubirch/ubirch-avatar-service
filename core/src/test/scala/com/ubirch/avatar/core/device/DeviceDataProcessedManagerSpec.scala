@@ -492,8 +492,11 @@ class DeviceDataProcessedManagerSpec
     scenario("5000 records in interval (ensure that Elasticsearch page size is not the default)") {
 
       // prepare
-      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(5000)
-      val deviceId: UUID = UUIDUtil.fromString(dataSeries.head.deviceId)
+      val deviceId: UUID = UUIDUtil.uuid
+      val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(
+        elementCount = 5000,
+        deviceId = deviceId.toString
+      )
 
       val day = dataSeries.head.timestamp
 
