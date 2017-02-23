@@ -21,16 +21,16 @@ function init() {
 function build_software() {
 
 	# get local .ivy2
-	rsync -r ~/.ivy2 ./
+	rsync -r ~/.ivy2/ ./.ivy2/
   	docker run --user `id -u`:`id -g` --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY  --volume=${PWD}:/build ubirch/sbt-build:${SBT_CONTAINER_VERSION} $1
 	# write back to local .ivy2
 
   if [ $? -ne 0 ]; then
-	  rsync -r ./.ivy2 ~/
+	  rsync -r ./.ivy2/ ~/.ivy2/
       echo "Docker build failed"
       exit 1
   else
-	  rsync -rv ./.ivy2 ~/
+	  rsync -r ./.ivy2/ ~/.ivy2/
   fi
 }
 
