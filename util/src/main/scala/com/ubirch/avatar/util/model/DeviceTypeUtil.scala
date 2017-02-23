@@ -15,7 +15,7 @@ object DeviceTypeUtil {
 
   val defaultKey = "defaultDeviceType"
 
-  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.UNKNOWN_DEVICE, Const.TRACKLESENSOR
+  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.TRACKLESENSOR, Const.GENERICSENSOR, Const.UNKNOWN_DEVICE
   )
 
   def dataSeries(prefix: String = defaultKey,
@@ -63,6 +63,8 @@ object DeviceTypeUtil {
 
       case Const.TRACKLESENSOR => DeviceTypeName("trackle", "trackle Sensor")
 
+      case Const.GENERICSENSOR => DeviceTypeName("ubirchSensor", "ubirch Sensor")
+
       case Const.UNKNOWN_DEVICE =>
         DeviceTypeName("Unbekanntes Gerät", "Unknown Device")
 
@@ -80,6 +82,7 @@ object DeviceTypeUtil {
       case Const.LIGHTSSENSOR => "ion-ios-sunny"
       case Const.LIGHTSLAMP => "ion-ios-lightbulb"
       case Const.ENVIRONMENTSENSOR => "ion-speedometer"
+      case Const.GENERICSENSOR => "ion-radio-waves"
       case Const.UNKNOWN_DEVICE => "ion-radio-waves"
       case _ => "ion-radio-waves"
 
@@ -93,12 +96,18 @@ object DeviceTypeUtil {
 
       case Const.LIGHTSLAMP => Map.empty
 
-      case Const.LIGHTSSENSOR => Map(Const.STOREDATA -> Const.BOOL_TRUE)
+      case Const.LIGHTSSENSOR =>
+        Map(Const.STOREDATA -> Const.BOOL_TRUE)
 
       case Const.ENVIRONMENTSENSOR =>
         Map(
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_TRUE
+        )
+
+      case Const.GENERICSENSOR =>
+        Map(
+          Const.STOREDATA -> Const.BOOL_TRUE
         )
 
       case Const.UNKNOWN_DEVICE => Map.empty
@@ -157,7 +166,13 @@ object DeviceTypeUtil {
           Const.CONF_THRESHOLD -> 3600
         )
 
-      case Const.UNKNOWN_DEVICE => Map.empty
+      case Const.GENERICSENSOR => Map(
+        Const.CONF_INTERVALL -> (15 * 60)
+      )
+
+      case Const.UNKNOWN_DEVICE => Map(
+        Const.CONF_INTERVALL -> (15 * 60)
+      )
 
       case _ => Map(Const.CONF_INTERVALL -> (15 * 60))
 
@@ -174,15 +189,13 @@ object DeviceTypeUtil {
       case Const.LIGHTSLAMP =>
         Set(
           Const.TAG_UBB0,
-          Const.TAG_ACTOR,
-          Const.TAG_BTCD
+          Const.TAG_ACTOR
         )
 
       case Const.LIGHTSSENSOR =>
         Set(
           Const.TAG_UBB0,
-          Const.TAG_SENSOR,
-          Const.TAG_BTCD
+          Const.TAG_SENSOR
         )
 
       case Const.ENVIRONMENTSENSOR =>
@@ -192,7 +205,15 @@ object DeviceTypeUtil {
           Const.TAG_BTCD
         )
 
-      case Const.UNKNOWN_DEVICE => Set.empty
+      case Const.GENERICSENSOR =>
+        Set(
+          Const.TAG_UBB1,
+          Const.TAG_SENSOR
+        )
+
+      case Const.UNKNOWN_DEVICE => Set(
+        Const.TAG_SENSOR
+      )
 
       case _ => Set(Const.TAG_UBB1)
 

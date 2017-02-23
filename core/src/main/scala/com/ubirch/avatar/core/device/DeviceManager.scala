@@ -61,7 +61,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
-        ) map(_.extractOpt[Device])
+        ) map (_.extractOpt[Device])
 
       case None =>
         Future(None)
@@ -72,9 +72,15 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     create(device: Device).map {
       case Some(dev) =>
 
-        AwsShadowUtil.createShadow(dev.awsDeviceThingId)
-        if (dev.deviceConfig.isDefined)
-          AwsShadowUtil.setDesired(dev, dev.deviceConfig.get)
+        try {
+          AwsShadowUtil.createShadow(dev.awsDeviceThingId)
+          if (dev.deviceConfig.isDefined)
+            AwsShadowUtil.setDesired(dev, dev.deviceConfig.get)
+        }
+        catch {
+          case e: Exception =>
+            logger.error("could not create a shadow", e)
+        }
 
         Some(dev)
 
@@ -88,13 +94,17 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     Json4sUtil.any2jvalue(device) match {
 
       case Some(devJval) =>
-        DeviceStorage.storeDoc(
+        val dev = DeviceStorage.storeDoc(
           docIndex = Config.esDeviceIndex,
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
         ).map(_.extractOpt[Device])
 
+        if (device.deviceConfig.isDefined)
+          AwsShadowUtil.setDesired(device, device.deviceConfig.get)
+
+        dev
       case None =>
         Future(None)
     }
@@ -161,7 +171,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def curretShadowState(device: Device): ThingShadowState = {
+  def curretShadowState(device: Device): Option[ThingShadowState] = {
     AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)
   }
 

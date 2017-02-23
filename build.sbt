@@ -202,7 +202,7 @@ lazy val depTestBase = Seq(
 lazy val akkaV = "2.4.17"
 lazy val akkaHttpV = "10.0.3"
 lazy val json4sV = "3.4.2"
-lazy val awsSdkV = "1.11.51"
+lazy val awsSdkV = "1.11.93"
 lazy val camelV = "2.18.1"
 lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
@@ -248,7 +248,8 @@ lazy val spireMath = "org.spire-math" %% "spire" % spireV
 
 // list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
 lazy val awsIotSdk = Seq(
-  awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor")
+  awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor"),
+  awsG % "aws-iot-device-sdk-java" % "1.1.0"
 )
 lazy val awsSqsSdk = Seq(
   awsG % "aws-java-sdk-sqs" % awsSdkV
@@ -346,8 +347,8 @@ def generateDockerFile(file: File, nameString: String, versionString: String, ja
   val jarTargetPath = s"/opt/jar/${jarFile.name}"
   val contents =
     s"""SOURCE=server/target/scala-2.11/${jarFile.getName}
-    |TARGET=${jarFile.getName}
-    |""".stripMargin
+       |TARGET=${jarFile.getName}
+       |""".stripMargin
   IO.write(file, contents)
   Seq(file)
 }

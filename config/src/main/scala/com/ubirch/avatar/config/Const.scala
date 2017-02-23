@@ -19,6 +19,7 @@ object Const {
   final val LIGHTSLAMP = "lightsLamp"
   final val ENVIRONMENTSENSOR = "envSensor"
   final val TRACKLESENSOR = "trackleSensor"
+  final val GENERICSENSOR = "genericSensor"
 
   final val LEDRGB = 1
   final val LEDBGR = 2

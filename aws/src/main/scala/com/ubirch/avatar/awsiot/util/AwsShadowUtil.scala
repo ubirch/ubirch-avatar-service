@@ -2,7 +2,7 @@ package com.ubirch.avatar.awsiot.util
 
 import java.nio.ByteBuffer
 
-import com.amazonaws.services.iot.model.{CreateThingRequest, DeleteThingRequest}
+import com.amazonaws.services.iot.model.{AttributePayload, CreateThingRequest, DeleteThingRequest}
 import com.amazonaws.services.iotdata.model.PublishRequest
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.awsiot.config.AwsConf
@@ -41,12 +41,26 @@ object AwsShadowUtil extends StrictLogging {
     logger.debug(s"create shadow with id $awsDeviceShadowId")
     val createSensorRequest = new CreateThingRequest()
 
-    createSensorRequest.setThingName(awsDeviceShadowId)
+    val pl = new AttributePayload()
+    pl.addAttributesEntry("i", "900")
 
+    createSensorRequest.setThingName(awsDeviceShadowId)
+    createSensorRequest.withAttributePayload(pl)
     val response = iotClient.createThing(createSensorRequest)
+
     logger.debug(s"created shadow with name ${response.getThingName}")
     logger.debug(s"created shadow with arn ${response.getThingArn}")
-    response.getThingName
+    val thingName = response.getThingName
+
+    //    val gtsr = new GetThingShadowRequest()
+    //    gtsr.withThingName(thingName)
+    //    val thing = iotDataClient.getThingShadow(gtsr)
+
+    //    val awsDev = new AWSIotDevice(thingName)
+    //    awsDev.activate()
+    //    awsDev.update("{}")
+
+    thingName
   }
 
   def deleteShadow(awsDeviceShadowId: String) = {

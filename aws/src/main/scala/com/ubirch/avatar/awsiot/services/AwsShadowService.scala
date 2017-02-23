@@ -23,15 +23,21 @@ object AwsShadowService extends MyJsonProtocol with StrictLogging {
     * @param awsDeviceShadowId AWS IoT thing name, which is the AWS IoT Thing Id
     * @return current state as ThingShadowState
     */
-  def getCurrentDeviceState(awsDeviceShadowId: String): ThingShadowState = {
-    ThingShadowState(
-      inSync = getSyncState(awsDeviceShadowId),
-      desired = getDesired(awsDeviceShadowId),
-      reported = getReported(awsDeviceShadowId),
-      delta = getDelta(awsDeviceShadowId),
-      deviceLastUpdated = getTimestamp(awsDeviceShadowId),
-      avatarLastUpdated = getTimestamp(awsDeviceShadowId)
-    )
+  def getCurrentDeviceState(awsDeviceShadowId: String): Option[ThingShadowState] = {
+    try {
+      Some(ThingShadowState(
+        inSync = getSyncState(awsDeviceShadowId),
+        desired = getDesired(awsDeviceShadowId),
+        reported = getReported(awsDeviceShadowId),
+        delta = getDelta(awsDeviceShadowId),
+        deviceLastUpdated = getTimestamp(awsDeviceShadowId),
+        avatarLastUpdated = getTimestamp(awsDeviceShadowId)
+      ))
+    }
+    catch {
+      case e: Exception => logger.error("could not get current shadow state", e)
+        None
+    }
   }
 
   /**
@@ -91,20 +97,27 @@ object AwsShadowService extends MyJsonProtocol with StrictLogging {
   }
 
   private def getState(awsDeviceShadowId: String, state: String): Option[JValue] = {
-    getShadowResource(awsDeviceShadowId) match {
-      case Some(thingShadow) =>
-        val inputStream = new ByteArrayInputStream(thingShadow.getPayload().array())
-        //        val input: String = scala.io.Source.fromInputStream(inputStream).getLines().next()
-        Json4sUtil.inputstream2jvalue(inputStream) match {
-          //        Json4sUtil.string2JValue(input) match {
-          case Some(jval) =>
-            if (state == Config.awsStatesTimestamp)
-              (jval \ state).extractOpt[JValue]
-            else
-              (jval \ "state" \ state).extractOpt[JValue]
-          case None => None
-        }
-      case None =>
+    try {
+      getShadowResource(awsDeviceShadowId) match {
+        case Some(thingShadow) =>
+          val inputStream = new ByteArrayInputStream(thingShadow.getPayload().array())
+          //        val input: String = scala.io.Source.fromInputStream(inputStream).getLines().next()
+          Json4sUtil.inputstream2jvalue(inputStream) match {
+            //        Json4sUtil.string2JValue(input) match {
+            case Some(jval) =>
+              if (state == Config.awsStatesTimestamp)
+                (jval \ state).extractOpt[JValue]
+              else
+                (jval \ "state" \ state).extractOpt[JValue]
+            case None => None
+          }
+        case None =>
+          None
+      }
+    }
+    catch {
+      case e: Throwable =>
+        logger.error(s"got no current state: $awsDeviceShadowId", e)
         None
     }
   }
