@@ -2,6 +2,8 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
+import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.services.storage.DeviceDataProcessedStorage
@@ -18,7 +20,8 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-30
   */
-object DeviceDataProcessedManager extends MyJsonProtocol {
+object DeviceDataProcessedManager extends MyJsonProtocol
+  with StrictLogging {
 
   private val index = Config.esDeviceDataProcessedIndex
   private val esType = Config.esDeviceDataProcessedType
@@ -139,12 +142,15 @@ object DeviceDataProcessedManager extends MyJsonProtocol {
     */
   def byDay(deviceId: UUID, day: DateTime): Future[Seq[DeviceDataProcessed]] = {
 
+    logger.debug(s"search byDay: day=$day")
     val from = day.withHourOfDay(0)
       .withMinuteOfHour(0)
       .withSecondOfMinute(0)
       .withMillisOfSecond(0)
 
     val to = from.plusDays(1).minusMillis(1)
+    logger.debug(s"search byDay: from=$from")
+    logger.debug(s"search byDay: to=$to")
 
     byDate(deviceId, from, to)
 
