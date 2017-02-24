@@ -34,7 +34,8 @@ object DeviceUtil {
     val pKey: PublicKey = kp.getPublic
 
     sgr.initSign(sKey)
-    sgr.update(write(payload).getBytes)
+    val payloadStr = write(payload)
+    sgr.update(payloadStr.getBytes)
     val signature: Array[Byte] = sgr.sign
 
     (Base64.getEncoder.encodeToString(pKey.getEncoded),

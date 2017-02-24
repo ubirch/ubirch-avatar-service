@@ -27,12 +27,14 @@ class MqttDeviceConsumerActor
 
   val mqttBrokerUrl: String = Config.mqttBrokerUrl
 
+  val mqttDeviceInTopic: String = s"${Config.mqttTopicDevicesBase}/+/${Config.mqttTopicDevicesIn}"
+
   val clientId: String = s"avatarService_${UUIDUtil.uuidStr}"
 
   //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
+
   override def endpointUri = s"mqtt:" +
-    s"" +
-    s"heinz?host=$mqttBrokerUrl&subscribeTopicName=${Config.mqttQueueDevicesIn}&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
+    s"avatarService?host=$mqttBrokerUrl&subscribeTopicName=${mqttDeviceInTopic}&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
@@ -46,23 +48,28 @@ class MqttDeviceConsumerActor
   //TODO fix error handling, in case of error the message should be resend later?
   override def receive = {
     case msg: CamelMessage =>
-      msg.body match {
-        case dataStr: String =>
-          self ! dataStr
-        case bytes: Array[Byte] =>
-          val dataStr = new String(bytes, "UTF-8")
-          self ! dataStr
-        case _ =>
-          log.error(s"received invalid message body: ${msg.body}")
+      if (msg.getHeaders.keySet().contains("CamelMQTTSubscribeTopic")) {
+        val mqttTopic = msg.getHeaders.get("CamelMQTTSubscribeTopic").toString
+        val deviceUuid = mqttTopic.replace(Config.mqttTopicDevicesBase, "").replace(Config.mqttTopicDevicesIn, "").replaceAll("/", "")
+
+        msg.body match {
+          case dataStr: String =>
+            self ! (dataStr, deviceUuid)
+          case bytes: Array[Byte] =>
+            val dataStr = new String(bytes, "UTF-8")
+            self ! (dataStr, deviceUuid)
+          case _ =>
+            log.error(s"received invalid message body: ${msg.body}")
+        }
       }
     //      log.debug(s"received mqtt message: ${msg.bodyAs[String]}")
-    case msgStr: String =>
+    case (msgStr: String, deviceUuid: String) =>
       try {
         Json4sUtil.string2JValue(msgStr) match {
           case Some(jval) =>
             jval.extractOpt[DeviceDataRaw] match {
               case Some(ddr) =>
-                validatorActor ! ddr
+                validatorActor ! ddr.copy(uuid = Some(deviceUuid))
               case None =>
                 log.error(s"message is not a valid DeviceDataRaw object: $msgStr")
             }

@@ -206,6 +206,10 @@ object Config extends ConfigBase {
 
   def mqttPassword: String = config.getString(ConfigKeys.MQTT_PASSWORD_KEY)
 
-  def mqttQueueDevicesIn: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_IN)
+  def mqttTopicDevicesBase: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_BASE)
+
+  def mqttTopicDevicesIn: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_IN)
+
+  def mqttTopicDevicesOut: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_OUT)
 
 }

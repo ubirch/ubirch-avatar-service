@@ -20,6 +20,8 @@ object ActorNames {
 
   final val PERSISTENCE_SVC: String = "persistence-service"
 
+  final val DEVICESTATEUPDATER: String = "devicestateupdate-service"
+
   final val MSG_PROCESSOR: String = "message-processor"
 
   final val MSG_VALIDATOR: String = "message-validator"
