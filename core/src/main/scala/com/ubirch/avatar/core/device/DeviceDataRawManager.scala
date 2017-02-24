@@ -11,7 +11,6 @@ import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import org.elasticsearch.index.query.QueryBuilders
-import org.joda.time.DateTime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionException, Future}
