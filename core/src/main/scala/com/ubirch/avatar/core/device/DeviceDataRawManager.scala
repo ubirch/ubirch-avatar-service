@@ -89,8 +89,7 @@ object DeviceDataRawManager extends MyJsonProtocol
           docIndex = index,
           docType = esType,
           docId = id,
-          doc = doc,
-          timestamp = DateTime.now.getMillis
+          doc = doc
         ) map (_.extractOpt[DeviceDataRaw])
 
       case None => Future(None)

@@ -190,8 +190,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
           docIndex = index,
           docType = esType,
           docId = id,
-          doc = doc,
-          timestamp = DateTime.now.getMillis
+          doc = doc
         ) map (_.extractOpt[DeviceDataProcessed])
 
       case None => Future(None)
