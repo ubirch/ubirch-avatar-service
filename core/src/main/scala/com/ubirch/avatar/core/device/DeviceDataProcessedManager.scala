@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataProcessed
-import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
@@ -184,12 +184,14 @@ object DeviceDataProcessedManager extends MyJsonProtocol
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-        val id = Some(data.messageId.toString)
-        ESSimpleStorage.storeDoc(
+
+        val id = data.messageId.toString
+        ESBulkStorage.storeDocBulk(
           docIndex = index,
           docType = esType,
-          docIdOpt = id,
-          doc = doc
+          docId = id,
+          doc = doc,
+          timestamp = DateTime.now.getMillis
         ) map (_.extractOpt[DeviceDataProcessed])
 
       case None => Future(None)
