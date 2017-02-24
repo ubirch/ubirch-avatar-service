@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
-import com.ubirch.services.storage.DeviceDataRawStorage
+import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
@@ -19,7 +19,8 @@ import scala.concurrent.{ExecutionException, Future}
   * author: cvandrei
   * since: 2016-09-30
   */
-object DeviceDataRawManager extends MyJsonProtocol with StrictLogging {
+object DeviceDataRawManager extends MyJsonProtocol
+  with StrictLogging {
 
   /**
     * Query the history of deviceDataRaw for a specified device.
@@ -43,7 +44,7 @@ object DeviceDataRawManager extends MyJsonProtocol with StrictLogging {
     val query = Some(QueryBuilders.termQuery("a", device.hwDeviceId))
     val sort = Some(SortUtil.sortBuilder("ts", asc = false))
 
-    DeviceDataRawStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
+    ESSimpleStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
       res.map(_.extract[DeviceDataRaw])
     }
 
@@ -63,7 +64,7 @@ object DeviceDataRawManager extends MyJsonProtocol with StrictLogging {
     val esType = Config.esDeviceDataRawType
     val query = Some(QueryBuilders.termQuery("id", id.toString))
 
-    DeviceDataRawStorage.getDocs(index, esType, query).map { res =>
+    ESSimpleStorage.getDocs(index, esType, query).map { res =>
       res.map(_.extract[DeviceDataRaw]).headOption
     }
   }
@@ -84,12 +85,12 @@ object DeviceDataRawManager extends MyJsonProtocol with StrictLogging {
         val esType = Config.esDeviceDataRawType
         val id = Some(data.id.toString)
         //TODO we should use here ES bulk client
-        DeviceDataRawStorage.storeDoc(
+        ESSimpleStorage.storeDoc(
           docIndex = index,
           docType = esType,
           docIdOpt = id,
           doc = doc
-        ) map(_.extractOpt[DeviceDataRaw])
+        ) map (_.extractOpt[DeviceDataRaw])
 
       case None => Future(None)
 

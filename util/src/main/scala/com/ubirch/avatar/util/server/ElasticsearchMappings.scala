@@ -1,6 +1,7 @@
 package com.ubirch.avatar.util.server
 
 import com.ubirch.avatar.config.Config
+import com.ubirch.util.elasticsearch.client.binary.config.ESConfig
 import com.ubirch.util.elasticsearch.util.{ElasticsearchMappingsBase, IndexInfo, Mapping}
 
 /**
@@ -9,11 +10,11 @@ import com.ubirch.util.elasticsearch.util.{ElasticsearchMappingsBase, IndexInfo,
   */
 trait ElasticsearchMappings extends ElasticsearchMappingsBase {
 
-  private val indexInfoDevice = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceIndex)
-  private val indexInfoDeviceRawData = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataRawIndex)
-  private val indexInfoDeviceRawDataAnchored = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataRawAnchoredIndex)
-  private val indexInfoDeviceHistory = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceDataProcessedIndex)
-  private val indexInfoDeviceType = IndexInfo(Config.esHost, Config.esPortHttp, Config.esDeviceTypeIndex)
+  private val indexInfoDevice = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceIndex)
+  private val indexInfoDeviceRawData = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceDataRawIndex)
+  private val indexInfoDeviceRawDataAnchored = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceDataRawAnchoredIndex)
+  private val indexInfoDeviceHistory = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceDataProcessedIndex)
+  private val indexInfoDeviceType = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceTypeIndex)
 
   final val indexInfos: Seq[IndexInfo] = Seq(
     indexInfoDevice,

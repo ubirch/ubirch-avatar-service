@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
-import com.ubirch.services.storage.{DeviceDataRawAnchoredBulkStorage, DeviceDataRawAnchoredStorage}
+import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import org.joda.time.DateTime
@@ -34,7 +34,7 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
 
     logger.debug(s"query byId: id=$id")
 
-    DeviceDataRawAnchoredStorage.getDoc(
+    ESSimpleStorage.getDoc(
       docIndex = index,
       docType = esType,
       docId = id.toString
@@ -59,7 +59,7 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
       case Some(doc) =>
 
         val id = data.id.toString
-        DeviceDataRawAnchoredBulkStorage.storeDocBulk(
+        ESBulkStorage.storeDocBulk(
           docIndex = index,
           docType = esType,
           docId = id,
