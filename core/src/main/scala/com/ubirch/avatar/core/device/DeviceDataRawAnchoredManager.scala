@@ -9,8 +9,6 @@ import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
-import org.joda.time.DateTime
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -63,8 +61,7 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
           docIndex = index,
           docType = esType,
           docId = id,
-          doc = doc,
-          timestamp = DateTime.now.getMillis
+          doc = doc
         ) map (_.extractOpt[DeviceDataRaw])
 
       case None => Future(None)

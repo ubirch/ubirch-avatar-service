@@ -32,7 +32,8 @@ ubirch Avatar Service is responsible for:
   * /device/$DEVICE_ID/data/history/day/$DATE
 * save bitcoin tx hashes in a new index: "ubirch-device-raw-data-anchored" (only relevant for raw data with NotaryService being used)
 * update `scalatest` from 3.0.0 to 3.0.1
-* update to `elasticsearch-client-binary` version 0.5.1
+* update to `elasticsearch-client-binary` version 0.5.2
+* bulk write of `DeviceDataRaw` and `DeviceDataProcessed`
 
 ### Version 0.3.6 (2017-02-07)
 

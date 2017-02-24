@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
-import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
@@ -83,12 +83,11 @@ object DeviceDataRawManager extends MyJsonProtocol
       case Some(doc) =>
         val index = Config.esDeviceDataRawIndex
         val esType = Config.esDeviceDataRawType
-        val id = Some(data.id.toString)
-        //TODO we should use here ES bulk client
-        ESSimpleStorage.storeDoc(
+        val id = data.id.toString
+        ESBulkStorage.storeDocBulk(
           docIndex = index,
           docType = esType,
-          docIdOpt = id,
+          docId = id,
           doc = doc
         ) map (_.extractOpt[DeviceDataRaw])
 
