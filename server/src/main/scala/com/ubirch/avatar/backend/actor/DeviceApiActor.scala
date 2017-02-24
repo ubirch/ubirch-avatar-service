@@ -27,7 +27,8 @@ class DeviceApiActor extends Actor with StrictLogging {
             errorMessage = s"device already exist: $dev"
           )
         case None =>
-          DeviceManager.createWithShadow(cd.device).map {
+          //          DeviceManager.createWithShadow(cd.device).map {
+          DeviceManager.create(cd.device).map {
             case None =>
               from ! JsonErrorResponse(
                 errorType = "CreationError",

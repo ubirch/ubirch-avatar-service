@@ -2,9 +2,8 @@ package com.ubirch.avatar.awsiot.services
 
 import java.io.ByteArrayInputStream
 
-import com.amazonaws.services.iotdata.model.GetThingShadowRequest
+import com.amazonaws.services.iotdata.model.GetThingShadowResult
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -25,14 +24,16 @@ object AwsShadowService extends MyJsonProtocol with StrictLogging {
     */
   def getCurrentDeviceState(awsDeviceShadowId: String): Option[ThingShadowState] = {
     try {
-      Some(ThingShadowState(
-        inSync = getSyncState(awsDeviceShadowId),
-        desired = getDesired(awsDeviceShadowId),
-        reported = getReported(awsDeviceShadowId),
-        delta = getDelta(awsDeviceShadowId),
-        deviceLastUpdated = getTimestamp(awsDeviceShadowId),
-        avatarLastUpdated = getTimestamp(awsDeviceShadowId)
-      ))
+
+      //      Some(ThingShadowState(
+      //        inSync = getSyncState(awsDeviceShadowId),
+      //        desired = getDesired(awsDeviceShadowId),
+      //        reported = getReported(awsDeviceShadowId),
+      //        delta = getDelta(awsDeviceShadowId),
+      //        deviceLastUpdated = getTimestamp(awsDeviceShadowId),
+      //        avatarLastUpdated = getTimestamp(awsDeviceShadowId)
+      //      ))
+      Some(ThingShadowState(inSync = Some(true)))
     }
     catch {
       case e: Exception => logger.error("could not get current shadow state", e)
@@ -134,15 +135,17 @@ object AwsShadowService extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  private def getShadowResource(awsDeviceShadowId: String) = {
-    try {
-      val awsIotDataClient = AwsConf.awsIotDataClient
-      var getThingShadowRequest = new GetThingShadowRequest().withThingName(awsDeviceShadowId)
-      Some(awsIotDataClient.getThingShadow(getThingShadowRequest))
-    } catch {
-      case e: Exception =>
-        logger.error(s"error while accessing device shadow: $awsDeviceShadowId", e)
-        None
-    }
+  private def getShadowResource(awsDeviceShadowId: String): Option[GetThingShadowResult] = {
+    //@TODO AWSIOT removed
+    //    try {
+    //      val awsIotDataClient = AwsConf.awsIotDataClient
+    //      var getThingShadowRequest = new GetThingShadowRequest().withThingName(awsDeviceShadowId)
+    //      Some(awsIotDataClient.getThingShadow(getThingShadowRequest))
+    //    } catch {
+    //      case e: Exception =>
+    //        logger.error(s"error while accessing device shadow: $awsDeviceShadowId", e)
+    //        None
+    //    }
+    None
   }
 }

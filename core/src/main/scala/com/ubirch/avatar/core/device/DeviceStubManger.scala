@@ -1,6 +1,5 @@
 package com.ubirch.avatar.core.device
 
-import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.model.device.{Device, DeviceInfo}
 
 /**
@@ -10,14 +9,16 @@ object DeviceStubManger {
 
   def create(device: Device): DeviceInfo = {
 
-    val awsSyncState = AwsShadowService.getSyncState(device.awsDeviceThingId)
+    //@TODO AWSIOT removed
+    //    val awsSyncState = AwsShadowService.getSyncState(device.awsDeviceThingId)
 
     DeviceInfo(
       deviceId = device.deviceId,
       deviceName = device.deviceName,
       deviceTypeKey = device.deviceTypeKey,
       deviceLastUpdated = device.deviceLastUpdated,
-      inSync = awsSyncState
+      //      inSync = awsSyncState
+      inSync = Some(true)
     )
   }
 }
