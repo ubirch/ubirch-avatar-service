@@ -22,7 +22,6 @@ case class ThingShadowState(
                              avatarLastUpdated: Option[DateTime] = Some(DateTime.now())
                            )
 
-//@TODO Crille
 case class AvatarState(
                         deviceId: UUID,
                         inSync: Option[Boolean] = None,
