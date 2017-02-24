@@ -118,6 +118,10 @@ object ConfigKeys {
 
   final val MQTT_PASSWORD_KEY = s"$mqttPrefix.credentials.password"
 
-  final val MQTT_QUEUES_DEVICES_IN = s"$mqttPrefix.queues.devicesin"
+  final val MQTT_QUEUES_DEVICES_BASE = s"$mqttPrefix.queues.deviceBaseTopic"
+
+  final val MQTT_QUEUES_DEVICES_IN = s"$mqttPrefix.queues.devicesTopicPartIn"
+
+  final val MQTT_QUEUES_DEVICES_OUT = s"$mqttPrefix.queues.devicesTopicPartOut"
 
 }

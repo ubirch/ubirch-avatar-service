@@ -1,5 +1,7 @@
 package com.ubirch.avatar.model.aws
 
+import java.util.UUID
+
 import org.joda.time.DateTime
 import org.json4s.JValue
 
@@ -19,3 +21,16 @@ case class ThingShadowState(
                              deviceLastUpdated: Option[DateTime] = Some(DateTime.now()),
                              avatarLastUpdated: Option[DateTime] = Some(DateTime.now())
                            )
+
+//@TODO Crille
+case class AvatarState(
+                        deviceId: UUID,
+                        inSync: Option[Boolean] = None,
+                        desired: Option[JValue] = None,
+                        reported: Option[JValue] = None,
+                        delta: Option[JValue] = None,
+                        // update on device
+                        deviceLastUpdated: Option[DateTime] = Some(DateTime.now()),
+                        // update on server side
+                        avatarLastUpdated: Option[DateTime] = Some(DateTime.now())
+                      )

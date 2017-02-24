@@ -39,7 +39,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     logger.info("validateSimpleMessage")
     DeviceManager.infoByHashedHwId(hwDeviceId).map {
       case Some(device) =>
-        logger.debug(s"found device wir primaryKey: $hwDeviceId")
+        logger.debug(s"found device with primaryKey: $hwDeviceId")
         Some(device)
       case None =>
         logger.error(s"device with primaryKey=$hwDeviceId not found")
@@ -51,7 +51,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     logger.info("validateMessage")
     DeviceManager.infoByHashedHwId(hwDeviceId).map {
       case Some(device) =>
-        logger.debug(s"found device wir primaryKey: $hwDeviceId")
+        logger.debug(s"found device with primaryKey: $hwDeviceId")
         val currentAuthToken = createSimpleSignature(payload, device)
         currentAuthToken == authToken match {
           case true =>
