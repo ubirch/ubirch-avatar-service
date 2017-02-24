@@ -65,7 +65,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
       .must(QueryBuilders.rangeQuery("timestamp").gte(from))
       .must(QueryBuilders.rangeQuery("timestamp").lte(to))
 
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
     ESSimpleStorage.getDocs(
       docIndex = index,
@@ -92,7 +92,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
       .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
       .must(QueryBuilders.rangeQuery("timestamp").lt(before))
 
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
     ESSimpleStorage.getDocs(
       docIndex = index,
@@ -119,7 +119,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
       .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
       .must(QueryBuilders.rangeQuery("timestamp").gt(after))
 
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
+    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
     ESSimpleStorage.getDocs(
       docIndex = index,
