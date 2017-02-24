@@ -18,19 +18,21 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.8 (tbd)
 
-* save bitcoin tx hashes in a new index: "ubirch-device-raw-data-anchored" (only relevant for raw data with NotaryService being used)
-* update `scalatest` from 3.0.0 to 3.0.1
+* tbd
 
-### Version 0.3.7 (2017-02-22)
+### Version 0.3.7 (tbd)
 
 * upgrade lib: `Akka HTTP` from version 2.4.11 (experimental) to 10.0.3 (stable)
 * upgrade lib: `Akka` from version 2.4.11 to 2.4.17
 * upgrade rest-akka-http* modules to version 0.3.3 (add `Authorization` to CORS allow-headers)
 * new routes
-** /device/$DEVICE_ID/data/history/bydate/from/$FROM_DATE/to/$TO_DATE
-** /device/$DEVICE_ID/data/history/bydate/before/$DATE
-** /device/$DEVICE_ID/data/history/bydate/after/$DATE
-** /device/$DEVICE_ID/data/history/day/$DATE
+  * /device/$DEVICE_ID/data/history/bydate/from/$FROM_DATE/to/$TO_DATE
+  * /device/$DEVICE_ID/data/history/bydate/before/$DATE
+  * /device/$DEVICE_ID/data/history/bydate/after/$DATE
+  * /device/$DEVICE_ID/data/history/day/$DATE
+* save bitcoin tx hashes in a new index: "ubirch-device-raw-data-anchored" (only relevant for raw data with NotaryService being used)
+* update `scalatest` from 3.0.0 to 3.0.1
+* update to `elasticsearch-client-binary` version 0.5.1
 
 ### Version 0.3.6 (2017-02-07)
 

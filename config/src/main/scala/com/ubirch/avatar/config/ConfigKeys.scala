@@ -34,9 +34,6 @@ object ConfigKeys {
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
 
   // Connection
-  final val ESCLUSTERNAME = s"$esPrefix.clustername"
-  final val ESHOST = s"$esPrefix.host"
-  final val ESPORT_BINARY = s"$esPortPrefix.binary"
   final val ESPORT_REST = s"$esPortPrefix.rest"
   final val DEVICE_DATA_DB_USER = s"$esPrefix.user"
   final val DEVICE_DATA_DB_PASSWORD = s"$esPrefix.password"

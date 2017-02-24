@@ -49,21 +49,6 @@ object Config extends ConfigBase {
    ************************************************************************************************/
 
   /**
-    * @return Elasticsearch host
-    */
-  def esClusterName: String = config.getString(ConfigKeys.ESCLUSTERNAME)
-
-  /**
-    * @return Elasticsearch host
-    */
-  def esHost: String = config.getString(ConfigKeys.ESHOST)
-
-  /**
-    * @return Elasticsearch binary client port
-    */
-  def esPortBinary: Int = config.getInt(ConfigKeys.ESPORT_BINARY)
-
-  /**
     * @return Elasticsearch REST client port
     */
   def esPortHttp: Int = config.getInt(ConfigKeys.ESPORT_REST)
@@ -138,7 +123,7 @@ object Config extends ConfigBase {
     *
     * @return
     */
-  def awsIotEnvPrefix = config.getString(ConfigKeys.AWS_IOT_ENV_PREFIX)
+  def awsIotEnvPrefix: String = config.getString(ConfigKeys.AWS_IOT_ENV_PREFIX)
 
   /**
     * @return ElasticSearch size of large pages in regards to pagination

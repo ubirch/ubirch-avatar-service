@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataProcessed
-import com.ubirch.services.storage.DeviceDataProcessedStorage
+import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
@@ -44,7 +44,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
-    DeviceDataProcessedStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
+    ESSimpleStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
       res.map(_.extract[DeviceDataProcessed])
     }
 
@@ -67,7 +67,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
 
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
 
-    DeviceDataProcessedStorage.getDocs(
+    ESSimpleStorage.getDocs(
       docIndex = index,
       docType = esType,
       sort = sort,
@@ -94,7 +94,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
 
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
 
-    DeviceDataProcessedStorage.getDocs(
+    ESSimpleStorage.getDocs(
       docIndex = index,
       docType = esType,
       sort = sort,
@@ -121,7 +121,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
 
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = true))
 
-    DeviceDataProcessedStorage.getDocs(
+    ESSimpleStorage.getDocs(
       docIndex = index,
       docType = esType,
       sort = sort,
@@ -168,7 +168,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
 
     val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
 
-    DeviceDataProcessedStorage.getDocs(index, esType, query).map { res =>
+    ESSimpleStorage.getDocs(index, esType, query).map { res =>
       res.map(_.extract[DeviceDataProcessed]).headOption
     }
   }
@@ -185,7 +185,7 @@ object DeviceDataProcessedManager extends MyJsonProtocol
 
       case Some(doc) =>
         val id = Some(data.messageId.toString)
-        DeviceDataProcessedStorage.storeDoc(
+        ESSimpleStorage.storeDoc(
           docIndex = index,
           docType = esType,
           docIdOpt = id,

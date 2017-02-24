@@ -1,5 +1,3 @@
-
-
 packagedArtifacts in file(".") := Map.empty // disable publishing of root/default project
 
 // see http://www.scala-sbt.org/0.13/docs/Parallel-Execution.html for details
@@ -181,6 +179,7 @@ lazy val depModel = Seq(
 lazy val depUtil = Seq(
   ubirchCrypto,
   ubirchUtilJson,
+  ubirchElasticsearchClientBinary,
   ubirchElasticsearchUtil,
   ubirchUtilUUID % "test",
   scalatest % "test"
@@ -267,8 +266,7 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.4.1" excludeAll(
-  //lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.5.0" excludeAll(
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.5.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")

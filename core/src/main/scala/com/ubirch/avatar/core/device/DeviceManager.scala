@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
@@ -10,28 +11,29 @@ import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.model.device.{Device, DeviceInfo}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
-import com.ubirch.services.storage.DeviceStorage
+import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+
 import org.elasticsearch.index.query.QueryBuilders
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
   * author: cvandrei
   * since: 2016-09-23
   */
-object DeviceManager extends MyJsonProtocol with StrictLogging {
-
-  implicit val ec = scala.concurrent.ExecutionContext.global
+object DeviceManager extends MyJsonProtocol
+  with StrictLogging {
 
   def all(): Future[Seq[Device]] = {
-    DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
+    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
       res.map(_.extract[Device])
     }
   }
 
   def allStubs(): Future[Seq[DeviceInfo]] = {
-    DeviceStorage.getDocs(docIndex = Config.esDeviceIndex, docType = Config.esDeviceType, size = Some(100)).map { res =>
+    ESSimpleStorage.getDocs(docIndex = Config.esDeviceIndex, docType = Config.esDeviceType, size = Some(100)).map { res =>
       res.map { jv =>
         DeviceStubManger.create(device = jv.extract[Device])
       }
@@ -56,7 +58,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     Json4sUtil.any2jvalue(devWithDefaults) match {
 
       case Some(devJval) =>
-        DeviceStorage.storeDoc(
+        ESSimpleStorage.storeDoc(
           docIndex = Config.esDeviceIndex,
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
@@ -94,7 +96,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     Json4sUtil.any2jvalue(device) match {
 
       case Some(devJval) =>
-        val dev = DeviceStorage.storeDoc(
+        val dev = ESSimpleStorage.storeDoc(
           docIndex = Config.esDeviceIndex,
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
@@ -114,7 +116,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
 
     AwsShadowUtil.deleteShadow(device.awsDeviceThingId)
 
-    DeviceStorage.deleteDoc(Config.esDeviceIndex, Config.esDeviceType, device.deviceId).map {
+    ESSimpleStorage.deleteDoc(Config.esDeviceIndex, Config.esDeviceType, device.deviceId).map {
       case true =>
 
         Some(device)
@@ -126,7 +128,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
 
   def infoByHwId(hwDeviceId: String): Future[Option[Device]] = {
     val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId)
-    DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
+    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
       l.headOption match {
         case Some(jval) =>
           jval.extractOpt[Device]
@@ -138,7 +140,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
 
   def infoByHashedHwId(hashedHwDeviceId: String): Future[Option[Device]] = {
     val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
-    DeviceStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
+    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
       l.headOption match {
         case Some(jval) =>
           jval.extractOpt[Device]
@@ -154,7 +156,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
   }
 
   def info(deviceId: String): Future[Option[Device]] = {
-    DeviceStorage.getDoc(Config.esDeviceIndex, Config.esDeviceType, deviceId).map {
+    ESSimpleStorage.getDoc(Config.esDeviceIndex, Config.esDeviceType, deviceId).map {
       case Some(resJval) =>
         Some(resJval.extract[Device])
       case None =>

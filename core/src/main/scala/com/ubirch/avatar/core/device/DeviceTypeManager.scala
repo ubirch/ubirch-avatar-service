@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceType
 import com.ubirch.avatar.util.model.DeviceTypeUtil
-import com.ubirch.services.storage.DeviceTypeStorage
+import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 
 import org.elasticsearch.index.query.QueryBuilders
@@ -30,7 +30,7 @@ object DeviceTypeManager extends StrictLogging {
     */
   def all(): Future[Set[DeviceType]] = {
 
-    DeviceTypeStorage.getDocs(index, esType) map { res =>
+    ESSimpleStorage.getDocs(index, esType) map { res =>
       res.map(_.extract[DeviceType]).toSet
     }
 
@@ -46,7 +46,7 @@ object DeviceTypeManager extends StrictLogging {
 
     val query = Some(QueryBuilders.termQuery("key", key))
 
-    DeviceTypeStorage.getDocs(index, esType, query) map { res =>
+    ESSimpleStorage.getDocs(index, esType, query) map { res =>
       res.map(_.extract[DeviceType]).headOption
     }
 
@@ -69,12 +69,12 @@ object DeviceTypeManager extends StrictLogging {
           case Some(dbRecord) => Future(None)
 
           case None =>
-            DeviceTypeStorage.storeDoc(
+            ESSimpleStorage.storeDoc(
               docIndex = index,
               docType = esType,
               docIdOpt = Some(key),
               doc = doc
-            ) map(_.extractOpt[DeviceType])
+            ) map (_.extractOpt[DeviceType])
 
         }
 
@@ -100,12 +100,12 @@ object DeviceTypeManager extends StrictLogging {
         getByKey(key) flatMap {
 
           case Some(_) =>
-            DeviceTypeStorage.storeDoc(
+            ESSimpleStorage.storeDoc(
               docIndex = index,
               docType = esType,
               docIdOpt = Some(key),
               doc = doc
-            ) map(_.extractOpt[DeviceType])
+            ) map (_.extractOpt[DeviceType])
 
           case None => Future(None)
 
