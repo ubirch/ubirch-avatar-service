@@ -55,13 +55,16 @@ function build_container() {
   sed -i.bak "s%@@SOURCE@@%$SOURCE%g" TMP/Dockerfile
   sed -i.bak "s%@@TARGET@@%$TARGET%g" TMP/Dockerfile
   cd TMP
-  docker build -t ubirch/ubirch-avatar-service .
+  docker build -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL .
+
   if [ $? -ne 0 ]; then
     echo "Docker build failed"
     exit 1
   fi
+
   # push Docker image
   docker push ubirch/ubirch-avatar-service
+  docker push ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL
   if [ $? -ne 0 ]; then
     echo "Docker push failed"
     exit 1
