@@ -16,7 +16,7 @@ trait WelcomeRoute extends MyJsonProtocol {
 
     get {
       complete {
-        JsonResponse(message = "Welcome to the ubirchAvatarService (B135)")
+        JsonResponse(message = "Welcome to the ubirchAvatarService (V0.3.7)")
       }
     }
   }
