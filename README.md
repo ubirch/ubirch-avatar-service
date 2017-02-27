@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.8 (tbd)
 
-* tbd
+* add AvatarStateManager
 
 ### Version 0.3.7 (tbd)
 
@@ -585,6 +585,19 @@ The service requires the following mappings for things to work as expected:
         "devicetype" : {
           "properties" : {
             "key" : {
+              "type" : "string",
+              "index": "not_analyzed"
+            }
+          }
+        }
+      }
+    }'
+
+    curl -XPOST 'localhost:9200/ubirch-avatar-state' -H "Content-Type: application/json" -d '{
+      "mappings": {
+        "avatarstate" : {
+          "properties" : {
+            "deviceId" : {
               "type" : "string",
               "index": "not_analyzed"
             }

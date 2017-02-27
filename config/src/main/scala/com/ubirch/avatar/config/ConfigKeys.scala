@@ -32,6 +32,7 @@ object ConfigKeys {
   final val esDeviceRawDataAnchoredPrefix = s"$esPrefix.devicerawdataAnchored"
   final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
+  final val esAvatarStatePrefix = s"$esPrefix.avatarState"
 
   // Connection
   final val ESPORT_REST = s"$esPortPrefix.rest"
@@ -57,6 +58,10 @@ object ConfigKeys {
   // Device Type
   final val ES_DEVICE_TYPE_INDEX = s"$esDeviceTypePrefix.index"
   final val ES_DEVICE_TYPE_TYPE = s"$esDeviceTypePrefix.type"
+
+  // Avatar State
+  final val ES_AVATAR_STATE_INDEX = s"$esAvatarStatePrefix.index"
+  final val ES_AVATAR_STATE_TYPE = s"$esAvatarStatePrefix.type"
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
