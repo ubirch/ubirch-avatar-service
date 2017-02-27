@@ -30,6 +30,7 @@ case class DeviceDataRaw(
                           s: Option[String] = None,
                           uuid: Option[String] = None,
                           p: JValue,
+                          chainedHash: Option[String] = None, // MD5 hash of signature
                           txHash: Option[String] = None // related bitcoin transaction hash
                         ) {
   override def hashCode(): Int = id.hashCode()

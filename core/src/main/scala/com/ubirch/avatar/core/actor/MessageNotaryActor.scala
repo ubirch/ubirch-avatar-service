@@ -7,6 +7,10 @@ import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.notary.client.NotaryClient
 
+import com.roundeights.hasher.Implicits._
+import scala.language.postfixOps
+
+
 /**
   * author: derMicha
   * since: 2016-10-28
@@ -27,14 +31,14 @@ class MessageNotaryActor extends Actor
       drd.s match {
         case Some(payloadHash) =>
           NotaryClient.notarize(
-            blockHash = payloadHash,
+            blockHash = payloadHash.md5,
             dataIsHash = false
           ) match {
 
             case Some(resp) =>
               val txHash = resp.hash
               log.info(s"btx hash for message ${drd.id} is $txHash")
-              val anchored = drd.copy(txHash = Some(txHash))
+              val anchored = drd.copy(chainedHash = Some(payloadHash.md5), txHash = Some(txHash))
               persistenceActor ! AnchoredRawData(anchored)
 
             case None => log.error(s"notarize failed for: rawData.id=${drd.id}")
