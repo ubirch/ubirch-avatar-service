@@ -130,10 +130,10 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     */
   def checkNotaryUsage(device: Device): Boolean = {
     if (device.deviceProperties.isDefined) {
-      (device.deviceProperties.get \ Const.BLOCKC).extractOpt[String] match {
-        case Some(ptx) if Const.BOOL_TRUE == ptx =>
+      (device.deviceProperties.get \ Const.BLOCKC).extractOpt[String].getOrElse(Const.BOOL_FALSE) match {
+        case Const.BOOL_TRUE =>
           true
-        case None =>
+        case _ =>
           false
       }
     }

@@ -1,8 +1,7 @@
 package com.ubirch.transformer
 
-import com.ubirch.avatar.util.actor.ActorNames
-
 import akka.actor.{ActorSystem, Props}
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.actor.{AwsConsumerActor, MqttDeviceConsumerActor}
 
 /**

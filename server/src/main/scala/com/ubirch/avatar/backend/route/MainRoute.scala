@@ -13,7 +13,8 @@ class MainRoute {
   val welcome = new WelcomeRoute {}
 
   val device = new DeviceRoute {}
-  val deviceUpdate = new DeviceUpdateRoute {}
+  //  val deviceUpdate = new DeviceUpdateRoute {}
+  val deviceUpdate = new DeviceUpdatePlainRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStub = new DeviceStubRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
