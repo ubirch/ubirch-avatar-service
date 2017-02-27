@@ -77,6 +77,12 @@ function build_container() {
 
 }
 
+function container_tag () {
+    docker pull ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL
+    docker tag ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL ubirch/ubirch-avatar-service:latest
+    docker push ubirch/ubirch-avatar-service:latest
+
+}
 
 case "$1" in
     build)
@@ -90,8 +96,11 @@ case "$1" in
     containerbuild)
         build_container
         ;;
+    containertag)
+        container_tag
+        ;;
     *)
-        echo "Usage: $0 {build|assembly|containerbuild}"
+        echo "Usage: $0 {build|assembly|containerbuild|containertag}"
         exit 1
 esac
 
