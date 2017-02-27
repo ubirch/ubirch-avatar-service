@@ -15,18 +15,20 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
   private val indexInfoDeviceRawDataAnchored = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceDataRawAnchoredIndex)
   private val indexInfoDeviceHistory = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceDataProcessedIndex)
   private val indexInfoDeviceType = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceTypeIndex)
+  private val indexInfoAvatarState = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esAvatarStateIndex)
 
   final val indexInfos: Seq[IndexInfo] = Seq(
     indexInfoDevice,
     indexInfoDeviceRawData,
     indexInfoDeviceRawDataAnchored,
     indexInfoDeviceHistory,
-    indexInfoDeviceType
+    indexInfoDeviceType,
+    indexInfoAvatarState
   )
 
   private val deviceMappings: Mapping = {
 
-    val deviceMapping =
+    val mapping =
       s"""{
          |  "mappings": {
          |    "${Config.esDeviceType}" : {
@@ -49,13 +51,13 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |}""".stripMargin
     val url = indexInfoDevice.url
 
-    Mapping(url, deviceMapping)
+    Mapping(url, mapping)
 
   }
 
   private val deviceDataRawMappings: Mapping = {
 
-    val deviceDataRawMapping =
+    val mapping =
       s"""{
          |  "mappings": {
          |    "${Config.esDeviceDataRawType}" : {
@@ -78,13 +80,13 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |}""".stripMargin
     val url = indexInfoDeviceRawData.url
 
-    Mapping(url, deviceDataRawMapping)
+    Mapping(url, mapping)
 
   }
 
   private val deviceDataRawAnchoredMappings: Mapping = {
 
-    val deviceDataRawMapping =
+    val mapping =
       s"""{
          |  "mappings": {
          |    "${Config.esDeviceDataRawAnchoredType}" : {
@@ -107,13 +109,13 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |}""".stripMargin
     val url = indexInfoDeviceRawDataAnchored.url
 
-    Mapping(url, deviceDataRawMapping)
+    Mapping(url, mapping)
 
   }
 
   private val deviceDataProcessedMappings: Mapping = {
 
-    val deviceDataProcessedMapping =
+    val mapping =
       s"""{
          |  "mappings": {
          |    "${Config.esDeviceDataProcessedType}" : {
@@ -148,13 +150,13 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |}""".stripMargin
     val url = indexInfoDeviceHistory.url
 
-    Mapping(url, deviceDataProcessedMapping)
+    Mapping(url, mapping)
 
   }
 
   private val deviceTypeMappings: Mapping = {
 
-    val deviceTypeMapping =
+    val mapping =
       s"""{
          |  "mappings": {
          |    "${Config.esDeviceTypeType}" : {
@@ -169,7 +171,28 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |}""".stripMargin
     val url = indexInfoDeviceType.url
 
-    Mapping(url, deviceTypeMapping)
+    Mapping(url, mapping)
+
+  }
+
+  private val avatarStateMappings: Mapping = {
+
+    val mapping =
+      s"""{
+         |  "mappings": {
+         |    "${Config.esAvatarStateType}" : {
+         |      "properties" : {
+         |        "deviceId" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
+         |        }
+         |      }
+         |    }
+         |  }
+         |}""".stripMargin
+    val url = indexInfoAvatarState.url
+
+    Mapping(url, mapping)
 
   }
 
@@ -178,7 +201,8 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
     deviceDataRawMappings,
     deviceDataRawAnchoredMappings,
     deviceDataProcessedMappings,
-    deviceTypeMappings
+    deviceTypeMappings,
+    avatarStateMappings
   )
 
 }
