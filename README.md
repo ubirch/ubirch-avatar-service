@@ -16,13 +16,7 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
-### Version 0.3.8 (tbd)
-
-* add AvatarStateManager
-* update notary client to 0.3.0
-* remember `txHashLink` when writing data to index `ubirch-device-raw-data-anchored`
-
-### Version 0.3.7 (tbd)
+### Version 0.3.7 (2017-02-28)
 
 * upgrade lib: `Akka HTTP` from version 2.4.11 (experimental) to 10.0.3 (stable)
 * upgrade lib: `Akka` from version 2.4.11 to 2.4.17
@@ -36,6 +30,7 @@ ubirch Avatar Service is responsible for:
 * update `scalatest` from 3.0.0 to 3.0.1
 * update to `elasticsearch-client-binary` version 0.5.2
 * bulk write of `DeviceDataRaw` and `DeviceDataProcessed`
+* add AvatarStateManager
 
 ### Version 0.3.6 (2017-02-07)
 
