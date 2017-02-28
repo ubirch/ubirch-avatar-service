@@ -184,24 +184,76 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
   }
 
-  //  feature("upsert()") {
-  //
-  //    ignore("index does not exist -> upsert succeeds but we can't find the record afterwards (mappings are missing)") {
-  //
-  //      // prepare
-  //      deleteIndexes()
-  //      val device = DummyDevices.minimalDevice()
-  //      val deviceId = UUIDUtil.fromString(device.deviceId)
-  //      val avatarState = AvatarState(deviceId = deviceId)
-  //
-  //      // test
-  //
-  //      // TODO
-  //
-  //    }
-  //
-  //    // TODO test cases
-  //
-  //  }
+  feature("upsert()") {
+
+    scenario("index does not exist -> upsert succeeds and we can find the record afterwards") {
+
+      // prepare
+      deleteIndexes()
+      val device = DummyDevices.minimalDevice()
+      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val avatarState = AvatarState(deviceId = deviceId)
+
+      // test
+      AvatarStateManager.upsert(avatarState) flatMap { result =>
+
+        // verify
+        result should be(Some(avatarState))
+
+        Thread.sleep(2000)
+        AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
+
+      }
+
+    }
+
+    scenario("index exists; record does not -> upsert succeeds") {
+
+      // prepare
+      val device = DummyDevices.minimalDevice()
+      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val avatarState = AvatarState(deviceId = deviceId)
+
+      // test
+      AvatarStateManager.upsert(avatarState) flatMap { result =>
+
+        // verify
+        result should be(Some(avatarState))
+
+        Thread.sleep(2000)
+        AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
+
+      }
+
+    }
+
+    scenario("record exists -> upsert succeeds") {
+
+      // prepare
+      val device = DummyDevices.minimalDevice()
+      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val avatarState = AvatarState(deviceId = deviceId)
+      AvatarStateManager.upsert(avatarState) flatMap { initialUpsertOpt =>
+
+        val initialUpsert = initialUpsertOpt.get
+        initialUpsert should be(avatarState)
+        val toUpdate = initialUpsert.copy(avatarLastUpdated = Some(initialUpsert.avatarLastUpdated.get.plusDays(1)))
+
+        // test
+        AvatarStateManager.upsert(toUpdate) flatMap { result =>
+
+          // verify
+          result should be(Some(toUpdate))
+
+          Thread.sleep(2000)
+          AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(toUpdate)))
+
+        }
+
+      }
+
+    }
+
+  }
 
 }
