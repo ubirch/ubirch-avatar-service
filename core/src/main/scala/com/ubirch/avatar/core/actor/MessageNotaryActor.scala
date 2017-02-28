@@ -29,6 +29,7 @@ class MessageNotaryActor extends Actor
       //val payloadStr = Json4sUtil.jvalue2String(drd.p)
 
       drd.s match {
+
         case Some(payloadHash) =>
           NotaryClient.notarize(
             blockHash = payloadHash.md5,
@@ -37,8 +38,13 @@ class MessageNotaryActor extends Actor
 
             case Some(resp) =>
               val txHash = resp.hash
-              log.info(s"btx hash for message ${drd.id} is $txHash")
-              val anchored = drd.copy(chainedHash = Some(payloadHash.md5), txHash = Some(txHash))
+              val txHashLink = resp.txHashLink
+              log.info(s"btx hash for message ${drd.id} is $txHash ($txHashLink)")
+              val anchored = drd.copy(
+                chainedHash = Some(payloadHash.md5),
+                txHash = Some(txHash),
+                txHashLink = Some(txHashLink)
+              )
               persistenceActor ! AnchoredRawData(anchored)
 
             case None => log.error(s"notarize failed for: rawData.id=${drd.id}")

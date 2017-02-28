@@ -32,35 +32,43 @@ class MessageNotaryActorSpec extends ElasticsearchSpec {
       notaryActor ! rawBefore
 
       // verify
-      Thread.sleep(3000)
+      Thread.sleep(4000)
+
       val rawAfterOpt = Await.result(DeviceDataRawAnchoredManager.byId(rawBefore.id), 3 seconds)
       rawAfterOpt should be('isDefined)
+
       val rawAfter = rawAfterOpt.get
+      rawAfter.chainedHash should be('isDefined)
       rawAfter.txHash should be('isDefined)
-      rawAfter.copy(txHash = None) should be(rawBefore)
+      rawAfter.txHashLink should be('isDefined)
+      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None) should be(rawBefore)
 
     }
 
-    scenario("incoming DeviceDataRaw has a txHash (which is ignored); is written to Elasticsearch") {
+    scenario("incoming DeviceDataRaw has a txHash and txHashLink (which are ignored); is written to Elasticsearch") {
 
       // prepare
       implicit val system = ActorSystem()
       val notaryActor = TestActorRef(new MessageNotaryActor)
 
       val device = DummyDevices.minimalDevice()
-      val rawBefore = DummyDeviceDataRaw.data(device = device)().copy(txHash = Some("foo"))
+      val rawBefore = DummyDeviceDataRaw.data(device = device)().copy(txHash = Some("foo"), txHashLink = Some("http://example.com/foo"))
 
       // test
       notaryActor ! rawBefore
 
       // verify
-      Thread.sleep(3000)
+      Thread.sleep(4000)
+
       val rawAfterOpt = Await.result(DeviceDataRawAnchoredManager.byId(rawBefore.id), 3 seconds)
       rawAfterOpt should be('isDefined)
       val rawAfter = rawAfterOpt.get
+
+      rawAfter.chainedHash should be('isDefined)
       rawAfter.txHash should be('isDefined)
+      rawAfter.txHashLink should be('isDefined)
       rawAfter.txHash should not be rawBefore.txHash
-      rawAfter.copy(txHash = None) should be(rawBefore.copy(txHash = None))
+      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None) should be(rawBefore.copy(txHash = None))
 
     }
 

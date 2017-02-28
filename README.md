@@ -19,6 +19,8 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.8 (tbd)
 
 * add AvatarStateManager
+* update notary client to 0.3.0
+* remember `txHashLink` when writing data to index `ubirch-device-raw-data-anchored`
 
 ### Version 0.3.7 (tbd)
 

@@ -306,7 +306,7 @@ lazy val ubirchUtilResponse = ubirchUtilG %% "response-util" % "0.1.2" excludeAl
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.2.6" excludeAll(
+lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.0" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
