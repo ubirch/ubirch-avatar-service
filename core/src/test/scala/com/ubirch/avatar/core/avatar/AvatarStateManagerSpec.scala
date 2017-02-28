@@ -26,17 +26,26 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       Await.result(AvatarStateManager.byDeviceId(UUIDUtil.uuid), 1 seconds) should be(None)
     }
 
-    ignore("id exists") {
-      // TODO implement test
+    scenario("deviceId exists") {
+
+      // prepare
+      val device = DummyDevices.minimalDevice()
+      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val avatarState = AvatarState(deviceId = deviceId)
+      val created = Await.result(AvatarStateManager.create(avatarState), 1 second)
+      Thread.sleep(1500)
+
+      // test && verify
+      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 second) should be(created)
+
     }
 
   }
 
   feature("create") {
 
-    ignore("index does not exist -> create is successful (record can't be found due to missing mappings though)") {
+    scenario("index does not exist -> create is successful (and record can be found)") {
 
-      // TODO test is broken --> FIX
       // prepare
       deleteIndexes()
       val device = DummyDevices.minimalDevice()
@@ -50,7 +59,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       result should be(Some(avatarState))
 
       Thread.sleep(1300)
-      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 second) should be(None)
+      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 second) should be(result)
 
     }
 
@@ -87,8 +96,6 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       Await.result(AvatarStateManager.create(avatarState), 1 second) should be(None)
 
     }
-
-    // TODO remaining test cases
 
   }
 
