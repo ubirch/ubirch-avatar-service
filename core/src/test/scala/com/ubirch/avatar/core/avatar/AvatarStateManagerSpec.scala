@@ -2,28 +2,26 @@ package com.ubirch.avatar.core.avatar
 
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.aws.AvatarState
-import com.ubirch.avatar.test.base.ElasticsearchSpec
+import com.ubirch.avatar.test.base.ElasticsearchSpecAsync
 import com.ubirch.util.uuid.UUIDUtil
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
   * author: cvandrei
   * since: 2017-02-27
   */
-class AvatarStateManagerSpec extends ElasticsearchSpec {
+class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
   feature("byDeviceId()") {
 
     scenario("index does not exist") {
       deleteIndexes()
-      Await.result(AvatarStateManager.byDeviceId(UUIDUtil.uuid), 1 second) should be(None)
+      AvatarStateManager.byDeviceId(UUIDUtil.uuid) map (_ should be(None))
     }
 
     scenario("index exists; record does not") {
-      Await.result(AvatarStateManager.byDeviceId(UUIDUtil.uuid), 1 seconds) should be(None)
+      AvatarStateManager.byDeviceId(UUIDUtil.uuid) map (_ should be(None))
     }
 
     scenario("deviceId exists") {
@@ -32,11 +30,17 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       val device = DummyDevices.minimalDevice()
       val deviceId = UUIDUtil.fromString(device.deviceId)
       val avatarState = AvatarState(deviceId = deviceId)
-      val created = Await.result(AvatarStateManager.create(avatarState), 1 second)
-      Thread.sleep(1500)
 
-      // test && verify
-      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 second) should be(created)
+      AvatarStateManager.create(avatarState) flatMap { created =>
+
+        Thread.sleep(1500)
+
+        // test && verify
+        AvatarStateManager.byDeviceId(deviceId) map { result =>
+          result should be(created)
+        }
+
+      }
 
     }
 
@@ -53,13 +57,15 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       val avatarState = AvatarState(deviceId = deviceId)
 
       // test
-      val result = Await.result(AvatarStateManager.create(avatarState), 1 second)
+      AvatarStateManager.create(avatarState) flatMap { result =>
 
-      // verify
-      result should be(Some(avatarState))
+        // verify
+        result should be(Some(avatarState))
 
-      Thread.sleep(1300)
-      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 second) should be(result)
+        Thread.sleep(1300)
+        AvatarStateManager.byDeviceId(deviceId) map (_ should be(result))
+
+      }
 
     }
 
@@ -71,13 +77,16 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       val avatarState = AvatarState(deviceId = deviceId)
 
       // test
-      val result = Await.result(AvatarStateManager.create(avatarState), 2 second)
+      AvatarStateManager.create(avatarState) flatMap { result =>
 
-      // verify
-      result should be(Some(avatarState))
+        // verify
+        result should be(Some(avatarState))
 
-      Thread.sleep(1300)
-      Await.result(AvatarStateManager.byDeviceId(deviceId), 1 second) should be(Some(avatarState))
+        Thread.sleep(1300)
+        AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
+
+      }
+
 
     }
 
@@ -88,12 +97,15 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       val deviceId = UUIDUtil.fromString(device.deviceId)
       val avatarState = AvatarState(deviceId = deviceId)
 
-      val prepareResult = Await.result(AvatarStateManager.create(avatarState), 1 second)
-      prepareResult should be(Some(avatarState))
-      Thread.sleep(1300)
+      AvatarStateManager.create(avatarState) flatMap { prepareResult =>
 
-      // test && verify
-      Await.result(AvatarStateManager.create(avatarState), 1 second) should be(None)
+        prepareResult should be(Some(avatarState))
+        Thread.sleep(1300)
+
+        // test && verify
+        AvatarStateManager.create(avatarState) map (_ should be(None))
+
+      }
 
     }
 
@@ -110,13 +122,15 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       val avatarState = AvatarState(deviceId = deviceId)
 
       // test
-      val result = Await.result(AvatarStateManager.update(avatarState), 2 seconds)
+      AvatarStateManager.update(avatarState) flatMap { result =>
 
-      // verify
-      result should be(None)
+        // verify
+        result should be(None)
 
-      Thread.sleep(2000)
-      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 seconds) should be(None)
+        Thread.sleep(2000)
+        AvatarStateManager.byDeviceId(deviceId) map (_ should be(None))
+
+      }
 
     }
 
@@ -128,13 +142,15 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       val avatarState = AvatarState(deviceId = deviceId)
 
       // test
-      val result = Await.result(AvatarStateManager.update(avatarState), 2 seconds)
+      AvatarStateManager.update(avatarState) flatMap { result =>
 
-      // verify
-      result should be(None)
+        // verify
+        result should be(None)
 
-      Thread.sleep(2000)
-      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 seconds) should be(None)
+        Thread.sleep(2000)
+        AvatarStateManager.byDeviceId(deviceId) map (_ should be(None))
+
+      }
 
     }
 
@@ -144,28 +160,48 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
       val device = DummyDevices.minimalDevice()
       val deviceId = UUIDUtil.fromString(device.deviceId)
       val avatarState = AvatarState(deviceId = deviceId)
-      val created = Await.result(AvatarStateManager.create(avatarState), 2 seconds).get
-      Thread.sleep(1500)
+      AvatarStateManager.create(avatarState) flatMap { createdOpt =>
 
-      val forUpdate = created.copy(avatarLastUpdated = Some(created.avatarLastUpdated.get.plusDays(1)))
+        val created = createdOpt.get
+        Thread.sleep(1500)
+        val forUpdate = created.copy(avatarLastUpdated = Some(created.avatarLastUpdated.get.plusDays(1)))
 
-      // test
-      val result = Await.result(AvatarStateManager.update(forUpdate), 2 seconds)
+        // test
+        AvatarStateManager.update(forUpdate) flatMap { result =>
 
-      // verify
-      result should be(Some(forUpdate))
+          // verify
+          result should be(Some(forUpdate))
 
-      Thread.sleep(3000)
-      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 seconds) should be(result)
+          Thread.sleep(3000)
+          AvatarStateManager.byDeviceId(deviceId) map (_ should be(result))
+
+        }
+
+
+      }
 
     }
 
   }
 
-  ignore("upsert()") {
-
-    // TODO test cases
-
-  }
+  //  feature("upsert()") {
+  //
+  //    ignore("index does not exist -> upsert succeeds but we can't find the record afterwards (mappings are missing)") {
+  //
+  //      // prepare
+  //      deleteIndexes()
+  //      val device = DummyDevices.minimalDevice()
+  //      val deviceId = UUIDUtil.fromString(device.deviceId)
+  //      val avatarState = AvatarState(deviceId = deviceId)
+  //
+  //      // test
+  //
+  //      // TODO
+  //
+  //    }
+  //
+  //    // TODO test cases
+  //
+  //  }
 
 }
