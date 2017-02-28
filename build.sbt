@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.9-SNAPSHOT",
+  version := "0.3.9",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -306,7 +306,7 @@ lazy val ubirchUtilResponse = ubirchUtilG %% "response-util" % "0.1.2" excludeAl
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.0" excludeAll(
+lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
