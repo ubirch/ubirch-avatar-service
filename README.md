@@ -16,6 +16,10 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
+### Version 0.3.10 (tbd)
+
+* tbd
+
 ### Version 0.3.9 (2017-02-28)
 
 * update dependency `com.ubirch.notary:client:0.3.0` to 0.3.1
@@ -65,10 +69,10 @@ ubirch Avatar Service is responsible for:
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.9"
+  "com.ubirch.avatar" %% "aws" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -76,11 +80,11 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.9"
+  "com.ubirch.avatar" %% "client" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -91,7 +95,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.9"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -99,10 +103,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.9"
+  "com.ubirch.avatar" %% "config" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -110,10 +114,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.9"
+  "com.ubirch.avatar" %% "core" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -121,10 +125,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.9"
+  "com.ubirch.avatar" %% "model" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -132,11 +136,11 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.9"
+  "com.ubirch.avatar" %% "server" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -144,12 +148,12 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("hseeberger", "maven"),
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.9"
+  "com.ubirch.avatar" %% "test-base" % "0.3.10-SNAPSHOT"
 )
 ```
 
@@ -157,10 +161,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("releases")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.9"
+  "com.ubirch.avatar" %% "util" % "0.3.10-SNAPSHOT"
 )
 ```
 
