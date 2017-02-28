@@ -67,7 +67,6 @@ object AvatarStateManager extends MyJsonProtocol
     */
   def update(avatarState: AvatarState): Future[Option[AvatarState]] = {
 
-    // TODO automated tests
     logger.debug(s"update avatarState: $avatarState")
 
     byDeviceId(avatarState.deviceId) flatMap {
@@ -85,7 +84,6 @@ object AvatarStateManager extends MyJsonProtocol
     */
   def upsert(state: AvatarState): Future[Option[AvatarState]] = {
 
-    // TODO automated tests
     Json4sUtil.any2jvalue(state) match {
 
       case Some(doc) =>

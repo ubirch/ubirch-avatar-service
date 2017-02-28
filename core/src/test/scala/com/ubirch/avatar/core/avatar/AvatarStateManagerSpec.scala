@@ -99,4 +99,73 @@ class AvatarStateManagerSpec extends ElasticsearchSpec {
 
   }
 
+  feature("update()") {
+
+    scenario("index does not exist -> update fails") {
+
+      // prepare
+      deleteIndexes()
+      val device = DummyDevices.minimalDevice()
+      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val avatarState = AvatarState(deviceId = deviceId)
+
+      // test
+      val result = Await.result(AvatarStateManager.update(avatarState), 2 seconds)
+
+      // verify
+      result should be(None)
+
+      Thread.sleep(2000)
+      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 seconds) should be(None)
+
+    }
+
+    scenario("index exists; record does not -> update fails") {
+
+      // prepare
+      val device = DummyDevices.minimalDevice()
+      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val avatarState = AvatarState(deviceId = deviceId)
+
+      // test
+      val result = Await.result(AvatarStateManager.update(avatarState), 2 seconds)
+
+      // verify
+      result should be(None)
+
+      Thread.sleep(2000)
+      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 seconds) should be(None)
+
+    }
+
+    scenario("record exists -> update succeeds") {
+
+      // prepare
+      val device = DummyDevices.minimalDevice()
+      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val avatarState = AvatarState(deviceId = deviceId)
+      val created = Await.result(AvatarStateManager.create(avatarState), 2 seconds).get
+      Thread.sleep(1500)
+
+      val forUpdate = created.copy(avatarLastUpdated = Some(created.avatarLastUpdated.get.plusDays(1)))
+
+      // test
+      val result = Await.result(AvatarStateManager.update(forUpdate), 2 seconds)
+
+      // verify
+      result should be(Some(forUpdate))
+
+      Thread.sleep(3000)
+      Await.result(AvatarStateManager.byDeviceId(deviceId), 2 seconds) should be(result)
+
+    }
+
+  }
+
+  ignore("upsert()") {
+
+    // TODO test cases
+
+  }
+
 }
