@@ -16,6 +16,11 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
+### Version 0.3.8 (tbd)
+
+* update dependency `com.ubirch.notary:client:0.2.6` to 0.3.0
+* remember `txHashLink` when writing data to index `ubirch-device-raw-data-anchored`
+
 ### Version 0.3.7 (2017-02-28)
 
 * upgrade lib: `Akka HTTP` from version 2.4.11 (experimental) to 10.0.3 (stable)
@@ -59,7 +64,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "aws" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -71,7 +76,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "client" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -82,7 +87,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -93,7 +98,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "config" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -104,7 +109,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "core" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -115,7 +120,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "model" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -127,7 +132,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "server" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -140,7 +145,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "test-base" % "0.3.8-SNAPSHOT"
 )
 ```
 
@@ -151,7 +156,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.7-SNAPSHOT"
+  "com.ubirch.avatar" %% "util" % "0.3.8-SNAPSHOT"
 )
 ```
 
