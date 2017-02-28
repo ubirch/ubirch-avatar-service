@@ -1,13 +1,15 @@
 package com.ubirch.avatar.core.actor
 
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.notary.client.NotaryClient
-import com.ubirch.util.json.Json4sUtil
 
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.routing.RoundRobinPool
+import com.roundeights.hasher.Implicits._
+import scala.language.postfixOps
+
 
 /**
   * author: derMicha
@@ -23,21 +25,27 @@ class MessageNotaryActor extends Actor
     case drd: DeviceDataRaw =>
 
       log.debug(s"received message: $drd")
-      val payloadStr = Json4sUtil.jvalue2String(drd.p)
 
-      NotaryClient.notarize(
-        blockHash = payloadStr,
-        dataIsHash = false
-      ) match {
+      //val payloadStr = Json4sUtil.jvalue2String(drd.p)
 
-        case Some(resp) =>
-          val txHash = resp.hash
-          log.info(s"btx hash for message ${drd.id} is $txHash")
-          val anchored = drd.copy(txHash = Some(txHash))
-          persistenceActor ! AnchoredRawData(anchored)
+      drd.s match {
+        case Some(payloadHash) =>
+          NotaryClient.notarize(
+            blockHash = payloadHash.md5,
+            dataIsHash = false
+          ) match {
 
-        case None => log.error(s"notarize failed for: rawData.id=${drd.id}")
+            case Some(resp) =>
+              val txHash = resp.hash
+              log.info(s"btx hash for message ${drd.id} is $txHash")
+              val anchored = drd.copy(chainedHash = Some(payloadHash.md5), txHash = Some(txHash))
+              persistenceActor ! AnchoredRawData(anchored)
 
+            case None => log.error(s"notarize failed for: rawData.id=${drd.id}")
+
+          }
+        case _ =>
+          log.error("no payload hash exist")
       }
 
     case _ => log.error("received unknown message")
