@@ -2,7 +2,7 @@ package com.ubirch.avatar.model.aws
 
 import java.util.UUID
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 
 /**
@@ -29,7 +29,7 @@ case class AvatarState(
                         reported: Option[JValue] = None,
                         delta: Option[JValue] = None,
                         // update on device
-                        deviceLastUpdated: Option[DateTime] = Some(DateTime.now()),
+                        deviceLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)),
                         // update on server side
-                        avatarLastUpdated: Option[DateTime] = Some(DateTime.now())
+                        avatarLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC))
                       )

@@ -30,7 +30,6 @@ object AvatarStateManager extends MyJsonProtocol
     */
   def byDeviceId(deviceId: UUID): Future[Option[AvatarState]] = {
 
-    // TODO automated tests
     logger.debug(s"query byDeviceId: deviceId=$deviceId")
 
     ESSimpleStorage.getDoc(
@@ -52,7 +51,6 @@ object AvatarStateManager extends MyJsonProtocol
     */
   def create(avatarState: AvatarState): Future[Option[AvatarState]] = {
 
-    // TODO automated tests
     logger.debug(s"create avatarState: $avatarState")
     byDeviceId(avatarState.deviceId) flatMap {
       case Some(_) => Future(None)
