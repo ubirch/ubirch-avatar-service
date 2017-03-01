@@ -41,7 +41,8 @@ class MessageNotaryActorSpec extends ElasticsearchSpec {
       rawAfter.chainedHash should be('isDefined)
       rawAfter.txHash should be('isDefined)
       rawAfter.txHashLink should be('isDefined)
-      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None) should be(rawBefore)
+      rawAfter.txHashLinkHtml should be('isDefined)
+      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None, txHashLinkHtml = None) should be(rawBefore)
 
     }
 
@@ -67,8 +68,9 @@ class MessageNotaryActorSpec extends ElasticsearchSpec {
       rawAfter.chainedHash should be('isDefined)
       rawAfter.txHash should be('isDefined)
       rawAfter.txHashLink should be('isDefined)
+      rawAfter.txHashLinkHtml should be('isDefined)
       rawAfter.txHash should not be rawBefore.txHash
-      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None) should be(rawBefore.copy(txHash = None))
+      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None, txHashLinkHtml = None) should be(rawBefore.copy(txHash = None))
 
     }
 

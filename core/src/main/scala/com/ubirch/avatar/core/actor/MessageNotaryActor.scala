@@ -43,7 +43,8 @@ class MessageNotaryActor extends Actor
               val anchored = drd.copy(
                 chainedHash = Some(payloadHash.md5),
                 txHash = Some(txHash),
-                txHashLink = Some(txHashLink)
+                txHashLink = Some(txHashLink),
+                txHashLinkHtml = Some(s"<a target=_blank href='$txHashLink'>$txHash</a>")
               )
               persistenceActor ! AnchoredRawData(anchored)
 
