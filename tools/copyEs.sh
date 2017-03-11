@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://github.com/taskrabbit/elasticsearch-dump
+
 if [ ! -z $1 ] && [ ! -z $2 ]; then
 
     INDICES="ubirch-devices ubirch-device-type ubirch-device-history ubirch-device-raw-data ubirch-device-raw-data-anchored ubirch-avatar-state"

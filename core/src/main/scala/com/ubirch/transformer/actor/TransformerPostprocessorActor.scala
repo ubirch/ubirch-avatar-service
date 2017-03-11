@@ -1,6 +1,7 @@
 package com.ubirch.transformer.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device._
 import com.ubirch.avatar.util.actor.ActorNames
@@ -36,7 +37,12 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
 
       val jval = Json4sUtil.any2jvalue(ddp) match {
         case Some(jval) =>
+          log.debug("send processed message to sqs")
           outProducerActor ! Json4sUtil.jvalue2String(jval)
+          log.debug("send processed message to mqtt")
+          val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
+          deviceMessageProcessedActor ! Json4sUtil.jvalue2String(jval)
+
         case None =>
           log.error(s"could not parse to json: $ddp")
       }
