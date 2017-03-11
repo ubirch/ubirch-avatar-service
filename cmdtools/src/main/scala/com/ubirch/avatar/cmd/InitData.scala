@@ -49,6 +49,8 @@ object InitData
 
       logger.info(s"created: $dev")
 
+      Thread.sleep(5000)
+
       val (_, series) = DummyDeviceDataRaw.dataSeries(
         device = device,
         elementCount = numberOfRawMessages,

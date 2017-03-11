@@ -3,13 +3,11 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.avatar.model.device.{DeviceDataProcessed, DeviceDataProcessedLegacy}
 import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
 import org.elasticsearch.index.query.QueryBuilders
 import org.joda.time.DateTime
 
@@ -45,9 +43,10 @@ object DeviceDataProcessedManager extends MyJsonProtocol
     val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
 
     ESSimpleStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
-      res.map(_.extract[DeviceDataProcessed])
+      res.map(_.extract[DeviceDataProcessedLegacy]).map { ddpl =>
+        upgradeDdl(ddpl)
+      }
     }
-
   }
 
   /**
@@ -74,7 +73,9 @@ object DeviceDataProcessedManager extends MyJsonProtocol
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
     ) map { res =>
-      res.map(_.extract[DeviceDataProcessed])
+      res.map(_.extract[DeviceDataProcessedLegacy]).map { ddpl =>
+        upgradeDdl(ddpl)
+      }
     }
 
   }
@@ -101,9 +102,10 @@ object DeviceDataProcessedManager extends MyJsonProtocol
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
     ) map { res =>
-      res.map(_.extract[DeviceDataProcessed])
+      res.map(_.extract[DeviceDataProcessedLegacy]).map { ddpl =>
+        upgradeDdl(ddpl)
+      }
     }
-
   }
 
   /**
@@ -128,7 +130,9 @@ object DeviceDataProcessedManager extends MyJsonProtocol
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
     ) map { res =>
-      res.map(_.extract[DeviceDataProcessed])
+      res.map(_.extract[DeviceDataProcessedLegacy]).map { ddpl =>
+        upgradeDdl(ddpl)
+      }
     }
 
   }
@@ -169,7 +173,9 @@ object DeviceDataProcessedManager extends MyJsonProtocol
     val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
 
     ESSimpleStorage.getDocs(index, esType, query).map { res =>
-      res.map(_.extract[DeviceDataProcessed]).headOption
+      res.map(_.extract[DeviceDataProcessedLegacy]).map { ddpl =>
+        upgradeDdl(ddpl)
+      }.headOption
     }
   }
 
@@ -191,12 +197,32 @@ object DeviceDataProcessedManager extends MyJsonProtocol
           docType = esType,
           docId = id,
           doc = doc
-        ) map (_.extractOpt[DeviceDataProcessed])
-
+        ).map(_.extractOpt[DeviceDataProcessed])
       case None => Future(None)
-
     }
+  }
 
+
+  private def upgradeDdl(ddpl: DeviceDataProcessedLegacy) = {
+    val dn = if (ddpl.deviceName.isEmpty)
+      s"${
+        ddpl.deviceType
+      }-${
+        ddpl.deviceId
+      }"
+    else
+      ddpl.deviceName.get.trim
+
+    DeviceDataProcessed(messageId = ddpl.messageId,
+      deviceDataRawId = ddpl.deviceDataRawId,
+      deviceId = ddpl.deviceId,
+      deviceName = dn,
+      deviceType = ddpl.deviceType,
+      deviceTags = ddpl.deviceTags,
+      deviceMessage = ddpl.deviceMessage,
+      deviceDataRaw = ddpl.deviceDataRaw,
+      timestamp = ddpl.timestamp
+    )
   }
 
 }

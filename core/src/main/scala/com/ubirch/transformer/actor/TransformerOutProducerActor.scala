@@ -13,7 +13,7 @@ class TransformerOutProducerActor extends Actor with Producer {
 
   val secretKey = Config.awsSecretAccessKey
 
-  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformerOut}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=15"
+  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformerOut}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=30"
 
   override def oneway: Boolean = true
 

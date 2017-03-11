@@ -28,7 +28,7 @@ object DummyDeviceDataProcessed {
       messageId = messageId,
       deviceDataRawId = UUIDUtil.uuid,
       deviceId = deviceId,
-      deviceName = s"device $deviceId",
+      deviceName = s"$deviceType $deviceId",
       deviceType = deviceType,
       deviceTags = deviceTags,
       deviceMessage = deviceMessage,

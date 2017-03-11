@@ -139,7 +139,5 @@ object DeviceTypeManager extends StrictLogging {
       }
 
     }
-
   }
-
 }
