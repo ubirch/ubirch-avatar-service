@@ -48,7 +48,7 @@ object DummyDeviceDataRaw {
   def dataSeries(messageId: Option[UUID] = None,
                  device: Device = DummyDevices.minimalDevice(),
                  pubKey: String = "pretend-to-be-a-public-key",
-                 intervalMillis: Long = 1000 * 10, // 10s
+                 intervalMillis: Long = 1000 * 30, // 30s
                  timestampOffset: Long = -1000 * 60 * 60, // -1h
                  elementCount: Int = 5
                 )
@@ -97,7 +97,7 @@ object DummyDeviceDataRaw {
          |"h":${4000 + Random.nextInt(5500)},
          |"la":"52.51${10000 + Random.nextInt(20000)}",
          |"lo":"13.21${10000 + Random.nextInt(20000)}",
-         |
+         |"a":${5000 + Random.nextInt(10000)}
          |}
          |]
         """.stripMargin

@@ -1,17 +1,148 @@
 {
-  "v": "0.0.2",
-  "a": "fmz/hStGkKblYjZ6PIDC0r6kDS1JmzFskp9TUAZo+wmsb3FM2NaCkb1+hBtkm2sYkfe2LH+h1ZaCZoQ3x5+uQg==",
-  "k": "p4NHQ1lebkpgZDhFSPNyoyRqWwnmTxAV1PXcTYF5iPk=",
-  "s": "ovBm8UfuS/P6szUZDY+6YBizcrCJ+MCFi2w6tNjhrLygeSDZS8rDawXh2yrwKUhefRRlxYmy3OoR6/NvqoYtBw==",
-  "p": {
-    "t": 2086,
-    "p": 93876,
-    "h": 2101,
-    "a": 63948,
-    "la": "48.124100",
-    "lo": "11.601422",
-    "ba": 100,
-    "lp": 28158,
-    "e": 0
+  "ubirch-device-history": {
+    "aliases": {},
+    "mappings": {
+      "devicedata": {
+        "properties": {
+          "a": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "deviceDataRaw": {
+            "properties": {
+              "a": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "k": {
+                "type": "string"
+              },
+              "p": {
+                "properties": {
+                  "a": {
+                    "type": "long"
+                  },
+                  "ba": {
+                    "type": "long"
+                  },
+                  "e": {
+                    "type": "long"
+                  },
+                  "h": {
+                    "type": "long"
+                  },
+                  "i": {
+                    "type": "long"
+                  },
+                  "la": {
+                    "type": "string"
+                  },
+                  "lo": {
+                    "type": "string"
+                  },
+                  "lp": {
+                    "type": "long"
+                  },
+                  "p": {
+                    "type": "long"
+                  },
+                  "t": {
+                    "type": "long"
+                  },
+                  "th": {
+                    "type": "long"
+                  }
+                }
+              },
+              "s": {
+                "type": "string"
+              },
+              "ts": {
+                "type": "date",
+                "format": "strict_date_optional_time||epoch_millis"
+              },
+              "v": {
+                "type": "string"
+              }
+            }
+          },
+          "deviceDataRawId": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "deviceId": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "deviceMessage": {
+            "properties": {
+              "altitude": {
+                "type": "double"
+              },
+              "batteryLevel": {
+                "type": "long"
+              },
+              "errorCode": {
+                "type": "long"
+              },
+              "humidity": {
+                "type": "double"
+              },
+              "latitude": {
+                "type": "double"
+              },
+              "longitude": {
+                "type": "double"
+              },
+              "loops": {
+                "type": "long"
+              },
+              "presure": {
+                "type": "double"
+              },
+              "t": {
+                "type": "long"
+              },
+              "temperature": {
+                "type": "double"
+              }
+            }
+          },
+          "deviceTags": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "messageId": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "timestamp": {
+            "type": "date",
+            "format": "strict_date_optional_time||epoch_millis"
+          }
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "creation_date": "1489236985173",
+        "number_of_shards": "5",
+        "number_of_replicas": "1",
+        "uuid": "YMwzxnl3RiW9xaINEEDBbQ",
+        "version": {
+          "created": "2040299"
+        }
+      }
+    },
+    "warmers": {
+    }
   }
 }

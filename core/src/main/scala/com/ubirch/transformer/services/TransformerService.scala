@@ -83,14 +83,15 @@ object TransformerService
       drd.p
 
     DeviceDataProcessed(
-      deviceId = device.deviceId,
       messageId = drd.id,
       deviceDataRawId = sdrd.id,
+      deviceId = device.deviceId,
+      deviceName = device.deviceName,
       deviceType = deviceType.key,
-      timestamp = drd.ts,
       deviceTags = device.tags,
       deviceMessage = transformedPayload,
-      deviceDataRaw = Some(sdrd)
+      deviceDataRaw = Some(sdrd),
+      timestamp = drd.ts
     )
   }
 }
