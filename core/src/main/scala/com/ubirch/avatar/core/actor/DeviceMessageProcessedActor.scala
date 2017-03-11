@@ -8,7 +8,7 @@ import com.ubirch.util.uuid.UUIDUtil
 /**
   * Created by derMicha on 24/02/17.
   */
-class DeviceStateUpdateActor(deviceUuid: String) extends Actor with Producer with ActorLogging {
+class DeviceMessageProcessedActor(deviceUuid: String) extends Actor with Producer with ActorLogging {
 
   val mqttUser: String = Config.mqttUser
 
@@ -16,7 +16,7 @@ class DeviceStateUpdateActor(deviceUuid: String) extends Actor with Producer wit
 
   val mqttBrokerUrl: String = Config.mqttBrokerUrl
 
-  val mqttDeviceOutTopic: String = s"${Config.mqttTopicDevicesBase}/$deviceUuid/${Config.mqttTopicDevicesOut}"
+  val mqttDeviceOutTopic: String = s"${Config.mqttTopicDevicesBase}/$deviceUuid/${Config.mqttTopicDevicesProcessed}"
 
   val clientId: String = s"avatarService_${UUIDUtil.uuidStr}"
 
@@ -25,6 +25,6 @@ class DeviceStateUpdateActor(deviceUuid: String) extends Actor with Producer wit
 
 }
 
-object DeviceStateUpdateActor {
-  def props(deviceUuid: String): Props = Props(new DeviceStateUpdateActor(deviceUuid))
+object DeviceMessageProcessedActor {
+  def props(deviceUuid: String): Props = Props(new DeviceMessageProcessedActor(deviceUuid))
 }
