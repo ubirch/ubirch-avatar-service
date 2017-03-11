@@ -123,7 +123,7 @@ object DeviceTypeUtil {
   def defaultDisplayKeys(deviceTypeKey: String): Array[String] = {
     deviceTypeKey match {
       case Const.ENVIRONMENTSENSOR =>
-        Array("temperature", "presure", "humidity", "batteryLevel")
+        Array("temperature", "presure", "humidity", "altitude", "batteryLevel")
       case Const.LIGHTSSENSOR =>
         Array("r", "g", "b", "ba")
       case Const.TRACKLESENSOR =>
