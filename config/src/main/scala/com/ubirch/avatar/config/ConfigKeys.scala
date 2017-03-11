@@ -129,4 +129,6 @@ object ConfigKeys {
 
   final val MQTT_QUEUES_DEVICES_OUT = s"$mqttPrefix.queues.devicesTopicPartOut"
 
+  final val MQTT_QUEUES_DEVICES_PROCESSED = s"$mqttPrefix.queues.devicesTopicPartProcessed"
+
 }
