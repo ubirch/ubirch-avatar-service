@@ -44,6 +44,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |        "hashedHwDeviceId" : {
          |          "type" : "string",
          |          "index": "not_analyzed"
+         |        },
+         |        "deviceName" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
          |        }
          |      }
          |    }
@@ -102,6 +106,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |        "id" : {
          |          "type" : "string",
          |          "index": "not_analyzed"
+         |        },
+         |        "deviceName" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
          |        }
          |      }
          |    }
@@ -141,6 +149,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
          |          "index": "not_analyzed"
          |        },
          |        "a" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
+         |        },
+         |        "deviceName" : {
          |          "type" : "string",
          |          "index": "not_analyzed"
          |        }
