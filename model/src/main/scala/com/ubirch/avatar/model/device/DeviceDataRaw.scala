@@ -30,6 +30,8 @@ case class DeviceDataRaw(
                           s: Option[String] = None,
                           uuid: Option[String] = None,
                           p: JValue,
+                          deviceId: Option[String] = None,
+                          deviceName: Option[String] = None,
                           chainedHash: Option[String] = None, // MD5 hash of signature
                           txHash: Option[String] = None, // related bitcoin transaction hash
                           txHashLink: Option[String] = None, // related chain explorer url

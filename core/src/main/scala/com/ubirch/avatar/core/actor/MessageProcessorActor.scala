@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
@@ -48,6 +49,10 @@ class MessageProcessorActor extends Actor with ActorLogging {
         deviceStateUpdateActor ! Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(currentState).get)
         //deviceStateUpdateActor ! Kill
       }
+
+    case msg: CamelMessage =>
+      log.debug(s"received CamelMessage")
+    //@TODO check why we receive here CamelMessages ???
 
     case _ => log.error("received unknown message")
 

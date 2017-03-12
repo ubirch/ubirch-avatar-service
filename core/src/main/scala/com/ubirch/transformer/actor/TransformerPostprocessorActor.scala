@@ -1,6 +1,7 @@
 package com.ubirch.transformer.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.camel.CamelMessage
 import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device._
@@ -37,8 +38,10 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
 
       val jval = Json4sUtil.any2jvalue(ddp) match {
         case Some(jval) =>
+
           log.debug("send processed message to sqs")
           outProducerActor ! Json4sUtil.jvalue2String(jval)
+
           log.debug("send processed message to mqtt")
           val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
           deviceMessageProcessedActor ! Json4sUtil.jvalue2String(jval)
@@ -47,8 +50,10 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
           log.error(s"could not parse to json: $ddp")
       }
 
-
+    case msg: CamelMessage =>
+      log.debug(s"received CamelMessage")
+    //@TODO check why we receive here CamelMessages ???
     case _ =>
-      log.error("received unknown message")
+      log.error(s"received unknown message from ${context.sender()} ")
   }
 }
