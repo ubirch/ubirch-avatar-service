@@ -59,7 +59,18 @@ function build_container() {
   sed -i.bak "s%@@SOURCE@@%$SOURCE%g" TMP/Dockerfile
   sed -i.bak "s%@@TARGET@@%$TARGET%g" TMP/Dockerfile
   cd TMP
-  docker build -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL .
+
+
+  if [ -z $GO_PIPELINE_LABEL ]; then
+      # building without GoCD
+      docker build -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL .
+  else
+      # build with GoCD
+      docker build -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL --build-arg GO_PIPELINE_NAME=$GO_PIPELINE_NAME \
+      --build-arg GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL \
+      --build-arg GO_PIPELINE_COUNTER=$GO_PIPELINE_COUNTER \
+      --build-arg GO_REVISION_UBIRCH_AVATAR_SERVICE_DEV=$GO_REVISION_UBIRCH_AVATAR_SERVICE_DEV .
+  fi
 
   if [ $? -ne 0 ]; then
     echo "Docker build failed"
