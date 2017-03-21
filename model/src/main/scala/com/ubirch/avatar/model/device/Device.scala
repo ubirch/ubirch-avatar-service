@@ -1,7 +1,6 @@
 package com.ubirch.avatar.model.device
 
 import com.ubirch.avatar.config.Config
-
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 
@@ -17,7 +16,8 @@ case class Device(deviceId: String,
                   tags: Set[String] = Set(),
                   deviceConfig: Option[JValue] = None,
                   deviceProperties: Option[JValue] = None,
-                  subscriptions: Option[Seq[String]] = None,
+                  subQueues: Option[Set[String]] = None,
+                  pubQueues: Option[Set[String]] = Some(Set(Config.awsSqsQueueTransformerOut)),
                   avatarLastUpdated: Option[DateTime] = None,
                   deviceLastUpdated: Option[DateTime] = None,
                   updated: Option[DateTime] = None,

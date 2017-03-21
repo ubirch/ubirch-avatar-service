@@ -114,6 +114,16 @@ object Config extends ConfigBase {
   def esDeviceTypeType: String = config.getString(ConfigKeys.ES_DEVICE_TYPE_TYPE)
 
   /**
+    * @return Elasticsearch deviceType index
+    */
+  def esDeviceStateIndex: String = config.getString(ConfigKeys.ES_DEVICE_STATE_INDEX)
+
+  /**
+    * @return Elasticsearch deviceType type
+    */
+  def esDeviceStateType: String = config.getString(ConfigKeys.ES_DEVICE_STATE_TYPE)
+
+  /**
     * @return Elasticsearch avatarState index
     */
   def esAvatarStateIndex: String = config.getString(ConfigKeys.ES_AVATAR_STATE_INDEX)

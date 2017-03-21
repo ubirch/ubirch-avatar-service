@@ -15,6 +15,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
   private val indexInfoDeviceRawDataAnchored = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceDataRawAnchoredIndex)
   private val indexInfoDeviceHistory = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceDataProcessedIndex)
   private val indexInfoDeviceType = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceTypeIndex)
+  private val indexInfoDeviceState = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esDeviceStateIndex)
   private val indexInfoAvatarState = IndexInfo(ESConfig.host, Config.esPortHttp, Config.esAvatarStateIndex)
 
   final val indexInfos: Seq[IndexInfo] = Seq(
@@ -23,6 +24,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
     indexInfoDeviceRawDataAnchored,
     indexInfoDeviceHistory,
     indexInfoDeviceType,
+    indexInfoDeviceState,
     indexInfoAvatarState
   )
 
@@ -187,6 +189,39 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
 
   }
 
+  private val deviceStateMappings: Mapping = {
+
+    val mapping =
+      s"""{
+         |  "mappings": {
+         |    "${Config.esDeviceStateType}" : {
+         |      "properties" : {
+         |        "id" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
+         |        },
+         |        "k" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
+         |        },
+         |        "s" : {
+         |          "type" : "string",
+         |          "index": "not_analyzed"
+         |        },
+         |        "ts": {
+         |            "type": "date",
+         |            "format": "strict_date_optional_time||epoch_millis"
+         |        }
+         |      }
+         |    }
+         |  }
+         |}""".stripMargin
+    val url = indexInfoDeviceState.url
+
+    Mapping(url, mapping)
+
+  }
+
   private val avatarStateMappings: Mapping = {
 
     val mapping =
@@ -214,6 +249,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
     deviceDataRawAnchoredMappings,
     deviceDataProcessedMappings,
     deviceTypeMappings,
+    deviceStateMappings,
     avatarStateMappings
   )
 

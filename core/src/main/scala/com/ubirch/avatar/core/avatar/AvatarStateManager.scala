@@ -3,7 +3,6 @@ package com.ubirch.avatar.core.avatar
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.AvatarState
 import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
@@ -16,8 +15,9 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2017-02-24
   */
-object AvatarStateManager extends MyJsonProtocol
-  with StrictLogging {
+object AvatarStateManager
+  extends MyJsonProtocol
+    with StrictLogging {
 
   private val index = Config.esAvatarStateIndex
   private val esType = Config.esAvatarStateType
