@@ -42,6 +42,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
 
       //send back current device state
       val currentState = DeviceStateManager.currentDeviceState(device)
+      DeviceStateManager.upsert(currentState)
       s ! currentState
 
       if (drd.uuid.isDefined) {
