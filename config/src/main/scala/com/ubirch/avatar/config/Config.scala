@@ -8,6 +8,12 @@ import com.ubirch.util.config.ConfigBase
   */
 object Config extends ConfigBase {
 
+  def goPipelineName: String = config.getString(ConfigKeys.GOPIPELINENAME)
+
+  def goPipelineLabel: String = config.getString(ConfigKeys.GOPIPELINELABEL)
+  
+  def goPipelineRev: String = config.getString(ConfigKeys.GOPIPELINEREV)
+
   /*
    * SERVER RELATED
    ****************************************************************/
