@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
 import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
@@ -12,11 +12,16 @@ import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
 
+import scala.concurrent.duration._
+import scala.language.postfixOps
+
 /**
   * author: derMicha
   * since: 2016-10-28
   */
 class MessageProcessorActor extends Actor with ActorLogging {
+
+  implicit val exContext = context.dispatcher
 
   private val transformerActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerProducerActor]), ActorNames.TRANSFORMER_PRODUCER)
 
@@ -48,12 +53,12 @@ class MessageProcessorActor extends Actor with ActorLogging {
       if (drd.uuid.isDefined) {
         val deviceStateUpdateActor = context.actorOf(DeviceStateUpdateActor.props(drd.uuid.get))
         deviceStateUpdateActor ! Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(currentState).get)
-        //deviceStateUpdateActor ! Kill
+        context.system.scheduler.scheduleOnce(15 seconds, deviceStateUpdateActor, Kill)
       }
 
     case msg: CamelMessage =>
+      //@TODO check why we receive here CamelMessages ???
       log.debug(s"received CamelMessage")
-    //@TODO check why we receive here CamelMessages ???
 
     case _ => log.error("received unknown message")
 

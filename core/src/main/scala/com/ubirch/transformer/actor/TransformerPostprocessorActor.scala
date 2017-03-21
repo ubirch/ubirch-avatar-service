@@ -1,24 +1,22 @@
 package com.ubirch.transformer.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Kill}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
 import com.ubirch.avatar.model.device._
-import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by derMicha on 28/10/16.
   */
 class TransformerPostprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
-  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
-
-  val outProducerActor: ActorRef = context.actorOf(Props[TransformerOutProducerActor], ActorNames.OUT_PRODUCER)
+  implicit val executionContext = context.dispatcher
 
   override def receive: Receive = {
 
@@ -40,7 +38,14 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
         case Some(jval) =>
 
           log.debug("send processed message to sqs")
-          outProducerActor ! Json4sUtil.jvalue2String(jval)
+          if (device.pubQueues.isDefined) {
+            device.pubQueues.get.foreach { sqsQueueName =>
+              log.debug(s"send processed message to $sqsQueueName")
+              val outProducerActor: ActorRef = context.actorOf(TransformerOutProducerActor.props(sqsQueueName))
+              outProducerActor ! Json4sUtil.jvalue2String(jval)
+              context.system.scheduler.scheduleOnce(15 seconds, outProducerActor, Kill)
+            }
+          }
 
           log.debug("send processed message to mqtt")
           val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
