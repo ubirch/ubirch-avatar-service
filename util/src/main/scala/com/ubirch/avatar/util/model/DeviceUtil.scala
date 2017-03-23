@@ -43,7 +43,7 @@ object DeviceUtil {
 
   }
 
-  def createKeypair: (PrivateKey, PublicKey) = {
+  def createKeyPair: (PrivateKey, PublicKey) = {
     val sgr: Signature = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
     val spec: EdDSAParameterSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.CURVE_ED25519_SHA512)
     val kpg: KeyPairGenerator = new KeyPairGenerator

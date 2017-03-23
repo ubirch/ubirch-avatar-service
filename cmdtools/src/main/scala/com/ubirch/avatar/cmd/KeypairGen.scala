@@ -8,7 +8,7 @@ import com.ubirch.avatar.util.model.DeviceUtil
   */
 object KeypairGen extends App with StrictLogging {
 
-  val (sKey, pKey) = DeviceUtil.createKeypair
+  val (sKey, pKey) = DeviceUtil.createKeyPair
 
 
   logger.debug(s"skey: ${sKey.getFormat}")
