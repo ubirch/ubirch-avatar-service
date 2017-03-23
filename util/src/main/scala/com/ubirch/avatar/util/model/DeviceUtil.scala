@@ -1,13 +1,14 @@
 package com.ubirch.avatar.util.model
 
 import java.security._
-import java.security.spec.AlgorithmParameterSpec
 import java.util.Base64
 
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.util.json.JsonFormats
+
 import org.json4s._
 import org.json4s.native.Serialization._
+
 import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec}
 import net.i2p.crypto.eddsa.{EdDSAEngine, KeyPairGenerator}
 
@@ -17,7 +18,7 @@ import net.i2p.crypto.eddsa.{EdDSAEngine, KeyPairGenerator}
   */
 object DeviceUtil {
 
-  implicit val formats = JsonFormats.default
+  implicit val formats: Formats = JsonFormats.default
 
   def sign(payload: JValue, device: Device): (String, String) = {
 
