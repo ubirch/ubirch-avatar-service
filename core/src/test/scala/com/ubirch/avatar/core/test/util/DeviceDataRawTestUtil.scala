@@ -4,7 +4,6 @@ import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.DummyDeviceDataRaw
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -24,15 +23,13 @@ object DeviceDataRawTestUtil {
   def storeSeries(elementCount: Int): (Device, List[DeviceDataRaw]) = {
 
     val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)()
-    val storedSeries: ListBuffer[DeviceDataRaw] = ListBuffer()
 
-    dataSeries foreach { deviceData =>
-      val storedRawData = Await.result(DeviceDataRawManager.store(deviceData), 1 seconds).get
-      storedSeries += storedRawData
+    val storedSeries = dataSeries map { deviceData =>
+      Await.result(DeviceDataRawManager.store(deviceData), 1 seconds).get
     }
     Thread.sleep(3000)
 
-    (device, storedSeries.toList)
+    (device, storedSeries)
 
   }
 
