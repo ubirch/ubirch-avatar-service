@@ -9,6 +9,7 @@ import org.json4s.JValue
   * since: 2016-09-23
   */
 case class Device(deviceId: String,
+                  ownedByGroup: String = "default",
                   deviceTypeKey: String = "unknownDeviceType",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",
