@@ -92,7 +92,7 @@ lazy val config = project
   .settings(commonSettings: _*)
   .settings(
     description := "config code",
-    libraryDependencies += ubirchUtilConfig
+    libraryDependencies += ubirchConfig
   )
 
 lazy val model = project
@@ -143,10 +143,10 @@ lazy val depServer = Seq(
   //testing
   scalatest % "test",
 
-  ubirchUtilJson,
-  ubirchUtilJsonAutoConvert,
-  ubirchUtilRestAkkaHttp,
-  ubirchUtilResponse
+  ubirchJson,
+  ubirchJsonAutoConvert,
+  ubirchRestAkkaHttp,
+  ubirchResponse
 
 ) ++ scalaLogging
 
@@ -154,7 +154,7 @@ lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
   ubirchCrypto,
   ubirchNotary,
-  ubirchUtilResponse,
+  ubirchResponse,
   spireMath,
   scalatest % "test",
   akkaTestkit % "test"
@@ -165,31 +165,31 @@ lazy val depClient = Seq(
 ) ++ scalaLogging
 
 lazy val depAws = Seq(
-  ubirchUtilJson,
-  ubirchUtilUUID % "test",
+  ubirchJson,
+  ubirchUUID % "test",
   scalatest % "test"
 ) ++ awsIotSdk ++ awsSqsSdk ++ scalaLogging
 
 lazy val depModel = Seq(
-  ubirchUtilJsonAutoConvert,
+  ubirchJsonAutoConvert,
   json4sNative,
-  ubirchUtilUUID
+  ubirchUUID
 ) ++ joda
 
 lazy val depUtil = Seq(
   ubirchCrypto,
-  ubirchUtilJson,
+  ubirchJson,
   ubirchElasticsearchClientBinary,
   ubirchElasticsearchUtil,
-  ubirchUtilUUID % "test",
+  ubirchUUID % "test",
   scalatest % "test"
 ) ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
   scalatest,
-  ubirchUtilRestAkkaHttpTest,
+  ubirchRestAkkaHttpTest,
   beeClient,
-  ubirchUtilUUID,
+  ubirchUUID,
   ubirchCrypto
 ) ++ json4s ++ scalaLogging
 
@@ -256,62 +256,25 @@ lazy val awsSqsSdk = Seq(
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
-lazy val ubirchUtilConfig = ubirchUtilG %% "config" % "0.1" excludeAll(
+lazy val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.6.0" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "0.1.0" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchUtilJson = ubirchUtilG %% "json" % "0.3.2" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchUtilJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchUtilRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.3" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchUtilRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.3" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchUtilUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
-lazy val ubirchUtilResponse = ubirchUtilG %% "response-util" % "0.1.2" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
-)
+
+lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll(excludedLoggers: _*)
+lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(excludedLoggers: _*)
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.6.0" excludeAll(excludedLoggers: _*)
+lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "0.1.0" excludeAll(excludedLoggers: _*)
+lazy val ubirchJson = ubirchUtilG %% "json" % "0.3.2" excludeAll(excludedLoggers: _*)
+lazy val ubirchJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2" excludeAll(excludedLoggers: _*)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.1" excludeAll(
-  ExclusionRule(organization = "com.typesafe.scala-logging"),
-  ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback"),
-  ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")
+  excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
 )
+lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.3" excludeAll(excludedLoggers: _*)
+lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.3" excludeAll(excludedLoggers: _*)
+lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.1.2" excludeAll(excludedLoggers: _*)
+lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll(excludedLoggers: _*)
 
 /*
  * RESOLVER
