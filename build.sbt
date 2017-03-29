@@ -271,7 +271,7 @@ lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
 )
-lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "0.2.0" excludeAll(
+lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "0.2.1" excludeAll(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback")
