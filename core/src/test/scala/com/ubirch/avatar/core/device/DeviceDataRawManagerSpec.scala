@@ -74,8 +74,9 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
     }
 
     scenario("deviceId does not exist; index does not exist") {
+      deleteIndexes()
       val device = DummyDevices.minimalDevice()
-      an[ExecutionException] should be thrownBy Await.result(DeviceDataRawManager.history(device), 1 seconds)
+      Await.result(DeviceDataRawManager.history(device), 1 seconds) should be('isEmpty)
     }
 
     scenario("deviceId does not exist; index exists") {
