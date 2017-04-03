@@ -1,3 +1,5 @@
+import sbt.Keys.libraryDependencies
+
 packagedArtifacts in file(".") := Map.empty // disable publishing of root/default project
 
 // see http://www.scala-sbt.org/0.13/docs/Parallel-Execution.html for details
@@ -54,7 +56,11 @@ lazy val cmdtools = project
   .settings(commonSettings: _*)
   .dependsOn(core, client, util, testBase)
   .settings(
-    description := "command line tools"
+    description := "command line tools",
+    libraryDependencies ++= depCmdtools,
+    resolvers ++= Seq(
+      resolverElastic
+    )
   )
 
 lazy val client = project
@@ -132,6 +138,10 @@ lazy val util = project
 /*
  * MODULE DEPENDENCIES
  ********************************************************/
+
+lazy val depCmdtools = Seq(
+  esXpack
+)
 
 lazy val depServer = Seq(
 
@@ -284,6 +294,7 @@ lazy val resolverSeebergerJson = Resolver.bintrayRepo("hseeberger", "maven")
 lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
 lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
 lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
+
 
 /*
  * MISC
