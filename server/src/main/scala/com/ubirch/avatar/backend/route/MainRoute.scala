@@ -1,8 +1,13 @@
 package com.ubirch.avatar.backend.route
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.util.oidc.directive.OidcDirective
+import com.ubirch.util.redis.RedisClientUtil
+import redis.RedisClient
 
 /**
   * author: cvandrei
@@ -39,14 +44,10 @@ class MainRoute {
               deviceDataHistory.route ~
               deviceDataRaw.route ~
               deviceId.route
+
           } ~ path(RouteConstants.device) {
             device.route
           } ~
-            pathPrefix("wumms") {
-              pathEndOrSingleSlash {
-                forbidden.route
-              }
-            } ~
             pathEndOrSingleSlash {
               welcome.route
             }

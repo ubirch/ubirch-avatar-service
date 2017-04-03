@@ -6,7 +6,7 @@ package com.ubirch.avatar.config
   */
 object ConfigKeys {
 
-  private final val prefix = "ubirchAvatarService"
+  final val prefix = "ubirchAvatarService"
 
   final val GOPIPELINENAME = s"$prefix.gopipelinename"
   final val GOPIPELINELABEL = s"$prefix.gopipelinelabel"
