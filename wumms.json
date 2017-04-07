@@ -1,165 +1,17 @@
 {
-  "took": 147,
-  "timed_out": false,
-  "_shards": {
-    "total": 5,
-    "successful": 5,
-    "failed": 0
-  },
-  "hits": {
-    "total": 31,
-    "max_score": 1.0,
-    "hits": [
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa0W_KP_ZsSNW2bqDT",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:06:24.808Z",
-          "message": "POST http://elasticsearch:9200/ubirch-devices ({\n  \"mappings\": {\n    \"device\" : {\n      \"properties\" : {\n        \"deviceId\" : {\n          \"type\" : \"string\",\n          \"inde...,application/json) [] -> 400 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 134] 39.1ms",
-          "host": "avatar-service-deployment-2708359143-4jpsc",
-          "level": "DEBUG",
-          "log": "POST http://elasticsearch:9200/ubirch-devices ({\n  \"mappings\": {\n    \"device\" : {\n      \"properties\" : {\n        \"deviceId\" : {\n          \"type\" : \"string\",\n          \"inde...,application/json) [] -> 400 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 134] 39.1ms",
-          "thread": "main",
-          "logger": "uk.co.bigbeeconsultants.http.HttpClient"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa0W_KP_ZsSNW2bqDV",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:06:24.821Z",
-          "message": "POST http://elasticsearch:9200/ubirch-device-raw-data ({\n  \"mappings\": {\n    \"devicemessage\" : {\n      \"properties\" : {\n        \"timestamp\": {\n            \"type\": \"date\",\n         ...,application/json) [] -> 400 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 140] 12.6ms",
-          "host": "avatar-service-deployment-2708359143-4jpsc",
-          "level": "DEBUG",
-          "log": "POST http://elasticsearch:9200/ubirch-device-raw-data ({\n  \"mappings\": {\n    \"devicemessage\" : {\n      \"properties\" : {\n        \"timestamp\": {\n            \"type\": \"date\",\n         ...,application/json) [] -> 400 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 140] 12.6ms",
-          "thread": "main",
-          "logger": "uk.co.bigbeeconsultants.http.HttpClient"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa4lVUpsqsvhfSkc2C",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:24:52.032Z",
-          "message": "Slf4jLogger started",
-          "host": "avatar-service-deployment-2708359143-wl1x1",
-          "level": "INFO",
-          "log": "Slf4jLogger started",
-          "thread": "default-akka.actor.default-dispatcher-3",
-          "logger": "akka.event.slf4j.Slf4jLogger"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa4lVUpsqsvhfSkc2D",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:24:52.068Z",
-          "message": "ubirchAvatarService started",
-          "host": "avatar-service-deployment-2708359143-wl1x1",
-          "level": "INFO",
-          "log": "ubirchAvatarService started",
-          "thread": "main",
-          "logger": "com.ubirch.avatar.backend.Boot$"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa4lVUpsqsvhfSkc2H",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:24:52.172Z",
-          "message": "Elasticsearch index and mapping already exists: http://elasticsearch:9200/ubirch-device-raw-data",
-          "host": "avatar-service-deployment-2708359143-wl1x1",
-          "level": "INFO",
-          "log": "Elasticsearch index and mapping already exists: http://elasticsearch:9200/ubirch-device-raw-data",
-          "thread": "main",
-          "logger": "com.ubirch.avatar.backend.Boot$"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa4lVUpsqsvhfSkc2K",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:24:52.186Z",
-          "message": "POST http://elasticsearch:9200/ubirch-device-history ({\n  \"mappings\": {\n    \"devicedata\" : {\n      \"properties\" : {\n        \"timestamp\": {\n          \"type\": \"date\",\n          \"for...,application/json) [] -> 400 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 139] 8746μs",
-          "host": "avatar-service-deployment-2708359143-wl1x1",
-          "level": "DEBUG",
-          "log": "POST http://elasticsearch:9200/ubirch-device-history ({\n  \"mappings\": {\n    \"devicedata\" : {\n      \"properties\" : {\n        \"timestamp\": {\n          \"type\": \"date\",\n          \"for...,application/json) [] -> 400 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 139] 8746μs",
-          "thread": "main",
-          "logger": "uk.co.bigbeeconsultants.http.HttpClient"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsalZUnpsqsvhfSkc1_",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T15:00:44.235Z",
-          "message": "Elasticsearch index and mapping created: http://elasticsearch:9200/ubirch-devices",
-          "host": "avatar-service-deployment-2708359143-hvgdv",
-          "level": "INFO",
-          "log": "Elasticsearch index and mapping created: http://elasticsearch:9200/ubirch-devices",
-          "thread": "main",
-          "logger": "com.ubirch.avatar.backend.Boot$"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa0XhGP_ZsSNW2bqDX",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:06:26.883Z",
-          "message": "POST http://elasticsearch:9200/ubirch-device-raw-data-anchored ({\n  \"mappings\": {\n    \"devicemessage\" : {\n      \"properties\" : {\n        \"timestamp\": {\n            \"type\": \"date\",\n         ...,application/json) [] -> 200 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 47] 2062ms",
-          "host": "avatar-service-deployment-2708359143-4jpsc",
-          "level": "DEBUG",
-          "log": "POST http://elasticsearch:9200/ubirch-device-raw-data-anchored ({\n  \"mappings\": {\n    \"devicemessage\" : {\n      \"properties\" : {\n        \"timestamp\": {\n            \"type\": \"date\",\n         ...,application/json) [] -> 200 [Content-Type: application/json; charset=UTF-8; Content-Encoding: gzip; Content-Length: 47] 2062ms",
-          "thread": "main",
-          "logger": "uk.co.bigbeeconsultants.http.HttpClient"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa4nFhpsqsvhfSkc2Q",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:24:59.234Z",
-          "message": "POST http://elasticsearch:9200/ubirch-avatar-state ({\n  \"mappings\": {\n    \"avatarstate\" : {\n      \"properties\" : {\n        \"deviceId\" : {\n          \"type\" : \"string\",\n          ...,application/json) [] 5004ms - Read timed out",
-          "host": "avatar-service-deployment-2708359143-wl1x1",
-          "level": "WARN",
-          "log": "POST http://elasticsearch:9200/ubirch-avatar-state ({\n  \"mappings\": {\n    \"avatarstate\" : {\n      \"properties\" : {\n        \"deviceId\" : {\n          \"type\" : \"string\",\n          ...,application/json) [] 5004ms - Read timed out",
-          "thread": "main",
-          "logger": "uk.co.bigbeeconsultants.http.HttpClient"
-        }
-      },
-      {
-        "_index": "avatar-service-logs-2017-03-29",
-        "_type": "log",
-        "_id": "AVsa0W_KP_ZsSNW2bqDR",
-        "_score": 1.0,
-        "_source": {
-          "@timestamp": "2017-03-29T16:06:24.707Z",
-          "message": "Slf4jLogger started",
-          "host": "avatar-service-deployment-2708359143-4jpsc",
-          "level": "INFO",
-          "log": "Slf4jLogger started",
-          "thread": "default-akka.actor.default-dispatcher-4",
-          "logger": "akka.event.slf4j.Slf4jLogger"
-        }
-      }
-    ]
+  "v": "0.0.2",
+  "a": "XPL7H+/Q5hlp8JDm0n7JhK7jYmoEnjVk+CLGN10owj7EJx8hGWcVdlvxL+t7rQ/2N8I2qlICLCKnve9GcPQGYg==",
+  "k": "pb37Vbe8tpo0+ed4nO/emQryVAMfAkIjZWFtWLiGbmA=",
+  "s": "8BVqi94N4M4j5B7oNTapvOqCWJqFjtJYTDxQSdlU3KqMb6aHuZVmImKtPIfl3SdoQEPi1gOhpmAsyR0aWiK8Bw==",
+  "p": {
+    "t": 3095,
+    "p": 1011,
+    "h": 2983,
+    "a": 2588133,
+    "la": "13.36430",
+    "lo": "52.481083",
+    "ba": 89,
+    "lp": 0,
+    "e": 0
   }
 }

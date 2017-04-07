@@ -39,9 +39,7 @@ trait DeviceIdRoute extends CORSDirective
 
   private val deviceApiActor = system.actorOf(Props[DeviceApiActor], ActorNames.DEVICE_API)
 
-  private val configPrefix = ConfigKeys.prefix
-  private val redis: RedisClient = RedisClientUtil.newInstance(configPrefix)(system)
-  private val oidcDirective = new OidcDirective(configPrefix = configPrefix, redis = redis)
+  private val oidcDirective = new OidcDirective()
 
   val route: Route = {
     path(JavaUUID) { deviceId =>
