@@ -10,6 +10,7 @@ import com.ubirch.avatar.model.aws.ThingShadowState
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
+import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -26,24 +27,22 @@ trait DeviceStateRoute extends MyJsonProtocol
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
+  private val oidcDirective = new OidcDirective()
+
   val route: Route = {
 
     path(JavaUUID / state) { deviceId =>
       respondWithCORS {
-        get {
-          onSuccess(queryState(deviceId)) {
-            case None =>
-              complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
-            case Some(deviceState: ThingShadowState) =>
-              complete(deviceState)
+        oidcDirective.oidcToken2UserContext { userContext =>
+          get {
+            onSuccess(queryState(deviceId)) {
+              case None =>
+                complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
+              case Some(deviceState: ThingShadowState) =>
+                complete(deviceState)
+            }
           }
         }
-        //        ~ post {
-        //          entity(as[ThingShadowState]) { state =>
-        //            onSuccess(storeState(deviceId, state)) {
-        //              case None => complete(errorResponse(deviceId))
-        //              case Some(storedData) => complete(storedData)
-        //            }
       }
     }
 

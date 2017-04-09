@@ -14,6 +14,7 @@ import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -37,28 +38,32 @@ trait DeviceUpdateRoute extends MyJsonProtocol
 
   private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageValidatorActor]), ActorNames.MSG_VALIDATOR)
 
+  private val oidcDirective = new OidcDirective()
+
   val route: Route = {
     path(update) {
       respondWithCORS {
-        post {
-          entity(as[DeviceDataRaw]) { ddr =>
-            onComplete(validatorActor ? ddr) {
-              case Success(resp) =>
-                resp match {
-                  case dm: DeviceStateUpdate => complete(dm)
-                  case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
-                  case _ =>
-                    complete(requestErrorResponse(
-                      errorType = "UnknownResult",
-                      errorMessage = s"received unknown result")
-                    )
-                }
-              case Failure(t) =>
-                logger.error("update device data failed", t)
-                complete(requestErrorResponse(
-                  errorType = "UpdateDeviceError",
-                  errorMessage = s"update failed for message ${ddr.id}, error occured: ${t.getMessage.replace("\"", "'")}")
-                )
+        oidcDirective.oidcToken2UserContext { userContext =>
+          post {
+            entity(as[DeviceDataRaw]) { ddr =>
+              onComplete(validatorActor ? ddr) {
+                case Success(resp) =>
+                  resp match {
+                    case dm: DeviceStateUpdate => complete(dm)
+                    case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
+                    case _ =>
+                      complete(requestErrorResponse(
+                        errorType = "UnknownResult",
+                        errorMessage = s"received unknown result")
+                      )
+                  }
+                case Failure(t) =>
+                  logger.error("update device data failed", t)
+                  complete(requestErrorResponse(
+                    errorType = "UpdateDeviceError",
+                    errorMessage = s"update failed for message ${ddr.id}, error occured: ${t.getMessage.replace("\"", "'")}")
+                  )
+              }
             }
           }
         }
@@ -66,10 +71,12 @@ trait DeviceUpdateRoute extends MyJsonProtocol
     } ~
       path(bulk) {
         respondWithCORS {
-          post {
-            entity(as[DeviceDataRaw]) { sdm =>
-              validatorActor ! sdm
-              complete(JsonResponse(message = "processing started"))
+          oidcDirective.oidcToken2UserContext { userContext =>
+            post {
+              entity(as[DeviceDataRaw]) { sdm =>
+                validatorActor ! sdm
+                complete(JsonResponse(message = "processing started"))
+              }
             }
           }
         }
