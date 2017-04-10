@@ -18,7 +18,12 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.11 (tbd)
 
-* tbd
+* update _com.ubirch.util:elasticsearch-client-binary_ to version 0.6.1
+* update _com.ubirch.util:elasticsearch-util_ to version 0.2.1
+* update _com.ubirch.util:json_ to version 0.3.3
+* update _com.ubirch.util:json-auto-convert_ to version 0.3.3
+* update _com.ubirch.util:oidc-utils_ to version 0.2.4
+* update _com.ubirch.notary:notary-client_ to version 0.3.2
 
 ### Version 0.3.10 (2017-03-01)
 
