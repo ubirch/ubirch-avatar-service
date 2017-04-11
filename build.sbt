@@ -46,7 +46,7 @@ lazy val server = project
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
     resourceGenerators in Compile += Def.task {
-      generateDockerFile(baseDirectory.value / ".." / "Dockerfile.input", name.value, version.value, (assemblyOutputPath in assembly).value)
+      generateDockerFile(baseDirectory.value / ".." / "Dockerfile.input", (assemblyOutputPath in assembly).value)
     }.taskValue
   )
 
@@ -307,8 +307,7 @@ lazy val mergeStrategy = Seq(
   }
 )
 
-def generateDockerFile(file: File, nameString: String, versionString: String, jarFile: sbt.File): Seq[File] = {
-  val jarTargetPath = s"/opt/jar/${jarFile.name}"
+def generateDockerFile(file: File, jarFile: sbt.File): Seq[File] = {
   val contents =
     s"""SOURCE=server/target/scala-2.11/${jarFile.getName}
        |TARGET=${jarFile.getName}
