@@ -2,7 +2,7 @@ package com.ubirch.avatar.test.base
 
 import com.ubirch.avatar.storage.StorageCleanup
 
-import org.scalatest.{AsyncFeatureSpec, BeforeAndAfterEach, Matchers}
+import org.scalatest.{AsyncFeatureSpec, BeforeAndAfterAll, BeforeAndAfterEach, Matchers}
 
 /**
   * author: cvandrei
@@ -11,11 +11,17 @@ import org.scalatest.{AsyncFeatureSpec, BeforeAndAfterEach, Matchers}
 trait ElasticsearchSpecAsync extends AsyncFeatureSpec
   with Matchers
   with BeforeAndAfterEach
+  with BeforeAndAfterAll
   with StorageCleanup {
 
   override protected def beforeEach(): Unit = {
     cleanElasticsearch()
     Thread.sleep(100)
+  }
+
+  override protected def afterAll(): Unit = {
+    esClientClose()
+    super.afterAll()
   }
 
 }

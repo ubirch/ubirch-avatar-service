@@ -179,7 +179,7 @@ class DeviceDataProcessedManagerSpec
   feature("byDate()") {
 
     scenario("deviceId does not exist; index does not exist") {
-      deleteIndexes()
+      deleteIndices()
       val result = Await.result(DeviceDataProcessedManager.byDate(UUIDUtil.uuid, DateTime.now, DateTime.now), 1 seconds)
       result should be('isEmpty)
     }
@@ -290,7 +290,7 @@ class DeviceDataProcessedManagerSpec
   feature("before()") {
 
     scenario("deviceId does not exist; index does not exist") {
-      deleteIndexes()
+      deleteIndices()
       val result = Await.result(DeviceDataProcessedManager.before(UUIDUtil.uuid, DateTime.now), 1 seconds)
       result should be('isEmpty)
     }
@@ -365,7 +365,7 @@ class DeviceDataProcessedManagerSpec
   feature("after()") {
 
     scenario("deviceId does not exist; index does not exist") {
-      deleteIndexes()
+      deleteIndices()
       val result = Await.result(DeviceDataProcessedManager.after(UUIDUtil.uuid, DateTime.now), 1 seconds)
       result should be('isEmpty)
     }
@@ -440,7 +440,7 @@ class DeviceDataProcessedManagerSpec
   feature("byDay()") {
 
     scenario("deviceId does not exist; index does not exist") {
-      deleteIndexes()
+      deleteIndices()
       val result = Await.result(DeviceDataProcessedManager.byDay(UUIDUtil.uuid, DateTime.now), 1 seconds)
       result should be('isEmpty)
     }

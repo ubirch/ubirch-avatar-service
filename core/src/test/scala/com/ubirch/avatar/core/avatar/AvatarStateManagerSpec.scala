@@ -16,7 +16,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
   feature("byDeviceId()") {
 
     scenario("index does not exist") {
-      deleteIndexes()
+      deleteIndices()
       AvatarStateManager.byDeviceId(UUIDUtil.uuid) map (_ should be(None))
     }
 
@@ -51,7 +51,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
     scenario("index does not exist -> create is successful (and record can be found)") {
 
       // prepare
-      deleteIndexes()
+      deleteIndices()
       val device = DummyDevices.minimalDevice()
       val deviceId = UUIDUtil.fromString(device.deviceId)
       val avatarState = AvatarState(deviceId = deviceId)
@@ -116,7 +116,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
     scenario("index does not exist -> update fails") {
 
       // prepare
-      deleteIndexes()
+      deleteIndices()
       val device = DummyDevices.minimalDevice()
       val deviceId = UUIDUtil.fromString(device.deviceId)
       val avatarState = AvatarState(deviceId = deviceId)
@@ -189,7 +189,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
     scenario("index does not exist -> upsert succeeds and we can find the record afterwards") {
 
       // prepare
-      deleteIndexes()
+      deleteIndices()
       val device = DummyDevices.minimalDevice()
       val deviceId = UUIDUtil.fromString(device.deviceId)
       val avatarState = AvatarState(deviceId = deviceId)

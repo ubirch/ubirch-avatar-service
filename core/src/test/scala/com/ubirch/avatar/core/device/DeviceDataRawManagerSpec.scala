@@ -6,8 +6,8 @@ import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionException}
 import scala.language.postfixOps
 
 /**
@@ -74,7 +74,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
     }
 
     scenario("deviceId does not exist; index does not exist") {
-      deleteIndexes()
+      deleteIndices()
       val device = DummyDevices.minimalDevice()
       Await.result(DeviceDataRawManager.history(device), 1 seconds) should be('isEmpty)
     }

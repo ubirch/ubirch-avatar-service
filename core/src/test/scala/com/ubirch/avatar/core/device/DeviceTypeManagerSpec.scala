@@ -19,7 +19,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("all()") {
 
     scenario("index does not exist --> empty response") {
-      deleteIndexes()
+      deleteIndices()
       runAllReturnsEmpty()
     }
 
@@ -45,7 +45,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("getByKey()") {
 
     scenario("index does not exist --> result is None") {
-      deleteIndexes()
+      deleteIndices()
       runGetByKeyResultsInNone()
     }
 
@@ -63,7 +63,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("create()") {
 
     scenario("index does not exist --> create is successful") {
-      deleteIndexes()
+      deleteIndices()
       runCreateSuccessful()
     }
 
@@ -94,7 +94,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("update()") {
 
     scenario("index does not exist --> update fails") {
-      deleteIndexes()
+      deleteIndices()
       runUpdateFails()
     }
 
@@ -125,7 +125,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("init()") {
 
     scenario("index does not exist --> default deviceTypes are created") {
-      deleteIndexes()
+      deleteIndices()
       runInitDeviceTypesAreCreated()
     }
 

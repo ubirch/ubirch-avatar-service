@@ -23,7 +23,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"GET ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> empty response") {
-      deleteIndexes()
+      deleteIndices()
       runTypeGetProducesEmptyResponse()
     }
 
@@ -56,7 +56,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"POST ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> create is successful") {
-      deleteIndexes()
+      deleteIndices()
       runTypePostCreatesRecord()
     }
 
@@ -90,7 +90,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"PUT ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> update fails") {
-      deleteIndexes()
+      deleteIndices()
       runTypePutFails()
     }
 
@@ -124,7 +124,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"GET ${RouteConstants.pathDeviceTypeInit}") {
 
     scenario("index does not exist --> default deviceTypes are created") {
-      deleteIndexes()
+      deleteIndices()
       runTypeInitCreatesRecords()
     }
 

@@ -27,6 +27,7 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:json-auto-convert_ to version 0.3.4
 * update _com.ubirch.util:oidc-utils_ to version 0.2.5
 * update _com.ubirch.notary:notary-client_ to version 0.3.2
+* migrate to _com.ubirch.util:elasticsearch-util_ version 1.0.0
 
 ### Version 0.3.10 (2017-03-01)
 
@@ -670,7 +671,11 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
         ./sbt server/run
 
- 2. start test data tool
+ 2. reset database
+
+     ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ClearDb"
+
+ 3. start test data tool
 
     1. set AWS env vars:
 
