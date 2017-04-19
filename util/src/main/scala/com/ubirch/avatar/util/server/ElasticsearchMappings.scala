@@ -32,10 +32,6 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
         s"""{
            |  "${Config.esDeviceDataRawType}" : {
            |    "properties" : {
-           |      "timestamp": {
-           |          "type": "date",
-           |          "format": "strict_date_optional_time||epoch_millis"
-           |      },
            |      "a" : {
            |        "type" : "string",
            |        "index": "not_analyzed"
@@ -55,10 +51,6 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
         s"""{
            |  "${Config.esDeviceDataProcessedType}" : {
            |    "properties" : {
-           |      "timestamp": {
-           |        "type": "date",
-           |        "format": "strict_date_optional_time||epoch_millis"
-           |      },
            |      "deviceId" : {
            |        "type" : "string",
            |        "index": "not_analyzed"
@@ -94,10 +86,6 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
         s"""{
            |  "${Config.esDeviceDataRawAnchoredType}" : {
            |    "properties" : {
-           |      "timestamp": {
-           |          "type": "date",
-           |          "format": "strict_date_optional_time||epoch_millis"
-           |      },
            |      "a" : {
            |        "type" : "string",
            |        "index": "not_analyzed"
@@ -159,10 +147,6 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      "s" : {
            |        "type" : "string",
            |        "index": "not_analyzed"
-           |      },
-           |      "ts": {
-           |          "type": "date",
-           |          "format": "strict_date_optional_time||epoch_millis"
            |      }
            |    }
            |  }

@@ -21,13 +21,13 @@ ubirch Avatar Service is responsible for:
 * update to _json4s_ version 3.5.1
 * update to _de.heikoseeberger:akka-http-json4s_ version 1.14.0
 * update Akka HTTP to version 10.0.5
-* update _com.ubirch.util:elasticsearch-client-binary_ to version 0.6.2
-* update _com.ubirch.util:elasticsearch-util_ to version 0.2.1
 * update _com.ubirch.util:json_ to version 0.3.4
 * update _com.ubirch.util:json-auto-convert_ to version 0.3.4
 * update _com.ubirch.util:oidc-utils_ to version 0.2.5
 * update _com.ubirch.notary:notary-client_ to version 0.3.2
-* migrate to _com.ubirch.util:elasticsearch-util_ version 1.0.0
+* update _com.ubirch.util:elasticsearch-util_ to version 2.0.0
+* update _com.ubirch.util:elasticsearch-client-binary_ to version 2.0.1
+* update to Elasticsearch 5.3
 
 ### Version 0.3.10 (2017-03-01)
 
@@ -505,129 +505,8 @@ The AvatarService opens a connection to AWS which depends on the following envir
 
 ### Elasticsearch
 
-The service requires the following mappings for things to work as expected:
-
-    curl -XPOST 'localhost:9200/ubirch-devices' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "device" : {
-          "properties" : {
-            "deviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "hwDeviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "hashedHwDeviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-raw-data' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicemessage" : {
-          "properties" : {
-            "timestamp": {
-                "type": "date",
-                "format": "strict_date_optional_time||epoch_millis"
-            },
-            "a" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "id" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-raw-data-anchored' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicemessage" : {
-          "properties" : {
-            "timestamp": {
-                "type": "date",
-                "format": "strict_date_optional_time||epoch_millis"
-            },
-            "a" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "id" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-history' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicedata" : {
-          "properties" : {
-            "timestamp": {
-              "type": "date",
-              "format": "strict_date_optional_time||epoch_millis"
-            },
-            "deviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "messageId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "deviceDataRawId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "id" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "a" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-type' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicetype" : {
-          "properties" : {
-            "key" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-avatar-state' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "avatarstate" : {
-          "properties" : {
-            "deviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
+The service requires the mappings defined in `ElasticsearchMappings`. They are automatically created during server boot
+if they don't exist.
 
 
 ## Automated Tests

@@ -15,7 +15,7 @@ object Config extends ConfigBase {
   def goPipelineRev: String = config.getString(ConfigKeys.GOPIPELINEREV)
 
   /*
-   * SERVER RELATED
+   * Service
    ****************************************************************/
 
   /**
@@ -38,7 +38,7 @@ object Config extends ConfigBase {
   def port: Int = config.getInt(ConfigKeys.HTTPPORT)
 
   /*
-   * Akka Related
+   * Akka
    ************************************************************************************************/
 
   /**
@@ -51,23 +51,8 @@ object Config extends ConfigBase {
   def akkaNumberOfWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_WORKERS)
 
   /*
-   * Elasticsearch Related
+   * Elasticsearch
    ************************************************************************************************/
-
-  /**
-    * @return Elasticsearch REST client port
-    */
-  def esPortHttp: Int = config.getInt(ConfigKeys.ESPORT_REST)
-
-  /**
-    * @return Elasticsearch login user (not yet implemented)
-    */
-  def esUser: String = config.getString(ConfigKeys.DEVICE_DATA_DB_USER)
-
-  /**
-    * @return Elasticsearch login password (not yet implemented)
-    */
-  def esPassword: String = config.getString(ConfigKeys.DEVICE_DATA_DB_PASSWORD)
 
   /**
     * @return Elasticsearch DeviceData index
@@ -144,6 +129,10 @@ object Config extends ConfigBase {
     */
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
+  /*
+   * AWS
+   ************************************************************************************************/
+
   /**
     * defines a prefix for AWS IoT Shadownames
     *
@@ -199,6 +188,10 @@ object Config extends ConfigBase {
 
   def awsSqsQueueTransformerOut: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER_OUT)
 
+  /*
+   * ubirch REST Client
+   ************************************************************************************************/
+
   /**
     * @return REST Client connection timeout in milliseconds
     */
@@ -209,7 +202,9 @@ object Config extends ConfigBase {
     */
   def restClientTimeoutRead: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_READ)
 
-  /* mqtt */
+  /*
+   * MQTT
+   ************************************************************************************************/
 
   def mqttBrokerUrl: String = config.getString(ConfigKeys.MQTT_BROKER_URL)
 

@@ -30,7 +30,6 @@ object ConfigKeys {
 
   // Prefixes
   final val esPrefix = s"$prefix.es"
-  final val esPortPrefix = s"$esPrefix.port"
   final val esDevicePrefix = s"$esPrefix.device"
   final val esDeviceRawDataPrefix = s"$esPrefix.devicerawdata"
   final val esDeviceRawDataAnchoredPrefix = s"$esPrefix.devicerawdataAnchored"
@@ -38,11 +37,6 @@ object ConfigKeys {
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
   final val esDeviceStatePrefix = s"$esPrefix.devicestate"
   final val esAvatarStatePrefix = s"$esPrefix.avatarState"
-
-  // Connection
-  final val ESPORT_REST = s"$esPortPrefix.rest"
-  final val DEVICE_DATA_DB_USER = s"$esPrefix.user"
-  final val DEVICE_DATA_DB_PASSWORD = s"$esPrefix.password"
 
   // Device Index & Type
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
