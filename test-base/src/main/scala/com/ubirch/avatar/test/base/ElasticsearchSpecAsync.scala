@@ -19,9 +19,4 @@ trait ElasticsearchSpecAsync extends AsyncFeatureSpec
     Thread.sleep(100)
   }
 
-  override protected def afterAll(): Unit = {
-    esClientClose()
-    super.afterAll()
-  }
-
 }
