@@ -1,10 +1,10 @@
-package com.ubirch.avatar.core.test.util
+package com.ubirch.avatar.test.tools
 
 import java.util.UUID
 
 import com.ubirch.avatar.core.device.DeviceDataProcessedManager
-import com.ubirch.avatar.core.test.model.DummyDeviceDataProcessed
 import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.avatar.test.tools.model.DummyDeviceDataProcessed
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}

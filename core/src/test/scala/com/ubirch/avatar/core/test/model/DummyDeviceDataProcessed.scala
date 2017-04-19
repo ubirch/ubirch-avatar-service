@@ -1,9 +1,10 @@
-package com.ubirch.avatar.model
+package com.ubirch.avatar.core.test.model
 
 import java.util.UUID
 
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.util.uuid.UUIDUtil
+
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._

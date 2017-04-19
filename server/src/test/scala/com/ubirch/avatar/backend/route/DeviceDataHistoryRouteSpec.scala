@@ -1,18 +1,18 @@
 package com.ubirch.avatar.backend.route
 
-
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.test.util.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.uuid.UUIDUtil
+
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.language.postfixOps

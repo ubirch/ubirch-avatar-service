@@ -30,12 +30,23 @@ lazy val commonSettings = Seq(
 
 lazy val avatarService = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(server, cmdtools, client, core, aws, config, model, testBase, util)
+  .aggregate(
+    aws,
+    client,
+    cmdtools,
+    config,
+    core,
+    model,
+    server,
+    testBase,
+    testTools,
+    util
+  )
 
 lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
-  .dependsOn(util, core, config, testBase % "test")
+  .dependsOn(util, core, config, testBase % "test", testTools % "test")
   .enablePlugins(DockerPlugin)
   .settings(
     description := "REST interface and Akka HTTP specific code",
@@ -115,6 +126,14 @@ lazy val testBase = (project in file("test-base"))
       resolverBeeClient,
       resolverRoundEights
     )
+  )
+
+lazy val testTools = (project in file("test-tools"))
+  .settings(commonSettings: _*)
+  .dependsOn(core)
+  .settings(
+    name := "test-tools",
+    description := "test tools for use outside of core"
   )
 
 lazy val util = project

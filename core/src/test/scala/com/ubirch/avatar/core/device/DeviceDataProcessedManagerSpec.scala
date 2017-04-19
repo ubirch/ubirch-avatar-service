@@ -2,8 +2,8 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
+import com.ubirch.avatar.core.test.model.DummyDeviceDataProcessed
 import com.ubirch.avatar.core.test.util.DeviceDataProcessedTestUtil
-import com.ubirch.avatar.model.DummyDeviceDataProcessed
 import com.ubirch.avatar.model.device.DeviceDataProcessed
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
