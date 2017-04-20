@@ -8,21 +8,9 @@
         </encoder>
     </appender>
 
-    <!--<appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
-    <!--<file>./logs/application.log</file>-->
-    <!--<encoder>-->
-    <!--<pattern>%date{ISO8601} %-5level - %msg -[%logger{36}] - [%thread]%n</pattern>-->
-    <!--</encoder>-->
-    <!--</appender>-->
-
-    <!--<appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">-->
-    <!--<appender-ref ref="FILE"/>-->
-    <!--</appender>-->
-
     <logger name="com.ubirch" level="DEBUG"/>
 
     <root level="DEBUG">
-        <!--<appender-ref ref="FILE"/>-->
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
