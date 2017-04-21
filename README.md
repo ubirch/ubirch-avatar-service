@@ -23,11 +23,11 @@ ubirch Avatar Service is responsible for:
 * update Akka HTTP to version 10.0.5
 * update _com.ubirch.util:json_ to version 0.3.4
 * update _com.ubirch.util:json-auto-convert_ to version 0.3.4
-* update _com.ubirch.util:oidc-utils_ to version 0.2.5
 * update _com.ubirch.notary:notary-client_ to version 0.3.2
 * update _com.ubirch.util:elasticsearch-util_ to version 2.0.0
 * update _com.ubirch.util:elasticsearch-client-binary_ to version 2.0.1
 * update to Elasticsearch 5.3
+* update _com.ubirch.util:oidc-utils_ to version 0.3.0
 
 ### Version 0.3.10 (2017-03-01)
 
