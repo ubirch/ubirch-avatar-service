@@ -8,6 +8,7 @@ import com.ubirch.avatar.model.device._
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
+import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -16,7 +17,7 @@ import scala.language.postfixOps
   */
 class TransformerPostprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
-  implicit val executionContext = context.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   override def receive: Receive = {
 
@@ -34,7 +35,7 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
 
       DeviceDataProcessedManager.store(ddp)
 
-      val jval = Json4sUtil.any2jvalue(ddp) match {
+      Json4sUtil.any2jvalue(ddp) match {
         case Some(jval) =>
 
           log.debug("send processed message to sqs")
