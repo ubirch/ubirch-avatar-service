@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.aws.AvatarState
 import com.ubirch.avatar.model.device.{Device, DeviceStateUpdate}
-import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.keyservice.KeyServiceManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESBulkStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
@@ -36,7 +36,8 @@ object DeviceStateManager extends MyJsonProtocol with StrictLogging {
 
     val payload = device.deviceConfig.getOrElse(Json4sUtil.any2jvalue(SimplePayLoad()).get)
 
-    val (k, s) = DeviceUtil.sign(payload, device).get
+    //@TODO remove ugly get
+    val (k, s) = KeyServiceManager.sign(payload, device).get
 
     DeviceStateUpdate(
       id = UUIDUtil.uuid,

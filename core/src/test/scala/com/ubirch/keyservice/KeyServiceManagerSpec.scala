@@ -1,4 +1,4 @@
-package com.ubirch.avatar.util.model
+package com.ubirch.keyservice
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.model.DummyDevices
@@ -14,7 +14,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by derMicha on 18/01/17.
   */
-class DeviceUtilTest extends FeatureSpec
+//@TODO this test is placed in the wrong module because of f*cking dependencies
+class KeyServiceManagerSpec
+  extends FeatureSpec
   with Matchers
   with StrictLogging
   with MyJsonProtocol {
@@ -29,7 +31,7 @@ class DeviceUtilTest extends FeatureSpec
         """{"a":"b"}""".stripMargin
       )
 
-      DeviceUtil.sign(payload, device) match {
+      KeyServiceManager.sign(payload, device) match {
         case Some((k, s)) =>
           val checkedD = DeviceCoreUtil.validateSignedMessage(device.hwDeviceId, k, s, payload)
           checkedD shouldBe true
@@ -42,7 +44,7 @@ class DeviceUtilTest extends FeatureSpec
 
       val payload = read[JValue]("")
 
-      DeviceUtil.sign(payload, device) match {
+      KeyServiceManager.sign(payload, device) match {
         case Some((k, s)) =>
           val checkedD = DeviceCoreUtil.validateSignedMessage(device.hwDeviceId, k, s, payload)
           checkedD shouldBe true
@@ -53,5 +55,4 @@ class DeviceUtilTest extends FeatureSpec
     }
 
   }
-
 }

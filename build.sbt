@@ -65,7 +65,7 @@ lazy val server = project
 
 lazy val keyservice = project
   .settings(commonSettings: _*)
-  .dependsOn(config)
+  .dependsOn(model, config)
   .settings(
     description := "ubirch key service",
     libraryDependencies ++= depKeyservice
@@ -164,6 +164,7 @@ lazy val util = project
 
 lazy val depKeyservice = Seq(
   ubirchCrypto,
+  ubirchJson,
   scalatest % "test"
 ) ++ scalaLogging
 

@@ -3,8 +3,8 @@ package com.ubirch.avatar.model
 import java.util.UUID
 
 import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
-import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.keyservice.KeyServiceManager
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
@@ -33,7 +33,7 @@ object DummyDeviceDataRaw {
   : DeviceDataRaw = {
 
     val p = payload()
-    val (k, s) = DeviceUtil.sign(p, device).get
+    val (k, s) = KeyServiceManager.sign(p, device).get
 
     DeviceDataRaw(
       id = messageId,
