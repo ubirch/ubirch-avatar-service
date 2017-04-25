@@ -87,7 +87,8 @@ lazy val core = project
     libraryDependencies ++= depCore,
     resolvers ++= Seq(
       resolverRoundEights,
-      resolverEclipse
+      resolverEclipse,
+      resolverElasticsearch
     )
   )
 
@@ -144,7 +145,8 @@ lazy val util = project
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
       resolverBeeClient,
-      resolverRoundEights
+      resolverRoundEights,
+      resolverElasticsearch
     )
   )
 
@@ -306,6 +308,7 @@ lazy val resolverSeebergerJson = Resolver.bintrayRepo("hseeberger", "maven")
 lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
 lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
 lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
+lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
 
 /*
  * MISC
