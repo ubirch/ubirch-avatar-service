@@ -1,3 +1,5 @@
+import sbt.Keys.libraryDependencies
+
 packagedArtifacts in file(".") := Map.empty // disable publishing of root/default project
 
 // see http://www.scala-sbt.org/0.13/docs/Parallel-Execution.html for details
@@ -61,9 +63,17 @@ lazy val server = project
     }.taskValue
   )
 
+lazy val keyservice = project
+  .settings(commonSettings: _*)
+  .dependsOn(config)
+  .settings(
+    description := "ubirch key service",
+    libraryDependencies ++= depKeyservice
+  )
+
 lazy val cmdtools = project
   .settings(commonSettings: _*)
-  .dependsOn(core, client, util, testBase)
+  .dependsOn(core, client, keyservice, util, testBase)
   .settings(
     description := "command line tools"
   )
@@ -81,7 +91,7 @@ lazy val client = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, model, util, testBase % "test")
+  .dependsOn(config, aws, model, keyservice, util, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore,
@@ -117,7 +127,7 @@ lazy val model = project
 
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(model, config, util)
+  .dependsOn(util)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -138,7 +148,7 @@ lazy val testTools = (project in file("test-tools"))
 
 lazy val util = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model)
+  .dependsOn(config, model, keyservice)
   .settings(
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
@@ -151,6 +161,11 @@ lazy val util = project
 /*
  * MODULE DEPENDENCIES
  ********************************************************/
+
+lazy val depKeyservice = Seq(
+  ubirchCrypto,
+  scalatest % "test"
+) ++ scalaLogging
 
 lazy val depServer = Seq(
 

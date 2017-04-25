@@ -3,6 +3,7 @@ package com.ubirch.avatar.model.device
 import java.util.UUID
 
 import com.ubirch.avatar.model.MessageVersion
+import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
 import org.json4s._
@@ -30,9 +31,9 @@ case class DeviceDataRaw(
                           s: Option[String] = None,
                           uuid: Option[String] = None,
                           p: JValue,
+                          ch: Option[String] = None, // SHA256 hash of previous message
                           deviceId: Option[String] = None,
                           deviceName: Option[String] = None,
-                          chainedHash: Option[String] = None, // MD5 hash of signature
                           txHash: Option[String] = None, // related bitcoin transaction hash
                           txHashLink: Option[String] = None, // related chain explorer url
                           txHashLinkHtml: Option[String] = None // related chain explorer html-link

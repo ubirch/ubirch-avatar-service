@@ -41,7 +41,7 @@ class MessageNotaryActor extends Actor
               val txHashLink = resp.txHashLink
               log.info(s"btx hash for message ${drd.id} is $txHash ($txHashLink)")
               val anchored = drd.copy(
-                chainedHash = Some(payloadHash.md5),
+                ch = Some(payloadHash.md5),
                 txHash = Some(txHash),
                 txHashLink = Some(txHashLink),
                 txHashLinkHtml = Some(s"<a target=_blank href='$txHashLink'>$txHash</a>")

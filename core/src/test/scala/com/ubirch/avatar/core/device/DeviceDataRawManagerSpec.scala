@@ -10,6 +10,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 /**
   * author: cvandrei
   * since: 2016-10-25

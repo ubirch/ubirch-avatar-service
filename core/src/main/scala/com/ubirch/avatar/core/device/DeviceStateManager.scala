@@ -36,7 +36,7 @@ object DeviceStateManager extends MyJsonProtocol with StrictLogging {
 
     val payload = device.deviceConfig.getOrElse(Json4sUtil.any2jvalue(SimplePayLoad()).get)
 
-    val (k, s) = DeviceUtil.sign(payload, device)
+    val (k, s) = DeviceUtil.sign(payload, device).get
 
     DeviceStateUpdate(
       id = UUIDUtil.uuid,

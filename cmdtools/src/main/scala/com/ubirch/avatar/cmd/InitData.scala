@@ -4,6 +4,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
+import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
@@ -12,6 +13,8 @@ import org.json4s.native.Serialization.read
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by derMicha on 09/11/16.
@@ -51,7 +54,7 @@ object InitData
 
       Thread.sleep(5000)
 
-      val (_, series) = DummyDeviceDataRaw.dataSeries(
+      val series: List[DeviceDataRaw] = DummyDeviceDataRaw.dataSeries(
         device = device,
         elementCount = numberOfRawMessages,
         intervalMillis = 1000 * 60 * 5, // 5 mins

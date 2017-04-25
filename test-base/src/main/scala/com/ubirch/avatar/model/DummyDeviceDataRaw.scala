@@ -6,13 +6,15 @@ import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 import org.json4s.native.JsonMethods._
 
 import scala.collection.mutable.ListBuffer
+import scala.concurrent.ExecutionContext
 import scala.util.Random
+import scala.language.postfixOps
+
 
 /**
   * author: cvandrei
@@ -24,15 +26,14 @@ object DummyDeviceDataRaw {
 
   def data(messageId: UUID = UUIDUtil.uuid,
            device: Device,
-           pubKey: String = "pretend-to-be-a-public-key",
-           timestamp: DateTime = DateTime.now,
-           hashedPubKey: String = "pretend-to-be-a-public-key"
+           timestamp: DateTime = DateTime.now
           )
           (payload: () => JValue = () => randomPayload())
+          (implicit context: ExecutionContext)
   : DeviceDataRaw = {
 
     val p = payload()
-    val (k, s) = DeviceUtil.sign(p, device)
+    val (k, s) = DeviceUtil.sign(p, device).get
 
     DeviceDataRaw(
       id = messageId,
@@ -46,25 +47,19 @@ object DummyDeviceDataRaw {
   }
 
   def dataSeries(messageId: Option[UUID] = None,
-                 device: Device = DummyDevices.minimalDevice(),
-                 pubKey: String = "pretend-to-be-a-public-key",
+                 device: Device,
                  intervalMillis: Long = 1000 * 30, // 30s
                  timestampOffset: Long = -1000 * 60 * 60, // -1h
                  elementCount: Int = 5
                 )
                 (payload: () => JValue = () => randomPayload())
-  : (Device, List[DeviceDataRaw]) = {
+                (implicit context: ExecutionContext)
+  : List[DeviceDataRaw] = {
 
     val rawDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
 
-    val hashedPubKey = pubKey match {
-      case pk: String if pk.nonEmpty => HashUtil.sha256HexString(pk)
-      case _ => "pretend-to-be-a-public-key"
-    }
-
-    val range = 0 until elementCount
-    for (i <- range) {
+    for (i <- 0 until elementCount) {
 
       val timestamp = newestDateTime.minus(i * intervalMillis)
       val msgId = messageId match {
@@ -74,23 +69,36 @@ object DummyDeviceDataRaw {
 
       val deviceData = data(messageId = msgId,
         device = device,
-        pubKey = pubKey,
-        timestamp = timestamp,
-        hashedPubKey = hashedPubKey
+        timestamp = timestamp
       )(payload)
 
       rawDataList.+=:(deviceData)
 
     }
 
-    (device, rawDataList.toList)
-
+    rawDataList.toList
   }
 
   def randomPayload(): JValue =
     parse(
       s"""
          |[
+         |{
+         |"t":${2000 + Random.nextInt(1500)},
+         |"p":${90000 + Random.nextInt(20000)},
+         |"h":${4000 + Random.nextInt(5500)},
+         |"la":"52.51${10000 + Random.nextInt(20000)}",
+         |"lo":"13.21${10000 + Random.nextInt(20000)}",
+         |"a":${5000 + Random.nextInt(10000)}
+         |},
+         |{
+         |"t":${2000 + Random.nextInt(1500)},
+         |"p":${90000 + Random.nextInt(20000)},
+         |"h":${4000 + Random.nextInt(5500)},
+         |"la":"52.51${10000 + Random.nextInt(20000)}",
+         |"lo":"13.21${10000 + Random.nextInt(20000)}",
+         |"a":${5000 + Random.nextInt(10000)}
+         |},
          |{
          |"t":${2000 + Random.nextInt(1500)},
          |"p":${90000 + Random.nextInt(20000)},

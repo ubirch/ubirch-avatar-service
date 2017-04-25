@@ -1,5 +1,7 @@
 package com.ubirch.avatar.model.device
 
+import java.security.{KeyPair, KeyPairGenerator, MessageDigest, Signature}
+
 import com.ubirch.avatar.config.Config
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue

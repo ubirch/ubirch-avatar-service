@@ -1,17 +1,171 @@
-{
-  "v": "0.0.2",
-  "a": "XPL7H+/Q5hlp8JDm0n7JhK7jYmoEnjVk+CLGN10owj7EJx8hGWcVdlvxL+t7rQ/2N8I2qlICLCKnve9GcPQGYg==",
-  "k": "pb37Vbe8tpo0+ed4nO/emQryVAMfAkIjZWFtWLiGbmA=",
-  "s": "8BVqi94N4M4j5B7oNTapvOqCWJqFjtJYTDxQSdlU3KqMb6aHuZVmImKtPIfl3SdoQEPi1gOhpmAsyR0aWiK8Bw==",
-  "p": {
-    "t": 3095,
-    "p": 1011,
-    "h": 2983,
-    "a": 2588133,
-    "la": "13.36430",
-    "lo": "52.481083",
-    "ba": 89,
-    "lp": 0,
-    "e": 0
+[
+  {
+    "id": "7d7cda25-1648-41c7-ba82-ecca23c7f96c",
+    "v": "0.0.3",
+    "a": "By0Mj2FAAQgg3Mh/qJVMC1TsxyCST/d9dvGqWS619DRBkV5oleR7alP/OPxvvae5/RBDHQXP3nskgAIG4ntGiw==",
+    "ts": "2017-04-25T08:53:15.003Z",
+    "s": "Pj149+zC89kGBbczOxTU7c+H2OKJrCGl1q/BS+Msy0L3Kwur92ixx8q10lbSfwFQJw9+MZGq1bszFHYU0UkDAw==",
+    "p": [
+      {
+        "t": 3196,
+        "p": 100990,
+        "h": 7495,
+        "la": "52.5119534",
+        "lo": "13.2120918",
+        "a": 10265
+      },
+      {
+        "t": 2265,
+        "p": 100189,
+        "h": 6598,
+        "la": "52.5129918",
+        "lo": "13.2111864",
+        "a": 13758
+      },
+      {
+        "t": 2785,
+        "p": 104352,
+        "h": 7106,
+        "la": "52.5126822",
+        "lo": "13.2114450",
+        "a": 14648
+      }
+    ]
+  },
+  {
+    "id": "a19c5d3a-690a-4e06-b457-ce47a654078f",
+    "v": "0.0.3",
+    "a": "By0Mj2FAAQgg3Mh/qJVMC1TsxyCST/d9dvGqWS619DRBkV5oleR7alP/OPxvvae5/RBDHQXP3nskgAIG4ntGiw==",
+    "ts": "2017-04-25T08:53:45.003Z",
+    "s": "6m1ZOy41sOecaw2/vhfkMa/hvqFglw3Kqp6An98pWPZEtU/vkDVnMmCil8v7BLxH9dovrGPdmqIJxvd7NHHFAA==",
+    "p": [
+      {
+        "t": 2097,
+        "p": 96064,
+        "h": 5066,
+        "la": "52.5110718",
+        "lo": "13.2126236",
+        "a": 8576
+      },
+      {
+        "t": 3497,
+        "p": 109239,
+        "h": 6897,
+        "la": "52.5127844",
+        "lo": "13.2111172",
+        "a": 14874
+      },
+      {
+        "t": 2921,
+        "p": 102351,
+        "h": 6243,
+        "la": "52.5110402",
+        "lo": "13.2111600",
+        "a": 9714
+      }
+    ],
+    "chainedHash": "75f930072c508d896f5bf0d7f1f78f557ed2b194d4e2bb7ff3542594a77b8f07"
+  },
+  {
+    "id": "50fdfc00-3de5-4d04-905d-c6ebc60d41e7",
+    "v": "0.0.3",
+    "a": "By0Mj2FAAQgg3Mh/qJVMC1TsxyCST/d9dvGqWS619DRBkV5oleR7alP/OPxvvae5/RBDHQXP3nskgAIG4ntGiw==",
+    "ts": "2017-04-25T08:54:15.003Z",
+    "s": "nmOZDX8NrM0kkNwmhEIa7kFeOxSCPQO2qVt2HdSn0b11TajV/YlD0Ey9yOZer05+sntAuqmP/toaWtFMs6S4Aw==",
+    "p": [
+      {
+        "t": 3200,
+        "p": 108441,
+        "h": 5637,
+        "la": "52.5124866",
+        "lo": "13.2112507",
+        "a": 6657
+      },
+      {
+        "t": 3091,
+        "p": 106876,
+        "h": 6254,
+        "la": "52.5124435",
+        "lo": "13.2127196",
+        "a": 6622
+      },
+      {
+        "t": 2168,
+        "p": 99257,
+        "h": 5795,
+        "la": "52.5127094",
+        "lo": "13.2115292",
+        "a": 7037
+      }
+    ],
+    "chainedHash": "3e8731b32b5271df516ea739dafff929d7a283d3062d2346c91ecbafdce04295"
+  },
+  {
+    "id": "f1cdb70c-f77c-4c6c-8ab3-fd082bf469a0",
+    "v": "0.0.3",
+    "a": "By0Mj2FAAQgg3Mh/qJVMC1TsxyCST/d9dvGqWS619DRBkV5oleR7alP/OPxvvae5/RBDHQXP3nskgAIG4ntGiw==",
+    "ts": "2017-04-25T08:54:45.003Z",
+    "s": "t2yqY94LWXE2mtHNLBY2qnuoMOdwMXZWgF6XPBM3YBC19hJVy4Y3/iCKQpPNkqQf4VDD8UzW9XNkkUHBPWr6Bw==",
+    "p": [
+      {
+        "t": 3029,
+        "p": 93162,
+        "h": 9043,
+        "la": "52.5129389",
+        "lo": "13.2113959",
+        "a": 14485
+      },
+      {
+        "t": 2819,
+        "p": 92772,
+        "h": 9474,
+        "la": "52.5118768",
+        "lo": "13.2118126",
+        "a": 13195
+      },
+      {
+        "t": 3452,
+        "p": 108832,
+        "h": 5354,
+        "la": "52.5126169",
+        "lo": "13.2115688",
+        "a": 13910
+      }
+    ],
+    "chainedHash": "d5c08183b9a3a4803c53c240efbcad244c931bf096b446168e5d9bea8d295388"
+  },
+  {
+    "id": "e2b5adad-6a2b-4058-9b52-1c8bf4b3bf80",
+    "v": "0.0.3",
+    "a": "By0Mj2FAAQgg3Mh/qJVMC1TsxyCST/d9dvGqWS619DRBkV5oleR7alP/OPxvvae5/RBDHQXP3nskgAIG4ntGiw==",
+    "ts": "2017-04-25T08:55:15.003Z",
+    "s": "bWldy7LYAUOr8wQsrdJAc+m0DKwx50pRY6fxAbhrmzk7F/gss+BuEVTYZ3ku+VQie2h3kBDFt9io/bBUn7ZHCQ==",
+    "p": [
+      {
+        "t": 3384,
+        "p": 90259,
+        "h": 8237,
+        "la": "52.5114046",
+        "lo": "13.2120289",
+        "a": 10632
+      },
+      {
+        "t": 2783,
+        "p": 95676,
+        "h": 7751,
+        "la": "52.5118937",
+        "lo": "13.2111611",
+        "a": 9838
+      },
+      {
+        "t": 2863,
+        "p": 95750,
+        "h": 7774,
+        "la": "52.5124939",
+        "lo": "13.2112325",
+        "a": 9410
+      }
+    ],
+    "chainedHash": "dc6874ae730afcd8f24982003e001f0faf7a3039a60b8d4de3ae495b01cb16a5"
   }
-}
+]
