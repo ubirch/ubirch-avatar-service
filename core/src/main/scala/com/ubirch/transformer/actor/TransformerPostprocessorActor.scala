@@ -25,36 +25,38 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
     case (deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw) =>
       log.debug(s"received device preprocessed raw data message: $drd with deviceKeyType: $deviceType")
 
-      val ddp = TransformerService.transform(
+      TransformerService.transform(
         deviceType = deviceType,
         device = device,
         drd = drd,
         sdrd = sdrd
-      )
+      ) match {
+        case Some(ddp) =>
+          DeviceDataProcessedManager.store(ddp)
 
-      DeviceDataProcessedManager.store(ddp)
+          Json4sUtil.any2jvalue(ddp) match {
+            case Some(jval) =>
 
-      val jval = Json4sUtil.any2jvalue(ddp) match {
-        case Some(jval) =>
+              log.debug("send processed message to sqs")
+              if (device.pubQueues.isDefined) {
+                device.pubQueues.get.foreach { sqsQueueName =>
+                  log.debug(s"send processed message to $sqsQueueName")
+                  val outProducerActor: ActorRef = context.actorOf(TransformerOutProducerActor.props(sqsQueueName))
+                  outProducerActor ! Json4sUtil.jvalue2String(jval)
+                  context.system.scheduler.scheduleOnce(15 seconds, outProducerActor, Kill)
+                }
+              }
 
-          log.debug("send processed message to sqs")
-          if (device.pubQueues.isDefined) {
-            device.pubQueues.get.foreach { sqsQueueName =>
-              log.debug(s"send processed message to $sqsQueueName")
-              val outProducerActor: ActorRef = context.actorOf(TransformerOutProducerActor.props(sqsQueueName))
-              outProducerActor ! Json4sUtil.jvalue2String(jval)
-              context.system.scheduler.scheduleOnce(15 seconds, outProducerActor, Kill)
-            }
+              log.debug("send processed message to mqtt")
+              val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
+              deviceMessageProcessedActor ! Json4sUtil.jvalue2String(jval)
+
+            case None =>
+              log.error(s"could not parse to json: $ddp")
           }
-
-          log.debug("send processed message to mqtt")
-          val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
-          deviceMessageProcessedActor ! Json4sUtil.jvalue2String(jval)
-
         case None =>
-          log.error(s"could not parse to json: $ddp")
+          log.error("transformation failed")
       }
-
     case msg: CamelMessage =>
       log.debug(s"received CamelMessage")
     //@TODO check why we receive here CamelMessages ???

@@ -14,6 +14,8 @@ import org.json4s.JValue
 import org.scalactic.TolerantNumerics
 import org.scalatest.{FeatureSpec, Matchers}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import spire.implicits._
 
 /**
@@ -71,7 +73,8 @@ class TransformerServiceTrackleSensorTest extends FeatureSpec
         sdrd = ddrTrackleSensor
       )
 
-      val tPayload = trd.deviceMessage.extractOpt[TrackleSensorPayloadOut]
+      trd.isDefined shouldBe true
+      val tPayload = trd.get.deviceMessage.extractOpt[TrackleSensorPayloadOut]
 
       implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(2)
 
