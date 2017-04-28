@@ -20,7 +20,7 @@ class AwsConsumerActor extends Consumer with ActorLogging {
   val accessKey: String = Config.awsAccessKey
   val secretKey: String = Config.awsSecretAccessKey
 
-  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=30"
+  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=10"
 
   override def autoAck: Boolean = true
 
