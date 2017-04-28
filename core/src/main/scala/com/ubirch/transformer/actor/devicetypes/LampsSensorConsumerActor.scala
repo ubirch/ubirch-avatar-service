@@ -13,7 +13,7 @@ class LampsSensorConsumerActor extends Consumer with ActorLogging {
 
   val secretKey = System.getenv().get(Config.awsSecretAccessKey)
 
-  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=20"
+  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=30"
 
   override def autoAck: Boolean = true
 
