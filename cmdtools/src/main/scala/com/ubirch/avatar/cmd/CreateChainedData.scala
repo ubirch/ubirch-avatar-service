@@ -20,6 +20,13 @@ object CreateChainedData
   val device = DummyDevices.minimalDevice()
   val dataSeries: List[DeviceDataRaw] = DummyDeviceDataRaw.dataSeries(device = device, elementCount = elementCount)()
 
+  KeyServiceManager.getKeyPairForDevice(device.deviceId).map {
+    case Some(keyPair) =>
+      println("public Key: " + KeyServiceManager.encodePubKey(keyPair.getPublic))
+      println("private Key: " + KeyServiceManager.encodePrivateKey(keyPair.getPrivate))
+    case None => None
+  }
+
   var prevDataHash: Option[String] = None
 
   val chainedDataSeries: List[DeviceDataRaw] = dataSeries.map { ddr =>
@@ -32,7 +39,6 @@ object CreateChainedData
 
     KeyServiceManager.getKeyPairForDevice(device.deviceId).map {
       case Some(keyPair) =>
-        println(KeyServiceManager.encodePubKey(keyPair.getPublic))
         println(Json4sUtil.jvalue2String(jval))
       case None => None
     }
