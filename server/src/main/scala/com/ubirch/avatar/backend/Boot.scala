@@ -3,21 +3,19 @@ package com.ubirch.avatar.backend
 import java.util.concurrent.TimeUnit
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.util.server.ElasticsearchMappings
 import com.ubirch.transformer.TransformerManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
-
 import org.elasticsearch.client.transport.TransportClient
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
+import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -37,6 +35,9 @@ object Boot extends App
   implicit val executionContext = system.dispatcher
 
   logger.info("ubirchAvatarService started")
+
+  val c = ConfigFactory.load("application.docker.conf")
+  c.entrySet().toString.split(",").foreach(println(_))
 
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
