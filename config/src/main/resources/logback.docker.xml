@@ -18,7 +18,7 @@
     </appender>
 
     <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
-        <url>https://${ES_LOG_USERNAME}:${ES_LOG_PASSWORD}@${ES_LOG_HOST}:${ES_LOG_PORT}/_bulk</url>
+        <url>http://${ES_LOG_HOST}:${ES_LOG_PORT}/_bulk</url>
         <authentication class="com.internetitem.logback.elasticsearch.config.BasicAuthentication"/>
         <index>${ENVID}-avatar-service-logs-%date{yyyy-MM-dd}</index>
         <type>log</type>
