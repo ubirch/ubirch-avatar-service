@@ -36,8 +36,8 @@ object Boot extends App
 
   logger.info("ubirchAvatarService started")
 
-  val c = ConfigFactory.load("application.docker.conf")
-  c.entrySet().toString.split(",").foreach(println(_))
+  //val c = ConfigFactory.load("application.docker.conf")
+  //c.entrySet().toString.split(",").foreach(println(_))
 
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
