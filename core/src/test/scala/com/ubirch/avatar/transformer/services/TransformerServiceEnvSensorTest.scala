@@ -12,6 +12,8 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import org.json4s.JValue
 import org.scalatest.{FeatureSpec, Matchers}
+import scala.concurrent.ExecutionContext.Implicits.global
+
 
 /**
   * Created by derMicha on 30/11/16.
@@ -65,7 +67,8 @@ class TransformerServiceEnvSensorTest extends FeatureSpec
         sdrd = ddrEnvSensor
       )
 
-      val tPayload = trd.deviceMessage.extractOpt[EnvSensorPayload]
+      trd.isDefined shouldBe true
+      val tPayload = trd.get.deviceMessage.extractOpt[EnvSensorPayload]
 
       tPayload.isDefined shouldBe true
       tPayload.get.temperature shouldBe (payload.t.toDouble / 100)
