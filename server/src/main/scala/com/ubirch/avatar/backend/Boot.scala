@@ -51,21 +51,6 @@ object Boot extends App
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
   createElasticsearchMappings()
 
-  // TEST CODE: read ES mappings and print them
-  for (indexName <- indicesToDelete) {
-
-    val response: GetSettingsResponse = esClient.admin().indices().prepareGetSettings(indexName).get
-    logger.debug(s"====== (index=$indexName) ======\n settings=${response.toString}")
-    /*for (cursor: ObjectObjectCursor[String, Settings] <- response) {
-      val index = cursor.key
-      val settings: Settings = cursor.value
-      for (settingsKey <- settings.getAsMap.asScala.keySet()) {
-        logger.info(s"settings (index=$index): ${settings.get(settingsKey)}")
-      }
-    }*/
-
-  }
-
   val bindingFuture = start()
 
   TransformerManager.init()
