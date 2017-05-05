@@ -25,7 +25,7 @@ object TransformerService
     * @param sdrd
     * @return
     */
-  def transform(deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw)(implicit ec: ExecutionContext): Option[DeviceDataProcessed] = {
+  def transform(deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw)(implicit ec: ExecutionContext): Option[DeviceHistory] = {
 
     logger.debug(s"$deviceType / $device")
 
@@ -121,7 +121,7 @@ object TransformerService
       Some(drd.p)
 
     if (transformedPayload.isDefined)
-      Some(DeviceDataProcessed(
+      Some(DeviceHistory(
         messageId = drd.id,
         deviceDataRawId = sdrd.id,
         deviceId = device.deviceId,

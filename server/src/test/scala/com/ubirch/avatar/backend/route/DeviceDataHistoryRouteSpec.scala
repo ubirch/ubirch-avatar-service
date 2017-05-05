@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.history.HistoryIndexUtil
-import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.avatar.model.device.DeviceHistory
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.util.server.RouteConstants
@@ -210,7 +210,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
 
     // prepare
-    val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+    val dataSeries: Seq[DeviceHistory] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
     val deviceId = dataSeries.head.deviceId
     val url = urlForTest(deviceId, from, size)
 
@@ -229,7 +229,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
           verifyCORSHeader()
 
           responseEntity.contentType should be(`application/json`)
-          val resultSeq = responseAs[Seq[DeviceDataProcessed]]
+          val resultSeq = responseAs[Seq[DeviceHistory]]
 
           val beginIndex = HistoryIndexUtil.calculateBeginIndex(from)
           val endIndexOpt = size match {

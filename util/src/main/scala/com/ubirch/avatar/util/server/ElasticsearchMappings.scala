@@ -18,8 +18,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |  "${Config.esAvatarStateType}" : {
            |    "properties" : {
            |      "deviceId" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      }
            |    }
            |  }
@@ -33,12 +32,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |  "${Config.esDeviceDataRawType}" : {
            |    "properties" : {
            |      "a" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "id" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      }
            |    }
            |  }
@@ -46,34 +43,28 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
     ),
 
     // ubirch-device-history
-    Config.esDeviceDataProcessedIndex -> Map(
-      Config.esDeviceDataProcessedType ->
+    Config.esDeviceHistoryIndex -> Map(
+      Config.esDeviceHistoryType ->
         s"""{
-           |  "${Config.esDeviceDataProcessedType}" : {
+           |  "${Config.esDeviceHistoryType}" : {
            |    "properties" : {
            |      "deviceId" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "messageId" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "deviceDataRawId" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "id" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "a" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "deviceName" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      }
            |    }
            |  }
@@ -87,16 +78,13 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |  "${Config.esDeviceDataRawAnchoredType}" : {
            |    "properties" : {
            |      "a" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "id" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "deviceName" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      }
            |    }
            |  }
@@ -110,20 +98,16 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |  "${Config.esDeviceType}" : {
            |    "properties" : {
            |      "deviceId" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "hwDeviceId" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "hashedHwDeviceId" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "deviceName" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      }
            |    }
            |  }
@@ -137,16 +121,13 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |  "${Config.esDeviceStateType}" : {
            |    "properties" : {
            |      "id" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "k" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      },
            |      "s" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      }
            |    }
            |  }
@@ -160,8 +141,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |  "${Config.esDeviceTypeType}" : {
            |    "properties" : {
            |      "key" : {
-           |        "type" : "string",
-           |        "index": "not_analyzed"
+           |        "type" : "keyword"
            |      }
            |    }
            |  }

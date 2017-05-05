@@ -2,7 +2,7 @@ package com.ubirch.avatar.test.tools.model
 
 import java.util.UUID
 
-import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.avatar.model.device.DeviceHistory
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}
@@ -15,7 +15,7 @@ import scala.collection.mutable.ListBuffer
   * author: cvandrei
   * since: 2016-10-25
   */
-object DummyDeviceDataProcessed {
+object DummyDeviceHistory {
 
   def data(deviceId: String = UUIDUtil.uuidStr,
            messageId: UUID = UUIDUtil.uuid,
@@ -23,9 +23,9 @@ object DummyDeviceDataProcessed {
            timestamp: DateTime = DateTime.now,
            deviceTags: Set[String] = Set("ubirch#0", "actor"),
            deviceMessage: JValue = parse("""{"foo": 23, "bar": 42}""")
-          ): DeviceDataProcessed = {
+          ): DeviceHistory = {
 
-    DeviceDataProcessed(
+    DeviceHistory(
       messageId = messageId,
       deviceDataRawId = UUIDUtil.uuid,
       deviceId = deviceId,
@@ -44,9 +44,9 @@ object DummyDeviceDataProcessed {
                  intervalMillis: Long = 1000 * 10, // 10s
                  timestampOffset: Long = -1000 * 60 * 60, // 1h
                  elementCount: Int = 5
-                ): List[DeviceDataProcessed] = {
+                ): List[DeviceHistory] = {
 
-    val deviceDataList: ListBuffer[DeviceDataProcessed] = ListBuffer()
+    val deviceDataList: ListBuffer[DeviceHistory] = ListBuffer()
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
 
     val range = 0 until elementCount

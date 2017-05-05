@@ -51,8 +51,8 @@ object ConfigKeys {
   final val ES_DEVICE_DATA_RAW_ANCHORED_TYPE = s"$esDeviceRawDataAnchoredPrefix.type"
 
   // DeviceHistory Index & Type
-  final val ES_DEVICE_DATA_PROCESSED_INDEX = s"$esDeviceHistoryPrefix.index"
-  final val ES_DEVICE_DATA_PROCESSED_TYPE = s"$esDeviceHistoryPrefix.type"
+  final val ES_DEVICE_HISTORY_INDEX = s"$esDeviceHistoryPrefix.index"
+  final val ES_DEVICE_HISTORY_TYPE = s"$esDeviceHistoryPrefix.type"
 
   // Device Type
   final val ES_DEVICE_TYPE_INDEX = s"$esDeviceTypePrefix.index"

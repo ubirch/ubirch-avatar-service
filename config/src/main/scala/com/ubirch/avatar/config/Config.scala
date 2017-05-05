@@ -85,14 +85,14 @@ object Config extends ConfigBase {
   def esDeviceDataRawAnchoredType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_ANCHORED_TYPE)
 
   /**
-    * @return Elasticsearch processed device data index
+    * @return Elasticsearch device history index
     */
-  def esDeviceDataProcessedIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_INDEX)
+  def esDeviceHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
 
   /**
-    * @return Elasticsearch processed device data type
+    * @return Elasticsearch device history data type
     */
-  def esDeviceDataProcessedType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_TYPE)
+  def esDeviceHistoryType: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_TYPE)
 
   /**
     * @return Elasticsearch deviceType index

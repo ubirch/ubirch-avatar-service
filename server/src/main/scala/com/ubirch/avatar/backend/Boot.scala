@@ -2,21 +2,28 @@ package com.ubirch.avatar.backend
 
 import java.util.concurrent.TimeUnit
 
+import com.carrotsearch.hppc.cursors.ObjectObjectCursor
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.util.server.ElasticsearchMappings
 import com.ubirch.transformer.TransformerManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse
 import org.elasticsearch.client.transport.TransportClient
+import org.elasticsearch.common.collect.ImmutableOpenMap
+import org.elasticsearch.common.settings.Settings
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.typesafe.config.ConfigFactory
 
+import scala.collection.JavaConverters._
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -43,6 +50,21 @@ object Boot extends App
 
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
   createElasticsearchMappings()
+
+  // TEST CODE: read ES mappings and print them
+  for (indexName <- indicesToDelete) {
+
+    val response: GetSettingsResponse = esClient.admin().indices().prepareGetSettings(indexName).get
+    logger.debug(s"====== (index=$indexName) ======\n settings=${response.toString}")
+    /*for (cursor: ObjectObjectCursor[String, Settings] <- response) {
+      val index = cursor.key
+      val settings: Settings = cursor.value
+      for (settingsKey <- settings.getAsMap.asScala.keySet()) {
+        logger.info(s"settings (index=$index): ${settings.get(settingsKey)}")
+      }
+    }*/
+
+  }
 
   val bindingFuture = start()
 

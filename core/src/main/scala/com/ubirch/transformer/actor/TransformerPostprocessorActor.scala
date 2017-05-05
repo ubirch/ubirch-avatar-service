@@ -3,7 +3,7 @@ package com.ubirch.transformer.actor
 import akka.actor.{Actor, ActorLogging, ActorRef, Kill}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
-import com.ubirch.avatar.core.device.DeviceDataProcessedManager
+import com.ubirch.avatar.core.device.DeviceHistoryManager
 import com.ubirch.avatar.model.device._
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -32,7 +32,7 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
         sdrd = sdrd
       ) match {
         case Some(ddp) =>
-          DeviceDataProcessedManager.store(ddp)
+          DeviceHistoryManager.store(ddp)
 
           Json4sUtil.any2jvalue(ddp) match {
             case Some(jval) =>

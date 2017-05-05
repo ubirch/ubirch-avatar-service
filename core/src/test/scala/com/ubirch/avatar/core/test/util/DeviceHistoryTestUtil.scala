@@ -2,9 +2,9 @@ package com.ubirch.avatar.core.test.util
 
 import java.util.UUID
 
-import com.ubirch.avatar.core.device.DeviceDataProcessedManager
-import com.ubirch.avatar.core.test.model.DummyDeviceDataProcessed
-import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.avatar.core.device.DeviceHistoryManager
+import com.ubirch.avatar.core.test.model.DummyDeviceHistory
+import com.ubirch.avatar.model.device.DeviceHistory
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}
@@ -18,10 +18,10 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-10-27
   */
-object DeviceDataProcessedTestUtil {
+object DeviceHistoryTestUtil {
 
   /**
-    * Creates a series of [[DeviceDataProcessed]] and stores them. All messages are from the same device.
+    * Creates a series of [[DeviceHistory]] and stores them. All messages are from the same device.
     *
     * The newest message's timestamp is about 23:59:59.000 and the interval between messages is small enough to fit more
     * than 15.000 messages into one day. As an effect unless you create too many records all of their timestamps will be
@@ -32,7 +32,7 @@ object DeviceDataProcessedTestUtil {
     */
   def storeSeries(elementCount: Int,
                   deviceId: String = UUIDUtil.uuidStr
-                 ): Seq[DeviceDataProcessed] = {
+                 ): Seq[DeviceHistory] = {
 
     val now = DateTime.now(DateTimeZone.UTC)
     val midnight = now.withHourOfDay(23)
@@ -40,7 +40,7 @@ object DeviceDataProcessedTestUtil {
       .withSecondOfMinute(59)
       .withMillisOfSecond(0)
 
-    val dataSeries: Seq[DeviceDataProcessed] = DummyDeviceDataProcessed.dataSeries(
+    val dataSeries: Seq[DeviceHistory] = DummyDeviceHistory.dataSeries(
       deviceId = deviceId,
       elementCount = elementCount,
       intervalMillis = 1000 * 5, // 5s
@@ -51,37 +51,37 @@ object DeviceDataProcessedTestUtil {
   }
 
   /**
-    * Create a list of [[DeviceDataProcessed]] instances based on the given list of timestamps and store them.
+    * Create a list of [[DeviceHistory]] instances based on the given list of timestamps and store them.
     *
     * @param deviceId   deviceId for all instances
-    * @param timestamps create [[DeviceDataProcessed]] for each timestamp
+    * @param timestamps create [[DeviceHistory]] for each timestamp
     * @return list of stored instances
     */
-  def storeTimeBasedSeries(deviceId: UUID, timestamps: Seq[DateTime]): Seq[DeviceDataProcessed] = {
+  def storeTimeBasedSeries(deviceId: UUID, timestamps: Seq[DateTime]): Seq[DeviceHistory] = {
 
-    val toStore: Seq[DeviceDataProcessed] = timestamps map { t =>
-      DummyDeviceDataProcessed.data(deviceId = deviceId.toString, timestamp = t)
+    val toStore: Seq[DeviceHistory] = timestamps map { t =>
+      DummyDeviceHistory.data(deviceId = deviceId.toString, timestamp = t)
     }
 
-    DeviceDataProcessedTestUtil.store(toStore)
+    DeviceHistoryTestUtil.store(toStore)
 
   }
 
   /**
-    * Store a list of [[DeviceDataProcessed]] instances.
+    * Store a list of [[DeviceHistory]] instances.
     *
     * @param list instances to store
     * @return list of stored instances
     */
-  def store(list: Seq[DeviceDataProcessed]): Seq[DeviceDataProcessed] = {
+  def store(list: Seq[DeviceHistory]): Seq[DeviceHistory] = {
 
-    val storedSeries: ListBuffer[DeviceDataProcessed] = ListBuffer()
+    val storedSeries: ListBuffer[DeviceHistory] = ListBuffer()
 
     list foreach { deviceData =>
-      val storedRawData = Await.result(DeviceDataProcessedManager.store(deviceData), 2 seconds).get
+      val storedRawData = Await.result(DeviceHistoryManager.store(deviceData), 2 seconds).get
       storedSeries += storedRawData
     }
-    Thread.sleep(1500 + list.size)
+    Thread.sleep(2000 + list.size)
 
     storedSeries.toList
 
