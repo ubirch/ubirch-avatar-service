@@ -30,7 +30,7 @@ object DeviceHistoryManager extends MyJsonProtocol
     * @param deviceId id of the device for which we would like to get messages
     * @param from     paging parameter: skip the first x elements
     * @param size     paging parameter: return up to x elements
-    * @return result list; empty if no messages were found
+    * @return results ordered by "timestamp desc"; empty if no messages were found
     */
   def history(deviceId: String,
               from: Int = 0,
@@ -55,7 +55,7 @@ object DeviceHistoryManager extends MyJsonProtocol
     * @param deviceId device whose history we query
     * @param from     lower interval boundary (included in interval)
     * @param to       upper interval boundary (included in interval)
-    * @return results ordered by "timestamp asc"
+    * @return results ordered by "timestamp desc"
     */
   def byDate(deviceId: UUID, from: DateTime, to: DateTime): Future[Seq[DeviceHistory]] = {
 
@@ -85,7 +85,7 @@ object DeviceHistoryManager extends MyJsonProtocol
     *
     * @param deviceId device whose history we query
     * @param before   search for messages before this timestamp
-    * @return results ordered by "timestamp asc"
+    * @return results ordered by "timestamp desc"
     */
   def before(deviceId: UUID, before: DateTime): Future[Seq[DeviceHistory]] = {
 
@@ -113,7 +113,7 @@ object DeviceHistoryManager extends MyJsonProtocol
     *
     * @param deviceId device whose history we query
     * @param after    search for messages after this timestamp
-    * @return results ordered by "timestamp asc"
+    * @return results ordered by "timestamp desc"
     */
   def after(deviceId: UUID, after: DateTime): Future[Seq[DeviceHistory]] = {
 
@@ -142,7 +142,7 @@ object DeviceHistoryManager extends MyJsonProtocol
     *
     * @param deviceId device whose history we query
     * @param day      search for messages within this day
-    * @return results ordered by "timestamp asc"
+    * @return results ordered by "timestamp desc"
     */
   def byDay(deviceId: UUID, day: DateTime): Future[Seq[DeviceHistory]] = {
 
