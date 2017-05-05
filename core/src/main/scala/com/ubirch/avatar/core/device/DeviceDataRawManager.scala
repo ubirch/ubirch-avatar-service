@@ -30,7 +30,7 @@ object DeviceDataRawManager
     * @param device device for which we would like to get raw data
     * @param from   paging parameter: skip the first x elements
     * @param size   paging parameter: return up to x elements
-    * @return result list; empty if no messages were found
+    * @return result list (sorted by field "ts" in ascending order); empty if no messages were found
     * @throws ExecutionException       something went wrong (e.g. no document matching our query exists yet)
     * @throws IllegalArgumentException device.hwDeviceId is empty
     */
@@ -56,7 +56,7 @@ object DeviceDataRawManager
     * @param id unique which identifies one raw data object
     * @return DeviceDataRaw or None
     */
-  def history(id: UUID): Future[Option[DeviceDataRaw]] = {
+  def loadById(id: UUID): Future[Option[DeviceDataRaw]] = {
 
     require(id != null, "raw data id may not be null")
 

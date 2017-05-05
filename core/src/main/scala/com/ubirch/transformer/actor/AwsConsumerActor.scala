@@ -36,7 +36,7 @@ class AwsConsumerActor extends Consumer with ActorLogging {
           try {
             val id = UUID.fromString(idStr)
             log.debug(s"received id: $id")
-            DeviceDataRawManager.history(id = id).map {
+            DeviceDataRawManager.loadById(id = id).map {
               case Some(drd) =>
                 DeviceManager.infoByHashedHwId(drd.a).map {
                   case Some(device) =>

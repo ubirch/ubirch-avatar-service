@@ -33,11 +33,8 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val expectedStoredRaw = rawData.copy(id = storedRaw1.id)
       storedRaw1 should be(expectedStoredRaw)
 
-      val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
-      deviceDataRawList.size should be(1)
-
-      val deviceDataRawInDb = deviceDataRawList.head
-      deviceDataRawInDb should be(storedRaw1)
+      val deviceDataRawInDb = Await.result(DeviceDataRawManager.loadById(storedRaw1.id), 1 seconds)
+      Some(storedRaw1) should be(deviceDataRawInDb)
 
     }
 
