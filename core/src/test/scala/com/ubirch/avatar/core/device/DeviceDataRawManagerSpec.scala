@@ -27,7 +27,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
 
       // test
       val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData), 1 seconds).get
-      Thread.sleep(1000)
+      Thread.sleep(1200)
 
       // verify
       val expectedStoredRaw = rawData.copy(id = storedRaw1.id)
@@ -53,7 +53,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
 
       // test
       val storedRaw2 = Await.result(DeviceDataRawManager.store(rawData2), 1 seconds).get
-      Thread.sleep(1000)
+      Thread.sleep(1200)
 
       // verify
       val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)

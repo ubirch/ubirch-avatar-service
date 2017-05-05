@@ -27,7 +27,7 @@ object DeviceDataRawTestUtil {
     val storedSeries = dataSeries map { deviceData =>
       Await.result(DeviceDataRawManager.store(deviceData), 1 seconds).get
     }
-    Thread.sleep(3000)
+    Thread.sleep(1200 + elementCount * 5)
 
     (device, storedSeries)
 

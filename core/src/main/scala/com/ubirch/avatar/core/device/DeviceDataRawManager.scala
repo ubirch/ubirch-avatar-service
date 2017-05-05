@@ -21,6 +21,9 @@ object DeviceDataRawManager
   extends MyJsonProtocol
     with StrictLogging {
 
+  private val index = Config.esDeviceDataRawIndex
+  private val esType = Config.esDeviceDataRawType
+
   /**
     * Query the history of deviceDataRaw for a specified device.
     *
@@ -38,8 +41,6 @@ object DeviceDataRawManager
 
     require(device.hwDeviceId.nonEmpty, "hwDeviceId may not be empty")
 
-    val index = Config.esDeviceDataRawIndex
-    val esType = Config.esDeviceDataRawType
     val query = Some(QueryBuilders.termQuery("a", device.hwDeviceId))
     val sort = Some(SortUtil.sortBuilder("ts", asc = false))
 
@@ -59,8 +60,6 @@ object DeviceDataRawManager
 
     require(id != null, "raw data id may not be null")
 
-    val index = Config.esDeviceDataRawIndex
-    val esType = Config.esDeviceDataRawType
     val query = Some(QueryBuilders.termQuery("id", id.toString))
 
     ESSimpleStorage.getDocs(index, esType, query).map { res =>
@@ -80,8 +79,6 @@ object DeviceDataRawManager
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-        val index = Config.esDeviceDataRawIndex
-        val esType = Config.esDeviceDataRawType
         val id = data.id.toString
         ESBulkStorage.storeDocBulk(
           docIndex = index,
