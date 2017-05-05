@@ -87,12 +87,12 @@ object Config extends ConfigBase {
   /**
     * @return Elasticsearch device history index
     */
-  def esDeviceHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
+  def esDeviceDataHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
 
   /**
     * @return Elasticsearch device history data type
     */
-  def esDeviceHistoryType: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_TYPE)
+  def esDeviceDataHistoryType: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_TYPE)
 
   /**
     * @return Elasticsearch deviceType index

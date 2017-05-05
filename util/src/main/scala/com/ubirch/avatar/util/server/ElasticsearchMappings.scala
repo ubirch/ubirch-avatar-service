@@ -43,10 +43,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
     ),
 
     // ubirch-device-history
-    Config.esDeviceHistoryIndex -> Map(
-      Config.esDeviceHistoryType ->
+    Config.esDeviceDataHistoryIndex -> Map(
+      Config.esDeviceDataHistoryType ->
         s"""{
-           |  "${Config.esDeviceHistoryType}" : {
+           |  "${Config.esDeviceDataHistoryType}" : {
            |    "properties" : {
            |      "deviceId" : {
            |        "type" : "keyword"

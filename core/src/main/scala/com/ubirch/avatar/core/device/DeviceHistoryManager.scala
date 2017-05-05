@@ -21,8 +21,8 @@ import scala.concurrent.Future
 object DeviceHistoryManager extends MyJsonProtocol
   with StrictLogging {
 
-  private val index = Config.esDeviceHistoryIndex
-  private val esType = Config.esDeviceHistoryType
+  private val index = Config.esDeviceDataHistoryIndex
+  private val esType = Config.esDeviceDataHistoryType
 
   /**
     * Query the history of deviceDataHistory for a specified deviceId.
