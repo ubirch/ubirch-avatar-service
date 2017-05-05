@@ -201,7 +201,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDate(deviceId, from, to), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -233,7 +233,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDate(deviceId, from, to), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -249,7 +249,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDate(deviceId, from, to), 1 seconds)
 
       // verify
-      result should be(dataSeries.tail)
+      result should be(dataSeries.tail.reverse)
 
     }
 
@@ -265,7 +265,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDate(deviceId, from, to), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -281,7 +281,8 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDate(deviceId, from, to), 1 seconds)
 
       // verify
-      result should be(Seq(dataSeries.head, dataSeries(1)))
+      val expected = Seq(dataSeries.head, dataSeries(1)).reverse
+      result should be(expected)
 
     }
 
@@ -311,7 +312,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.before(deviceId, before), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -341,7 +342,8 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.before(deviceId, before), 1 seconds)
 
       // verify
-      result should be(Seq(dataSeries.head, dataSeries(1)))
+      val expected = Seq(dataSeries.head, dataSeries(1)).reverse
+      result should be(expected)
 
     }
 
@@ -356,7 +358,8 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.before(deviceId, before), 1 seconds)
 
       // verify
-      result should be(Seq(dataSeries.head, dataSeries(1)))
+      val expected = Seq(dataSeries.head, dataSeries(1)).reverse
+      result should be(expected)
 
     }
 
@@ -386,7 +389,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.after(deviceId, after), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -416,7 +419,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.after(deviceId, after), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -431,7 +434,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.after(deviceId, after), 1 seconds)
 
       // verify
-      result should be(dataSeries.tail)
+      result should be(dataSeries.tail.reverse)
 
     }
 
@@ -465,7 +468,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDay(deviceId, dayBegins), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -485,7 +488,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDay(deviceId, dayEnds), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -525,7 +528,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDay(deviceId, day), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -546,7 +549,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDay(deviceId, day), 1 seconds)
 
       // verify
-      result should be(dataSeries.tail)
+      result should be(dataSeries.tail.reverse)
 
     }
 
@@ -567,7 +570,7 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDay(deviceId, day), 1 seconds)
 
       // verify
-      result should be(dataSeries)
+      result should be(dataSeries.reverse)
 
     }
 
@@ -588,7 +591,8 @@ class DeviceHistoryManagerSpec
       val result = Await.result(DeviceHistoryManager.byDay(deviceId, day), 1 seconds)
 
       // verify
-      result should be(Seq(dataSeries.head, dataSeries(1)))
+      val expected = Seq(dataSeries.head, dataSeries(1)).reverse
+      result should be(expected)
 
     }
 
