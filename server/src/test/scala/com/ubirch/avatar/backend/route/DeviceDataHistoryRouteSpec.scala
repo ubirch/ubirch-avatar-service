@@ -7,7 +7,6 @@ import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.uuid.UUIDUtil
 
 import akka.http.scaladsl.model.ContentTypes._
@@ -211,6 +210,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
     // prepare
     val dataSeries: Seq[DeviceHistory] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+    Thread.sleep(500)
     val deviceId = dataSeries.head.deviceId
     val url = urlForTest(deviceId, from, size)
 
@@ -268,6 +268,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
     }
     val deviceId = UUIDUtil.uuidStr
     val url = urlForTest(deviceId, from, size)
+    logger.info(s"url=$url")
 
     // test
     Get(url) ~> Route.seal(routes) ~> check {
@@ -276,14 +277,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
       (from.isDefined && from.get < 0) || (size.isDefined && size.get < 0) match {
 
         case true => verifyNotFound()
-
-        case false =>
-
-          indexExists match {
-            case true => verifyBadRequestDeviceNotFound(deviceId, from, size)
-            case false => verifyInternalServerError()
-
-          }
+        case false => verifyEmptyArray()
 
       }
 
@@ -312,20 +306,13 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
     verifyCORSHeader(exist = false)
   }
 
-  private def verifyInternalServerError(): Unit = {
-    status shouldEqual InternalServerError
-    verifyCORSHeader(exist = false)
-  }
+  private def verifyEmptyArray(): Unit = {
 
-  private def verifyBadRequestDeviceNotFound(deviceId: String, from: Option[Int], size: Option[Int]): Unit = {
+    status should be(OK)
+    verifyCORSHeader(exist = true)
 
-    status shouldEqual BadRequest
-
-    val expectedError = requestErrorResponse("QueryError", s"deviceId not found: deviceId=$deviceId, from=$from, size=$size")
     responseEntity.contentType should be(`application/json`)
-    responseAs[JsonErrorResponse] shouldEqual expectedError
-
-    verifyCORSHeader()
+    responseAs[Seq[DeviceHistory]] should be(Seq.empty)
 
   }
 
