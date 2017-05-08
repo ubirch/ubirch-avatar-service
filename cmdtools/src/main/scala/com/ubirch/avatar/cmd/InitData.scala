@@ -42,8 +42,6 @@ object InitData
     DummyDevices.device(deviceTypeKey = Const.ENVIRONMENTSENSOR)
   }
 
-  //@TODO AWSIOT removed
-  //  Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
   Await.result(DeviceManager.create(device), 5 seconds) match {
     case Some(dev) =>
 
