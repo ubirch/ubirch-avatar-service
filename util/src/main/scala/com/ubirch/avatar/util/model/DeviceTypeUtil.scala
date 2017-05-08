@@ -15,7 +15,7 @@ object DeviceTypeUtil {
 
   val defaultKey = "defaultDeviceType"
 
-  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.AQSENSOR, Const.TRACKLESENSOR, Const.GENERICSENSOR, Const.UNKNOWN_DEVICE
+  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.AQSENSOR, Const.EMOSENSOR, Const.TRACKLESENSOR, Const.GENERICSENSOR, Const.UNKNOWN_DEVICE
   )
 
   def dataSeries(prefix: String = defaultKey,
@@ -63,6 +63,8 @@ object DeviceTypeUtil {
 
       case Const.AQSENSOR => DeviceTypeName("Luftqualitätsensor", "Airquality Sensor")
 
+      case Const.EMOSENSOR => DeviceTypeName("Emotionssensor", "Emotion Sensor")
+
       case Const.TRACKLESENSOR => DeviceTypeName("trackle", "trackle Sensor")
 
       case Const.GENERICSENSOR => DeviceTypeName("ubirchSensor", "ubirch Sensor")
@@ -85,6 +87,7 @@ object DeviceTypeUtil {
       case Const.LIGHTSLAMP => "ion-ios-lightbulb"
       case Const.ENVIRONMENTSENSOR => "ion-speedometer"
       case Const.AQSENSOR => "ion-ios-cloud-outline"
+      case Const.EMOSENSOR => "ion-ios-pulse"
       case Const.GENERICSENSOR => "ion-radio-waves"
       case Const.UNKNOWN_DEVICE => "ion-radio-waves"
       case _ => "ion-radio-waves"
@@ -105,7 +108,19 @@ object DeviceTypeUtil {
       case Const.ENVIRONMENTSENSOR =>
         Map(
           Const.STOREDATA -> Const.BOOL_TRUE,
-          Const.BLOCKC -> Const.BOOL_TRUE
+          Const.BLOCKC -> Const.BOOL_FALSE
+        )
+
+      case Const.AQSENSOR =>
+        Map(
+          Const.STOREDATA -> Const.BOOL_TRUE,
+          Const.BLOCKC -> Const.BOOL_FALSE
+        )
+
+      case Const.EMOSENSOR =>
+        Map(
+          Const.STOREDATA -> Const.BOOL_TRUE,
+          Const.BLOCKC -> Const.BOOL_FALSE
         )
 
       case Const.GENERICSENSOR =>
@@ -129,6 +144,8 @@ object DeviceTypeUtil {
         Array("temperature", "presure", "humidity", "altitude", "batteryLevel")
       case Const.AQSENSOR =>
         Array("airquality", "temperature", "presure", "humidity", "altitude", "batteryLevel")
+      case Const.EMOSENSOR =>
+        Array("temperature", "emg", "gsr", "pulse", "activity", "batteryLevel")
       case Const.LIGHTSSENSOR =>
         Array("r", "g", "b", "ba")
       case Const.TRACKLESENSOR =>
@@ -175,6 +192,11 @@ object DeviceTypeUtil {
         Map(
           Const.CONF_INTERVALL -> (15 * 60),
           Const.CONF_THRESHOLD -> 0
+        )
+
+      case Const.EMOSENSOR =>
+        Map(
+          Const.CONF_INTERVALL -> (1 * 60)
         )
 
       case Const.GENERICSENSOR => Map(

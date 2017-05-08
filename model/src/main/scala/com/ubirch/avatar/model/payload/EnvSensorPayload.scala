@@ -29,6 +29,18 @@ final case class AqSensorPayload(
                                   errorCode: Option[Int]
                                 )
 
+final case class EmoSensorPayload(
+                                   temperature: Double,
+                                   emg: Int,
+                                   gsr: Int,
+                                   pulse: Int,
+                                   activity: Int,
+                                   emoDeviceId: Int,
+                                   messageId: Int,
+                                   batteryLevel: Option[Int] = None,
+                                   errorCode: Option[Int] = None
+                                 )
+
 final case class EnvSensorRawPayload(
                                       t: Int,
                                       p: Int,
@@ -54,3 +66,15 @@ final case class AqSensorRawPayload(
                                      a: Option[Double],
                                      e: Option[Int]
                                    )
+
+final case class EmoSensorRawPayload(
+                                      tmp: Int,
+                                      emg: Int,
+                                      gsr: Int,
+                                      pls: Int,
+                                      act: Int,
+                                      did: Int,
+                                      mid: Int,
+                                      bat: Option[Int] = None,
+                                      e: Option[Int]
+                                    )
