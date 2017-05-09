@@ -13,7 +13,7 @@ class TransformerOutProducerActor(sqsQueueName: String) extends Actor with Produ
 
   val secretKey = Config.awsSecretAccessKey
 
-  override def endpointUri = s"aws-sqs://${sqsQueueName}?accessKey=$accessKey&secretKey=$secretKey&delaySeconds=30"
+  override def endpointUri = s"aws-sqs://${sqsQueueName}?accessKey=$accessKey&secretKey=$secretKey&waitTimeSeconds=15"
 
   override def oneway: Boolean = true
 
