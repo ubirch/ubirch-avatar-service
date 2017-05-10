@@ -98,6 +98,14 @@ object DummyDeviceDataRaw {
          |"la":"52.51${10000 + Random.nextInt(20000)}",
          |"lo":"13.21${10000 + Random.nextInt(20000)}",
          |"a":${5000 + Random.nextInt(10000)}
+         |},
+         |{
+         |"t":${2000 + Random.nextInt(1500)},
+         |"p":${90000 + Random.nextInt(20000)},
+         |"h":${4000 + Random.nextInt(5500)},
+         |"la":"52.51${10000 + Random.nextInt(20000)}",
+         |"lo":"13.21${10000 + Random.nextInt(20000)}",
+         |"a":${5000 + Random.nextInt(10000)}
          |}
          |]
         """.stripMargin
