@@ -11,7 +11,7 @@ object Config extends ConfigBase {
   def goPipelineName: String = config.getString(ConfigKeys.GOPIPELINENAME)
 
   def goPipelineLabel: String = config.getString(ConfigKeys.GOPIPELINELABEL)
-  
+
   def goPipelineRev: String = config.getString(ConfigKeys.GOPIPELINEREV)
 
   /*
@@ -219,5 +219,7 @@ object Config extends ConfigBase {
   def mqttTopicDevicesOut: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_OUT)
 
   def mqttTopicDevicesProcessed: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_PROCESSED)
+
+  def mqttPublishProcessed: Boolean = config.getBoolean(ConfigKeys.MQTT_PUBLISH_PROCESSED)
 
 }

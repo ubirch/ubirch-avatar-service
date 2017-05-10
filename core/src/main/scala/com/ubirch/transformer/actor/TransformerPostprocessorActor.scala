@@ -2,6 +2,7 @@ package com.ubirch.transformer.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Kill}
 import akka.camel.CamelMessage
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
 import com.ubirch.avatar.core.device.DeviceHistoryManager
 import com.ubirch.avatar.model.device._
@@ -46,10 +47,14 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
                   context.system.scheduler.scheduleOnce(15 seconds, outProducerActor, Kill)
                 }
               }
+              if (Config.mqttPublishProcessed) {
+                log.debug("send processed message to mqtt")
+                val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
+                deviceMessageProcessedActor ! Json4sUtil.jvalue2String(jval)
+              }
+              else
+                log.info("do not send processed message to mqtt")
 
-              log.debug("send processed message to mqtt")
-              val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
-              deviceMessageProcessedActor ! Json4sUtil.jvalue2String(jval)
 
             case None =>
               log.error(s"could not parse to json: $ddp")
