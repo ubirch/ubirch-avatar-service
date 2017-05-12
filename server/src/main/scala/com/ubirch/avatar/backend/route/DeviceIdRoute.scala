@@ -7,6 +7,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.JsonErrorResponse
@@ -62,7 +63,8 @@ trait DeviceIdRoute extends CORSDirective
             }
           } ~ post {
             entity(as[Device]) { device =>
-              onComplete(deviceApiActor ? CreateDevice(device = device)) {
+              val avatarSession = AvatarSession(userContext)
+              onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
                 case Success(resp) =>
                   resp match {
                     case dev: Device =>

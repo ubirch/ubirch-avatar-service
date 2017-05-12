@@ -219,6 +219,7 @@ lazy val depUtil = Seq(
   ubirchJson,
   ubirchElasticsearchClientBinary,
   ubirchElasticsearchUtil,
+  ubirchOidcUtils,
   ubirchUUID % "test",
   scalatest % "test"
 ) ++ json4s ++ scalaLogging

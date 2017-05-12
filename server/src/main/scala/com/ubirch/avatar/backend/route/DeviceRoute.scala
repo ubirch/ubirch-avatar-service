@@ -1,9 +1,5 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.backend.actor.{CreateDevice, DeviceApiActor}
@@ -11,12 +7,17 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
+import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor
@@ -43,32 +44,34 @@ trait DeviceRoute extends MyJsonProtocol
 
   val route: Route = respondWithCORS {
 
-    // TODO authentication for all methods...or just for post?
     oidcDirective.oidcToken2UserContext { userContext =>
+
       get {
         complete(DeviceManager.all())
-      }
-    } ~
-      oidcDirective.oidcToken2UserContext { userContext =>
-        post {
-          entity(as[Device]) { device =>
-            onComplete(deviceApiActor ? CreateDevice(device = device)) {
-              case Success(resp) =>
-                resp match {
-                  case dev: Device =>
-                    complete(dev)
-                  case jer: JsonErrorResponse =>
-                    complete(requestErrorResponse(jer))
-                  case _ =>
-                    complete("doof")
-                }
-              case Failure(t) =>
-                logger.error("device creation failed", t)
-                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
-            }
+      } ~ post {
+
+        entity(as[Device]) { device =>
+          val avatarSession = AvatarSession(userContext)
+          onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
+            case Success(resp) =>
+              resp match {
+                case dev: Device =>
+                  complete(dev)
+                case jer: JsonErrorResponse =>
+                  complete(requestErrorResponse(jer))
+                case _ =>
+                  complete("doof")
+              }
+            case Failure(t) =>
+              logger.error("device creation failed", t)
+              complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
           }
         }
+
       }
 
+    }
+
   }
+
 }
