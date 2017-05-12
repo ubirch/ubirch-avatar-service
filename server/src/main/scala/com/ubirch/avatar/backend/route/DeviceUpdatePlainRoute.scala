@@ -1,18 +1,20 @@
 package com.ubirch.avatar.backend.route
 
+import com.typesafe.scalalogging.slf4j.StrictLogging
+
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.avatar.util.server.RouteConstants.update
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
-import com.ubirch.avatar.model.device.{DeviceDataRaw, DeviceStateUpdate}
-import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.avatar.util.server.RouteConstants.update
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._

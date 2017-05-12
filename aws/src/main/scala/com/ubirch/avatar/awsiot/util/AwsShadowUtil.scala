@@ -2,14 +2,16 @@ package com.ubirch.avatar.awsiot.util
 
 import java.nio.ByteBuffer
 
-import com.amazonaws.services.iot.model.{AttributePayload, CreateThingRequest, DeleteThingRequest}
+import com.amazonaws.services.iot.model.{AttributePayload, CreateThingRequest, DeleteThingRequest, DeleteThingResult}
 import com.amazonaws.services.iotdata.model.PublishRequest
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.awsiot.config.AwsConf
-import com.ubirch.avatar.model.aws.{ThingShadowMessage, ThingShadowState}
-import com.ubirch.avatar.model.device.Device
-import com.ubirch.avatar.model.util.AwsThingTopicUtil
+import com.ubirch.avatar.model.rest.aws.{ThingShadowMessage, ThingShadowState}
+import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.model.rest.util.AwsThingTopicUtil
 import com.ubirch.util.json.JsonFormats
+
 import org.json4s._
 import org.json4s.native.Serialization._
 
@@ -18,7 +20,7 @@ import org.json4s.native.Serialization._
   */
 object AwsShadowUtil extends StrictLogging {
 
-  implicit val formats = JsonFormats.default
+  private implicit val formats = JsonFormats.default
 
   private val iotDataClient = AwsConf.awsIotDataClient
   private val iotClient = AwsConf.awsIotClient
@@ -63,7 +65,7 @@ object AwsShadowUtil extends StrictLogging {
     thingName
   }
 
-  def deleteShadow(awsDeviceShadowId: String) = {
+  def deleteShadow(awsDeviceShadowId: String): DeleteThingResult = {
     logger.debug(s"delete shadow with id $awsDeviceShadowId")
     val deleteSensorRequest = new DeleteThingRequest()
     deleteSensorRequest.setThingName(awsDeviceShadowId)

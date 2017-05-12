@@ -1,14 +1,10 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.routing.RoundRobinPool
-import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
-import com.ubirch.avatar.model.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
@@ -16,6 +12,12 @@ import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
+import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.routing.RoundRobinPool
+import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor

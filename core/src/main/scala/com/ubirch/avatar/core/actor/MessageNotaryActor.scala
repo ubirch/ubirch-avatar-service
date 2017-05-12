@@ -3,11 +3,12 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.notary.client.NotaryClient
-
 import com.roundeights.hasher.Implicits._
+
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+
 import scala.language.postfixOps
 
 

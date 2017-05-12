@@ -4,9 +4,11 @@ import java.io.ByteArrayInputStream
 
 import com.amazonaws.services.iotdata.model.GetThingShadowResult
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.aws.ThingShadowState
+import com.ubirch.avatar.model.rest.aws.ThingShadowState
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s._
 

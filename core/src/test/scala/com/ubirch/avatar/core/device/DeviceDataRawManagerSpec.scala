@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.core.test.util.DeviceDataRawTestUtil
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol

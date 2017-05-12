@@ -1,6 +1,7 @@
-package com.ubirch.avatar.model.device
+package com.ubirch.avatar.model.rest.device
 
 import com.ubirch.avatar.config.Config
+
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 

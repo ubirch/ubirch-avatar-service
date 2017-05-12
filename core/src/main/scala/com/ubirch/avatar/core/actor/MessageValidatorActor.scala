@@ -2,8 +2,8 @@ package com.ubirch.avatar.core.actor
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.MessageVersion
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse

@@ -1,6 +1,4 @@
-package com.ubirch.avatar.model.device
-
-import org.joda.time.DateTime
+package com.ubirch.avatar.model.rest.device
 
 /**
   * Created by derMicha on 07/11/16.

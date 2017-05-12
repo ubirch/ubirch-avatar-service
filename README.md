@@ -28,7 +28,8 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:elasticsearch-client-binary_ to version 2.0.1
 * update to Elasticsearch 5.3
 * update _com.ubirch.util:oidc-utils_ to version 0.4.0
-* update mappings to Elasticsearch 5.3 
+* update mappings to Elasticsearch 5.3
+* rename module _model_ to _model-rest_ and introduce module _model-db_
 
 ### Version 0.3.10 (2017-03-01)
 
@@ -135,14 +136,25 @@ libraryDependencies ++= Seq(
 )
 ```
 
-### `model`
+### `model-db`
 
 ```scala
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-db" % "0.3.11-SNAPSHOT"
+)
+```
+
+### `model-rest`
+
+```scala
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots")
+)
+libraryDependencies ++= Seq(
+  "com.ubirch.avatar" %% "model-rest" % "0.3.11-SNAPSHOT"
 )
 ```
 

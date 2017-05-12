@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model.payload
+package com.ubirch.avatar.model.rest.payload
 
 /**
   * Created by derMicha on 29/11/16.

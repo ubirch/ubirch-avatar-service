@@ -7,8 +7,8 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.aws.ThingShadowState
-import com.ubirch.avatar.model.device.{Device, DeviceInfo}
+import com.ubirch.avatar.model.rest.aws.ThingShadowState
+import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage

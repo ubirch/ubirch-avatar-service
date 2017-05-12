@@ -1,6 +1,6 @@
 package com.ubirch.avatar.model
 
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 

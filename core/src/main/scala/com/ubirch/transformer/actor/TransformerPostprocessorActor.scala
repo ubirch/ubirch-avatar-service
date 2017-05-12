@@ -1,13 +1,14 @@
 package com.ubirch.transformer.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Kill}
-import akka.camel.CamelMessage
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
 import com.ubirch.avatar.core.device.DeviceHistoryManager
-import com.ubirch.avatar.model.device._
+import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw, DeviceType}
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+
+import akka.actor.{Actor, ActorLogging, ActorRef, Kill}
+import akka.camel.CamelMessage
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -17,7 +18,7 @@ import scala.language.postfixOps
   */
 class TransformerPostprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
-  implicit val executionContext = context.dispatcher
+  private implicit val executionContext = context.dispatcher
 
   override def receive: Receive = {
 

@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.history.HistoryIndexUtil
-import com.ubirch.avatar.model.device.DeviceHistory
+import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.util.server.RouteConstants

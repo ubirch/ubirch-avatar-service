@@ -1,8 +1,8 @@
-package com.ubirch.avatar.model.device
+package com.ubirch.avatar.model.rest.device
 
 import java.util.UUID
 
-import com.ubirch.avatar.model.MessageVersion
+import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime

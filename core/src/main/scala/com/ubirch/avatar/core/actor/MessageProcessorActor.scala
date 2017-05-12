@@ -1,16 +1,17 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
-import akka.camel.CamelMessage
-import akka.routing.RoundRobinPool
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceStateManager
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
+
+import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
+import akka.camel.CamelMessage
+import akka.routing.RoundRobinPool
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -21,7 +22,7 @@ import scala.language.postfixOps
   */
 class MessageProcessorActor extends Actor with ActorLogging {
 
-  implicit val exContext = context.dispatcher
+  private implicit val exContext = context.dispatcher
 
   private val transformerActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerProducerActor]), ActorNames.TRANSFORMER_PRODUCER)
 

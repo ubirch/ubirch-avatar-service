@@ -1,9 +1,10 @@
 package com.ubirch.transformer.services
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.model.device._
-import com.ubirch.avatar.model.payload._
+import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw, DeviceHistory, DeviceType}
+import com.ubirch.avatar.model.rest.payload.{AqSensorPayload, AqSensorRawPayload, EmoSensorPayload, EmoSensorRawPayload, EnvSensorPayload, EnvSensorRawPayload, TrackleSensorPayload, TrackleSensorPayloadOut}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import scala.concurrent.ExecutionContext
@@ -11,8 +12,6 @@ import scala.concurrent.ExecutionContext
 /**
   * Created by derMicha on 29/11/16.
   */
-
-
 object TransformerService
   extends StrictLogging
     with MyJsonProtocol {

@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.model.device.DeviceType
+import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.test.tools.DeviceTypeTestUtil
 import com.ubirch.avatar.util.model.DeviceTypeUtil

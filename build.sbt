@@ -36,7 +36,8 @@ lazy val avatarService = (project in file("."))
     cmdtools,
     config,
     core,
-    model,
+    modelDb,
+    modelRest,
     server,
     testBase,
     testTools,
@@ -70,7 +71,7 @@ lazy val cmdtools = project
 
 lazy val client = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, util)
+  .dependsOn(config, modelRest, util)
   .settings(
     description := "REST client for the avatarService",
     libraryDependencies ++= depClient,
@@ -81,7 +82,7 @@ lazy val client = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, model, util, testBase % "test")
+  .dependsOn(config, aws, modelRest, util, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore,
@@ -94,7 +95,7 @@ lazy val core = project
 
 lazy val aws = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, util, testBase % "test")
+  .dependsOn(config, modelRest, util, testBase % "test")
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
@@ -107,18 +108,27 @@ lazy val config = project
     libraryDependencies += ubirchConfig
   )
 
-lazy val model = project
+lazy val modelDb = (project in file("model-db"))
   .settings(commonSettings: _*)
   .dependsOn(config)
   .settings(
-    name := "model",
+    name := "model-db",
+    description := "database models",
+    libraryDependencies ++= depModelDb
+  )
+
+lazy val modelRest = (project in file("model-rest"))
+  .settings(commonSettings: _*)
+  .dependsOn(config)
+  .settings(
+    name := "model-rest",
     description := "JSON models",
-    libraryDependencies ++= depModel
+    libraryDependencies ++= depModelRest
   )
 
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(model, config, util)
+  .dependsOn(modelRest, config, util)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -139,7 +149,7 @@ lazy val testTools = (project in file("test-tools"))
 
 lazy val util = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model)
+  .dependsOn(config, modelRest)
   .settings(
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
@@ -192,7 +202,13 @@ lazy val depAws = Seq(
   scalatest % "test"
 ) ++ awsIotSdk ++ awsSqsSdk ++ scalaLogging
 
-lazy val depModel = Seq(
+lazy val depModelDb = Seq(
+  ubirchJsonAutoConvert,
+  json4sNative,
+  ubirchUUID
+) ++ joda
+
+lazy val depModelRest = Seq(
   ubirchJsonAutoConvert,
   json4sNative,
   ubirchUUID

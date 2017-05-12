@@ -1,13 +1,15 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.core.device.DeviceDataRawManager
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
 import com.ubirch.util.http.response.ResponseUtil
+
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.util.{Failure, Success}

@@ -1,8 +1,9 @@
 package com.ubirch.avatar.util.model
 
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.model.device.{DeviceType, DeviceTypeDefaults, DeviceTypeName}
+import com.ubirch.avatar.model.rest.device.{DeviceType, DeviceTypeDefaults, DeviceTypeName}
 import com.ubirch.util.json.Json4sUtil
+
 import org.json4s.JValue
 
 import scala.collection.mutable.ListBuffer

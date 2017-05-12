@@ -3,7 +3,7 @@ package com.ubirch.avatar.util.model
 import java.security._
 import java.util.Base64
 
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.util.json.JsonFormats
 
 import org.json4s._
