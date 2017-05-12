@@ -1,5 +1,7 @@
 package com.ubirch.avatar.model.rest.device
 
+import java.util.UUID
+
 import com.ubirch.avatar.config.Config
 
 import org.joda.time.{DateTime, DateTimeZone}
@@ -10,7 +12,7 @@ import org.json4s.JValue
   * since: 2016-09-23
   */
 case class Device(deviceId: String,
-                  ownedByGroup: String = "default",
+                  groups: Set[UUID] = Set.empty,
                   deviceTypeKey: String = "unknownDeviceType",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",

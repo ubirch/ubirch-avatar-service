@@ -4,8 +4,11 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.model._
 import com.ubirch.avatar.util.server.AvatarSession
+import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
+import com.ubirch.util.uuid.UUIDUtil
 
 import akka.actor.Actor
 
@@ -34,12 +37,14 @@ class DeviceApiActor extends Actor with StrictLogging {
 
         case None =>
           //          DeviceManager.createWithShadow(cd.device).map {
-          // TODO set device.groups and transform to db.Device
+          val dbDevice = addGroup(cd.session, cd.device)
+          logger.debug(s"creating: db.device.Device=$dbDevice")
+          // TODO refactor DeviceManager.create to accept db.device.Device
           DeviceManager.create(cd.device).map {
             case None =>
               from ! JsonErrorResponse(
                 errorType = "CreationError",
-                errorMessage = s"failed to create device: ${}"
+                errorMessage = s"failed to create device: ${cd.device.deviceId}"
               )
             case Some(deviceObject) =>
               from ! deviceObject
@@ -48,6 +53,13 @@ class DeviceApiActor extends Actor with StrictLogging {
       }
 
     case _ => logger.error("received unknown message")
+
+  }
+
+  private def addGroup(session: AvatarSession, device: Device) = {
+
+    val groups = Set(UUIDUtil.uuid, UUIDUtil.uuid) // TODO ask user-service for groups
+    Json4sUtil.any2any[db.device.Device](device).copy(groups = groups)
 
   }
 

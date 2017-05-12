@@ -82,7 +82,7 @@ lazy val client = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, modelRest, util, testBase % "test")
+  .dependsOn(config, aws, modelDb, modelRest, util, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore,
