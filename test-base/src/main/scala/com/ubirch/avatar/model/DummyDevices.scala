@@ -110,19 +110,19 @@ object DummyDevices {
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
-  lazy val device1Config = parse(
+  lazy val device1Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device1Properties = parse(
+  lazy val device1Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar1Desired = parse(
+  lazy val avatar1Desired: JValue = parse(
     """{
       |  "i": 1800,
       |  "bf": 1,
@@ -131,7 +131,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar1Reported = parse(
+  lazy val avatar1Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -145,19 +145,19 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val device2Config = parse(
+  lazy val device2Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device2Properties = parse(
+  lazy val device2Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar2Desired = parse(
+  lazy val avatar2Desired: JValue = parse(
     """{
       |  "i": 1800,
       |  "bf": 1,
@@ -166,7 +166,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar2Reported = parse(
+  lazy val avatar2Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -180,19 +180,19 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val device3Config = parse(
+  lazy val device3Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device3Properties = parse(
+  lazy val device3Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar3Desired = parse(
+  lazy val avatar3Desired: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -206,7 +206,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar3Reported = parse(
+  lazy val avatar3Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -220,19 +220,19 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val device4Config = parse(
+  lazy val device4Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device4Properties = parse(
+  lazy val device4Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar4Desired = parse(
+  lazy val avatar4Desired: JValue = parse(
     """{
       |  "i": 1800,
       |  "bf": 1,
@@ -241,7 +241,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar4Reported = parse(
+  lazy val avatar4Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
