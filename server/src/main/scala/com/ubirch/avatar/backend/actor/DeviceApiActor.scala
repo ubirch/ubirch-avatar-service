@@ -1,11 +1,12 @@
 package com.ubirch.avatar.backend.actor
 
-import akka.actor.Actor
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.device.Device
 import com.ubirch.util.model.JsonErrorResponse
 
+import akka.actor.Actor
 
 /**
   * Created by derMicha on 30/10/16.
@@ -18,7 +19,10 @@ class DeviceApiActor extends Actor with StrictLogging {
   import context.dispatcher
 
   override def receive = {
+
     case cd: CreateDevice =>
+
+      // TODO set device.groups and transform to db.Device
       val from = sender
       DeviceManager.info(cd.device.deviceId).map {
         case Some(dev) =>
@@ -38,7 +42,9 @@ class DeviceApiActor extends Actor with StrictLogging {
               from ! deviceObject
           }
       }
-    case _ =>
-      logger.error("received unknown message")
+
+    case _ => logger.error("received unknown message")
+
   }
+
 }
