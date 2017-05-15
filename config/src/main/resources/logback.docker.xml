@@ -68,9 +68,9 @@
         </headers>
     </appender>
 
-    <logger name="com.ubirch" level="INFO"/>
+    <logger name="com.ubirch" level="DEBUG"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <!--<appender-ref ref="STDOUT"/>-->
         <appender-ref ref="ELASTIC"/>
     </root>
