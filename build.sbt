@@ -326,6 +326,7 @@ lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
 lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
 lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
 lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
+lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 
 /*
  * MISC
