@@ -80,7 +80,13 @@ class MqttDeviceConsumerActor
         case e: Exception =>
           log.error(s"received invalid data: $msgStr", e)
       }
+    case msg: Any =>
+      val sender = context.sender()
+
+      log.error(s"received from ${sender.getClass.toString} message: ${msg.getClass.toString}")
+
     case _ =>
-      log.error("received unknown message")
+      val sender = context.sender()
+      log.error(s"received from ${sender.getClass.toString} unknown message")
   }
 }

@@ -56,7 +56,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
       if (drd.uuid.isDefined) {
         val deviceStateUpdateActor = context.actorOf(DeviceStateUpdateActor.props(drd.uuid.get))
         deviceStateUpdateActor ! Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(currentState).get)
-        context.system.scheduler.scheduleOnce(15 seconds, deviceStateUpdateActor, Kill)
+        context.system.scheduler.scheduleOnce(60 seconds, deviceStateUpdateActor, Kill)
       }
 
     case msg: CamelMessage =>
