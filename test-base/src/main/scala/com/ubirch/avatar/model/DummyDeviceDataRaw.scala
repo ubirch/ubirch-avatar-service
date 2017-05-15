@@ -2,7 +2,8 @@ package com.ubirch.avatar.model
 
 import java.util.UUID
 
-import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil

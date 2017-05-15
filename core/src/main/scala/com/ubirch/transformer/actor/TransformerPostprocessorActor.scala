@@ -3,6 +3,7 @@ package com.ubirch.transformer.actor
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
 import com.ubirch.avatar.core.device.DeviceHistoryManager
+import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw, DeviceType}
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -27,9 +28,10 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
     case (deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw) =>
       log.debug(s"received device preprocessed raw data message: $drd with deviceKeyType: $deviceType")
 
+      val dbDevice = Json4sUtil.any2any[db.device.Device](device)
       TransformerService.transform(
         deviceType = deviceType,
-        device = device,
+        device = dbDevice,
         drd = drd,
         sdrd = sdrd
       ) match {

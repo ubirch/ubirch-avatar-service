@@ -2,7 +2,8 @@ package com.ubirch.avatar.core.test.util
 
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.DummyDeviceDataRaw
-import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
 import scala.concurrent.Await
 import scala.concurrent.duration._

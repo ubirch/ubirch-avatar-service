@@ -3,7 +3,7 @@ package com.ubirch.avatar.util.model
 import java.security._
 import java.util.Base64
 
-import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.util.json.JsonFormats
 
 import org.json4s._
@@ -39,12 +39,15 @@ object DeviceUtil {
     sgr.update(payloadStr.getBytes)
     val signature: Array[Byte] = sgr.sign
 
-    (Base64.getEncoder.encodeToString(pKey.getEncoded),
-      Base64.getEncoder.encodeToString(signature))
+    (
+      Base64.getEncoder.encodeToString(pKey.getEncoded),
+      Base64.getEncoder.encodeToString(signature)
+    )
 
   }
 
   def createKeyPair: (PrivateKey, PublicKey) = {
+
     val sgr: Signature = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
     val spec: EdDSAParameterSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.CURVE_ED25519_SHA512)
     val kpg: KeyPairGenerator = new KeyPairGenerator
@@ -56,5 +59,7 @@ object DeviceUtil {
     val sKey: PrivateKey = kp.getPrivate
     val pKey: PublicKey = kp.getPublic
     (sKey, pKey)
+
   }
+
 }

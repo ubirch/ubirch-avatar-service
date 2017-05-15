@@ -9,6 +9,7 @@ import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.aws.ThingShadowState
 import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
+import com.ubirch.avatar.model._
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
@@ -40,7 +41,7 @@ object DeviceManager extends MyJsonProtocol
     }
   }
 
-  def create(device: Device): Future[Option[Device]] = {
+  def create(device: db.device.Device): Future[Option[db.device.Device]] = {
 
     val devWithDefaults = device.copy(
       hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
@@ -63,21 +64,23 @@ object DeviceManager extends MyJsonProtocol
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
-        ) map (_.extractOpt[Device])
+        ) map (_.extractOpt[db.device.Device])
 
       case None =>
         Future(None)
     }
   }
 
-  def createWithShadow(device: Device): Future[Option[Device]] = {
-    create(device: Device).map {
+  def createWithShadow(device: db.device.Device): Future[Option[db.device.Device]] = {
+    create(device: db.device.Device).map {
       case Some(dev) =>
 
         try {
           AwsShadowUtil.createShadow(dev.awsDeviceThingId)
-          if (dev.deviceConfig.isDefined)
-            AwsShadowUtil.setDesired(dev, dev.deviceConfig.get)
+          if (dev.deviceConfig.isDefined) {
+            val restDevice = Json4sUtil.any2any[Device](dev)
+            AwsShadowUtil.setDesired(restDevice, dev.deviceConfig.get)
+          }
         }
         catch {
           case e: Exception =>

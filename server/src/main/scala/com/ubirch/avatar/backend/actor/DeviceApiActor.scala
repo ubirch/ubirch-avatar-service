@@ -39,8 +39,7 @@ class DeviceApiActor extends Actor with StrictLogging {
           //          DeviceManager.createWithShadow(cd.device).map {
           val dbDevice = addGroup(cd.session, cd.device)
           logger.debug(s"creating: db.device.Device=$dbDevice")
-          // TODO refactor DeviceManager.create to accept db.device.Device
-          DeviceManager.create(cd.device).map {
+          DeviceManager.create(dbDevice).map {
             case None =>
               from ! JsonErrorResponse(
                 errorType = "CreationError",

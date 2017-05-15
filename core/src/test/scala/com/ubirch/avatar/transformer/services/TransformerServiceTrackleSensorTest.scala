@@ -4,8 +4,9 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.DummyDevices
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
-import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw, DeviceType}
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceType}
 import com.ubirch.avatar.model.rest.payload.{TrackleSensorPayload, TrackleSensorPayloadOut}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.transformer.services.TransformerService

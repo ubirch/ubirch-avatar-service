@@ -3,7 +3,8 @@ package com.ubirch.transformer.services
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw, DeviceHistory, DeviceType}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceHistory, DeviceType}
 import com.ubirch.avatar.model.rest.payload.{AqSensorPayload, AqSensorRawPayload, EmoSensorPayload, EmoSensorRawPayload, EnvSensorPayload, EnvSensorRawPayload, TrackleSensorPayload, TrackleSensorPayloadOut}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
@@ -38,7 +39,7 @@ object TransformerService
             batteryLevel = envRawP.ba,
             latitude = if (envRawP.la.isDefined) Some(envRawP.la.get.toDouble) else None,
             longitude = if (envRawP.lo.isDefined) Some(envRawP.lo.get.toDouble) else None,
-            altitude = if (envRawP.a.isDefined) Some(envRawP.a.get.toDouble / 100.0) else None,
+            altitude = if (envRawP.a.isDefined) Some(envRawP.a.get / 100.0) else None,
             loops = if (envRawP.lp.isDefined) Some(envRawP.lp.get) else None,
             errorCode = if (envRawP.e.isDefined) Some(envRawP.e.getOrElse(0)) else None
           )
@@ -66,7 +67,7 @@ object TransformerService
             batteryLevel = aqRawP.ba,
             latitude = if (aqRawP.la.isDefined) Some(aqRawP.la.get.toDouble) else None,
             longitude = if (aqRawP.lo.isDefined) Some(aqRawP.lo.get.toDouble) else None,
-            altitude = if (aqRawP.a.isDefined) Some(aqRawP.a.get.toDouble / 100.0) else None,
+            altitude = if (aqRawP.a.isDefined) Some(aqRawP.a.get / 100.0) else None,
             loops = if (aqRawP.lp.isDefined) Some(aqRawP.lp.get) else None,
             errorCode = if (aqRawP.e.isDefined) Some(aqRawP.e.getOrElse(0)) else None
           )

@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.actor
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceStateManager
+import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
@@ -47,7 +48,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
       AwsShadowUtil.setReported(device, drd.p)
 
       //send back current device state
-      val currentState = DeviceStateManager.currentDeviceState(device)
+      val dbDevice = Json4sUtil.any2any[db.device.Device](device)
+      val currentState = DeviceStateManager.currentDeviceState(dbDevice)
       DeviceStateManager.upsert(currentState)
       s ! currentState
 

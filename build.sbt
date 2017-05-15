@@ -128,7 +128,7 @@ lazy val modelRest = (project in file("model-rest"))
 
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(modelRest, config, util)
+  .dependsOn(modelDb, modelRest, config, util)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -149,7 +149,7 @@ lazy val testTools = (project in file("test-tools"))
 
 lazy val util = project
   .settings(commonSettings: _*)
-  .dependsOn(config, modelRest)
+  .dependsOn(config, modelDb, modelRest)
   .settings(
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,

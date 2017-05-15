@@ -1,6 +1,8 @@
 package com.ubirch.avatar.model
 
-import com.ubirch.avatar.model.rest.device.Device
+import java.util.UUID
+
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 
@@ -15,21 +17,29 @@ import org.json4s.native.JsonMethods._
 object DummyDevices {
 
   def minimalDevice(deviceId: String = UUIDUtil.uuidStr,
+                    groups: Set[UUID] = Set.empty,
                     hwDeviceId: String = HashUtil.sha256HexString(UUIDUtil.uuidStr)
                    ): Device = {
 
-    Device(deviceId = deviceId, hwDeviceId = hwDeviceId)
+    Device(
+      deviceId = deviceId,
+      groups = groups,
+      hwDeviceId = hwDeviceId
+    )
 
   }
 
   def device(deviceId: String = UUIDUtil.uuidStr,
+             groups: Set[UUID] = Set(UUIDUtil.uuid),
              deviceName: String = "testHans001",
              hwDeviceId: String = UUIDUtil.uuidStr,
              deviceTypeKey: String,
              deviceProperties: Option[JValue] = None
             ): Device = {
 
-    Device(deviceId = deviceId,
+    Device(
+      deviceId = deviceId,
+      groups = groups,
       deviceName = deviceName,
       hwDeviceId = hwDeviceId,
       deviceTypeKey = deviceTypeKey,
@@ -55,6 +65,7 @@ object DummyDevices {
 
   lazy val device1 = Device(
     deviceId = device1Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "lightsSensor",
     deviceName = "lightsSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
@@ -69,6 +80,7 @@ object DummyDevices {
 
   lazy val device2 = Device(
     deviceId = device2Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "temperaturesSensor",
     deviceName = "temperaturesSensor_TU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
@@ -83,6 +95,7 @@ object DummyDevices {
 
   lazy val device3 = Device(
     deviceId = device3Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "machineSensor",
     deviceName = "machineSensor_WM_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
@@ -97,6 +110,7 @@ object DummyDevices {
 
   lazy val device4 = Device(
     deviceId = device4Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "trackleSensor",
     deviceName = "trackleSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
