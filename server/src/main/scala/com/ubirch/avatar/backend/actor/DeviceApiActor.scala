@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.actor
 
-^import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model._
@@ -24,7 +24,7 @@ case class CreateDevice(session: AvatarSession, device: Device)
 
 class DeviceApiActor(implicit ws: WSClient) extends Actor with StrictLogging {
 
-  import context.dispatcher
+  implicit private val ec =  context.dispatcher
 
   override def receive: Receive = {
 
