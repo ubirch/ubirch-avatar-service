@@ -52,21 +52,23 @@ class DeviceRoute(implicit ws: WSClient) extends MyJsonProtocol
       } ~ post {
 
         entity(as[Device]) { device =>
+
           val avatarSession = AvatarSession(userContext)
           onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
+
             case Success(resp) =>
               resp match {
-                case dev: Device =>
-                  complete(dev)
-                case jer: JsonErrorResponse =>
-                  complete(requestErrorResponse(jer))
-                case _ =>
-                  complete("doof")
+                case dev: Device => complete(dev)
+                case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
+                case _ => complete("DeviceRoute.post failed with unhandled message")
               }
+
             case Failure(t) =>
               logger.error("device creation failed", t)
               complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
+
           }
+
         }
 
       }
