@@ -1,24 +1,20 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.ActorSystem
+import com.ubirch.avatar.util.server.RouteConstants
+
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.config.ConfigKeys
-import com.ubirch.avatar.util.server.RouteConstants
-import com.ubirch.util.oidc.directive.OidcDirective
-import com.ubirch.util.redis.RedisClientUtil
-import redis.RedisClient
+import play.api.libs.ws.WSClient
 
 /**
   * author: cvandrei
   * since: 2016-09-20
   */
-class MainRoute {
+class MainRoute(implicit ws: WSClient) {
 
   val welcome = new WelcomeRoute {}
 
   val device = new DeviceRoute {}
-  //  val deviceUpdate = new DeviceUpdateRoute {}
   val deviceUpdate = new DeviceUpdatePlainRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStub = new DeviceStubRoute {}

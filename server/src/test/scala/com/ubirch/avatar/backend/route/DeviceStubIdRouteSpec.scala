@@ -11,6 +11,8 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
 
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ahc.AhcWSClient
 
 /**
   * author: cvandrei
@@ -18,6 +20,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   */
 class DeviceStubIdRouteSpec extends RouteSpec
   with ResponseUtil {
+
+  implicit val ws: WSClient = AhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

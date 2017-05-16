@@ -14,6 +14,8 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
 
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ahc.AhcWSClient
 
 /**
   * author: cvandrei
@@ -23,6 +25,8 @@ class DeviceIdRouteSpec extends RouteSpec
   with Matchers
   with BeforeAndAfterAll
   with ResponseUtil {
+
+  implicit val ws: WSClient = AhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

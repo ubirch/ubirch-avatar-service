@@ -178,7 +178,8 @@ lazy val depServer = Seq(
   ubirchJsonAutoConvert,
   ubirchRestAkkaHttp,
   ubirchResponse,
-  ubirchOidcUtils
+  ubirchOidcUtils,
+  ubirchUserClientRest
 
 ) ++ scalaLogging
 
@@ -316,6 +317,7 @@ lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.5" excludeA
 lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.5" excludeAll (excludedLoggers: _*)
 lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.1.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.2.1-SNAPSHOT" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER

@@ -10,12 +10,16 @@ import com.ubirch.avatar.test.base.RouteSpec
 
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ahc.AhcWSClient
 
 /**
   * author: cvandrei
   * since: 2016-09-21
   */
 class DeviceRouteSpec extends RouteSpec {
+
+  implicit val ws: WSClient = AhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

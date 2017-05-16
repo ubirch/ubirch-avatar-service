@@ -4,13 +4,18 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.util.model.JsonResponse
+
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ahc.AhcWSClient
 
 /**
   * author: cvandrei
   * since: 2016-09-22
   */
 class WelcomeRouteSpec extends RouteSpec {
+
+  implicit val ws: WSClient = AhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

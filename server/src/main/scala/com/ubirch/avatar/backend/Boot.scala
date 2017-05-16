@@ -18,6 +18,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ahc.AhcWSClient
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -35,6 +37,8 @@ object Boot extends App
   implicit val system = ActorSystem()
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
+
+  implicit val ws: WSClient = AhcWSClient()
 
   logger.info("ubirchAvatarService started")
 
@@ -63,6 +67,7 @@ object Boot extends App
     logger.info(s"start http server on $interface:$port")
 
     Http().bindAndHandle((new MainRoute).myRoute, interface, port)
+
   }
 
   private def stop() = {
@@ -74,12 +79,14 @@ object Boot extends App
         bindingFuture.flatMap(_.unbind()).onComplete {
 
           case Success(_) =>
-            esClient.close()
             system.terminate()
+            esClient.close()
+            ws.close()
           case Failure(f) =>
             logger.error("shutdown failed", f)
-            esClient.close()
             system.terminate()
+            esClient.close()
+            ws.close()
         }
 
       }
