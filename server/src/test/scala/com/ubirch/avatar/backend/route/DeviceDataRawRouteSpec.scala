@@ -9,8 +9,8 @@ import com.ubirch.avatar.util.server.RouteConstants
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import play.api.libs.ws.WSClient
-import play.api.libs.ws.ahc.AhcWSClient
+import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -23,7 +23,7 @@ import scala.language.postfixOps
 class DeviceDataRawRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
-  implicit val ws: WSClient = AhcWSClient()
+  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

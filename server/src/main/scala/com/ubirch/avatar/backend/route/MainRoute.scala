@@ -4,13 +4,13 @@ import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.StandaloneWSClient
 
 /**
   * author: cvandrei
   * since: 2016-09-20
   */
-class MainRoute(implicit ws: WSClient) {
+class MainRoute(implicit ws: StandaloneWSClient) {
 
   val welcome = new WelcomeRoute {}
 

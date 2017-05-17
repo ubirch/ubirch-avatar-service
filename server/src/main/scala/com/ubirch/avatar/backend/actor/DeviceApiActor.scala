@@ -12,21 +12,19 @@ import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
 
 import akka.actor.Actor
-import akka.stream.ActorMaterializer
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.StandaloneWSClient
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
   * Created by derMicha on 30/10/16.
   */
-
 case class CreateDevice(session: AvatarSession, device: Device)
 
-class DeviceApiActor(implicit ws: WSClient) extends Actor with StrictLogging {
+class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
-  implicit protected val materializer = ActorMaterializer()
+  //implicit protected val materializer = ActorMaterializer()
 
   override def receive: Receive = {
 

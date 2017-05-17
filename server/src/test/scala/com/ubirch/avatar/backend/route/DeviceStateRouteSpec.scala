@@ -3,8 +3,8 @@ package com.ubirch.avatar.backend.route
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
 
-import play.api.libs.ws.WSClient
-import play.api.libs.ws.ahc.AhcWSClient
+import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 /**
   * author: cvandrei
@@ -13,7 +13,7 @@ import play.api.libs.ws.ahc.AhcWSClient
 class DeviceStateRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
-  implicit val ws: WSClient = AhcWSClient()
+  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

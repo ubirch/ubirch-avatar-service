@@ -19,7 +19,7 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.StandaloneWSClient
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -30,7 +30,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceRoute(implicit ws: WSClient) extends MyJsonProtocol
+class DeviceRoute(implicit ws: StandaloneWSClient) extends MyJsonProtocol
   with CORSDirective
   with ResponseUtil
   with StrictLogging {

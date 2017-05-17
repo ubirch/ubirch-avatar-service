@@ -18,8 +18,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import play.api.libs.ws.WSClient
-import play.api.libs.ws.ahc.AhcWSClient
+import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -38,7 +38,7 @@ object Boot extends App
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
-  implicit val ws: WSClient = AhcWSClient()
+  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
   logger.info("ubirchAvatarService started")
 
