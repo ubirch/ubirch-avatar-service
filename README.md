@@ -163,7 +163,8 @@ libraryDependencies ++= Seq(
 ```scala
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
-  Resolver.bintrayRepo("hseeberger", "maven")
+  Resolver.bintrayRepo("hseeberger", "maven"),
+  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
   "com.ubirch.avatar" %% "server" % "0.3.11-SNAPSHOT"

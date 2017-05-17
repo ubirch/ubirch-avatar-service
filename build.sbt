@@ -54,7 +54,8 @@ lazy val server = project
     libraryDependencies ++= depServer,
     fork in run := true,
     resolvers ++= Seq(
-      resolverSeebergerJson
+      resolverSeebergerJson,
+      resolverTypesafeReleases
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
     resourceGenerators in Compile += Def.task {
