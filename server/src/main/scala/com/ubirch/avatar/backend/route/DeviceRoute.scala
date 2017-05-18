@@ -43,38 +43,38 @@ class DeviceRoute(implicit ws: StandaloneWSClient) extends MyJsonProtocol
 
   private val oidcDirective = new OidcDirective()
 
-  val route: Route = respondWithCORS {
+  val route: Route =
 
-    oidcDirective.oidcToken2UserContext { userContext =>
+    respondWithCORS {
+      oidcDirective.oidcToken2UserContext { userContext =>
 
-      get {
-        complete(DeviceManager.all())
-      } ~ post {
+        get {
+          complete(DeviceManager.all())
+        } ~ post {
 
-        entity(as[Device]) { device =>
+          entity(as[Device]) { device =>
 
-          val avatarSession = AvatarSession(userContext)
-          onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
+            val avatarSession = AvatarSession(userContext)
+            onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
 
-            case Success(resp) =>
-              resp match {
-                case dev: Device => complete(dev)
-                case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
-                case _ => complete("DeviceRoute.post failed with unhandled message")
-              }
+              case Success(resp) =>
+                resp match {
+                  case dev: Device => complete(dev)
+                  case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
+                  case _ => complete("DeviceRoute.post failed with unhandled message")
+                }
 
-            case Failure(t) =>
-              logger.error("device creation failed", t)
-              complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
+              case Failure(t) =>
+                logger.error("device creation failed", t)
+                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
+
+            }
 
           }
 
         }
 
       }
-
     }
-
-  }
 
 }
