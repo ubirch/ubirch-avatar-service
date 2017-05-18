@@ -69,6 +69,8 @@
     </appender>
 
     <logger name="com.ubirch" level="DEBUG"/>
+    <logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>
+    <logger name="org.apache.camel" level="INFO"/>
 
     <root level="INFO">
         <!--<appender-ref ref="STDOUT"/>-->
