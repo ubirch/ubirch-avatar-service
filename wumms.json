@@ -1,73 +1,47 @@
 {
-  "v": "0.0.3",
-  "a": "Gruq0U37NqlFnDr4Yjk9+BR4TdvLcigQhaiJsNvMPEvXwivvMCJCieNhu5nGViHxw9p4tteRHloHzwZjzMJnuw==",
-  "k": "OIX0hvZpHPKiWQRgOFhA6oYOMK6mT6mldtoyg578cPs=",
-  "s": "t7Da2PGSYLeaj0vQHm3XBTrFkDzm6vRA1UrSsO1hb4lZ8YEWy6jnY06PYWLbyMMFOi6cUtnWWOgUAy5Ry/kpAg==",
-  "p": [
-    {
-      "t": 2833,
-      "p": 1011,
-      "h": 3078,
-      "a": 2588293,
-      "la": "52.481083",
-      "lo": "13.3643",
+  "messageId": "a64c91c9-45b8-4a60-857e-ea5141889adf",
+  "deviceDataRawId": "a64c91c9-45b8-4a60-857e-ea5141889adf",
+  "deviceId": "aa61f780-49b3-4a2a-9334-1e315f44b4fc",
+  "deviceName": "AQ Sensor 1 (InsureTec Week)",
+  "deviceType": "aqSensor",
+  "deviceTags": [
+    "ubirch#1",
+    "sensor",
+    "btcDemo"
+  ],
+  "deviceMessage": {
+    "airquality": 64,
+    "airqualityRef": 66,
+    "temperature": 31.04,
+    "presure": 10.14,
+    "humidity": 33.04,
+    "batteryLevel": 100,
+    "latitude": 50.947945,
+    "longitude": 6.9419,
+    "loops": 30,
+    "altitude": 25870.1,
+    "errorCode": 0
+  },
+  "deviceDataRaw": {
+    "id": "a64c91c9-45b8-4a60-857e-ea5141889adf",
+    "v": "0.0.2",
+    "a": "Gruq0U37NqlFnDr4Yjk9+BR4TdvLcigQhaiJsNvMPEvXwivvMCJCieNhu5nGViHxw9p4tteRHloHzwZjzMJnuw==",
+    "ts": "2017-05-17T08:36:42.781Z",
+    "k": "OIX0hvZpHPKiWQRgOFhA6oYOMK6mT6mldtoyg578cPs=",
+    "s": "iaEK2zcRNvAFSLqa66HATI7Om+kp1keh+cIAi7l2UJJgxSul0aV0WbmHGxbEQfEBHUIQfdoIpM4WgCPkjPmbAQ==",
+    "p": {
+      "t": 3104,
+      "p": 1014,
+      "h": 3304,
+      "a": 2587010,
+      "la": "50.947945",
+      "lo": "6.94190",
       "ba": 100,
-      "lp": 13,
-      "e": 8,
-      "aq": 111,
-      "aqr": 121
-    },
-    {
-      "t": 2833,
-      "p": 1011,
-      "h": 3078,
-      "a": 2588293,
-      "la": "52.481083",
-      "lo": "13.3643",
-      "ba": 100,
-      "lp": 14,
+      "lp": 30,
       "e": 0,
-      "aq": 111,
-      "aqr": 121
-    },
-    {
-      "t": 2833,
-      "p": 1011,
-      "h": 3078,
-      "a": 2588293,
-      "la": "52.481083",
-      "lo": "13.3643",
-      "ba": 100,
-      "lp": 15,
-      "e": 0,
-      "aq": 111,
-      "aqr": 121
-    },
-    {
-      "t": 2833,
-      "p": 1011,
-      "h": 3078,
-      "a": 2588293,
-      "la": "52.481083",
-      "lo": "13.3643",
-      "ba": 100,
-      "lp": 16,
-      "e": 0,
-      "aq": 111,
-      "aqr": 121
-    },
-    {
-      "t": 2832,
-      "p": 1011,
-      "h": 3073,
-      "a": 2588293,
-      "la": "52.481083",
-      "lo": "13.3643",
-      "ba": 100,
-      "lp": 17,
-      "e": 0,
-      "aq": 111,
-      "aqr": 121
+      "aq": 64,
+      "aqr": 66
     }
-  ]
+  },
+  "timestamp": "2017-05-17T08:36:42.781Z"
 }

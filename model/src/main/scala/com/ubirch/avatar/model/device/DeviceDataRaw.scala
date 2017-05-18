@@ -23,12 +23,13 @@ import org.json4s._
   */
 case class DeviceDataRaw(
                           id: UUID = UUIDUtil.uuid, // messageId
+                          uuid: Option[String] = None,
                           v: String = MessageVersion.v003,
+                          fw: String = "n.a.",
                           a: String,
                           ts: DateTime = DateTime.now(),
                           k: Option[String] = None,
                           s: Option[String] = None,
-                          uuid: Option[String] = None,
                           p: JValue,
                           deviceId: Option[String] = None,
                           deviceName: Option[String] = None,
