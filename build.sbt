@@ -240,12 +240,13 @@ lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaHttpV
 lazy val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
-  "org.slf4j" % "slf4j-api" % "1.7.21",
+  "org.slf4j" % "slf4j-api" % "1.7.25",
+  "org.apache.logging.log4j" % "log4j-core" % "2.8.2",
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" exclude("org.slf4j", "slf4j-api"),
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
-  "ch.qos.logback" % "logback-core" % "1.1.7",
-  "ch.qos.logback" % "logback-classic" % "1.1.7",
-  "com.internetitem" % "logback-elasticsearch-appender" % "1.4"
+  "ch.qos.logback" % "logback-core" % "1.2.3" exclude("org.slf4j", "slf4j-api"),
+  "ch.qos.logback" % "logback-classic" % "1.2.3" exclude("org.slf4j", "slf4j-api"),
+  "com.internetitem" % "logback-elasticsearch-appender" % "1.5" exclude("org.slf4j", "slf4j-api")
 )
 
 lazy val akkaCamel = Seq(
