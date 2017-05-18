@@ -100,6 +100,9 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      "deviceId" : {
            |        "type" : "keyword"
            |      },
+           |      "uuid" : {
+           |        "type" : "keyword"
+           |      },
            |      "hwDeviceId" : {
            |        "type" : "keyword"
            |      },

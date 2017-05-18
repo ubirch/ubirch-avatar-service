@@ -1,47 +1,30 @@
 {
-  "messageId": "a64c91c9-45b8-4a60-857e-ea5141889adf",
-  "deviceDataRawId": "a64c91c9-45b8-4a60-857e-ea5141889adf",
-  "deviceId": "aa61f780-49b3-4a2a-9334-1e315f44b4fc",
-  "deviceName": "AQ Sensor 1 (InsureTec Week)",
-  "deviceType": "aqSensor",
-  "deviceTags": [
-    "ubirch#1",
-    "sensor",
-    "btcDemo"
-  ],
-  "deviceMessage": {
-    "airquality": 64,
-    "airqualityRef": 66,
-    "temperature": 31.04,
-    "presure": 10.14,
-    "humidity": 33.04,
-    "batteryLevel": 100,
-    "latitude": 50.947945,
-    "longitude": 6.9419,
-    "loops": 30,
-    "altitude": 25870.1,
-    "errorCode": 0
-  },
-  "deviceDataRaw": {
-    "id": "a64c91c9-45b8-4a60-857e-ea5141889adf",
-    "v": "0.0.2",
-    "a": "Gruq0U37NqlFnDr4Yjk9+BR4TdvLcigQhaiJsNvMPEvXwivvMCJCieNhu5nGViHxw9p4tteRHloHzwZjzMJnuw==",
-    "ts": "2017-05-17T08:36:42.781Z",
-    "k": "OIX0hvZpHPKiWQRgOFhA6oYOMK6mT6mldtoyg578cPs=",
-    "s": "iaEK2zcRNvAFSLqa66HATI7Om+kp1keh+cIAi7l2UJJgxSul0aV0WbmHGxbEQfEBHUIQfdoIpM4WgCPkjPmbAQ==",
-    "p": {
-      "t": 3104,
-      "p": 1014,
-      "h": 3304,
-      "a": 2587010,
-      "la": "50.947945",
-      "lo": "6.94190",
-      "ba": 100,
-      "lp": 30,
-      "e": 0,
-      "aq": 64,
-      "aqr": 66
+  "id": "5eb0abe2-6829-4c27-ba38-2fab9b37d8c4",
+  "uuid": "05dacd8e-5643-4a7f-84b7-70df1f65a176",
+  "v": "0.0.3",
+  "fw": "V1.2.3",
+  "a": "4Mbc5ANuEkKr0suiXF429GJAKF/eEM/zBssEbFg1j4CT+I1rT59P4dIRLfWBG6KBngxG+VMg27ME/IR/g1tucA==",
+  "ts": "2017-05-18T13:58:02.638Z",
+  "k": "MC0wCAYDK2VkCgEBAyEAhIQ31W+bNnoG8e98M97Q9GiVcIhz/WYTwLsKiqdQRVc=",
+  "s": "cWi2KEqoFmdg2pp1Mg0LalnpPJTzKkT/ijkCpfa8UFy2/v7C8XVxP8ESRWio/8XS5wvsdVccRDIvAi9JXFMOBA==",
+  "p": [
+    {
+      "t": 3224,
+      "p": 105581,
+      "h": 5175,
+      "la": "52.5118012",
+      "lo": "13.2122049",
+      "a": 7159,
+      "ts": "2017-05-18T15:56:02.662+02:00"
+    },
+    {
+      "t": 3471,
+      "p": 108987,
+      "h": 5508,
+      "la": "52.5117040",
+      "lo": "13.2122416",
+      "a": 11151,
+      "ts": "2017-05-18T15:57:02.714+02:00"
     }
-  },
-  "timestamp": "2017-05-17T08:36:42.781Z"
+  ]
 }

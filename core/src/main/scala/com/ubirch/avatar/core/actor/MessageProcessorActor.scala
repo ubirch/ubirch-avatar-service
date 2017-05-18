@@ -42,9 +42,6 @@ class MessageProcessorActor extends Actor with ActorLogging {
 
       transformerActor ! drd.id
 
-      //update AWS Shadow state
-      AwsShadowUtil.setReported(device, drd.p)
-
       //send back current device state
       val currentState = DeviceStateManager.currentDeviceState(device)
       DeviceStateManager.upsert(currentState)
