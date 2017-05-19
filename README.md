@@ -30,8 +30,8 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:oidc-utils_ to version 0.4.0
 * update mappings to Elasticsearch 5.3
 * rename module _model_ to _model-rest_ and introduce module _model-db_
-* update _com.ubirch.util:rest-akka-http_ to version 0.3.6
-* update _com.ubirch.util:rest-akka-http-test_ to version 0.3.6
+* update _com.ubirch.util:rest-akka-http_ to version 0.3.7
+* update _com.ubirch.util:rest-akka-http-test_ to version 0.3.7
 * update _com.ubirch.util:response-util_ to version 0.1.4
 * creating devices now stores groups as queried from user-service
 * update to Akka 2.4.18
