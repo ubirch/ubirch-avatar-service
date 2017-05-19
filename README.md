@@ -28,7 +28,9 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:elasticsearch-client-binary_ to version 2.0.1
 * update to Elasticsearch 5.3
 * update _com.ubirch.util:oidc-utils_ to version 0.4.0
-* update mappings to Elasticsearch 5.3 
+* update mappings to Elasticsearch 5.3
+ * update _com.ubirch.util:rest-akka-http_ to version 0.3.7
+ * update _com.ubirch.util:rest-akka-http-test_ to version 0.3.7
 
 ### Version 0.3.10 (2017-03-01)
 
