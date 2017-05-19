@@ -7,7 +7,6 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 import org.json4s.native.JsonMethods._
@@ -37,6 +36,8 @@ object DummyDeviceDataRaw {
 
     DeviceDataRaw(
       id = messageId,
+      uuid = Some(UUIDUtil.uuidStr),
+      fw = "V1.2.3",
       a = HashUtil.sha512Base64(device.hwDeviceId),
       ts = timestamp,
       k = Some(k),
@@ -98,7 +99,8 @@ object DummyDeviceDataRaw {
          |"h":${4000 + Random.nextInt(5500)},
          |"la":"52.51${10000 + Random.nextInt(20000)}",
          |"lo":"13.21${10000 + Random.nextInt(20000)}",
-         |"a":${5000 + Random.nextInt(10000)}
+         |"a":${5000 + Random.nextInt(10000)},
+         |"ts":"${new DateTime(DateTimeZone.UTC).minusMinutes(2)}"
          |},
          |{
          |"t":${2000 + Random.nextInt(1500)},
@@ -106,7 +108,8 @@ object DummyDeviceDataRaw {
          |"h":${4000 + Random.nextInt(5500)},
          |"la":"52.51${10000 + Random.nextInt(20000)}",
          |"lo":"13.21${10000 + Random.nextInt(20000)}",
-         |"a":${5000 + Random.nextInt(10000)}
+         |"a":${5000 + Random.nextInt(10000)},
+         |"ts":"${new DateTime(DateTimeZone.UTC).minusMinutes(1)}"
          |}
          |]
         """.stripMargin

@@ -1,5 +1,7 @@
 package com.ubirch.avatar.model.rest.payload
 
+import org.joda.time.DateTime
+
 /**
   * Created by derMicha on 01/02/17.
   */
@@ -13,7 +15,8 @@ final case class TrackleSensorPayload(
                                        t3: Int,
                                        la: String,
                                        lo: String,
-                                       e: Int
+                                       e: Int,
+                                       dt: Option[DateTime] = None
                                      )
 
 final case class TrackleSensorPayloadOut(
@@ -28,5 +31,6 @@ final case class TrackleSensorPayloadOut(
                                           t3: Double,
                                           la: String,
                                           lo: String,
-                                          e: Int
+                                          e: Int,
+                                          dt: Option[DateTime] = None
                                         )

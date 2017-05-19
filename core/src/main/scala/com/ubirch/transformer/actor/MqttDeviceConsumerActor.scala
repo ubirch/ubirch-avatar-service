@@ -62,7 +62,7 @@ class MqttDeviceConsumerActor
             log.error(s"received invalid message body: ${msg.body}")
         }
       }
-    //      log.debug(s"received mqtt message: ${msg.bodyAs[String]}")
+
     case (msgStr: String, deviceUuid: String) =>
       try {
         Json4sUtil.string2JValue(msgStr) match {
@@ -80,10 +80,9 @@ class MqttDeviceConsumerActor
         case e: Exception =>
           log.error(s"received invalid data: $msgStr", e)
       }
-    case msg: Any =>
-      val sender = context.sender()
 
-      log.error(s"received from ${sender.getClass.toString} message: ${msg.getClass.toString}")
+    case dsu: DeviceStateUpdate =>
+      log.debug(s"received DeviceStateUpdate: ${dsu.toString}, nothing to do!")
 
     case _ =>
       val sender = context.sender()

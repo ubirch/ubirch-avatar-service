@@ -1,19 +1,24 @@
 package com.ubirch.avatar.model.rest.payload
 
+import org.joda.time.DateTime
+
 /**
   * Created by derMicha on 29/11/16.
   */
-final case class EnvSensorPayload(
-                                   temperature: Double,
-                                   presure: Double,
-                                   humidity: Double,
-                                   batteryLevel: Option[Int],
-                                   latitude: Option[Double],
-                                   longitude: Option[Double],
-                                   loops: Option[Long],
-                                   altitude: Option[Double],
-                                   errorCode: Option[Int]
-                                 )
+
+
+case class EnvSensorPayload(
+                             temperature: Double,
+                             presure: Double,
+                             humidity: Double,
+                             batteryLevel: Option[Int],
+                             latitude: Option[Double],
+                             longitude: Option[Double],
+                             loops: Option[Long],
+                             altitude: Option[Double],
+                             errorCode: Option[Int],
+                             timestamp: Option[DateTime] = None
+                           )
 
 final case class AqSensorPayload(
                                   airquality: Int,
@@ -26,7 +31,8 @@ final case class AqSensorPayload(
                                   longitude: Option[Double],
                                   loops: Option[Long],
                                   altitude: Option[Double],
-                                  errorCode: Option[Int]
+                                  errorCode: Option[Int],
+                                  timestamp: Option[DateTime] = None
                                 )
 
 final case class EmoSensorPayload(
@@ -38,7 +44,8 @@ final case class EmoSensorPayload(
                                    emoDeviceId: Int,
                                    messageId: Int,
                                    batteryLevel: Option[Int] = None,
-                                   errorCode: Option[Int] = None
+                                   errorCode: Option[Int] = None,
+                                   timestamp: Option[DateTime] = None
                                  )
 
 final case class EnvSensorRawPayload(
@@ -50,7 +57,8 @@ final case class EnvSensorRawPayload(
                                       lo: Option[String],
                                       lp: Option[Long],
                                       a: Option[Double],
-                                      e: Option[Int]
+                                      e: Option[Int],
+                                      ts: Option[DateTime] = None
                                     )
 
 final case class AqSensorRawPayload(
@@ -64,7 +72,8 @@ final case class AqSensorRawPayload(
                                      lo: Option[String],
                                      lp: Option[Long],
                                      a: Option[Double],
-                                     e: Option[Int]
+                                     e: Option[Int],
+                                     ts: Option[DateTime] = None
                                    )
 
 final case class EmoSensorRawPayload(
@@ -76,5 +85,6 @@ final case class EmoSensorRawPayload(
                                       did: Int,
                                       mid: Int,
                                       bat: Option[Int] = None,
-                                      e: Option[Int]
+                                      e: Option[Int],
+                                      ts: Option[DateTime] = None
                                     )

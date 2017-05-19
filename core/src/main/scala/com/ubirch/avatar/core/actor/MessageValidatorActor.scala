@@ -57,9 +57,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
       if (drd.k.isDefined)
         DeviceManager.infoByHashedHwId(drd.a).map {
           case Some(dev) =>
-
             if (DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.getOrElse("nokey"), signature = drd.s.getOrElse("nosignature"), payload = drd.p)) {
-
               processorActor ! (s, drd, dev)
             }
             else {

@@ -53,6 +53,7 @@ class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorL
             drd.p.extract[Array[JValue]].foreach { payload =>
               log.debug(s"extracted payload: $payload")
               val newDrd = drd.copy(
+
                 v = MessageVersion.v002,
                 p = payload
               )
