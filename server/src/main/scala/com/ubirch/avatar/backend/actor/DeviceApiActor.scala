@@ -73,7 +73,9 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
                   errorMessage = s"failed to create device: ${device.deviceId}"
                 )
 
-              case Some(deviceObject) => Json4sUtil.any2any[Device](deviceObject)
+              case Some(deviceObject: db.device.Device) =>
+                logger.debug("convert db.device.Device to rest.device.Device")
+                Json4sUtil.any2any[Device](deviceObject)
 
             }
 
@@ -101,9 +103,18 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
         logger.debug(s"addGroup(): found $groups")
         val groupIds = groups map (_.id.get)
 
-        val dbDevice = Json4sUtil.any2any[db.device.Device](device).copy(groups = groupIds)
-        logger.debug(s"addGroup(); groups found and added to Device: groups=$groups, device=$dbDevice (userContext=${session.userContext})")
-        Some(dbDevice)
+        if (groupIds.isEmpty) {
+
+          logger.error(s"failed to add missing groups to device: userContext=${session.userContext}")
+          None
+
+        } else {
+
+          val dbDevice = Json4sUtil.any2any[db.device.Device](device).copy(groups = groupIds)
+          logger.debug(s"addGroup(); groups found and added to Device: groups=$groups, device=$dbDevice (userContext=${session.userContext})")
+          Some(dbDevice)
+
+        }
 
     }
 
