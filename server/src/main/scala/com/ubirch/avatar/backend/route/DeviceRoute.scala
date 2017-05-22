@@ -61,7 +61,7 @@ class DeviceRoute(implicit ws: StandaloneWSClient) extends MyJsonProtocol
                 resp match {
                   case dev: Device => complete(dev)
                   case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
-                  case _ => complete("DeviceRoute.post failed with unhandled message")
+                  case _ => complete(serverErrorResponse(errorType="CreationError", errorMessage = "DeviceRoute.post failed with unhandled message"))
                 }
 
               case Failure(t) =>
