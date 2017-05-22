@@ -27,7 +27,8 @@ import scala.concurrent.Future
 object DeviceManager extends MyJsonProtocol
   with StrictLogging {
 
-  def all(): Future[Seq[Device]] = {
+  def all(groups: Set[UUID]): Future[Seq[Device]] = {
+    // TODO refactor to query based on groups
     ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
       res.map(_.extract[Device])
     }

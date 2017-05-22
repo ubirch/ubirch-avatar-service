@@ -2,9 +2,8 @@ package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-import com.ubirch.avatar.backend.actor.{CreateDevice, CreateResult, DeviceApiActor}
+import com.ubirch.avatar.backend.actor.{AllDevices, CreateDevice, CreateResult, DeviceApiActor}
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
@@ -48,7 +47,21 @@ class DeviceRoute(implicit ws: StandaloneWSClient) extends MyJsonProtocol
       oidcDirective.oidcToken2UserContext { userContext =>
 
         get {
-          complete(DeviceManager.all())
+
+          onComplete(deviceApiActor ? AllDevices(session = AvatarSession(userContext = userContext))) {
+
+            case Success(resp) =>
+              resp match {
+                case devices: Seq[Device] => complete(devices)
+                case _ => complete(serverErrorResponse(errorType = "QueryError", errorMessage = "DeviceRoute.post failed with unhandled message"))
+              }
+
+            case Failure(t) =>
+              logger.error("querying all devices failed", t)
+              complete(serverErrorResponse(errorType = "QueryError", errorMessage = t.getMessage))
+
+          }
+
         } ~ post {
 
           entity(as[Device]) { device =>

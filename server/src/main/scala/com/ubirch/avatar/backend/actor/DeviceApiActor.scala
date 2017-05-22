@@ -1,5 +1,7 @@
 package com.ubirch.avatar.backend.actor
 
+import java.util.UUID
+
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.core.device.DeviceManager
@@ -19,6 +21,8 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 /**
   * Created by derMicha on 30/10/16.
   */
+case class AllDevices(session: AvatarSession)
+
 case class CreateDevice(session: AvatarSession, device: Device)
 
 case class CreateResult(error: Option[JsonErrorResponse] = None,
@@ -28,9 +32,12 @@ case class CreateResult(error: Option[JsonErrorResponse] = None,
 class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
-  //implicit protected val materializer = ActorMaterializer()
 
   override def receive: Receive = {
+
+    case all: AllDevices =>
+      val from = sender()
+      allDevices(all.session) map (from ! _)
 
     case cd: CreateDevice =>
       val from = sender
@@ -39,6 +46,12 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
     case _ =>
       logger.error("received unknown message")
       sender() ! JsonErrorResponse(errorType = "ServerError", errorMessage = "internal server error")
+
+  }
+
+  private def allDevices(session: AvatarSession): Future[Seq[Device]] = {
+
+    queryGroups(session) flatMap DeviceManager.all
 
   }
 
@@ -125,6 +138,22 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
         } else {
           Some(Json4sUtil.any2any[db.device.Device](device).copy(groups = groupIds))
         }
+
+    }
+
+  }
+
+  private def queryGroups(session: AvatarSession): Future[Set[UUID]] = {
+
+    UserServiceClientRest.groups(
+      contextName = session.userContext.context,
+      providerId = session.userContext.providerId,
+      externalUserId = session.userContext.userId
+    ) map {
+
+      case None => Set.empty
+
+      case Some(groups: Set[Group]) => groups map (_.id.get)
 
     }
 
