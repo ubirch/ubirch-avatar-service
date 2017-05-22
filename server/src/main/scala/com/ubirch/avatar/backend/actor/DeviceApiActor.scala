@@ -53,7 +53,7 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
             error = Some(
               JsonErrorResponse(
                 errorType = "CreationError",
-                errorMessage = s"device already exist: $dev"
+                errorMessage = "device already exist"
               )
             )
           )
@@ -61,17 +61,16 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
       case None =>
 
-        logger.debug(s"createDevice(): device does not exist yet...creating it now: ${device.hwDeviceId}")
         addGroup(session, device) flatMap {
 
           case None =>
-            logger.error(s"createDevice(): failed to add groups to device: ${device.hwDeviceId}")
+            logger.error(s"createDevice(): unable to create device if user has no groups: device.hwDeviceId=${device.hwDeviceId}, userContext=${session.userContext}")
             Future(
               CreateResult(
                 error = Some(
                   JsonErrorResponse(
                     errorType = "CreationError",
-                    errorMessage = s"failed to find groups to add to the device: ${device.deviceId}"
+                    errorMessage = "unable to create device: user has no groups"
                   )
                 )
               )
@@ -88,7 +87,7 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
                   error = Some(
                     JsonErrorResponse(
                       errorType = "CreationError",
-                      errorMessage = s"failed to create device: ${device.deviceId}"
+                      errorMessage = "failed to create device"
                     )
                   )
                 )
@@ -108,16 +107,13 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
   private def addGroup(session: AvatarSession, device: Device): Future[Option[db.device.Device]] = {
 
-    logger.debug("addGroup(); query user-service for groups")
     UserServiceClientRest.groups(
       contextName = session.userContext.context,
       providerId = session.userContext.providerId,
       externalUserId = session.userContext.userId
     ) map {
 
-      case None =>
-        logger.debug("addGroup(): found None")
-        None
+      case None => None
 
       case Some(groups: Set[Group]) =>
 
@@ -125,16 +121,9 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
         val groupIds = groups map (_.id.get)
 
         if (groupIds.isEmpty) {
-
-          logger.error(s"failed to add missing groups to device: userContext=${session.userContext}")
           None
-
         } else {
-
-          val dbDevice = Json4sUtil.any2any[db.device.Device](device).copy(groups = groupIds)
-          logger.debug(s"addGroup(); groups found and added to Device: groups=$groups, device=$dbDevice (userContext=${session.userContext})")
-          Some(dbDevice)
-
+          Some(Json4sUtil.any2any[db.device.Device](device).copy(groups = groupIds))
         }
 
     }
