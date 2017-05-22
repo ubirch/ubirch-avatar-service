@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-import com.ubirch.avatar.backend.actor.{CreateDevice, DeviceApiActor}
+import com.ubirch.avatar.backend.actor.{CreateDevice, CreateResult, DeviceApiActor}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.Device
@@ -10,7 +10,6 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
-import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
@@ -59,9 +58,20 @@ class DeviceRoute(implicit ws: StandaloneWSClient) extends MyJsonProtocol
 
               case Success(resp) =>
                 resp match {
-                  case deviceCreated: Device => complete(deviceCreated)
-                  case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
-                  case _ => complete(serverErrorResponse(errorType="CreationError", errorMessage = "DeviceRoute.post failed with unhandled message"))
+
+                  case result: CreateResult if result.device.isDefined =>
+                    complete(result.device.get)
+
+                  case result: CreateResult if result.error.isDefined =>
+                    complete(requestErrorResponse(result.error.get))
+
+                  case result: CreateResult =>
+                    logger.error(s"unhandled CreateResult: createResult=$result")
+                    complete(serverErrorResponse(errorType = "CreationError", errorMessage = "DeviceRoute.post failed with unhandled case"))
+
+                  case _ =>
+                    complete(serverErrorResponse(errorType = "CreationError", errorMessage = "DeviceRoute.post failed with unhandled message"))
+
                 }
 
               case Failure(t) =>

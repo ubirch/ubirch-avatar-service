@@ -21,6 +21,10 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   */
 case class CreateDevice(session: AvatarSession, device: Device)
 
+case class CreateResult(error: Option[JsonErrorResponse] = None,
+                        device: Option[rest.device.Device] = None
+                       )
+
 class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
@@ -38,27 +42,39 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
   }
 
-  private def createDevice(session: AvatarSession, device: Device) = {
+  private def createDevice(session: AvatarSession, device: Device): Future[CreateResult] = {
 
-    DeviceManager.info(device.deviceId).map {
+    DeviceManager.info(device.deviceId).flatMap {
 
       case Some(dev) =>
         logger.error(s"createDevice(): device already exists: ${dev.deviceId}")
-        JsonErrorResponse(
-          errorType = "CreationError",
-          errorMessage = s"device already exist: $dev"
+        Future(
+          CreateResult(
+            error = Some(
+              JsonErrorResponse(
+                errorType = "CreationError",
+                errorMessage = s"device already exist: $dev"
+              )
+            )
+          )
         )
 
       case None =>
 
         logger.debug(s"createDevice(): device does not exist yet...creating it now: ${device.hwDeviceId}")
-        addGroup(session, device) map {
+        addGroup(session, device) flatMap {
 
           case None =>
             logger.error(s"createDevice(): failed to add groups to device: ${device.hwDeviceId}")
-            JsonErrorResponse(
-              errorType = "CreationError",
-              errorMessage = s"failed to find groups to add to the device: ${device.deviceId}"
+            Future(
+              CreateResult(
+                error = Some(
+                  JsonErrorResponse(
+                    errorType = "CreationError",
+                    errorMessage = s"failed to find groups to add to the device: ${device.deviceId}"
+                  )
+                )
+              )
             )
 
           case Some(dbDevice: db.device.Device) =>
@@ -68,14 +84,19 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
               case None =>
                 logger.error(s"createDevice(): failed to create device: ${device.hwDeviceId}")
-                JsonErrorResponse(
-                  errorType = "CreationError",
-                  errorMessage = s"failed to create device: ${device.deviceId}"
+                CreateResult(
+                  error = Some(
+                    JsonErrorResponse(
+                      errorType = "CreationError",
+                      errorMessage = s"failed to create device: ${device.deviceId}"
+                    )
+                  )
                 )
 
               case Some(deviceObject: db.device.Device) =>
                 logger.debug("convert db.device.Device to rest.device.Device")
-                Json4sUtil.any2any[Device](deviceObject)
+                val restDevice = Json4sUtil.any2any[Device](deviceObject)
+                CreateResult(device = Some(restDevice))
 
             }
 
