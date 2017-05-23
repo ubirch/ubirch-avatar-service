@@ -153,8 +153,10 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
       case None => Set.empty
 
-      case Some(groups: Set[Group]) => groups map (_.id.get)
-
+      case Some(groups: Set[Group]) =>
+        val result = groups map (_.id.get)
+        logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")
+        result
     }
 
   }
