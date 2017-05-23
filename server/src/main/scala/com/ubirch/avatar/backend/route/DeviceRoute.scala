@@ -2,7 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-import com.ubirch.avatar.backend.actor.{AllDevices, CreateDevice, CreateResult, DeviceApiActor}
+import com.ubirch.avatar.backend.actor.{AllDevices, AllDevicesResult, CreateDevice, CreateResult, DeviceApiActor}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
@@ -52,7 +52,7 @@ class DeviceRoute(implicit ws: StandaloneWSClient) extends MyJsonProtocol
 
             case Success(resp) =>
               resp match {
-                case devices: Seq[Device] => complete(devices)
+                case devices: AllDevicesResult => complete(devices.devices)
                 case _ => complete(serverErrorResponse(errorType = "QueryError", errorMessage = "DeviceRoute.post failed with unhandled message"))
               }
 

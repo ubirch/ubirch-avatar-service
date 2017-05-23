@@ -7,9 +7,9 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.rest.aws.ThingShadowState
 import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
-import com.ubirch.avatar.model._
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
@@ -35,16 +35,11 @@ object DeviceManager extends MyJsonProtocol
     */
   def all(groups: Set[UUID]): Future[Seq[Device]] = {
 
-    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
-    val query: Option[QueryBuilder] = Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
-    logger.debug(s"all(): query=${query.get.toString}")
-    val size: Option[Int] = Some(Config.esLargePageSize)
-
     ESSimpleStorage.getDocs(
       docIndex = Config.esDeviceIndex,
       docType = Config.esDeviceType,
-      query = query,
-      size = size
+      query = groupsTermsQuery(groups),
+      size = Some(Config.esLargePageSize)
     ).map { res =>
       logger.debug(s"all(): result=$res")
       res.map(_.extract[Device])
@@ -52,10 +47,22 @@ object DeviceManager extends MyJsonProtocol
 
   }
 
-  def allStubs(): Future[Seq[DeviceInfo]] = {
-    ESSimpleStorage.getDocs(docIndex = Config.esDeviceIndex, docType = Config.esDeviceType, size = Some(100)).map { res =>
+  /**
+    * Select all device stubs in any of the given groups.
+    *
+    * @param groups select device stubs only if they're in any of these groups
+    * @return devices; empty if none found
+    */
+  def allStubs(groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
+
+    ESSimpleStorage.getDocs(
+      docIndex = Config.esDeviceIndex,
+      docType = Config.esDeviceType,
+      query = groupsTermsQuery(groups),
+      size = Some(Config.esLargePageSize)
+    ).map { res =>
       res.map { jv =>
-        DeviceStubManger.create(device = jv.extract[Device])
+        DeviceStubManger.toDeviceInfo(device = jv.extract[Device])
       }
     }
   }
@@ -189,14 +196,19 @@ object DeviceManager extends MyJsonProtocol
   def stub(deviceId: UUID): Future[Option[DeviceInfo]] = {
     info(deviceId).map {
       case Some(device) =>
-        Some(DeviceStubManger.create(device = device))
+        Some(DeviceStubManger.toDeviceInfo(device = device))
       case None =>
         None
     }
   }
 
-  def curretShadowState(device: Device): Option[ThingShadowState] = {
+  def currentShadowState(device: Device): Option[ThingShadowState] = {
     AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)
+  }
+
+  private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {
+    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
+    Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
   }
 
 }

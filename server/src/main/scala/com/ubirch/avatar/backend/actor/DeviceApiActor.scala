@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.user.client.rest.UserServiceClientRest
 import com.ubirch.user.model.rest.Group
@@ -23,11 +23,17 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   */
 case class AllDevices(session: AvatarSession)
 
+case class AllStubs(session: AvatarSession)
+
 case class CreateDevice(session: AvatarSession, device: Device)
 
 case class CreateResult(error: Option[JsonErrorResponse] = None,
                         device: Option[rest.device.Device] = None
                        )
+
+case class AllDevicesResult(devices: Seq[Device])
+
+case class AllStubsResult(stubs: Seq[DeviceInfo])
 
 class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictLogging {
 
@@ -37,7 +43,11 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
     case all: AllDevices =>
       val from = sender()
-      allDevices(all.session) map (from ! _)
+      allDevices(all.session) map (from ! AllDevicesResult(_))
+
+    case all: AllStubs =>
+      val from = sender()
+      allStubs(all.session) map (from ! AllStubsResult(_))
 
     case cd: CreateDevice =>
       val from = sender
@@ -52,6 +62,12 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
   private def allDevices(session: AvatarSession): Future[Seq[Device]] = {
 
     queryGroups(session) flatMap DeviceManager.all
+
+  }
+
+  private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
+
+    queryGroups(session) flatMap DeviceManager.allStubs
 
   }
 
