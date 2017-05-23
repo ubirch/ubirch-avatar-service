@@ -15,7 +15,7 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -27,11 +27,29 @@ import scala.concurrent.Future
 object DeviceManager extends MyJsonProtocol
   with StrictLogging {
 
+  /**
+    * Select all devices in any of the given groups.
+    *
+    * @param groups select devices only if they're in any of these groups
+    * @return devices; empty if none found
+    */
   def all(groups: Set[UUID]): Future[Seq[Device]] = {
-    // TODO refactor to query based on groups
-    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
+
+    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
+    val query: Option[QueryBuilder] = Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
+    logger.debug(s"all(): query=${query.get.toString}")
+    val size: Option[Int] = Some(Config.esLargePageSize)
+
+    ESSimpleStorage.getDocs(
+      docIndex = Config.esDeviceIndex,
+      docType = Config.esDeviceType,
+      query = query,
+      size = size
+    ).map { res =>
+      logger.debug(s"all(): result=$res")
       res.map(_.extract[Device])
     }
+
   }
 
   def allStubs(): Future[Seq[DeviceInfo]] = {
