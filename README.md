@@ -20,7 +20,7 @@ ubirch Avatar Service is responsible for:
 
 * update to _json4s_ version 3.5.1
 * update to _de.heikoseeberger:akka-http-json4s_ version 1.14.0
-* update Akka HTTP to version 10.0.5
+* update Akka HTTP to version 10.0.6
 * update _com.ubirch.util:json_ to version 0.3.4
 * update _com.ubirch.util:json-auto-convert_ to version 0.3.4
 * update _com.ubirch.notary:notary-client_ to version 0.3.2
@@ -29,8 +29,14 @@ ubirch Avatar Service is responsible for:
 * update to Elasticsearch 5.3
 * update _com.ubirch.util:oidc-utils_ to version 0.4.0
 * update mappings to Elasticsearch 5.3
- * update _com.ubirch.util:rest-akka-http_ to version 0.3.7
- * update _com.ubirch.util:rest-akka-http-test_ to version 0.3.7
+* rename module _model_ to _model-rest_ and introduce module _model-db_
+* update _com.ubirch.util:rest-akka-http_ to version 0.3.7
+* update _com.ubirch.util:rest-akka-http-test_ to version 0.3.7
+* update _com.ubirch.util:response-util_ to version 0.1.4
+* creating devices now stores groups as queried from user-service
+* update to Akka 2.4.18
+* update to Akka HTTP 10.0.6
+* creating a devices remembers the user's groups (new field _Device.groups_)
 
 ### Version 0.3.10 (2017-03-01)
 
@@ -137,14 +143,25 @@ libraryDependencies ++= Seq(
 )
 ```
 
-### `model`
+### `model-db`
 
 ```scala
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-db" % "0.3.11-SNAPSHOT"
+)
+```
+
+### `model-rest`
+
+```scala
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots")
+)
+libraryDependencies ++= Seq(
+  "com.ubirch.avatar" %% "model-rest" % "0.3.11-SNAPSHOT"
 )
 ```
 
@@ -153,7 +170,8 @@ libraryDependencies ++= Seq(
 ```scala
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
-  Resolver.bintrayRepo("hseeberger", "maven")
+  Resolver.bintrayRepo("hseeberger", "maven"),
+  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
   "com.ubirch.avatar" %% "server" % "0.3.11-SNAPSHOT"

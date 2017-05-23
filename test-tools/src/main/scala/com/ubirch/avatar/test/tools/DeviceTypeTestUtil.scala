@@ -1,7 +1,7 @@
 package com.ubirch.avatar.test.tools
 
 import com.ubirch.avatar.core.device.DeviceTypeManager
-import com.ubirch.avatar.model.device.DeviceType
+import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 
 import scala.concurrent.Await

@@ -36,7 +36,8 @@ lazy val avatarService = (project in file("."))
     cmdtools,
     config,
     core,
-    model,
+    modelDb,
+    modelRest,
     server,
     testBase,
     testTools,
@@ -53,7 +54,8 @@ lazy val server = project
     libraryDependencies ++= depServer,
     fork in run := true,
     resolvers ++= Seq(
-      resolverSeebergerJson
+      resolverSeebergerJson,
+      resolverTypesafeReleases
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
     resourceGenerators in Compile += Def.task {
@@ -70,7 +72,7 @@ lazy val cmdtools = project
 
 lazy val client = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, util)
+  .dependsOn(config, modelRest, util)
   .settings(
     description := "REST client for the avatarService",
     libraryDependencies ++= depClient,
@@ -81,7 +83,7 @@ lazy val client = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, model, util, testBase % "test")
+  .dependsOn(config, aws, modelDb, modelRest, util, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore,
@@ -94,7 +96,7 @@ lazy val core = project
 
 lazy val aws = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, util, testBase % "test")
+  .dependsOn(config, modelRest, util, testBase % "test")
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
@@ -107,18 +109,27 @@ lazy val config = project
     libraryDependencies += ubirchConfig
   )
 
-lazy val model = project
+lazy val modelDb = (project in file("model-db"))
   .settings(commonSettings: _*)
   .dependsOn(config)
   .settings(
-    name := "model",
+    name := "model-db",
+    description := "database models",
+    libraryDependencies ++= depModelDb
+  )
+
+lazy val modelRest = (project in file("model-rest"))
+  .settings(commonSettings: _*)
+  .dependsOn(config)
+  .settings(
+    name := "model-rest",
     description := "JSON models",
-    libraryDependencies ++= depModel
+    libraryDependencies ++= depModelRest
   )
 
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(model, config, util)
+  .dependsOn(modelDb, modelRest, config, util)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -139,7 +150,7 @@ lazy val testTools = (project in file("test-tools"))
 
 lazy val util = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model)
+  .dependsOn(config, modelDb, modelRest)
   .settings(
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
@@ -168,7 +179,8 @@ lazy val depServer = Seq(
   ubirchJsonAutoConvert,
   ubirchRestAkkaHttp,
   ubirchResponse,
-  ubirchOidcUtils
+  ubirchOidcUtils,
+  ubirchUserClientRest
 
 ) ++ scalaLogging
 
@@ -192,7 +204,13 @@ lazy val depAws = Seq(
   scalatest % "test"
 ) ++ awsIotSdk ++ awsSqsSdk ++ scalaLogging
 
-lazy val depModel = Seq(
+lazy val depModelDb = Seq(
+  ubirchJsonAutoConvert,
+  json4sNative,
+  ubirchUUID
+) ++ joda
+
+lazy val depModelRest = Seq(
   ubirchJsonAutoConvert,
   json4sNative,
   ubirchUUID
@@ -203,6 +221,7 @@ lazy val depUtil = Seq(
   ubirchJson,
   ubirchElasticsearchClientBinary,
   ubirchElasticsearchUtil,
+  ubirchOidcUtils,
   ubirchUUID % "test",
   scalatest % "test"
 ) ++ json4s ++ scalaLogging
@@ -220,8 +239,8 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-lazy val akkaV = "2.4.17"
-lazy val akkaHttpV = "10.0.5"
+lazy val akkaV = "2.4.18"
+lazy val akkaHttpV = "10.0.6"
 lazy val json4sV = "3.5.1"
 lazy val awsSdkV = "1.11.93"
 lazy val camelV = "2.18.1"
@@ -291,15 +310,15 @@ lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-
 lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.3.4" excludeAll (excludedLoggers: _*)
 lazy val ubirchJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.4" excludeAll (excludedLoggers: _*)
-lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.0" excludeAll (excludedLoggers: _*)
-
+lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
 lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.7" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.7" excludeAll (excludedLoggers: _*)
-lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.1.3" excludeAll (excludedLoggers: _*)
+lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.1.4" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.3.1" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
@@ -310,6 +329,7 @@ lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
 lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
 lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
 lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
+lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 
 /*
  * MISC

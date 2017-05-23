@@ -3,7 +3,7 @@ package com.ubirch.avatar.test.tools
 import java.util.UUID
 
 import com.ubirch.avatar.core.device.DeviceHistoryManager
-import com.ubirch.avatar.model.device.DeviceHistory
+import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.test.tools.model.DummyDeviceHistory
 import com.ubirch.util.uuid.UUIDUtil
 

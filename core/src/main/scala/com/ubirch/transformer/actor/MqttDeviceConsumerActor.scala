@@ -5,7 +5,7 @@ import akka.camel.{CamelMessage, Consumer}
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
-import com.ubirch.avatar.model.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
@@ -34,7 +34,7 @@ class MqttDeviceConsumerActor
   //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
 
   override def endpointUri = s"mqtt:" +
-    s"avatarService?host=$mqttBrokerUrl&subscribeTopicName=${mqttDeviceInTopic}&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
+    s"avatarService?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 

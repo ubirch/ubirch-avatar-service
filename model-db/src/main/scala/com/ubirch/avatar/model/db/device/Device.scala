@@ -1,15 +1,18 @@
-package com.ubirch.avatar.model.device
+package com.ubirch.avatar.model.db.device
+
+import java.util.UUID
 
 import com.ubirch.avatar.config.Config
+
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 
 /**
   * author: cvandrei
-  * since: 2016-09-23
+  * since: 2017-05-12
   */
 case class Device(deviceId: String,
-                  ownedByGroup: String = "default",
+                  groups: Set[UUID],
                   deviceTypeKey: String = "unknownDeviceType",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",
@@ -45,37 +48,5 @@ case class Device(deviceId: String,
     val prefix = Config.awsIotEnvPrefix
     s"${prefix}_$awsId"
   }
+
 }
-
-case class AvatarState(desired: Option[JValue],
-                       reported: Option[JValue]
-                      )
-
-/**
-  * we might use this draft in the future
-  */
-case class DeviceDraft(id: String,
-                       name: Option[String],
-                       hwType: Option[String],
-                       hwId: Option[String],
-                       syncState: Option[Int], // 0 = out of sync, 1 = in sync, 100 = unknown
-                       tags: Option[Set[String]],
-                       properties: Option[JValue],
-                       subscriptions: Option[Set[String]],
-                       config: Option[JValue],
-                       avatar: Option[AvatarDraft],
-                       created: Option[DateTime],
-                       updated: Option[DateTime],
-                       lastActive: Option[DateTime]
-                      )
-
-/**
-  * we might use this draft in the future
-  */
-case class AvatarDraft(id: String,
-                       stateDesired: Option[JValue],
-                       stateReported: Option[JValue],
-                       created: Option[DateTime],
-                       updated: Option[DateTime],
-                       lastActive: Option[DateTime]
-                      )

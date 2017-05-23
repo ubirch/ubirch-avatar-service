@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.core.device.DeviceDataRawManager
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
@@ -9,6 +9,8 @@ import com.ubirch.avatar.util.server.RouteConstants
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -20,6 +22,8 @@ import scala.language.postfixOps
   */
 class DeviceDataRawRouteSpec extends RouteSpec
   with ElasticsearchSpec {
+
+  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

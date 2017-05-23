@@ -7,9 +7,10 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.MessageVersion
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
-import com.ubirch.avatar.model.payload.TrackleSensorPayload
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.payload.TrackleSensorPayload
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.Json4sUtil
@@ -40,6 +41,7 @@ object ImportTrackle
 
   private val device = Device(
     deviceId = UUIDUtil.uuidStr,
+    groups = immutable.Set.empty, // TODO create user with group (and use group.id here)
     deviceName = "trackle Sensor 001",
     hwDeviceId = hwDeviceId,
     deviceTypeKey = Const.TRACKLESENSOR

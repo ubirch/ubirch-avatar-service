@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.avatar
 
 import com.ubirch.avatar.model.DummyDevices
-import com.ubirch.avatar.model.aws.AvatarState
+import com.ubirch.avatar.model.rest.aws.AvatarState
 import com.ubirch.avatar.test.base.ElasticsearchSpecAsync
 import com.ubirch.util.uuid.UUIDUtil
 

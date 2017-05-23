@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.ubirch.avatar.core.device.DeviceHistoryManager
 import com.ubirch.avatar.core.test.model.DummyDeviceHistory
-import com.ubirch.avatar.model.device.DeviceHistory
+import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}

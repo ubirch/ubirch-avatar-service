@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging}
 import com.ubirch.avatar.core.device.{DeviceDataRawAnchoredManager, DeviceDataRawManager}
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
 /**
   * Created by derMicha on 28/10/16.

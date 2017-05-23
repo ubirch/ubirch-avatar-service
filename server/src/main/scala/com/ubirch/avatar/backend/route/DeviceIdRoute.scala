@@ -1,23 +1,25 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.backend.actor.{CreateDevice, DeviceApiActor}
-import com.ubirch.avatar.config.{Config, ConfigKeys}
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.oidc.directive.OidcDirective
-import com.ubirch.util.redis.RedisClientUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
+import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import redis.RedisClient
+import play.api.libs.ws.StandaloneWSClient
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -28,7 +30,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-trait DeviceIdRoute extends CORSDirective
+class DeviceIdRoute(implicit ws: StandaloneWSClient) extends CORSDirective
   with MyJsonProtocol
   with ResponseUtil
   with StrictLogging {
@@ -37,7 +39,7 @@ trait DeviceIdRoute extends CORSDirective
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val deviceApiActor = system.actorOf(Props[DeviceApiActor], ActorNames.DEVICE_API)
+  private val deviceApiActor = system.actorOf(Props(new DeviceApiActor), ActorNames.DEVICE_API)
 
   private val oidcDirective = new OidcDirective()
 
@@ -62,7 +64,8 @@ trait DeviceIdRoute extends CORSDirective
             }
           } ~ post {
             entity(as[Device]) { device =>
-              onComplete(deviceApiActor ? CreateDevice(device = device)) {
+              val avatarSession = AvatarSession(userContext)
+              onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
                 case Success(resp) =>
                   resp match {
                     case dev: Device =>

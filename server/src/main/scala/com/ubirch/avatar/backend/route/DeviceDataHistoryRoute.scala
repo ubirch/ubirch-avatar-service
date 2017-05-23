@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.actor.{HistoryActor, HistoryAfter, HistoryBefore, HistoryByDate, HistoryByDay, HistorySeq}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceHistoryManager
-import com.ubirch.avatar.model.device.DeviceHistory
+import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil

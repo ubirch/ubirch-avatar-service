@@ -7,14 +7,15 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.aws.ThingShadowState
-import com.ubirch.avatar.model.device.{Device, DeviceInfo}
+import com.ubirch.avatar.model._
+import com.ubirch.avatar.model.rest.aws.ThingShadowState
+import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,21 +27,47 @@ import scala.concurrent.Future
 object DeviceManager extends MyJsonProtocol
   with StrictLogging {
 
-  def all(): Future[Seq[Device]] = {
-    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
+  /**
+    * Select all devices in any of the given groups.
+    *
+    * @param groups select devices only if they're in any of these groups
+    * @return devices; empty if none found
+    */
+  def all(groups: Set[UUID]): Future[Seq[Device]] = {
+
+    ESSimpleStorage.getDocs(
+      docIndex = Config.esDeviceIndex,
+      docType = Config.esDeviceType,
+      query = groupsTermsQuery(groups),
+      size = Some(Config.esLargePageSize)
+    ).map { res =>
+      logger.debug(s"all(): result=$res")
       res.map(_.extract[Device])
     }
+
   }
 
-  def allStubs(): Future[Seq[DeviceInfo]] = {
-    ESSimpleStorage.getDocs(docIndex = Config.esDeviceIndex, docType = Config.esDeviceType, size = Some(100)).map { res =>
+  /**
+    * Select all device stubs in any of the given groups.
+    *
+    * @param groups select device stubs only if they're in any of these groups
+    * @return devices; empty if none found
+    */
+  def allStubs(groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
+
+    ESSimpleStorage.getDocs(
+      docIndex = Config.esDeviceIndex,
+      docType = Config.esDeviceType,
+      query = groupsTermsQuery(groups),
+      size = Some(Config.esLargePageSize)
+    ).map { res =>
       res.map { jv =>
-        DeviceStubManger.create(device = jv.extract[Device])
+        DeviceStubManger.toDeviceInfo(device = jv.extract[Device])
       }
     }
   }
 
-  def create(device: Device): Future[Option[Device]] = {
+  def create(device: db.device.Device): Future[Option[db.device.Device]] = {
 
     val devWithDefaults = device.copy(
       hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
@@ -63,21 +90,23 @@ object DeviceManager extends MyJsonProtocol
           docType = Config.esDeviceType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
-        ) map (_.extractOpt[Device])
+        ) map (_.extractOpt[db.device.Device])
 
       case None =>
         Future(None)
     }
   }
 
-  def createWithShadow(device: Device): Future[Option[Device]] = {
-    create(device: Device).map {
+  def createWithShadow(device: db.device.Device): Future[Option[db.device.Device]] = {
+    create(device: db.device.Device).map {
       case Some(dev) =>
 
         try {
           AwsShadowUtil.createShadow(dev.awsDeviceThingId)
-          if (dev.deviceConfig.isDefined)
-            AwsShadowUtil.setDesired(dev, dev.deviceConfig.get)
+          if (dev.deviceConfig.isDefined) {
+            val restDevice = Json4sUtil.any2any[Device](dev)
+            AwsShadowUtil.setDesired(restDevice, dev.deviceConfig.get)
+          }
         }
         catch {
           case e: Exception =>
@@ -167,14 +196,19 @@ object DeviceManager extends MyJsonProtocol
   def stub(deviceId: UUID): Future[Option[DeviceInfo]] = {
     info(deviceId).map {
       case Some(device) =>
-        Some(DeviceStubManger.create(device = device))
+        Some(DeviceStubManger.toDeviceInfo(device = device))
       case None =>
         None
     }
   }
 
-  def curretShadowState(device: Device): Option[ThingShadowState] = {
+  def currentShadowState(device: Device): Option[ThingShadowState] = {
     AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)
+  }
+
+  private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {
+    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
+    Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
   }
 
 }

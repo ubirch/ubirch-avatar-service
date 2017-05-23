@@ -2,15 +2,19 @@ package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.DummyDevices
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.avatar.util.server.RouteConstants
-import org.scalatest.{BeforeAndAfterAll, Matchers}
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
+
+import org.scalatest.{BeforeAndAfterAll, Matchers}
+
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 /**
   * author: cvandrei
@@ -20,6 +24,8 @@ class DeviceIdRouteSpec extends RouteSpec
   with Matchers
   with BeforeAndAfterAll
   with ResponseUtil {
+
+  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

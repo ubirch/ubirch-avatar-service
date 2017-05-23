@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.actor
 
-import com.ubirch.avatar.model.MessageVersion
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
 import akka.actor.{Actor, ActorLogging}
 

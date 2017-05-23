@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model
+package com.ubirch.avatar.model.rest
 
 /**
   * author: cvandrei

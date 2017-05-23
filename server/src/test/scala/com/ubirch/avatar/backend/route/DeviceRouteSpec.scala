@@ -1,20 +1,24 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.model.DummyDevices
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.avatar.util.server.RouteConstants
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import com.ubirch.avatar.test.base.RouteSpec
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 /**
   * author: cvandrei
   * since: 2016-09-21
   */
 class DeviceRouteSpec extends RouteSpec {
+
+  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

@@ -2,7 +2,7 @@ package com.ubirch.avatar.test.tools.model
 
 import java.util.UUID
 
-import com.ubirch.avatar.model.device.DeviceHistory
+import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.{DateTime, DateTimeZone}

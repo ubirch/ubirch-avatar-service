@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.ubirch.avatar.core.test.model.DummyDeviceHistory
 import com.ubirch.avatar.core.test.util.DeviceHistoryTestUtil
-import com.ubirch.avatar.model.device.DeviceHistory
+import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil

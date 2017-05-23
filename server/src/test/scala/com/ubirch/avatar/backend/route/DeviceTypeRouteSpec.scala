@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.model.device.DeviceType
+import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.test.tools.DeviceTypeTestUtil
 import com.ubirch.avatar.util.model.DeviceTypeUtil
@@ -11,6 +11,8 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 /**
   * author: cvandrei
@@ -18,6 +20,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   */
 class DeviceTypeRouteSpec extends RouteSpec
   with ElasticsearchSpec {
+
+  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
   private val routes = (new MainRoute).myRoute
 

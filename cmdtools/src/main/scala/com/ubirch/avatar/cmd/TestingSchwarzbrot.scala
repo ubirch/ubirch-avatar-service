@@ -1,7 +1,7 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.model.payload.EnvSensorRawPayload
+import com.ubirch.avatar.model.rest.payload.EnvSensorRawPayload
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 /**

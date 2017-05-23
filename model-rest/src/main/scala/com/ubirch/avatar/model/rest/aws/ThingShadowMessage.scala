@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model.aws
+package com.ubirch.avatar.model.rest.aws
 
 import java.util.UUID
 

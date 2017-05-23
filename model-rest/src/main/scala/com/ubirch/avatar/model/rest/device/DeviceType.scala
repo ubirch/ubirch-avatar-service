@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model.device
+package com.ubirch.avatar.model.rest.device
 
 import org.json4s.JValue
 

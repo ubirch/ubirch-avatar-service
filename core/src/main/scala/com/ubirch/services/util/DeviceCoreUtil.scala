@@ -3,7 +3,7 @@ package com.ubirch.services.util
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}

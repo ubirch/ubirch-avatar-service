@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model.payload
+package com.ubirch.avatar.model.rest.payload
 
 import org.joda.time.DateTime
 
