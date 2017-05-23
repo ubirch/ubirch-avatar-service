@@ -34,7 +34,7 @@ class DeviceUtilTest extends FeatureSpec
       logger.info(s"k: $k")
       logger.info(s"s: $s")
 
-      val checkedD = DeviceCoreUtil.validateSignedMessage(device.hwDeviceId, k, s, payload)
+      val checkedD = DeviceCoreUtil.validateSignedMessage(k, s, payload)
       checkedD shouldBe true
     }
 
@@ -44,7 +44,7 @@ class DeviceUtilTest extends FeatureSpec
 
       val (k, s) = DeviceUtil.sign(payload, device)
 
-      val checkedD = DeviceCoreUtil.validateSignedMessage(device.hwDeviceId, k, s, payload)
+      val checkedD = DeviceCoreUtil.validateSignedMessage(k, s, payload)
       checkedD shouldBe true
 
     }
