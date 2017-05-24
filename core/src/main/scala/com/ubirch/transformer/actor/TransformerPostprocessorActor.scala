@@ -42,6 +42,7 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
             case Some(jval) =>
 
               log.debug("send processed message to sqs")
+
               if (device.pubQueues.isDefined) {
                 device.pubQueues.get.foreach { sqsQueueName =>
                   log.debug(s"send processed message to $sqsQueueName")
@@ -50,6 +51,7 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
                   context.system.scheduler.scheduleOnce(15 seconds, outProducerActor, Kill)
                 }
               }
+
               if (Config.mqttPublishProcessed) {
                 log.debug("send processed message to mqtt")
                 val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))

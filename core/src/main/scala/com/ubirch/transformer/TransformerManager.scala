@@ -2,7 +2,7 @@ package com.ubirch.transformer
 
 import akka.actor.{ActorSystem, Props}
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.actor.{AwsConsumerActor, MqttDeviceConsumerActor}
+import com.ubirch.transformer.actor.{TransformerConsumerActor, MqttDeviceConsumerActor}
 
 /**
   * Created by derMicha on 30/10/16.
@@ -19,7 +19,7 @@ object TransformerManager {
     //    ctx.addComponent()
     //    ctx.bind("client", client);
 
-    system.actorOf(Props[AwsConsumerActor], ActorNames.TRANSFORMER_CONSUMER)
+    system.actorOf(Props[TransformerConsumerActor], ActorNames.TRANSFORMER_CONSUMER)
     system.actorOf(Props[MqttDeviceConsumerActor], ActorNames.MQTT_CONSUMER)
 
   }

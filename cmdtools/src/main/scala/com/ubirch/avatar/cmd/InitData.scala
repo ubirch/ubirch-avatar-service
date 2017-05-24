@@ -54,7 +54,7 @@ object InitData
         elementCount = numberOfRawMessages,
         intervalMillis = 1000 * 60 * 5, // 5 mins
         timestampOffset = 0
-      )()
+      )
 
       series foreach { dataRaw =>
         AvatarRestClient.deviceUpdatePOST(dataRaw)

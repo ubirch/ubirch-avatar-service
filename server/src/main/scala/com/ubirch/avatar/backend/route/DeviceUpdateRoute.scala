@@ -44,29 +44,25 @@ trait DeviceUpdateRoute extends MyJsonProtocol
 
   val route: Route = {
     path(update) {
-      respondWithCORS {
-        oidcDirective.oidcToken2UserContext { userContext =>
-          post {
-            entity(as[DeviceDataRaw]) { ddr =>
-              onComplete(validatorActor ? ddr) {
-                case Success(resp) =>
-                  resp match {
-                    case dm: DeviceStateUpdate => complete(dm)
-                    case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
-                    case _ =>
-                      complete(requestErrorResponse(
-                        errorType = "UnknownResult",
-                        errorMessage = s"received unknown result")
-                      )
-                  }
-                case Failure(t) =>
-                  logger.error("update device data failed", t)
+      post {
+        entity(as[DeviceDataRaw]) { ddr =>
+          onComplete(validatorActor ? ddr) {
+            case Success(resp) =>
+              resp match {
+                case dm: DeviceStateUpdate => complete(dm)
+                case jer: JsonErrorResponse => complete(requestErrorResponse(jer))
+                case _ =>
                   complete(requestErrorResponse(
-                    errorType = "UpdateDeviceError",
-                    errorMessage = s"update failed for message ${ddr.id}, error occured: ${t.getMessage.replace("\"", "'")}")
+                    errorType = "UnknownResult",
+                    errorMessage = s"received unknown result")
                   )
               }
-            }
+            case Failure(t) =>
+              logger.error("update device data failed", t)
+              complete(requestErrorResponse(
+                errorType = "UpdateDeviceError",
+                errorMessage = s"update failed for message ${ddr.id}, error occured: ${t.getMessage.replace("\"", "'")}")
+              )
           }
         }
       }

@@ -1,6 +1,8 @@
 package com.ubirch.avatar.core.actor
 
-import com.ubirch.avatar.awsiot.util.AwsShadowUtil
+import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
+import akka.camel.CamelMessage
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model._
@@ -9,10 +11,6 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
-
-import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
-import akka.camel.CamelMessage
-import akka.routing.RoundRobinPool
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -42,7 +40,12 @@ class MessageProcessorActor extends Actor with ActorLogging {
       if (DeviceCoreUtil.checkNotaryUsage(device)) //TODO check notary config for device
         notaryActor ! drd
 
-      transformerActor ! drd.id
+      Json4sUtil.any2jvalue(drd) match {
+        case Some(drdJson) =>
+          transformerActor ! Json4sUtil.jvalue2String(drdJson)
+        case None =>
+          log.error(s"could not create json for message: ${drd.id}")
+      }
 
       //send back current device state
       val dbDevice = Json4sUtil.any2any[db.device.Device](device)

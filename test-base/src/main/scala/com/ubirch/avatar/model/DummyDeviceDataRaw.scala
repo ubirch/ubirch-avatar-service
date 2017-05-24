@@ -9,6 +9,7 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
+import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._
 
 import scala.collection.mutable.ListBuffer
@@ -28,10 +29,9 @@ object DummyDeviceDataRaw {
            timestamp: DateTime = DateTime.now,
            hashedPubKey: String = "pretend-to-be-a-public-key"
           )
-          (payload: () => JValue = () => randomPayload())
   : DeviceDataRaw = {
 
-    val p = payload()
+    val p = randomPayload(timestamp)
     val (k, s) = DeviceUtil.sign(p, device)
 
     DeviceDataRaw(
@@ -44,7 +44,6 @@ object DummyDeviceDataRaw {
       s = Some(s),
       p = p
     )
-
   }
 
   def dataSeries(messageId: Option[UUID] = None,
@@ -54,7 +53,6 @@ object DummyDeviceDataRaw {
                  timestampOffset: Long = -1000 * 60 * 60, // -1h
                  elementCount: Int = 5
                 )
-                (payload: () => JValue = () => randomPayload())
   : (Device, List[DeviceDataRaw]) = {
 
     val rawDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
@@ -79,7 +77,7 @@ object DummyDeviceDataRaw {
         pubKey = pubKey,
         timestamp = timestamp,
         hashedPubKey = hashedPubKey
-      )(payload)
+      )
 
       rawDataList.+=:(deviceData)
 
@@ -89,7 +87,7 @@ object DummyDeviceDataRaw {
 
   }
 
-  def randomPayload(): JValue =
+  def randomPayload(ts: DateTime): JValue =
     parse(
       s"""
          |[
@@ -100,7 +98,7 @@ object DummyDeviceDataRaw {
          |"la":"52.51${10000 + Random.nextInt(20000)}",
          |"lo":"13.21${10000 + Random.nextInt(20000)}",
          |"a":${5000 + Random.nextInt(10000)},
-         |"ts":"${new DateTime(DateTimeZone.UTC).minusMinutes(2)}"
+         |"ts":"${ts.minusMinutes(2)}"
          |},
          |{
          |"t":${2000 + Random.nextInt(1500)},
@@ -109,7 +107,7 @@ object DummyDeviceDataRaw {
          |"la":"52.51${10000 + Random.nextInt(20000)}",
          |"lo":"13.21${10000 + Random.nextInt(20000)}",
          |"a":${5000 + Random.nextInt(10000)},
-         |"ts":"${new DateTime(DateTimeZone.UTC).minusMinutes(1)}"
+         |"ts":"${ts.minusMinutes(1)}"
          |}
          |]
         """.stripMargin
