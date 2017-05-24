@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model.akka
+package com.ubirch.avatar.model.actors
 
 /**
   * Created by derMicha on 24/05/17.

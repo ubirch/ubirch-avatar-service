@@ -3,7 +3,7 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.config.ConfigKeys
-import com.ubirch.avatar.model.akka.MessageReceiver
+import com.ubirch.avatar.model.actors.MessageReceiver
 
 import scala.collection.parallel.mutable
 

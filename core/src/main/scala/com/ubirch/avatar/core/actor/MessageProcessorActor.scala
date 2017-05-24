@@ -6,7 +6,7 @@ import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.akka.MessageReceiver
+import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
