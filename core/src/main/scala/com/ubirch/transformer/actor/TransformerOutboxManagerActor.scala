@@ -29,10 +29,11 @@ class TransformerOutboxManagerActor extends Actor with ActorLogging {
         mr.target match {
           case ConfigKeys.INTERNOUTBOX =>
             val outProducerActor: ActorRef = context.actorOf(TransformerOutProducerActor.props(mr.topic))
-            connections.put(mr.topic, outProducerActor)
+            connections.put(mr.getKey, outProducerActor)
             outProducerActor ! mr.message
           case ConfigKeys.EXTERNOUTBOX =>
             val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(mr.topic))
+            connections.put(mr.getKey, deviceMessageProcessedActor)
             deviceMessageProcessedActor ! mr.message
           case _ =>
             log.error(s"invalid target: ${mr.target}")

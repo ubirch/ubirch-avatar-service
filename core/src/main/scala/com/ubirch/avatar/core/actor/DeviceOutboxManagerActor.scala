@@ -28,6 +28,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
         mr.target match {
           case ConfigKeys.DEVICEOUTBOX =>
             val deviceStateUpdateActor = context.actorOf(DeviceStateUpdateActor.props(mr.topic))
+            connections.put(mr.getKey, deviceStateUpdateActor)
             deviceStateUpdateActor ! mr.message
           case _ =>
             log.error(s"invalid target: ${mr.target}")

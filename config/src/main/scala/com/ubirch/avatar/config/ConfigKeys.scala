@@ -73,9 +73,9 @@ object ConfigKeys {
 
 
   // Global Message Queue Stuff
-  final val INTERNOUTBOX = "internoutbox"
-  final val EXTERNOUTBOX = "externoutbox"
-  final val DEVICEOUTBOX = "deviceoutbox"
+  final val INTERNOUTBOX = "intern-outbox"
+  final val EXTERNOUTBOX = "extern-outbox"
+  final val DEVICEOUTBOX = "device-outbox"
 
   /* AWS Related Config Keys
    **********************************************************************/
