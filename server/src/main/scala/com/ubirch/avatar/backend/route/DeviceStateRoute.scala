@@ -52,7 +52,7 @@ trait DeviceStateRoute extends MyJsonProtocol
   private def queryState(deviceId: UUID): Future[Option[ThingShadowState]] = {
     DeviceManager.info(deviceId).map {
       case Some(dvc) =>
-        AwsShadowService.getCurrentDeviceState(dvc.awsDeviceThingId)
+        AwsShadowService.getCurrentDeviceState(dvc.deviceId)
       case None =>
         None
     }

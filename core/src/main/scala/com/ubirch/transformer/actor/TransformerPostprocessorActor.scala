@@ -1,17 +1,15 @@
 package com.ubirch.transformer.actor
 
-import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceHistoryManager
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw, DeviceType}
+import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Kill}
-import akka.camel.CamelMessage
-
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
@@ -20,6 +18,8 @@ import scala.language.postfixOps
 class TransformerPostprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
   private implicit val executionContext = context.dispatcher
+
+  val outboxManagerActor: ActorRef = context.actorOf(Props[TransformerOutboxManagerActor], ActorNames.TRANSFORMER_OUTBOX_MANAGER)
 
   override def receive: Receive = {
 
@@ -43,19 +43,18 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
 
               log.debug("send processed message to sqs")
 
+              val jvalStr = Json4sUtil.jvalue2String(jval)
+
               if (device.pubQueues.isDefined) {
                 device.pubQueues.get.foreach { sqsQueueName =>
                   log.debug(s"send processed message to $sqsQueueName")
-                  val outProducerActor: ActorRef = context.actorOf(TransformerOutProducerActor.props(sqsQueueName))
-                  outProducerActor ! Json4sUtil.jvalue2String(jval)
-                  context.system.scheduler.scheduleOnce(15 seconds, outProducerActor, Kill)
+                  outboxManagerActor ! MessageReceiver(sqsQueueName, jvalStr, ConfigKeys.INTERNOUTBOX)
                 }
               }
 
               if (Config.mqttPublishProcessed) {
                 log.debug("send processed message to mqtt")
-                val deviceMessageProcessedActor = context.actorOf(DeviceMessageProcessedActor.props(ddp.deviceId))
-                deviceMessageProcessedActor ! Json4sUtil.jvalue2String(jval)
+                outboxManagerActor ! MessageReceiver(ddp.deviceId, jvalStr, ConfigKeys.EXTERNOUTBOX)
               }
               else
                 log.info("do not send processed message to mqtt")
@@ -67,9 +66,6 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
         case None =>
           log.error("transformation failed")
       }
-    case msg: CamelMessage =>
-      log.debug(s"received CamelMessage")
-    //@TODO check why we receive here CamelMessages ???
     case _ =>
       log.error(s"received unknown message from ${context.sender()} ")
   }

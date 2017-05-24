@@ -43,10 +43,4 @@ case class Device(deviceId: String,
 
   override def hashCode(): Int = this.deviceId.hashCode
 
-  def awsDeviceThingId: String = {
-    val awsId = this.deviceId.replaceAll("-", "").replaceAll(" ", "").trim.toLowerCase()
-    val prefix = Config.awsIotEnvPrefix
-    s"${prefix}_$awsId"
-  }
-
 }

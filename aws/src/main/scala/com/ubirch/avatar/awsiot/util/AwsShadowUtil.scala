@@ -73,7 +73,7 @@ object AwsShadowUtil extends StrictLogging {
   }
 
   def setReported(device: Device, newState: JValue): Unit = {
-    setReported(device.awsDeviceThingId, newState = newState)
+    setReported(device.deviceId, newState = newState)
   }
 
   def setReported(awsDeviceThingId: String, newState: JValue): Unit = {
@@ -87,7 +87,7 @@ object AwsShadowUtil extends StrictLogging {
   }
 
   def setDesired(device: Device, newState: JValue): Unit = {
-    setDesired(device.awsDeviceThingId, newState = newState)
+    setDesired(device.deviceId, newState = newState)
   }
 
   def setDesired(awsDeviceThingId: String, newState: JValue): Unit = {

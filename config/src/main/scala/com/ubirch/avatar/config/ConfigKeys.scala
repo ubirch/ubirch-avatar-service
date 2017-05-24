@@ -71,6 +71,12 @@ object ConfigKeys {
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
   final val ES_LARGE_PAGE_SIZE = s"$esPrefix.largePageSize"
 
+
+  // Global Message Queue Stuff
+  final val INTERNOUTBOX = "internoutbox"
+  final val EXTERNOUTBOX = "externoutbox"
+  final val DEVICEOUTBOX = "deviceoutbox"
+
   /* AWS Related Config Keys
    **********************************************************************/
 
@@ -100,10 +106,10 @@ object ConfigKeys {
   // AWS Auth keys
   final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
 
-  // AWS IoT
-  final val AWS_IOT_ENV_PREFIX = s"$awsPrefix.iot.env.prefix"
 
   // AWS SQS queues
+
+
   final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"
   final val AWS_SQS_QUEUES_TRANSFORMER_OUT = s"$awsPrefix.sqs.queues.transformer_out"
 
@@ -118,6 +124,7 @@ object ConfigKeys {
 
   /* MQTT Related Config Keys
  **********************************************************************/
+
 
   final val mqttPrefix = s"$prefix.mqtt"
 

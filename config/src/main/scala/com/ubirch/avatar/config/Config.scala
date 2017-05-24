@@ -134,13 +134,6 @@ object Config extends ConfigBase {
    ************************************************************************************************/
 
   /**
-    * defines a prefix for AWS IoT Shadownames
-    *
-    * @return
-    */
-  def awsIotEnvPrefix: String = config.getString(ConfigKeys.AWS_IOT_ENV_PREFIX)
-
-  /**
     * @return ElasticSearch size of large pages in regards to pagination
     */
   def esLargePageSize: Int = config.getInt(ConfigKeys.ES_LARGE_PAGE_SIZE)

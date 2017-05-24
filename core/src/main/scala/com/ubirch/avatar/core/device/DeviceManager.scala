@@ -97,29 +97,6 @@ object DeviceManager extends MyJsonProtocol
     }
   }
 
-  def createWithShadow(device: db.device.Device): Future[Option[db.device.Device]] = {
-    create(device: db.device.Device).map {
-      case Some(dev) =>
-
-        try {
-          AwsShadowUtil.createShadow(dev.awsDeviceThingId)
-          if (dev.deviceConfig.isDefined) {
-            val restDevice = Json4sUtil.any2any[Device](dev)
-            AwsShadowUtil.setDesired(restDevice, dev.deviceConfig.get)
-          }
-        }
-        catch {
-          case e: Exception =>
-            logger.error("could not create a shadow", e)
-        }
-
-        Some(dev)
-
-      case None =>
-        None
-    }
-  }
-
   def update(device: Device): Future[Option[Device]] = {
 
     Json4sUtil.any2jvalue(device) match {
@@ -142,8 +119,6 @@ object DeviceManager extends MyJsonProtocol
   }
 
   def delete(device: Device): Future[Option[Device]] = {
-
-    AwsShadowUtil.deleteShadow(device.awsDeviceThingId)
 
     ESSimpleStorage.deleteDoc(Config.esDeviceIndex, Config.esDeviceType, device.deviceId).map {
       case true =>
@@ -203,7 +178,8 @@ object DeviceManager extends MyJsonProtocol
   }
 
   def currentShadowState(device: Device): Option[ThingShadowState] = {
-    AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)
+    //TODO fix this
+    None
   }
 
   private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {

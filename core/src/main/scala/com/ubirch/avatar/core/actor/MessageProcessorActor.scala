@@ -3,9 +3,10 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
 import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
-import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model._
+import com.ubirch.avatar.model.akka.MessageReceiver
 import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
@@ -28,6 +29,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
   private val persistenceActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
 
   private val notaryActor = context.actorOf(Props[MessageNotaryActor], ActorNames.NOTARY_SVC)
+
+  val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
 
   override def receive: Receive = {
 
@@ -54,9 +57,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
       s ! currentState
 
       if (drd.uuid.isDefined) {
-        val deviceStateUpdateActor = context.actorOf(DeviceStateUpdateActor.props(drd.uuid.get))
-        deviceStateUpdateActor ! Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(currentState).get)
-        context.system.scheduler.scheduleOnce(60 seconds, deviceStateUpdateActor, Kill)
+        val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(currentState).get)
+        outboxManagerActor ! MessageReceiver(drd.uuid.toString, currentStateStr, ConfigKeys.DEVICEOUTBOX)
       }
 
     case msg: CamelMessage =>
