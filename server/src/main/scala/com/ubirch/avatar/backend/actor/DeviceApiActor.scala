@@ -47,6 +47,7 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
     case all: AllStubs =>
       val from = sender()
+      logger.debug("AllStubs")
       allStubs(all.session) map (from ! AllStubsResult(_))
 
     case cd: CreateDevice =>
@@ -66,7 +67,7 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
   }
 
   private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
-
+    logger.debug("allStubs")
     queryGroups(session) flatMap DeviceManager.allStubs
 
   }
@@ -161,18 +162,21 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
   private def queryGroups(session: AvatarSession): Future[Set[UUID]] = {
 
+    logger.debug(s"contextName = ${session.userContext.context} / providerId = ${session.userContext.providerId} / externalUserId = ${session.userContext.userId}")
+
     UserServiceClientRest.groups(
       contextName = session.userContext.context,
       providerId = session.userContext.providerId,
       externalUserId = session.userContext.userId
     ) map {
 
-      case None => Set.empty
+      case None =>
+        logger.debug("queryGroups: None")
+        Set.empty
 
       case Some(groups: Set[Group]) =>
-        val result = groups map (_.id.get)
         logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")
-        result
+        groups filter (_.id.isDefined) map (_.id.get)
     }
 
   }
