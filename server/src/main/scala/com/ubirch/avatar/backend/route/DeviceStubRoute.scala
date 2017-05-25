@@ -38,7 +38,7 @@ class DeviceStubRoute(implicit ws: StandaloneWSClient)
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val deviceApiActor = system.actorOf(Props(new DeviceApiActor), ActorNames.DEVICE_API)
+  private val deviceApiActor = system.actorOf(Props[DeviceApiActor], ActorNames.DEVICE_API)
 
   private val oidcDirective = new OidcDirective()
 
@@ -58,7 +58,7 @@ class DeviceStubRoute(implicit ws: StandaloneWSClient)
                 }
 
               case Failure(t) =>
-                logger.error("device creation failed", t)
+                logger.error("fetching device failed", t)
                 complete(serverErrorResponse(errorType = "DeviceStubError", errorMessage = t.getMessage))
 
             }

@@ -2,8 +2,8 @@ package com.ubirch.avatar.backend.actor
 
 import java.util.UUID
 
+import akka.actor.Actor
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
@@ -12,8 +12,6 @@ import com.ubirch.user.client.rest.UserServiceClientRest
 import com.ubirch.user.model.rest.Group
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
-
-import akka.actor.Actor
 import play.api.libs.ws.StandaloneWSClient
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -47,6 +45,7 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
     case all: AllStubs =>
       val from = sender()
+      logger.debug("AllStubs")
       allStubs(all.session) map (from ! AllStubsResult(_))
 
     case cd: CreateDevice =>
@@ -66,9 +65,11 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
   }
 
   private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
-
-    queryGroups(session) flatMap DeviceManager.allStubs
-
+    logger.debug("allStubs")
+    queryGroups(session) flatMap { g =>
+      logger.debug(s"allStubs groups: $g")
+      DeviceManager.allStubs(g)
+    }
   }
 
   private def createDevice(session: AvatarSession, device: Device): Future[CreateResult] = {
@@ -161,18 +162,21 @@ class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictL
 
   private def queryGroups(session: AvatarSession): Future[Set[UUID]] = {
 
+    logger.debug(s"contextName = ${session.userContext.context} / providerId = ${session.userContext.providerId} / externalUserId = ${session.userContext.userId}")
+
     UserServiceClientRest.groups(
       contextName = session.userContext.context,
       providerId = session.userContext.providerId,
       externalUserId = session.userContext.userId
     ) map {
 
-      case None => Set.empty
+      case None =>
+        logger.debug("queryGroups: None")
+        Set.empty
 
       case Some(groups: Set[Group]) =>
-        val result = groups map (_.id.get)
         logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")
-        result
+        groups filter (_.id.isDefined) map (_.id.get)
     }
 
   }
