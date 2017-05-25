@@ -37,6 +37,9 @@ object Config extends ConfigBase {
     */
   def port: Int = config.getInt(ConfigKeys.HTTPPORT)
 
+
+  def enviroment: String = config.getString(ConfigKeys.ENVIROMENT)
+
   /*
    * Akka
    ************************************************************************************************/

@@ -29,7 +29,7 @@ class MqttDeviceConsumerActor
 
   val mqttDeviceInTopic: String = s"${Config.mqttTopicDevicesBase}/+/${Config.mqttTopicDevicesIn}"
 
-  val clientId: String = s"avatarService_${UUIDUtil.uuidStr}"
+  val clientId: String = s"avatarService_${Config.enviroment}"
 
   //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
 

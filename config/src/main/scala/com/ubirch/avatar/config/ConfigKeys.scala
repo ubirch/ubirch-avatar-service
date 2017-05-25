@@ -16,6 +16,8 @@ object ConfigKeys {
   final val HTTPINTERFACE = s"$prefix.interface"
   final val HTTPPORT = s"$prefix.port"
 
+
+  final val ENVIROMENT = s"$prefix.enviroment"
   /*
    * Akka related configs
    *********************************************************************************************/
