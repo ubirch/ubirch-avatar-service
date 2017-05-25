@@ -58,7 +58,7 @@ class MessageProcessorActor extends Actor with ActorLogging {
 
       if (drd.uuid.isDefined) {
         val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(currentState).get)
-        outboxManagerActor ! MessageReceiver(drd.uuid.toString, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+        outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
       }
 
     case msg: CamelMessage =>

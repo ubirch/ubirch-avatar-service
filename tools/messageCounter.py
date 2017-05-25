@@ -29,10 +29,13 @@ def on_log(mosq, obj, level, string):
     print(string)
 
 
+deviceId = "145db162-5b94-452b-8093-576dcaf1627f"
 username = "ubi"
 password = "ubirch123"
 host = "mq2.dev.ubirch.com"
 port = 1883
+# topic = "ubirch_dev/ubirch/devices/+/out"
+topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
 
 mqttc = mqtt.Client(client_id="py_tester_1")
 mqttc.username_pw_set(username, password)
@@ -44,7 +47,7 @@ mqttc.on_message = on_message
 
 mqttc.connect(host, port, 60)
 
-mqttc.subscribe("localdev/ubirch/devices/+/processed", 1)
+mqttc.subscribe(topic, 1)
 
 rc = 0
 while rc == 0:
