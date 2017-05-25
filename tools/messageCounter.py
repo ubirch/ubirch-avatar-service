@@ -34,8 +34,8 @@ username = "ubi"
 password = "ubirch123"
 host = "mq2.dev.ubirch.com"
 port = 1883
-# topic = "ubirch_dev/ubirch/devices/+/out"
-topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
+topic = "ubirch_dev/ubirch/devices/+/out"
+# topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
 
 mqttc = mqtt.Client(client_id="py_tester_1")
 mqttc.username_pw_set(username, password)
