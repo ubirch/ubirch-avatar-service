@@ -29,7 +29,7 @@ devices = [
 
 topic = "ubirch_dev/ubirch/devices/%s/in"
 
-for i in range(10000):
+for i in range(1000):
     print i
     for d in devices:
         did = d["deviceId"]
