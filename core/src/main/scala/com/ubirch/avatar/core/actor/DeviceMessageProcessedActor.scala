@@ -21,7 +21,7 @@ class DeviceMessageProcessedActor(deviceUuid: String) extends Actor with Produce
   val clientId: String = s"avatarService_${UUIDUtil.uuidStr}"
 
   override def endpointUri: String = s"mqtt:" +
-    s"avatarService?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
+    s"DeviceMessageProcessedActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
 
 }
 
