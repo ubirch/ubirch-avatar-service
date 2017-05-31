@@ -29,7 +29,7 @@ class MqttDeviceConsumerActor
 
   val mqttDeviceInTopic: String = s"${Config.mqttTopicDevicesBase}/+/${Config.mqttTopicDevicesIn}"
 
-  val qualityOfService = "2";
+  val qualityOfService = "2"
 
   val clientId: String = s"avatarService_${Config.enviroment}"
 
