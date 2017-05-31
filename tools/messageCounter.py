@@ -10,7 +10,7 @@ def on_connect(mosq, obj, rc):
     print("rc: " + str(rc))
 
 
-def on_message_proc(mosq, obj, msg):
+def on_message(mosq, obj, msg):
     global counter
     # print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     message = msg.payload
@@ -26,13 +26,6 @@ def on_message_proc(mosq, obj, msg):
     print("%s: %s -> %s : %s" % (
         mId, msgTs.strftime("%Y-%m-%d %H:%M:%S:%f%Z"), nowTs.strftime("%Y-%m-%d %H:%M:%S:%f%Z"), str(diff)))
 
-def on_message(mosq, obj, msg):
-    global counter
-    # print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-    message = msg.payload
-    counter += 1
-    print("counter: %s" % (str(counter)))
-
 def on_publish(mosq, obj, mid):
     print("mid: " + str(mid))
 
@@ -44,16 +37,16 @@ def on_subscribe(mosq, obj, mid, granted_qos):
 def on_log(mosq, obj, level, string):
     print(string)
 
+
 deviceId = "145db162-5b94-452b-8093-576dcaf1627f"
 username = "ubi"
 password = "ubirch123"
-host = "rmq.dev.ubirch.com"
+host = "mq2.dev.ubirch.com"
 port = 1883
-# topic = "ubirch_dev/ubirch/devices/+/processed"
-# topic = "ubirch_dev/ubirch/devices/+/in"
-topic = "ubirch_dev/ubirch/devices/+/out"
+topic = "ubirch_dev/ubirch/devices/+/processed"
+# topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
 
-mqttc = mqtt.Client(client_id="py_messageCounter_1")
+mqttc = mqtt.Client(client_id="py_tester_1")
 mqttc.username_pw_set(username, password)
 
 mqttc.on_message = on_message

@@ -9,9 +9,9 @@ from datetime import datetime
 
 username = "ubi"
 password = "ubirch123"
-mqttc = mqtt.Client()
+mqttc = mqtt.Client(client_id="receiver1")
 mqttc.username_pw_set(username, password)
-mqttc.connect("rmq.dev.ubirch.com", 1883, 60)
+mqttc.connect("mq2.dev.ubirch.com", 1883, 60)
 
 url = "http://api.ubirch.dev.ubirch.com:8080/api/avatarService/v1/device/update"
 
@@ -59,6 +59,7 @@ for i in range(10):
         }
         jsonMsg = json.dumps(message)
         currentTopic = topic % (did)
+        mqttc.reconnect()
         print json.dumps(message)
         mqttc.publish(topic=currentTopic, payload=jsonMsg, qos=1)
-        time.sleep(0.5)
+    time.sleep(1)

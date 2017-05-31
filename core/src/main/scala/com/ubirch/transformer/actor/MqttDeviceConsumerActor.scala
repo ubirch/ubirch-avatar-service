@@ -29,12 +29,14 @@ class MqttDeviceConsumerActor
 
   val mqttDeviceInTopic: String = s"${Config.mqttTopicDevicesBase}/+/${Config.mqttTopicDevicesIn}"
 
+  val qualityOfService = "ExactlyOnce"
+
   val clientId: String = s"avatarService_${Config.enviroment}"
 
-  //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
+  //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl&qualityOfService=$qualityOfService"
 
   override def endpointUri = s"mqtt:" +
-    s"avatarService?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
+    s"MqttDeviceConsumerActor?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword&qualityOfService=$qualityOfService"
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
