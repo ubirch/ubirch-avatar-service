@@ -3,12 +3,15 @@ import json
 import paho.mqtt.client as mqtt
 import random
 import time
+import uuid
+
+from datetime import datetime
 
 username = "ubi"
 password = "ubirch123"
-mqttc = mqtt.Client(client_id="receiver1")
+mqttc = mqtt.Client()
 mqttc.username_pw_set(username, password)
-mqttc.connect("mq2.dev.ubirch.com", 1883, 60)
+mqttc.connect("rmq.dev.ubirch.com", 1883, 60)
 
 url = "http://api.ubirch.dev.ubirch.com:8080/api/avatarService/v1/device/update"
 
@@ -27,15 +30,18 @@ devices = [
     }
 ]
 
-topic = "ubirch_dev/ubirch/devices/%s/in"
-
-for i in range(1000):
-    print i
+topic = "ubirch_dev/ubirch/devices/%s/in"  #
+testId = str(uuid.uuid4())
+print "testId: %s" % (testId)
+for i in range(10):
+    print i + 1
     for d in devices:
         did = d["deviceId"]
         hwdid = d["hHwDeviceId"]
+        now = datetime.utcnow()
         message = {
             "v": "0.0.0",
+            "id": str(uuid.uuid4()),
             "a": hwdid,
             "p": {
                 "t": 3059 + random.randint(1, 10),
@@ -46,11 +52,13 @@ for i in range(1000):
                 "lo": "13.369360",
                 "ba": 90 + random.randint(1, 10),
                 "lp": 0,
-                "e": 0
+                "e": 0,
+                "tid": testId,
+                "ts": now.strftime("%Y-%m-%d %H:%M:%S:%f%Z")
             }
         }
         jsonMsg = json.dumps(message)
         currentTopic = topic % (did)
-        mqttc.reconnect()
+        print json.dumps(message)
         mqttc.publish(topic=currentTopic, payload=jsonMsg, qos=1)
-    time.sleep(0.5)
+        time.sleep(0.5)

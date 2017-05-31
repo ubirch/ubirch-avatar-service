@@ -1,30 +1,17 @@
 {
-  "id": "5eb0abe2-6829-4c27-ba38-2fab9b37d8c4",
-  "uuid": "05dacd8e-5643-4a7f-84b7-70df1f65a176",
+  "id": "b9b16a66-e314-467b-b3d2-08f4e9dcedd9",
   "v": "0.0.3",
-  "fw": "V1.2.3",
-  "a": "4Mbc5ANuEkKr0suiXF429GJAKF/eEM/zBssEbFg1j4CT+I1rT59P4dIRLfWBG6KBngxG+VMg27ME/IR/g1tucA==",
-  "ts": "2017-05-18T13:58:02.638Z",
-  "k": "MC0wCAYDK2VkCgEBAyEAhIQ31W+bNnoG8e98M97Q9GiVcIhz/WYTwLsKiqdQRVc=",
-  "s": "cWi2KEqoFmdg2pp1Mg0LalnpPJTzKkT/ijkCpfa8UFy2/v7C8XVxP8ESRWio/8XS5wvsdVccRDIvAi9JXFMOBA==",
+  "a": "bOD17vkvE70jtslfu5lgXEzUrpB5UbakH9AZKWxXRHcNKBUff2lYtlWTHgk40IXMbBaCrbmA5WZ9WYmB5uCREQ==",
+  "ts": "2017-03-12T14:19:43.218Z",
+  "s": "XUNlbLRHEHksyiKrCWJaB4dCuFIJO7s0JAj0qEqY/KL0BkjVCR0x17KDXVaqUmLojkd3rt11os+eDub0x1joAA==",
   "p": [
     {
-      "t": 3224,
-      "p": 105581,
-      "h": 5175,
-      "la": "52.5118012",
-      "lo": "13.2122049",
-      "a": 7159,
-      "ts": "2017-05-18T15:56:02.662+02:00"
-    },
-    {
-      "t": 3471,
-      "p": 108987,
-      "h": 5508,
-      "la": "52.5117040",
-      "lo": "13.2122416",
-      "a": 11151,
-      "ts": "2017-05-18T15:57:02.714+02:00"
+      "t": 2724,
+      "p": 98902,
+      "h": 5055,
+      "la": "52.5117443",
+      "lo": "13.2128586",
+      "a": 13077
     }
   ]
 }
