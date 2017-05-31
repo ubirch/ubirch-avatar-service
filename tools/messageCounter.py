@@ -1,5 +1,6 @@
+import json
 import paho.mqtt.client as mqtt
-import paho.mqtt.subscribe as subscribe
+from datetime import datetime
 
 message = 'ON'
 counter = 0
@@ -14,8 +15,16 @@ def on_message(mosq, obj, msg):
     # print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     message = msg.payload
     counter += 1
-    print("counter: " + str(counter))
-
+    print("counter: %s" % (str(counter)))
+    jsonMsg = json.loads(msg.payload)
+    # print(jsonMsg)
+    nowTs = datetime.utcnow()
+    # msgTs = datetime.strptime(jsonMsg['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    msgTs = datetime.strptime(jsonMsg['deviceDataRaw']['ts'], "%Y-%m-%dT%H:%M:%S.%fZ")
+    mId = jsonMsg['deviceDataRaw']['id']
+    diff = (nowTs - msgTs).total_seconds()
+    print("%s: %s -> %s : %s" % (
+        mId, msgTs.strftime("%Y-%m-%d %H:%M:%S:%f%Z"), nowTs.strftime("%Y-%m-%d %H:%M:%S:%f%Z"), str(diff)))
 
 def on_publish(mosq, obj, mid):
     print("mid: " + str(mid))
@@ -34,7 +43,7 @@ username = "ubi"
 password = "ubirch123"
 host = "mq2.dev.ubirch.com"
 port = 1883
-topic = "ubirch_dev/ubirch/devices/+/out"
+topic = "ubirch_dev/ubirch/devices/+/processed"
 # topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
 
 mqttc = mqtt.Client(client_id="py_tester_1")
