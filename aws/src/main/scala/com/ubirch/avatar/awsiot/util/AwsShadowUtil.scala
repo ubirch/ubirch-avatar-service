@@ -5,13 +5,11 @@ import java.nio.ByteBuffer
 import com.amazonaws.services.iot.model.{AttributePayload, CreateThingRequest, DeleteThingRequest, DeleteThingResult}
 import com.amazonaws.services.iotdata.model.PublishRequest
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.awsiot.config.AwsConf
 import com.ubirch.avatar.model.rest.aws.{ThingShadowMessage, ThingShadowState}
 import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.model.rest.util.AwsThingTopicUtil
 import com.ubirch.util.json.JsonFormats
-
 import org.json4s._
 import org.json4s.native.Serialization._
 
@@ -76,27 +74,29 @@ object AwsShadowUtil extends StrictLogging {
     setReported(device.deviceId, newState = newState)
   }
 
-  def setReported(awsDeviceThingId: String, newState: JValue): Unit = {
+  def setReported(deviceId: String, newState: JValue): Unit = {
     val thingShadowMessage = ThingShadowMessage(
       state =
         ThingShadowState(
           reported = Some(newState)
         )
     )
-    publish(AwsThingTopicUtil.getUpdateTopic(awsDeviceThingId), thingShadowMessage)
+    //@TODO remove this with our own persistence layer: REDIS or Mongo
+    publish(AwsThingTopicUtil.getUpdateTopic(deviceId), thingShadowMessage)
   }
 
   def setDesired(device: Device, newState: JValue): Unit = {
     setDesired(device.deviceId, newState = newState)
   }
 
-  def setDesired(awsDeviceThingId: String, newState: JValue): Unit = {
+  def setDesired(deviceId: String, newState: JValue): Unit = {
     val thingShadowMessage = ThingShadowMessage(
       state =
         ThingShadowState(
           desired = Some(newState)
         )
     )
-    publish(AwsThingTopicUtil.getUpdateTopic(awsDeviceThingId), thingShadowMessage)
+    //@TODO remove this with our own persistence layer: REDIS or Mongo
+    publish(AwsThingTopicUtil.getUpdateTopic(deviceId), thingShadowMessage)
   }
 }

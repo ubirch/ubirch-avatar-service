@@ -21,10 +21,10 @@ object AwsShadowService extends MyJsonProtocol with StrictLogging {
   /**
     * Determines current AWS IoT thing state
     *
-    * @param awsDeviceShadowId AWS IoT thing name, which is the AWS IoT Thing Id
+    * @param deviceId AWS IoT thing name, which is the AWS IoT Thing Id
     * @return current state as ThingShadowState
     */
-  def getCurrentDeviceState(awsDeviceShadowId: String): Option[ThingShadowState] = {
+  def getCurrentDeviceState(deviceId: String): Option[ThingShadowState] = {
     try {
 
       //      Some(ThingShadowState(

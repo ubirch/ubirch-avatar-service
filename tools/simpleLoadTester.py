@@ -11,7 +11,7 @@ username = "ubi"
 password = "ubirch123"
 mqttc = mqtt.Client(client_id="receiver1")
 mqttc.username_pw_set(username, password)
-mqttc.connect("mq2.dev.ubirch.com", 1883, 60)
+mqttc.connect("rmq.dev.ubirch.com", 1883, 60)
 
 url = "http://api.ubirch.dev.ubirch.com:8080/api/avatarService/v1/device/update"
 

@@ -41,7 +41,7 @@ def on_log(mosq, obj, level, string):
 deviceId = "145db162-5b94-452b-8093-576dcaf1627f"
 username = "ubi"
 password = "ubirch123"
-host = "mq2.dev.ubirch.com"
+host = "rmq.dev.ubirch.com"
 port = 1883
 topic = "ubirch_dev/ubirch/devices/+/processed"
 # topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
