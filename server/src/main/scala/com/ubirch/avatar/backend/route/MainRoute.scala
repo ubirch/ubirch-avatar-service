@@ -43,8 +43,9 @@ class MainRoute(implicit ws: StandaloneWSClient) {
 
           } ~ path(RouteConstants.device) {
             device.route
-          } ~
-            pathEndOrSingleSlash {
+          } ~ path(RouteConstants.check) {
+            welcome.route
+          } ~ pathEndOrSingleSlash {
               welcome.route
             }
         }

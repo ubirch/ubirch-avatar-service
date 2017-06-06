@@ -9,6 +9,7 @@ object RouteConstants {
   val apiPrefix = "api"
   val currentVersion = "v1"
   val serviceName = "avatarService"
+  val check = "check"
   val device = "device"
   val json = "json"
   val stub = "stub"

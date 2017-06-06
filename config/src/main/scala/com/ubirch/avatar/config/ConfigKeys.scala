@@ -8,9 +8,9 @@ object ConfigKeys {
 
   final val prefix = "ubirchAvatarService"
 
-  final val GOPIPELINENAME = s"$prefix.gopipelinename"
-  final val GOPIPELINELABEL = s"$prefix.gopipelinelabel"
-  final val GOPIPELINEREV = s"$prefix.gopipelinerev"
+  final val GO_PIPELINE_NAME = s"$prefix.gopipelinename"
+  final val GO_PIPELINE_LABEL = s"$prefix.gopipelinelabel"
+  final val GO_PIPELINE_REVISION = s"$prefix.gopipelinerev"
 
   final val HTTPPROTOCOL = s"$prefix.protocol"
   final val HTTPINTERFACE = s"$prefix.interface"

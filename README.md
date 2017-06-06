@@ -37,6 +37,8 @@ ubirch Avatar Service is responsible for:
 * update to Akka 2.4.18
 * update to Akka HTTP 10.0.6
 * creating a device remembers the user's groups (new field _Device.groups_)
+* change GO CI related environment variables to: _GO_PIPELINE_NAME_AVATAR_, _GO_PIPELINE_LABEL_AVATAR_ and _GO_REVISION_AVATAR_
+* introduce new endpoint: `/api/avatarService/v1/check`
 
 ### Version 0.3.10 (2017-03-01)
 
@@ -205,13 +207,15 @@ libraryDependencies ++= Seq(
 
 ## REST Methods
 
-### Welcome / Health
+### Welcome / Health / Check
 
     curl localhost:8080/
+    curl localhost:8080/api/avatarService/v1
+    curl localhost:8080/api/avatarService/v1/check
 
 If server is healthy response is:
 
-    200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService"}
+    200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService  ( $GO_PIPELINE_NAME / $GO_PIPELINE_LABEL / $GO_PIPELINE_REVISION )"}
 
 ### Device CRUD
 
