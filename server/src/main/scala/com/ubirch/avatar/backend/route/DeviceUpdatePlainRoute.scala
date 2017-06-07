@@ -24,9 +24,8 @@ import scala.util.{Failure, Success}
 /**
   * Created by derMicha on 26/02/17.
   */
-trait DeviceUpdatePlainRoute
-  extends MyJsonProtocol
-    with StrictLogging {
+trait DeviceUpdatePlainRoute extends MyJsonProtocol
+  with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher

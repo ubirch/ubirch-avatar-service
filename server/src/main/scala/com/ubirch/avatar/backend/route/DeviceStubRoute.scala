@@ -8,7 +8,6 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
@@ -29,8 +28,7 @@ import scala.util.{Failure, Success}
   * since: 2016-09-21
   */
 class DeviceStubRoute(implicit ws: StandaloneWSClient)
-  extends MyJsonProtocol
-    with ResponseUtil
+  extends ResponseUtil
     with CORSDirective
     with StrictLogging {
 

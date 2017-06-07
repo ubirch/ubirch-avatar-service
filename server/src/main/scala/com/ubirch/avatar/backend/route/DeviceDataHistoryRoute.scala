@@ -11,7 +11,6 @@ import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import org.joda.time.DateTime
@@ -32,9 +31,8 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-30
   */
-trait DeviceDataHistoryRoute extends MyJsonProtocol
+trait DeviceDataHistoryRoute extends ResponseUtil
   with CORSDirective
-  with ResponseUtil
   with StrictLogging {
 
   implicit val system = ActorSystem()

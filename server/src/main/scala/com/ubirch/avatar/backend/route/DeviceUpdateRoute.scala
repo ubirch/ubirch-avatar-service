@@ -8,7 +8,6 @@ import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
@@ -29,10 +28,9 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-trait DeviceUpdateRoute extends MyJsonProtocol
+trait DeviceUpdateRoute extends ResponseUtil
   with CORSDirective
-  with StrictLogging
-  with ResponseUtil {
+  with StrictLogging  {
 
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher

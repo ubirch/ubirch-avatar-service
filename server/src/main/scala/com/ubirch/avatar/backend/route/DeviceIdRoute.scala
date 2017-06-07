@@ -30,10 +30,10 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceIdRoute(implicit ws: StandaloneWSClient) extends CORSDirective
-  with MyJsonProtocol
-  with ResponseUtil
-  with StrictLogging {
+class DeviceIdRoute(implicit ws: StandaloneWSClient)
+  extends ResponseUtil
+    with CORSDirective
+    with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher

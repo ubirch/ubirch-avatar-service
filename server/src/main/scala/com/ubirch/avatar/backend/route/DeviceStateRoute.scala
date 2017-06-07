@@ -2,17 +2,16 @@ package com.ubirch.avatar.backend.route
 
 import java.util.UUID
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.awsiot.services.AwsShadowService
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.aws.ThingShadowState
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -21,8 +20,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   * author: cvandrei
   * since: 2016-10-27
   */
-trait DeviceStateRoute extends MyJsonProtocol
-  with ResponseUtil
+trait DeviceStateRoute extends ResponseUtil
   with CORSDirective {
 
   implicit val system = ActorSystem()

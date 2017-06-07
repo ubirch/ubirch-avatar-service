@@ -8,7 +8,6 @@ import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
@@ -28,10 +27,10 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceRoute(implicit ws: StandaloneWSClient) extends MyJsonProtocol
-  with CORSDirective
-  with ResponseUtil
-  with StrictLogging {
+class DeviceRoute(implicit ws: StandaloneWSClient)
+  extends ResponseUtil
+    with CORSDirective
+    with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher

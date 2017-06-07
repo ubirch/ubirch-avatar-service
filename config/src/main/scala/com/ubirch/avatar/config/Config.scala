@@ -12,7 +12,7 @@ object Config extends ConfigBase {
 
   def goPipelineLabel: String = config.getString(ConfigKeys.GO_PIPELINE_LABEL)
 
-  def goPipelineRev: String = config.getString(ConfigKeys.GO_PIPELINE_REVISION)
+  def goPipelineRevision: String = config.getString(ConfigKeys.GO_PIPELINE_REVISION)
 
   /*
    * Service
