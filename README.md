@@ -18,26 +18,27 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.11 (tbd)
 
-* update to _json4s_ version 3.5.1
-* update to _de.heikoseeberger:akka-http-json4s_ version 1.14.0
-* update Akka HTTP to version 10.0.6
-* update _com.ubirch.notary:notary-client_ to version 0.3.2
-* update _com.ubirch.util:elasticsearch-util_ to version 2.0.0
+* update to _json4s_ 3.5.1
+* update to _de.heikoseeberger:akka-http-json4s_ 1.14.0
+* update Akka HTTP to 10.0.6
+* update _com.ubirch.notary:notary-client_ to 0.3.2
+* update _com.ubirch.util:elasticsearch-util_ to 2.0.0
 * update to Elasticsearch 5.3
 * update mappings to Elasticsearch 5.3
 * rename module _model_ to _model-rest_ and introduce module _model-db_
-* update _com.ubirch.util:rest-akka-http_ to version 0.3.7
-* update _com.ubirch.util:rest-akka-http-test_ to version 0.3.7
+* update _com.ubirch.util:rest-akka-http_ to 0.3.7
+* update _com.ubirch.util:rest-akka-http-test_ to 0.3.7
 * creating devices now stores groups as queried from user-service
 * update to Akka 2.4.18
 * update to Akka HTTP 10.0.6
 * creating a device remembers the user's groups (new field _Device.groups_)
 * change GO CI related environment variables to: _GO_PIPELINE_NAME_AVATAR_, _GO_PIPELINE_LABEL_AVATAR_ and _GO_REVISION_AVATAR_
 * introduce new endpoint: `/api/avatarService/v1/check`
-* update _com.ubirch.util:json_ to version 0.4.0
-* update _com.ubirch.util:elasticsearch-client-binary_ to version 2.0.4
-* update _com.ubirch.util:oidc-utils_ to version 0.4.3
-* update _com.ubirch.util:response-util_ to version 0.1.6
+* update _com.ubirch.util:json_ to 0.4.0
+* update _com.ubirch.util:elasticsearch-client-binary_ to 2.0.4
+* update _com.ubirch.util:oidc-utils_ to 0.4.4
+* update _com.ubirch.util:response-util_ to 0.1.6
+* update _com.ubirch.user:client-rest_ to 0.4.7
 
 ### Version 0.3.10 (2017-03-01)
 
