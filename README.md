@@ -39,6 +39,7 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:oidc-utils_ to 0.4.4
 * update _com.ubirch.util:response-util_ to 0.1.6
 * update _com.ubirch.user:client-rest_ to 0.4.7
+* introduce endpoint `/api/avatarService/v1/deepCheck`
 
 ### Version 0.3.10 (2017-03-01)
 
@@ -216,6 +217,19 @@ libraryDependencies ++= Seq(
 If server is healthy response is:
 
     200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService  ( $GO_PIPELINE_NAME / $GO_PIPELINE_LABEL / $GO_PIPELINE_REVISION )"}
+
+### Deep Check / Server Health
+
+    curl localhost:8092/api/avatarService/v1/deepCheck
+
+If healthy the response is:
+
+    200 {"version":"1.0","status":"OK","messages":[]}
+
+If not healthy the status is "NOK" and the `messages` array not empty:
+
+    500 {"version":"1.0","status":"NOK","messages":["unable to connect to the database"]}
+
 
 ### Device CRUD
 
