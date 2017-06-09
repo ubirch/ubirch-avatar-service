@@ -303,18 +303,18 @@ lazy val excludedLoggers = Seq(
 
 lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.5-SNAPSHOT" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.5" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.5-SNAPSHOT" excludeAll (excludedLoggers: _*)
+lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.5" excludeAll (excludedLoggers: _*)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
 lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.7" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.7" excludeAll (excludedLoggers: _*)
-lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.0-SNAPSHOT" excludeAll (excludedLoggers: _*)
+lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.0" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.8-SNAPSHOT" excludeAll (excludedLoggers: _*)
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.8" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
