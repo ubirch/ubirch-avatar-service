@@ -224,11 +224,11 @@ If server is healthy response is:
 
 If healthy the response is:
 
-    200 {"version":"1.0","status":"OK","messages":[]}
+    200 {"status":true,"messages":[]}
 
 If not healthy the status is "NOK" and the `messages` array not empty:
 
-    500 {"version":"1.0","status":"NOK","messages":["unable to connect to the database"]}
+    500 {"status":false,"messages":["unable to connect to the database"]}
 
 
 ### Device CRUD
