@@ -35,11 +35,11 @@ ubirch Avatar Service is responsible for:
 * change GO CI related environment variables to: _GO_PIPELINE_NAME_AVATAR_, _GO_PIPELINE_LABEL_AVATAR_ and _GO_REVISION_AVATAR_
 * introduce new endpoint: `/api/avatarService/v1/check`
 * update _com.ubirch.util:json_ to 0.4.0
-* update _com.ubirch.util:elasticsearch-client-binary_ to 2.0.4
-* update _com.ubirch.util:oidc-utils_ to 0.4.4
-* update _com.ubirch.util:response-util_ to 0.1.6
 * update _com.ubirch.user:client-rest_ to 0.4.7
 * introduce endpoint `/api/avatarService/v1/deepCheck`
+* update _com.ubirch.util:elasticsearch-client-binary_ to 2.0.5
+* update _com.ubirch.util:response-util_ to 0.2.0
+* update _com.ubirch.util:oidc-utils_ to 0.4.5
 
 ### Version 0.3.10 (2017-03-01)
 
