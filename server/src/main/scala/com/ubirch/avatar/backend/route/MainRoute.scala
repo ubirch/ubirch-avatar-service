@@ -13,6 +13,7 @@ import play.api.libs.ws.StandaloneWSClient
 class MainRoute(implicit ws: StandaloneWSClient) {
 
   val welcome = new WelcomeRoute {}
+  val deepCheck = new DeepCheckRoute {}
 
   val device = new DeviceRoute {}
   val deviceUpdate = new DeviceUpdatePlainRoute {}
@@ -31,6 +32,7 @@ class MainRoute(implicit ws: StandaloneWSClient) {
     pathPrefix(RouteConstants.apiPrefix) {
       pathPrefix(RouteConstants.serviceName) {
         pathPrefix(RouteConstants.currentVersion) {
+
           pathPrefix(RouteConstants.device) {
             deviceUpdate.route ~
               deviceType.route ~
@@ -46,13 +48,13 @@ class MainRoute(implicit ws: StandaloneWSClient) {
           } ~ path(RouteConstants.check) {
             welcome.route
           } ~ pathEndOrSingleSlash {
-              welcome.route
-            }
+            welcome.route
+          } ~ deepCheck.route
+
         }
       }
-    } ~
-      pathSingleSlash {
-        welcome.route
-      }
+    } ~ pathSingleSlash {
+      welcome.route
+    }
   }
 }

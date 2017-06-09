@@ -36,4 +36,6 @@ object ActorNames {
 
   final val OUT_PRODUCER: String = "out-producer"
 
+  final val DEEP_CHECK = "deep-check-actor"
+
 }

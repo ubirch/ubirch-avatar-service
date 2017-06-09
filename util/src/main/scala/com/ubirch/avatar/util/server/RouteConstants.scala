@@ -10,6 +10,7 @@ object RouteConstants {
   val currentVersion = "v1"
   val serviceName = "avatarService"
   val check = "check"
+  val deepCheck = "deepCheck"
   val device = "device"
   val json = "json"
   val stub = "stub"
@@ -30,6 +31,9 @@ object RouteConstants {
   val init = "init"
 
   val pathPrefix = s"/$apiPrefix/$serviceName/$currentVersion"
+
+  val pathCheck = s"$pathPrefix/$check"
+  val pathDeepCheck = s"$pathPrefix/$deepCheck"
 
   val pathDevice = s"$pathPrefix/$device"
 
