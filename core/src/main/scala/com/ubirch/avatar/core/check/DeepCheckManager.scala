@@ -1,8 +1,8 @@
 package com.ubirch.avatar.core.check
 
-import com.ubirch.util.model.DeepCheckResponse
+import com.ubirch.util.deepCheck.model.DeepCheckResponse
+import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -16,8 +16,6 @@ object DeepCheckManager {
     *
     * @return deep check response with _status:OK_ if ok; otherwise with _status:NOK_
     */
-  def connectivityCheck(): Future[DeepCheckResponse] = {
-    Future(DeepCheckResponse()) // TODO implement
-  }
+  def connectivityCheck(): Future[DeepCheckResponse] = ESSimpleStorage.connectivityCheck()
 
 }

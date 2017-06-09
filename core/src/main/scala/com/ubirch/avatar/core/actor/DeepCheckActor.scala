@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.actor
 
 import com.ubirch.avatar.core.check.DeepCheckManager
-import com.ubirch.util.model.DeepCheckResponse
+import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
 
 import akka.actor.{Actor, ActorLogging}
 
@@ -28,5 +28,3 @@ class DeepCheckActor extends Actor
   private def deepCheck(): Future[DeepCheckResponse] = DeepCheckManager.connectivityCheck()
 
 }
-
-case class DeepCheckRequest()
