@@ -226,7 +226,7 @@ If healthy the response is:
 
     200 {"status":true,"messages":[]}
 
-If not healthy the status is "NOK" and the `messages` array not empty:
+If not healthy the status is `false` and the `messages` array not empty:
 
     500 {"status":false,"messages":["unable to connect to the database"]}
 
