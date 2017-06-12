@@ -39,7 +39,7 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:elasticsearch-client-binary_ to 2.0.5
 * update _com.ubirch.util:response-util_ to 0.2.0
 * update _com.ubirch.util:oidc-utils_ to 0.4.5
-* update _com.ubirch.user:client-rest_ to 0.4.8
+* update _com.ubirch.user:client-rest_ to 0.4.9
 
 ### Version 0.3.10 (2017-03-01)
 
