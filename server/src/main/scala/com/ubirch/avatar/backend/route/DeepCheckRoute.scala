@@ -11,6 +11,7 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
@@ -52,7 +53,7 @@ trait DeepCheckRoute extends CORSDirective
               resp match {
 
                 case res: DeepCheckResponse if res.status => complete(res)
-                case res: DeepCheckResponse if !res.status => complete(serverErrorResponse(responseObject = res))
+                case res: DeepCheckResponse if !res.status => complete(response(responseObject = res, status = StatusCodes.ServiceUnavailable))
                 case _ => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "failed to run deep check"))
 
               }
