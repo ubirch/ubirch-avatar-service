@@ -228,7 +228,7 @@ If healthy the response is:
 
 If not healthy the status is `false` and the `messages` array not empty:
 
-    500 {"status":false,"messages":["unable to connect to the database"]}
+    503 {"status":false,"messages":["unable to connect to the database"]}
 
 
 ### Device CRUD
