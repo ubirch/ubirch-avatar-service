@@ -25,8 +25,8 @@ case class ThingShadowState(
 /**
   * @param deviceId          id of associated device, should be a UUID
   * @param inSync            means reported == desired
-  * @param desired           json that contains changed device config and states from other sensors (aktor -> sensor)
-  * @param reported          last state which the decives has reported
+  * @param desired           json with changed device config and states from other sensors (actor -> sensor)
+  * @param reported          last state as reported by device
   * @param delta             delta state = reported - desired
   * @param deviceLastUpdated timestamp of last reported state update
   * @param avatarLastUpdated timestamp of last desired state update
