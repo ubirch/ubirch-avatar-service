@@ -122,7 +122,7 @@ object AvatarStateManager extends MongoFormats
 
   }
 
-  // TODO implement: setReported
-  // TODO implement: updateDesired
+  // TODO implement: setReported?
+  // TODO implement: updateDesired?
 
 }
