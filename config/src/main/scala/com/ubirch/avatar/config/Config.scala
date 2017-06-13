@@ -133,6 +133,12 @@ object Config extends ConfigBase {
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
   /*
+   * Mongo Related
+   ************************************************************************************************/
+
+  def mongoCollectionAvatarState: String = config.getString(ConfigKeys.COLLECTION_AVATAR_STATE)
+
+  /*
    * AWS
    ************************************************************************************************/
 

@@ -79,6 +79,16 @@ object ConfigKeys {
   final val EXTERNOUTBOX = "extern-outbox"
   final val DEVICEOUTBOX = "device-outbox"
 
+  /*
+   * Mongo
+   *********************************************************************************************/
+
+  final val MONGO_PREFIX = s"$prefix.mongo"
+
+  private final val mongoCollection = s"$MONGO_PREFIX.collection"
+
+  final val COLLECTION_AVATAR_STATE = s"$mongoCollection.avatarState"
+
   /* AWS Related Config Keys
    **********************************************************************/
 

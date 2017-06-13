@@ -8,6 +8,9 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.aws.AvatarState
 import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.mongo.format.MongoFormats
+
+import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -16,9 +19,14 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2017-02-24
   */
-object AvatarStateManager
-  extends MyJsonProtocol
-    with StrictLogging {
+object AvatarStateManager extends MyJsonProtocol
+  with MongoFormats
+  with StrictLogging {
+
+  private val collectionName = Config.mongoCollectionAvatarState
+
+  implicit protected def avatarStateWriter: BSONDocumentWriter[AvatarState] = Macros.writer[AvatarState]
+  implicit protected def avatarStateReader: BSONDocumentReader[AvatarState] = Macros.reader[AvatarState]
 
   private val index = Config.esAvatarStateIndex
   private val esType = Config.esAvatarStateType
@@ -102,5 +110,8 @@ object AvatarStateManager
     }
 
   }
+
+  // TODO implement: setReported
+  // TODO implement: updateDesired
 
 }
