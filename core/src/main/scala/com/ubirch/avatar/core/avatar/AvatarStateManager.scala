@@ -5,12 +5,11 @@ import java.util.UUID
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.rest.aws.AvatarState
-import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.avatar.model.db.device.AvatarState
+import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
 
-import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros}
+import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros, document}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -19,8 +18,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2017-02-24
   */
-object AvatarStateManager extends MyJsonProtocol
-  with MongoFormats
+object AvatarStateManager extends MongoFormats
   with StrictLogging {
 
   private val collectionName = Config.mongoCollectionAvatarState
@@ -28,26 +26,19 @@ object AvatarStateManager extends MyJsonProtocol
   implicit protected def avatarStateWriter: BSONDocumentWriter[AvatarState] = Macros.writer[AvatarState]
   implicit protected def avatarStateReader: BSONDocumentReader[AvatarState] = Macros.reader[AvatarState]
 
-  private val index = Config.esAvatarStateIndex
-  private val esType = Config.esAvatarStateType
-
   /**
     * Search an [[AvatarState]] based on the id of it's device.
     *
     * @param deviceId deviceId to search with
     * @return None if nothing was found
     */
-  def byDeviceId(deviceId: UUID): Future[Option[AvatarState]] = {
+  def byDeviceId(deviceId: UUID)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
     logger.debug(s"query byDeviceId: deviceId=$deviceId")
+    val selector = document("deviceId" -> deviceId)
 
-    ESSimpleStorage.getDoc(
-      docIndex = index,
-      docType = esType,
-      docId = deviceId.toString
-    ) map {
-      case Some(res) => Some(res.extract[AvatarState])
-      case None => None
+    mongo.collection(collectionName) flatMap {
+      _.find(selector).one[AvatarState]
     }
 
   }
@@ -58,12 +49,33 @@ object AvatarStateManager extends MyJsonProtocol
     * @param avatarState object to store
     * @return stored entity; None if something went wrong or entity already exists
     */
-  def create(avatarState: AvatarState): Future[Option[AvatarState]] = {
+  def create(avatarState: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    logger.debug(s"create avatarState: $avatarState")
     byDeviceId(avatarState.deviceId) flatMap {
-      case Some(_) => Future(None)
-      case None => upsert(avatarState)
+
+      case Some(_: AvatarState) =>
+
+        logger.error(s"unable to create avatarState for deviceId=${avatarState.deviceId}")
+        Future(None)
+
+      case None =>
+
+        mongo.collection(collectionName) flatMap { collection =>
+
+          collection.insert[AvatarState](avatarState) map { writeResult =>
+
+            if (writeResult.ok && writeResult.n == 1) {
+              logger.debug(s"created new avatarState: $avatarState")
+              Some(avatarState)
+            } else {
+              logger.error("failed to create user")
+              None
+            }
+
+          }
+
+        }
+
     }
 
   }
@@ -74,13 +86,23 @@ object AvatarStateManager extends MyJsonProtocol
     * @param avatarState object to update
     * @return updated object; None if something went wrong
     */
-  def update(avatarState: AvatarState): Future[Option[AvatarState]] = {
+  def update(avatarState: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    logger.debug(s"update avatarState: $avatarState")
+    val selector = document("deviceId" -> avatarState.deviceId)
+    mongo.collection(collectionName) flatMap {
 
-    byDeviceId(avatarState.deviceId) flatMap {
-      case Some(_) => upsert(avatarState)
-      case None => Future(None)
+      _.update(selector, avatarState) map { writeResult =>
+
+        if (writeResult.ok && writeResult.n == 1) {
+          logger.info(s"updated avatarState: deviceId=${avatarState.deviceId}")
+          Some(avatarState)
+        } else {
+          logger.error(s"failed to update avatarState: avatarState=$avatarState")
+          None
+        }
+
+      }
+
     }
 
   }
@@ -91,22 +113,11 @@ object AvatarStateManager extends MyJsonProtocol
     * @param state object to upsert
     * @return json of what we stored; None if something went wrong
     */
-  def upsert(state: AvatarState): Future[Option[AvatarState]] = {
+  def upsert(state: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    Json4sUtil.any2jvalue(state) match {
-
-      case Some(doc) =>
-
-        val id = state.deviceId.toString
-        ESBulkStorage.storeDocBulk(
-          docIndex = index,
-          docType = esType,
-          docId = id,
-          doc = doc
-        ) map (_.extractOpt[AvatarState])
-
-      case None => Future(None)
-
+    byDeviceId(state.deviceId) flatMap {
+      case None => create(state)
+      case Some(_: AvatarState) => update(state)
     }
 
   }

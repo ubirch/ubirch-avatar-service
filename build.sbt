@@ -226,6 +226,7 @@ lazy val depUtil = Seq(
 
 lazy val depTestBase = Seq(
   scalatest,
+  ubirchMongoTest,
   ubirchRestAkkaHttpTest,
   beeClient,
   ubirchUUID,

@@ -11,20 +11,6 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
 
   val indexesAndMappings: Map[String, Map[String, String]] = Map(
 
-    // ubirch-avatar-state
-    Config.esAvatarStateIndex -> Map(
-      Config.esAvatarStateType ->
-        s"""{
-           |  "${Config.esAvatarStateType}" : {
-           |    "properties" : {
-           |      "deviceId" : {
-           |        "type" : "keyword"
-           |      }
-           |    }
-           |  }
-           |}""".stripMargin
-    ),
-
     // ubirch-device-raw-data
     Config.esDeviceDataRawIndex -> Map(
       Config.esDeviceDataRawType ->

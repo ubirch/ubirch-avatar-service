@@ -1,8 +1,9 @@
 package com.ubirch.avatar.core.avatar
 
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.DummyDevices
-import com.ubirch.avatar.model.rest.aws.AvatarState
-import com.ubirch.avatar.test.base.ElasticsearchSpecAsync
+import com.ubirch.avatar.model.db.device.AvatarState
+import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.uuid.UUIDUtil
 
 import scala.language.postfixOps
@@ -11,17 +12,15 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2017-02-27
   */
-class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
+class AvatarStateManagerSpec extends MongoSpec {
+
+  private val collection = Config.mongoCollectionAvatarState
 
   feature("byDeviceId()") {
 
-    scenario("index does not exist") {
-      deleteIndices()
+    scenario("deviceId does not exist") {
       AvatarStateManager.byDeviceId(UUIDUtil.uuid) map (_ should be(None))
-    }
-
-    scenario("index exists; record does not") {
-      AvatarStateManager.byDeviceId(UUIDUtil.uuid) map (_ should be(None))
+      mongoTestUtils.countAll(collection) map (_ shouldBe 0)
     }
 
     scenario("deviceId exists") {
@@ -33,11 +32,13 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
       AvatarStateManager.create(avatarState) flatMap { created =>
 
-        Thread.sleep(1500)
+        // test
+        AvatarStateManager.byDeviceId(deviceId) flatMap { result =>
 
-        // test && verify
-        AvatarStateManager.byDeviceId(deviceId) map { result =>
+          // verify
           result should be(created)
+          mongoTestUtils.countAll(collection) map (_ shouldBe 1)
+
         }
 
       }
@@ -48,28 +49,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
   feature("create") {
 
-    scenario("index does not exist -> create is successful (and record can be found)") {
-
-      // prepare
-      deleteIndices()
-      val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
-
-      // test
-      AvatarStateManager.create(avatarState) flatMap { result =>
-
-        // verify
-        result should be(Some(avatarState))
-
-        Thread.sleep(1300)
-        AvatarStateManager.byDeviceId(deviceId) map (_ should be(result))
-
-      }
-
-    }
-
-    scenario("index exists -> create is successful") {
+    scenario("create is successful") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -81,9 +61,8 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
         // verify
         result should be(Some(avatarState))
-
-        Thread.sleep(1300)
         AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
+        mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
       }
 
@@ -100,10 +79,15 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
       AvatarStateManager.create(avatarState) flatMap { prepareResult =>
 
         prepareResult should be(Some(avatarState))
-        Thread.sleep(1300)
 
-        // test && verify
-        AvatarStateManager.create(avatarState) map (_ should be(None))
+        // test
+        AvatarStateManager.create(avatarState) flatMap { result =>
+
+          // verify
+          result should be(None)
+          mongoTestUtils.countAll(collection) map (_ shouldBe 1)
+
+        }
 
       }
 
@@ -113,28 +97,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
   feature("update()") {
 
-    scenario("index does not exist -> update fails") {
-
-      // prepare
-      deleteIndices()
-      val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
-
-      // test
-      AvatarStateManager.update(avatarState) flatMap { result =>
-
-        // verify
-        result should be(None)
-
-        Thread.sleep(2000)
-        AvatarStateManager.byDeviceId(deviceId) map (_ should be(None))
-
-      }
-
-    }
-
-    scenario("index exists; record does not -> update fails") {
+    scenario("record does not -> update fails") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -146,9 +109,9 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
         // verify
         result should be(None)
-
-        Thread.sleep(2000)
         AvatarStateManager.byDeviceId(deviceId) map (_ should be(None))
+        mongoTestUtils.countAll(collection) map (_ shouldBe 0)
+
 
       }
 
@@ -163,7 +126,6 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
       AvatarStateManager.create(avatarState) flatMap { createdOpt =>
 
         val created = createdOpt.get
-        Thread.sleep(1500)
         val forUpdate = created.copy(avatarLastUpdated = Some(created.avatarLastUpdated.get.plusDays(1)))
 
         // test
@@ -171,9 +133,8 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
           // verify
           result should be(Some(forUpdate))
-
-          Thread.sleep(3000)
           AvatarStateManager.byDeviceId(deviceId) map (_ should be(result))
+          mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
         }
 
@@ -186,28 +147,7 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
   feature("upsert()") {
 
-    scenario("index does not exist -> upsert succeeds and we can find the record afterwards") {
-
-      // prepare
-      deleteIndices()
-      val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
-
-      // test
-      AvatarStateManager.upsert(avatarState) flatMap { result =>
-
-        // verify
-        result should be(Some(avatarState))
-
-        Thread.sleep(2000)
-        AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
-
-      }
-
-    }
-
-    scenario("index exists; record does not -> upsert succeeds") {
+    scenario("record does not exist -> upsert succeeds") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -219,9 +159,8 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
         // verify
         result should be(Some(avatarState))
-
-        Thread.sleep(2000)
         AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
+        mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
       }
 
@@ -244,9 +183,8 @@ class AvatarStateManagerSpec extends ElasticsearchSpecAsync {
 
           // verify
           result should be(Some(toUpdate))
-
-          Thread.sleep(2000)
           AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(toUpdate)))
+          mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
         }
 
