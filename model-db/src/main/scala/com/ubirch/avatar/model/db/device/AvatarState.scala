@@ -15,7 +15,7 @@ import org.joda.time.DateTime
   * @param avatarLastUpdated most recent update of _desired_
   */
 case class AvatarState(deviceId: UUID,
-                       desired: Option[String] = None,
+                       desired: Option[String] = Some("{}"),
                        reported: Option[String] = Some("{}"),
                        deviceLastUpdated: Option[DateTime] = Some(DateTime.now()),
                        avatarLastUpdated: Option[DateTime] = Some(DateTime.now())
