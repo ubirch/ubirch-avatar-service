@@ -5,10 +5,11 @@ import java.util.UUID
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.db.device.AvatarState
+import com.ubirch.avatar.model.db.device.{AvatarState, Device}
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
+import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime
 import org.json4s.JValue
@@ -127,19 +128,17 @@ object AvatarStateManager extends MongoFormats
 
   }
 
-  def setReported(deviceId: UUID, reported: JValue)
+  def setReported(device: Device, reported: JValue)
                  (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
     // TODO automated tests
+    val deviceId = UUIDUtil.fromString(device.deviceId)
     val reportedString = Some(Json4sUtil.jvalue2String(reported))
     byDeviceId(deviceId) flatMap {
 
       case None =>
-        val toCreate = AvatarState(
-          deviceId = deviceId,
-          reported = reportedString,
-          desired = None // TODO desired=device.deviceConfig
-        )
+
+        val toCreate = newAvatarState(device, reportedString)
         create(toCreate)
 
       case Some(avatarState: AvatarState) =>
@@ -154,10 +153,35 @@ object AvatarStateManager extends MongoFormats
 
   }
 
-  def setDesired(deviceId: UUID, desired: JValue)
+  def setDesired(device: Device, desired: JValue)
                 (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
     // TODO implement
+    // NOTE updatedDesired = currentDesired + desired
     Future(None)
+  }
+
+  private def newAvatarState(device: Device, reported: Option[String]): AvatarState = {
+
+    val deviceId = UUIDUtil.fromString(device.deviceId)
+    device.deviceConfig match {
+
+      case None =>
+
+        AvatarState(
+          deviceId = deviceId,
+          reported = reported
+        )
+
+      case Some(deviceConfig: JValue) =>
+
+        AvatarState(
+          deviceId = deviceId,
+          reported = reported,
+          desired = Some(Json4sUtil.jvalue2String(deviceConfig))
+        )
+
+    }
+
   }
 
 }

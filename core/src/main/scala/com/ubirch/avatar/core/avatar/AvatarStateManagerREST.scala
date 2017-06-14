@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.avatar
 import java.util.UUID
 
 import com.ubirch.avatar.model._
+import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 
@@ -17,14 +18,13 @@ import scala.concurrent.Future
   */
 object AvatarStateManagerREST {
 
-  def setReported(deviceId: UUID, reported: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
+  def setReported(restDevice: Device, reported: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
 
     // TODO integration tests
-    AvatarStateManager.setReported(deviceId, reported) map {
+    val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
+    AvatarStateManager.setReported(dbDevice, reported) map {
 
-      case None =>
-        None // TODO actual implementation
-
+      case None => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
 
     }
