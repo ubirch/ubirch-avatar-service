@@ -6,8 +6,12 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.AvatarState
+import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
+
+import org.joda.time.DateTime
+import org.json4s.JValue
 
 import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros, document}
 
@@ -24,6 +28,7 @@ object AvatarStateManager extends MongoFormats
   private val collectionName = Config.mongoCollectionAvatarState
 
   implicit protected def avatarStateWriter: BSONDocumentWriter[AvatarState] = Macros.writer[AvatarState]
+
   implicit protected def avatarStateReader: BSONDocumentReader[AvatarState] = Macros.reader[AvatarState]
 
   /**
@@ -122,7 +127,37 @@ object AvatarStateManager extends MongoFormats
 
   }
 
-  // TODO implement: setReported?
-  // TODO implement: updateDesired?
+  def setReported(deviceId: UUID, reported: JValue)
+                 (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
+
+    // TODO automated tests
+    val reportedString = Some(Json4sUtil.jvalue2String(reported))
+    byDeviceId(deviceId) flatMap {
+
+      case None =>
+        val toCreate = AvatarState(
+          deviceId = deviceId,
+          reported = reportedString,
+          desired = None // TODO desired=device.deviceConfig
+        )
+        create(toCreate)
+
+      case Some(avatarState: AvatarState) =>
+
+        val toUpdate = avatarState.copy(
+          reported = reportedString,
+          deviceLastUpdated = Some(DateTime.now)
+        )
+        update(toUpdate)
+
+    }
+
+  }
+
+  def setDesired(deviceId: UUID, desired: JValue)
+                (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
+    // TODO implement
+    Future(None)
+  }
 
 }
