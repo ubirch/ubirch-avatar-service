@@ -135,7 +135,6 @@ object AvatarStateManager extends MongoFormats
   def setReported(device: Device, reported: JValue)
                  (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    // TODO automated tests
     val deviceId = UUIDUtil.fromString(device.deviceId)
     val reportedString = Some(Json4sUtil.jvalue2String(reported))
     byDeviceId(deviceId) flatMap {
@@ -143,6 +142,7 @@ object AvatarStateManager extends MongoFormats
       case None =>
 
         val toCreate = newAvatarStateWithReported(device, reportedString)
+        logger.debug(s"setReported() - creating new AvatarState: $toCreate")
         create(toCreate)
 
       case Some(avatarState: AvatarState) =>
@@ -151,6 +151,7 @@ object AvatarStateManager extends MongoFormats
           reported = reportedString,
           deviceLastUpdated = Some(DateTime.now)
         )
+        logger.debug(s"setReported() - updating AvatarState: $toUpdate")
         update(toUpdate)
 
     }
@@ -160,7 +161,6 @@ object AvatarStateManager extends MongoFormats
   def setDesired(device: Device, desired: JValue)
                 (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    // TODO automated tests
     val deviceId = UUIDUtil.fromString(device.deviceId)
     val desiredString = Some(Json4sUtil.jvalue2String(desired))
     byDeviceId(deviceId) flatMap {
