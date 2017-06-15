@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.avatar
 
-import java.util.UUID
-
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.util.json.Json4sUtil
@@ -31,11 +29,16 @@ object AvatarStateManagerREST {
 
   }
 
-  def setDesired(deviceId: UUID, newState: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
+  def setDesired(restDevice: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
 
     // TODO integration tests
-    // TODO implement: see AwsShadowUtil#setDesired
-    Future(None)
+    val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
+    AvatarStateManager.setDesired(dbDevice, desired) map {
+
+      case None => None
+      case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
+
+    }
 
   }
 

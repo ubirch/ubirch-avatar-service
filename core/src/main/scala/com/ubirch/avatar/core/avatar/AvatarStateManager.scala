@@ -6,13 +6,15 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.{AvatarState, Device}
-import com.ubirch.util.json.Json4sUtil
+import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime
 import org.json4s.JValue
+import org.json4s.jackson.JsonMethods._
+import org.json4s.native.Serialization.write
 
 import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros, document}
 
@@ -25,6 +27,8 @@ import scala.concurrent.Future
   */
 object AvatarStateManager extends MongoFormats
   with StrictLogging {
+
+  private implicit val formats = JsonFormats.default
 
   private val collectionName = Config.mongoCollectionAvatarState
 
@@ -138,7 +142,7 @@ object AvatarStateManager extends MongoFormats
 
       case None =>
 
-        val toCreate = newAvatarState(device, reportedString)
+        val toCreate = newAvatarStateWithReported(device, reportedString)
         create(toCreate)
 
       case Some(avatarState: AvatarState) =>
@@ -155,12 +159,34 @@ object AvatarStateManager extends MongoFormats
 
   def setDesired(device: Device, desired: JValue)
                 (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
-    // TODO implement
-    // NOTE updatedDesired = currentDesired + desired
-    Future(None)
+
+    // TODO automated tests
+    val deviceId = UUIDUtil.fromString(device.deviceId)
+    val desiredString = Some(Json4sUtil.jvalue2String(desired))
+    byDeviceId(deviceId) flatMap {
+
+      case None =>
+
+        val toCreate = newAvatarStateWithDesired(device, desiredString)
+        create(toCreate)
+
+      case Some(avatarState: AvatarState) =>
+
+        val newDesired = avatarState.desired match {
+          case None => Some(desired)
+          case Some(currentDesired: String) => Some(parse(currentDesired) merge desired)
+        }
+        val toUpdate = avatarState.copy(
+          desired = Some(write(newDesired)),
+          avatarLastUpdated = Some(DateTime.now)
+        )
+        update(toUpdate)
+
+    }
+
   }
 
-  private def newAvatarState(device: Device, reported: Option[String]): AvatarState = {
+  private def newAvatarStateWithReported(device: Device, reported: Option[String]): AvatarState = {
 
     val deviceId = UUIDUtil.fromString(device.deviceId)
     device.deviceConfig match {
@@ -181,6 +207,15 @@ object AvatarStateManager extends MongoFormats
         )
 
     }
+
+  }
+
+  private def newAvatarStateWithDesired(device: Device, desired: Option[String]): AvatarState = {
+
+    AvatarState(
+      deviceId = UUIDUtil.fromString(device.deviceId),
+      desired = desired
+    )
 
   }
 
