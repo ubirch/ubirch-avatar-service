@@ -244,7 +244,7 @@ class AvatarStateManagerSpec extends MongoSpec {
       )
       AvatarStateManager.create(state) flatMap {
 
-        case None => fail("failed to prepare test")
+        case None => fail("failed to create existing avatar state")
 
         case Some(existingState: AvatarState) =>
 

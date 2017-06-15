@@ -6,6 +6,7 @@ import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 
 import org.json4s.JValue
+import org.json4s.jackson.JsonMethods._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -16,9 +17,10 @@ import scala.concurrent.Future
   */
 object AvatarStateManagerREST {
 
+  private val emptyJson = parse("{}")
+
   def setReported(restDevice: Device, reported: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
 
-    // TODO integration tests
     val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
     AvatarStateManager.setReported(dbDevice, reported) map {
 
@@ -44,9 +46,30 @@ object AvatarStateManagerREST {
 
   def toRestModel(dbAvatarState: db.device.AvatarState): rest.aws.AvatarState = {
 
-    // TODO calculate "inSync"
-    // TODO calculate "delta"
-    Json4sUtil.any2any[rest.aws.AvatarState](dbAvatarState)
+    val desiredJvalue = stringToJson(dbAvatarState.desired)
+    val reportedJvalue = stringToJson(dbAvatarState.reported)
+    val restAvatarStatePrelim = rest.aws.AvatarState(
+      deviceId = dbAvatarState.deviceId,
+      inSync = Some(dbAvatarState.reported == dbAvatarState.desired),
+      desired = desiredJvalue,
+      reported = reportedJvalue,
+      deviceLastUpdated = dbAvatarState.deviceLastUpdated,
+      avatarLastUpdated = dbAvatarState.avatarLastUpdated
+    )
+
+    val diff = restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
+    val delta: JValue = diff.changed merge diff.added
+
+    restAvatarStatePrelim.copy(delta = Some(delta))
+
+  }
+
+  private def stringToJson(s: Option[String]): Option[JValue] = {
+
+    s match {
+      case None => None
+      case Some(jsonString: String) => Some(parse(jsonString))
+    }
 
   }
 
