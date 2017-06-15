@@ -276,7 +276,126 @@ class AvatarStateManagerSpec extends MongoSpec {
 
   feature("setDesired()") {
 
-    // TODO tests
+    scenario("no AvatarState exists --> creates a new one") {
+
+      // prepare
+      val deviceConfigString =
+        """{"i":600}"""
+      val deviceConfig = Some(parse(deviceConfigString))
+      val device = DummyDevices.minimalDevice().copy(deviceConfig = deviceConfig)
+      val desired = parse("""{"i":900}""")
+
+      // test
+      AvatarStateManager.setDesired(device, desired) flatMap {
+
+        // verify
+        case None => Future(fail("failed to create avatar state"))
+
+        case Some(state: AvatarState) =>
+
+          mongoTestUtils.countAll(collection) map (_ shouldBe 1)
+
+          state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+          state.desired should be(Some(Json4sUtil.jvalue2String(desired)))
+          state.reported should be(Some("""{}"""))
+
+      }
+
+    }
+
+    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field and add a new one) --> update existing one") {
+
+      // prepare
+      val deviceConfigString =
+        """{"i":600}"""
+      val deviceConfig = Some(parse(deviceConfigString))
+      val device = DummyDevices.minimalDevice().copy(deviceConfig = deviceConfig)
+      val desired = parse("""{"i":1200,"foo":"bar"}""")
+      val reported = Some("""{"i":900}""")
+
+      val state = AvatarState(
+        deviceId = UUIDUtil.fromString(device.deviceId),
+        desired = Some("""{"i":700}"""),
+        reported = reported,
+        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
+        avatarLastUpdated = Some(DateTime.now.minusHours(1))
+      )
+      AvatarStateManager.create(state) flatMap {
+
+        case None => fail("failed to prepare test")
+
+        case Some(existingState: AvatarState) =>
+
+          existingState should be(state)
+
+          // test
+          AvatarStateManager.setDesired(device, desired) flatMap {
+
+            // verify
+            case None => Future(fail("failed to update avatar state"))
+
+            case Some(updatedState: AvatarState) =>
+
+              mongoTestUtils.countAll(collection) map (_ shouldBe 1)
+
+              val expected = state.copy(
+                desired = Some(Json4sUtil.jvalue2String(desired)),
+                avatarLastUpdated = updatedState.avatarLastUpdated
+              )
+              updatedState should be(expected)
+
+          }
+
+      }
+
+    }
+
+    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field) --> update existing one") {
+
+      // prepare
+      val deviceConfigString =
+        """{"i":600}"""
+      val deviceConfig = Some(parse(deviceConfigString))
+      val device = DummyDevices.minimalDevice().copy(deviceConfig = deviceConfig)
+      val desired = parse("""{"i":1200}""")
+      val reported = Some("""{"i":900}""")
+
+      val state = AvatarState(
+        deviceId = UUIDUtil.fromString(device.deviceId),
+        desired = Some("""{"i":700,"foo":"bar"}"""),
+        reported = reported,
+        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
+        avatarLastUpdated = Some(DateTime.now.minusHours(1))
+      )
+      AvatarStateManager.create(state) flatMap {
+
+        case None => fail("failed to prepare test")
+
+        case Some(existingState: AvatarState) =>
+
+          existingState should be(state)
+
+          // test
+          AvatarStateManager.setDesired(device, desired) flatMap {
+
+            // verify
+            case None => Future(fail("failed to update avatar state"))
+
+            case Some(updatedState: AvatarState) =>
+
+              mongoTestUtils.countAll(collection) map (_ shouldBe 1)
+
+              val expected = state.copy(
+                desired = Some("""{"i":1200,"foo":"bar"}"""),
+                avatarLastUpdated = updatedState.avatarLastUpdated
+              )
+              updatedState should be(expected)
+
+          }
+
+      }
+
+    }
 
   }
 
