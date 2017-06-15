@@ -303,7 +303,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
     }
 
-    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field and add a new one) --> update existing one") {
+    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field and adds a new one) --> update existing one") {
 
       // prepare
       val deviceConfigString =
@@ -350,7 +350,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
     }
 
-    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field) --> update existing one") {
+    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field but doesn't remove an existing one) --> update existing one") {
 
       // prepare
       val deviceConfigString =
