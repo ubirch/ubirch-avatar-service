@@ -4,7 +4,8 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceHistoryManager
 import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw, DeviceType}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceType}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.transformer.services.TransformerService

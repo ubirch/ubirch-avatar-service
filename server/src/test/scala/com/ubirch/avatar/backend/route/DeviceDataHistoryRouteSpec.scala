@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
@@ -8,10 +8,10 @@ import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
+import com.ubirch.util.mongo.connection.MongoUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import play.api.libs.ws.StandaloneWSClient
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
@@ -27,6 +27,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
   with ResponseUtil {
 
   implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
+  implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   private val routes = (new MainRoute).myRoute
 

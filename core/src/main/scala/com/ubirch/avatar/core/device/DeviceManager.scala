@@ -3,17 +3,17 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.avatar.{AvatarStateManager, AvatarStateManagerREST}
 import com.ubirch.avatar.model._
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.aws.ThingShadowState
-import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
+import com.ubirch.avatar.model.rest.device.DeviceInfo
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
+import com.ubirch.util.mongo.connection.MongoUtil
 import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,7 +23,8 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-23
   */
-object DeviceManager extends MyJsonProtocol
+object DeviceManager
+  extends MyJsonProtocol
   with StrictLogging {
 
   /**
@@ -96,7 +97,7 @@ object DeviceManager extends MyJsonProtocol
     }
   }
 
-  def update(device: Device): Future[Option[Device]] = {
+  def update(device: Device)(implicit mongo: MongoUtil): Future[Option[Device]] = {
 
     Json4sUtil.any2jvalue(device) match {
 
@@ -109,7 +110,7 @@ object DeviceManager extends MyJsonProtocol
         ).map(_.extractOpt[Device])
 
         if (device.deviceConfig.isDefined)
-          AwsShadowUtil.setDesired(device, device.deviceConfig.get)
+          AvatarStateManager.setDesired(device, device.deviceConfig.get)
 
         dev
       case None =>

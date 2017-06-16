@@ -3,7 +3,7 @@ package com.ubirch.avatar.core.avatar
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.rest.device.AvatarState
-import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
@@ -63,7 +63,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val reported = parse("""{"i":1200}""")
 
       val state = db.device.AvatarState(
-        deviceId = UUIDUtil.fromString(device.deviceId),
+        deviceId = device.deviceId,
         desired = Some("""{"i":700}"""),
         reported = Some("""{"i":900}"""),
         deviceLastUpdated = Some(DateTime.now.minusHours(1)),
@@ -145,7 +145,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val reported = parse("""{"i":900}""")
 
       val state = db.device.AvatarState(
-        deviceId = UUIDUtil.fromString(device.deviceId),
+        deviceId = device.deviceId,
         desired = Some(Json4sUtil.jvalue2String(desired)),
         reported = Some(Json4sUtil.jvalue2String(reported)),
         deviceLastUpdated = Some(DateTime.now.minusHours(1)),
@@ -197,7 +197,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val reported = parse("""{"i":900}""")
 
       val state = db.device.AvatarState(
-        deviceId = UUIDUtil.fromString(device.deviceId),
+        deviceId = device.deviceId,
         desired = Some(Json4sUtil.jvalue2String(desiredOld)),
         reported = Some(Json4sUtil.jvalue2String(reported)),
         deviceLastUpdated = Some(DateTime.now.minusHours(1)),
@@ -245,7 +245,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
       // prepare
       val dbState = db.device.AvatarState(
-        deviceId = UUIDUtil.uuid
+        deviceId = UUIDUtil.uuidStr
       )
 
       // test
@@ -266,7 +266,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val reported = desired
       val deltaExpected = Some(JNothing)
       val dbState = db.device.AvatarState(
-        deviceId = UUIDUtil.uuid,
+        deviceId = UUIDUtil.uuidStr,
         desired = Some(desired),
         reported = Some(reported)
       )
@@ -291,7 +291,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val reported = """{"i":600}"""
       val deltaExpected = Some(parse(desired))
       val dbState = db.device.AvatarState(
-        deviceId = UUIDUtil.uuid,
+        deviceId = UUIDUtil.uuidStr,
         desired = Some(desired),
         reported = Some(reported)
       )
@@ -316,7 +316,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val reported = """{"i":900}"""
       val deltaExpected = Some(parse("""{"foo":"bar"}"""))
       val dbState = db.device.AvatarState(
-        deviceId = UUIDUtil.uuid,
+        deviceId = UUIDUtil.uuidStr,
         desired = Some(desired),
         reported = Some(reported)
       )
@@ -341,7 +341,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val reported = """{"i":900,"foo":"bar"}"""
       val deltaExpected = Some(JNothing) // TODO is this what we want?
       val dbState = db.device.AvatarState(
-        deviceId = UUIDUtil.uuid,
+        deviceId = UUIDUtil.uuidStr,
         desired = Some(desired),
         reported = Some(reported)
       )

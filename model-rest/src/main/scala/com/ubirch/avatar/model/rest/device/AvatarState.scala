@@ -17,7 +17,7 @@ import org.json4s.JValue
   * @param deviceLastUpdated timestamp of last reported state update
   * @param avatarLastUpdated timestamp of last desired state update
   */
-case class AvatarState(deviceId: UUID,
+case class AvatarState(deviceId: String,
                        inSync: Option[Boolean] = None,
                        desired: Option[JValue] = None,
                        reported: Option[JValue] = None,

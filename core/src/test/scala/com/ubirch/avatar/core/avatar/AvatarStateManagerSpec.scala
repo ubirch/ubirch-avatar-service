@@ -24,7 +24,7 @@ class AvatarStateManagerSpec extends MongoSpec {
   feature("byDeviceId()") {
 
     scenario("deviceId does not exist") {
-      AvatarStateManager.byDeviceId(UUIDUtil.uuid) map (_ should be(None))
+      AvatarStateManager.byDeviceId(UUIDUtil.uuidStr) map (_ should be(None))
       mongoTestUtils.countAll(collection) map (_ shouldBe 0)
     }
 
@@ -32,7 +32,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
+      val deviceId = device.deviceId
       val avatarState = AvatarState(deviceId = deviceId)
 
       AvatarStateManager.create(avatarState) flatMap { created =>
@@ -58,15 +58,14 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
+      val avatarState = AvatarState(deviceId = device.deviceId)
 
       // test
       AvatarStateManager.create(avatarState) flatMap { result =>
 
         // verify
         result should be(Some(avatarState))
-        AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
+        AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(Some(avatarState)))
         mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
       }
@@ -78,8 +77,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
+      val avatarState = AvatarState(deviceId = device.deviceId)
 
       AvatarStateManager.create(avatarState) flatMap { prepareResult =>
 
@@ -106,15 +104,14 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
+      val avatarState = AvatarState(deviceId = device.deviceId)
 
       // test
       AvatarStateManager.update(avatarState) flatMap { result =>
 
         // verify
         result should be(None)
-        AvatarStateManager.byDeviceId(deviceId) map (_ should be(None))
+        AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(None))
         mongoTestUtils.countAll(collection) map (_ shouldBe 0)
 
 
@@ -126,8 +123,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
+      val avatarState = AvatarState(deviceId = device.deviceId)
       AvatarStateManager.create(avatarState) flatMap { createdOpt =>
 
         val created = createdOpt.get
@@ -138,7 +134,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
           // verify
           result should be(Some(forUpdate))
-          AvatarStateManager.byDeviceId(deviceId) map (_ should be(result))
+          AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(result))
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
         }
@@ -156,15 +152,14 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
+      val avatarState = AvatarState(deviceId = device.deviceId)
 
       // test
       AvatarStateManager.upsert(avatarState) flatMap { result =>
 
         // verify
         result should be(Some(avatarState))
-        AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(avatarState)))
+        AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(Some(avatarState)))
         mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
       }
@@ -175,8 +170,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceId = UUIDUtil.fromString(device.deviceId)
-      val avatarState = AvatarState(deviceId = deviceId)
+      val avatarState = AvatarState(deviceId = device.deviceId)
       AvatarStateManager.upsert(avatarState) flatMap { initialUpsertOpt =>
 
         val initialUpsert = initialUpsertOpt.get
@@ -188,7 +182,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
           // verify
           result should be(Some(toUpdate))
-          AvatarStateManager.byDeviceId(deviceId) map (_ should be(Some(toUpdate)))
+          AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(Some(toUpdate)))
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
         }
@@ -236,7 +230,7 @@ class AvatarStateManagerSpec extends MongoSpec {
       val reported = parse("""{"i":1200}""")
 
       val state = AvatarState(
-        deviceId = UUIDUtil.fromString(device.deviceId),
+        deviceId = device.deviceId,
         desired = Some("""{"i":700}"""),
         reported = Some("""{"i":900}"""),
         deviceLastUpdated = Some(DateTime.now.minusHours(1)),
@@ -314,7 +308,7 @@ class AvatarStateManagerSpec extends MongoSpec {
       val reported = Some("""{"i":900}""")
 
       val state = AvatarState(
-        deviceId = UUIDUtil.fromString(device.deviceId),
+        deviceId = device.deviceId,
         desired = Some("""{"i":700}"""),
         reported = reported,
         deviceLastUpdated = Some(DateTime.now.minusHours(1)),
@@ -361,7 +355,7 @@ class AvatarStateManagerSpec extends MongoSpec {
       val reported = Some("""{"i":900}""")
 
       val state = AvatarState(
-        deviceId = UUIDUtil.fromString(device.deviceId),
+        deviceId = device.deviceId,
         desired = Some("""{"i":700,"foo":"bar"}"""),
         reported = reported,
         deviceLastUpdated = Some(DateTime.now.minusHours(1)),

@@ -2,9 +2,10 @@ package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.util.model.JsonResponse
-
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
+import com.ubirch.avatar.config.ConfigKeys
+import com.ubirch.util.mongo.connection.MongoUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import play.api.libs.ws.StandaloneWSClient
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
@@ -16,6 +17,7 @@ import play.api.libs.ws.ahc.StandaloneAhcWSClient
 class WelcomeRouteSpec extends RouteSpec {
 
   implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
+  implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   private val routes = (new MainRoute).myRoute
 

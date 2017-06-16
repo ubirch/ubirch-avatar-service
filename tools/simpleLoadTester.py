@@ -7,10 +7,13 @@ import uuid
 
 from datetime import datetime
 
+msgCount = 100
+
 username = "ubi"
 password = "ubirch123"
 mqttc = mqtt.Client(client_id="receiver1")
 mqttc.username_pw_set(username, password)
+# mqttc.connect("mq.dev.ubirch.com", 1883, 60)
 mqttc.connect("rmq.dev.ubirch.com", 1883, 60)
 
 url = "http://api.ubirch.dev.ubirch.com:8080/api/avatarService/v1/device/update"
@@ -33,8 +36,8 @@ devices = [
 topic = "ubirch_dev/ubirch/devices/%s/in"  #
 testId = str(uuid.uuid4())
 print "testId: %s" % (testId)
-for i in range(10):
-    print i + 1
+for i in range(1, msgCount + 1):
+    print i
     for d in devices:
         did = d["deviceId"]
         hwdid = d["hHwDeviceId"]
@@ -62,4 +65,4 @@ for i in range(10):
         mqttc.reconnect()
         print json.dumps(message)
         mqttc.publish(topic=currentTopic, payload=jsonMsg, qos=1)
-    time.sleep(1)
+    time.sleep(1 / 5)

@@ -7,9 +7,9 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
-
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.routing.RoundRobinPool
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -17,11 +17,11 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by derMicha on 28/10/16.
   * This Actor checks incoming messages
   */
-class MessageValidatorActor extends Actor with ActorLogging {
+class MessageValidatorActor(implicit mongo: MongoUtil) extends Actor with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  private val processorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageProcessorActor]), ActorNames.MSG_PROCESSOR)
+  private val processorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageProcessorActor())), ActorNames.MSG_PROCESSOR)
 
   override def receive: Receive = {
 

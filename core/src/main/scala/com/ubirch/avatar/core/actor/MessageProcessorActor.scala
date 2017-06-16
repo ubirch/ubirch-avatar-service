@@ -1,26 +1,30 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Kill, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys}
+import com.ubirch.avatar.core.avatar.{AvatarStateManager, AvatarStateManagerREST}
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.actors.MessageReceiver
-import com.ubirch.avatar.model.rest.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
+import com.ubirch.util.mongo.connection.MongoUtil
 
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
   * author: derMicha
   * since: 2016-10-28
   */
-class MessageProcessorActor extends Actor with ActorLogging {
+class MessageProcessorActor(implicit mongo: MongoUtil)
+  extends Actor
+    with ActorLogging {
 
   private implicit val exContext = context.dispatcher
 
@@ -40,6 +44,8 @@ class MessageProcessorActor extends Actor with ActorLogging {
 
       persistenceActor ! drd
 
+      AvatarStateManager.setReported(device = device, drd.p)
+
       if (DeviceCoreUtil.checkNotaryUsage(device)) //TODO check notary config for device
         notaryActor ! drd
 
@@ -52,13 +58,20 @@ class MessageProcessorActor extends Actor with ActorLogging {
 
       //send back current device state
       val dbDevice = Json4sUtil.any2any[db.device.Device](device)
-      val currentState = DeviceStateManager.currentDeviceState(dbDevice)
-      DeviceStateManager.upsert(currentState)
-      s ! currentState
 
-      if (drd.uuid.isDefined) {
-        val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(currentState).get)
-        outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+      AvatarStateManagerREST.byDeviceId(device.deviceId) map {
+        case Some(currentState) =>
+
+          val dsu = DeviceStateManager.createNewDeviceState(device, currentState)
+          DeviceStateManager.upsert(state = dsu)
+          s ! dsu
+
+          if (drd.uuid.isDefined) {
+            val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(dsu).get)
+            outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+          }
+        case None =>
+          log.error("device current state error")
       }
 
     case msg: CamelMessage =>

@@ -8,6 +8,7 @@ import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -15,7 +16,7 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by derMicha on 30/10/16.
   */
 
-class MqttDeviceConsumerActor
+class MqttDeviceConsumerActor(implicit mongo: MongoUtil)
   extends Consumer
     with ActorLogging
     with MyJsonProtocol {
@@ -39,7 +40,7 @@ class MqttDeviceConsumerActor
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  private val validatorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageValidatorActor]), ActorNames.MSG_VALIDATOR)
+  private val validatorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
 
   override def preStart(): Unit = {
     super.preStart()

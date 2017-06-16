@@ -42,7 +42,7 @@ object AvatarStateManager extends MongoFormats
     * @param deviceId deviceId to search with
     * @return None if nothing was found
     */
-  def byDeviceId(deviceId: UUID)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
+  def byDeviceId(deviceId: String)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
     logger.debug(s"query byDeviceId: deviceId=$deviceId")
     val selector = document("deviceId" -> deviceId)
@@ -61,7 +61,7 @@ object AvatarStateManager extends MongoFormats
     */
   def create(avatarState: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    byDeviceId(avatarState.deviceId) flatMap {
+    byDeviceId(avatarState.deviceId.toString) flatMap {
 
       case Some(_: AvatarState) =>
 
@@ -125,7 +125,7 @@ object AvatarStateManager extends MongoFormats
     */
   def upsert(state: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    byDeviceId(state.deviceId) flatMap {
+    byDeviceId(state.deviceId.toString) flatMap {
       case None => create(state)
       case Some(_: AvatarState) => update(state)
     }
@@ -135,9 +135,8 @@ object AvatarStateManager extends MongoFormats
   def setReported(device: Device, reported: JValue)
                  (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    val deviceId = UUIDUtil.fromString(device.deviceId)
     val reportedString = Some(Json4sUtil.jvalue2String(reported))
-    byDeviceId(deviceId) flatMap {
+    byDeviceId(device.deviceId) flatMap {
 
       case None =>
 
@@ -161,9 +160,8 @@ object AvatarStateManager extends MongoFormats
   def setDesired(device: Device, desired: JValue)
                 (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    val deviceId = UUIDUtil.fromString(device.deviceId)
     val desiredString = Some(Json4sUtil.jvalue2String(desired))
-    byDeviceId(deviceId) flatMap {
+    byDeviceId(device.deviceId) flatMap {
 
       case None =>
 
@@ -188,20 +186,19 @@ object AvatarStateManager extends MongoFormats
 
   private def newAvatarStateWithReported(device: Device, reported: Option[String]): AvatarState = {
 
-    val deviceId = UUIDUtil.fromString(device.deviceId)
     device.deviceConfig match {
 
       case None =>
 
         AvatarState(
-          deviceId = deviceId,
+          deviceId = device.deviceId,
           reported = reported
         )
 
       case Some(deviceConfig: JValue) =>
 
         AvatarState(
-          deviceId = deviceId,
+          deviceId = device.deviceId,
           reported = reported,
           desired = Some(Json4sUtil.jvalue2String(deviceConfig))
         )
@@ -213,7 +210,7 @@ object AvatarStateManager extends MongoFormats
   private def newAvatarStateWithDesired(device: Device, desired: Option[String]): AvatarState = {
 
     AvatarState(
-      deviceId = UUIDUtil.fromString(device.deviceId),
+      deviceId = device.deviceId,
       desired = desired
     )
 

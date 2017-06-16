@@ -3,7 +3,7 @@ package com.ubirch.avatar.core.avatar
 import java.util.UUID
 
 import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 
@@ -21,7 +21,7 @@ object AvatarStateManagerREST {
 
   private val emptyJson = parse("{}")
 
-  def byDeviceId(deviceId: UUID)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
+  def byDeviceId(deviceId: String)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
     // TODO automated tests
     AvatarStateManager.byDeviceId(deviceId) map {
@@ -35,8 +35,7 @@ object AvatarStateManagerREST {
 
   def setReported(restDevice: Device, reported: JValue)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
-    val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
-    AvatarStateManager.setReported(dbDevice, reported) map {
+    AvatarStateManager.setReported(restDevice, reported) map {
 
       case None => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
@@ -47,8 +46,7 @@ object AvatarStateManagerREST {
 
   def setDesired(restDevice: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
-    val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
-    AvatarStateManager.setDesired(dbDevice, desired) map {
+    AvatarStateManager.setDesired(restDevice, desired) map {
 
       case None => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))

@@ -5,9 +5,10 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
-
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
+import com.ubirch.avatar.config.ConfigKeys
+import com.ubirch.util.mongo.connection.MongoUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import play.api.libs.ws.StandaloneWSClient
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
@@ -24,6 +25,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
   implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
+  implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   private val routes = (new MainRoute).myRoute
 
