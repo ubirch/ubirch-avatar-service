@@ -16,6 +16,7 @@ object DeepCheckManager {
     *
     * @return deep check response with _status:OK_ if ok; otherwise with _status:NOK_
     */
+  //@TODO MQTT / SQS connections have to be checked
   def connectivityCheck(): Future[DeepCheckResponse] = ESSimpleStorage.connectivityCheck()
 
 }
