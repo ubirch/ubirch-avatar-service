@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.12 (tbd)
 
-* tbd
+* AvatarState is no longer stored in AWS IoT but instead in a MongoDB
 
 ### Version 0.3.11 (2017-06-16)
 
