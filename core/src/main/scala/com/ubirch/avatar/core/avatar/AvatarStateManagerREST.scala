@@ -70,6 +70,7 @@ object AvatarStateManagerREST {
     val diff = restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
     val delta: JValue = diff.changed merge diff.added match {
       case jn if (jn.equals(JsonAST.JNothing)) =>
+        //TODO ugly way to create an empty Json object
         Json4sUtil.string2JValue("{}").get
       case jn => jn
     }
