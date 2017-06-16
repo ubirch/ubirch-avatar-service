@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.avatar
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.rest.aws.AvatarState
+import com.ubirch.avatar.model.rest.device.AvatarState
 import com.ubirch.avatar.model.rest.device.Device
 import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.json.Json4sUtil

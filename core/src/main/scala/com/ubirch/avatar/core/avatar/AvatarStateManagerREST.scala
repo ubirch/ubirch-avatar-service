@@ -19,7 +19,7 @@ object AvatarStateManagerREST {
 
   private val emptyJson = parse("{}")
 
-  def setReported(restDevice: Device, reported: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
+  def setReported(restDevice: Device, reported: JValue)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
     val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
     AvatarStateManager.setReported(dbDevice, reported) map {
@@ -31,7 +31,7 @@ object AvatarStateManagerREST {
 
   }
 
-  def setDesired(restDevice: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
+  def setDesired(restDevice: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
     val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
     AvatarStateManager.setDesired(dbDevice, desired) map {
@@ -43,11 +43,11 @@ object AvatarStateManagerREST {
 
   }
 
-  def toRestModel(dbAvatarState: db.device.AvatarState): rest.aws.AvatarState = {
+  def toRestModel(dbAvatarState: db.device.AvatarState): rest.device.AvatarState = {
 
     val desiredJvalue = stringToJson(dbAvatarState.desired)
     val reportedJvalue = stringToJson(dbAvatarState.reported)
-    val restAvatarStatePrelim = rest.aws.AvatarState(
+    val restAvatarStatePrelim = rest.device.AvatarState(
       deviceId = dbAvatarState.deviceId,
       inSync = Some(dbAvatarState.reported == dbAvatarState.desired),
       desired = desiredJvalue,

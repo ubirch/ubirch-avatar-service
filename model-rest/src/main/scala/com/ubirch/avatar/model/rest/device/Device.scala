@@ -44,10 +44,6 @@ case class Device(deviceId: String,
   override def hashCode(): Int = this.deviceId.hashCode
 }
 
-case class AvatarState(desired: Option[JValue],
-                       reported: Option[JValue]
-                      )
-
 /**
   * we might use this draft in the future
   */
