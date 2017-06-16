@@ -6,8 +6,7 @@ import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
-
-import org.json4s.JValue
+import org.json4s._
 import org.json4s.jackson.JsonMethods._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -69,7 +68,11 @@ object AvatarStateManagerREST {
     )
 
     val diff = restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
-    val delta: JValue = diff.changed merge diff.added
+    val delta: JValue = diff.changed merge diff.added match {
+      case jn if (jn.equals(JsonAST.JNothing)) =>
+        Json4sUtil.string2JValue("{}").get
+      case jn => jn
+    }
 
     restAvatarStatePrelim.copy(delta = Some(delta))
 
