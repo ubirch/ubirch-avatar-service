@@ -33,7 +33,6 @@ object AvatarStateManagerREST {
 
   def setDesired(restDevice: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[rest.aws.AvatarState]] = {
 
-    // TODO integration tests
     val dbDevice = Json4sUtil.any2any[db.device.Device](restDevice)
     AvatarStateManager.setDesired(dbDevice, desired) map {
 
