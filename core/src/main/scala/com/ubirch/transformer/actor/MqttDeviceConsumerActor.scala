@@ -8,7 +8,6 @@ import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.uuid.UUIDUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -36,7 +35,7 @@ class MqttDeviceConsumerActor
   //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl&qualityOfService=$qualityOfService"
 
   override def endpointUri = s"mqtt:" +
-    s"MqttDeviceConsumerActor?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword&qualityOfService=$qualityOfService"
+    s"MqttDeviceConsumerActor?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword&qualityOfService=$qualityOfService&cleanSession=false"
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
