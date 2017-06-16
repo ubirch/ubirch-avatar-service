@@ -1,8 +1,6 @@
 package com.ubirch.avatar.model.rest.aws
 
-import java.util.UUID
-
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.DateTime
 import org.json4s.JValue
 
 /**
