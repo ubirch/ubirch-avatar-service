@@ -1,8 +1,5 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import akka.camel.CamelMessage
-import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.DeviceStateManager
@@ -15,6 +12,10 @@ import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.camel.CamelMessage
+import akka.routing.RoundRobinPool
 
 import scala.language.postfixOps
 
@@ -45,6 +46,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       persistenceActor ! drd
 
       AvatarStateManagerREST.setReported(restDevice = device, drd.p) map {
+
         case Some(currentAvatarState) =>
 
           val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
@@ -55,8 +57,11 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
             val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(dsu).get)
             outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
           }
+
         case None =>
-          JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State for ${device.deviceId}")
+          log.error(s"Could not get current Avatar State for ${device.deviceId}")
+          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State for ${device.deviceId}")
+
       }
 
       if (DeviceCoreUtil.checkNotaryUsage(device)) //TODO check notary config for device
