@@ -1,8 +1,9 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
-
+import com.ubirch.util.mongo.connection.MongoUtil
 import play.api.libs.ws.StandaloneWSClient
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
@@ -14,6 +15,7 @@ class DeviceStateRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
   implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
+  implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   private val routes = (new MainRoute).myRoute
 

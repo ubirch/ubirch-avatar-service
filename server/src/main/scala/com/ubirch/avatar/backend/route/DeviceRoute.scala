@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.backend.actor.{AllDevices, AllDevicesResult, CreateDevice, CreateResult, DeviceApiActor}
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.rest.device.Device
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil

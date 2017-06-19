@@ -12,7 +12,7 @@ import org.json4s.JValue
   * since: 2017-05-12
   */
 case class Device(deviceId: String,
-                  groups: Set[UUID],
+                  groups: Set[UUID] = Set.empty,
                   deviceTypeKey: String = "unknownDeviceType",
                   deviceName: String = "unnamedDevice",
                   hwDeviceId: String = "unknownHwDeviceId",

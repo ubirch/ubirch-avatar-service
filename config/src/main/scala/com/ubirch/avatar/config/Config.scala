@@ -118,19 +118,15 @@ object Config extends ConfigBase {
   def esDeviceStateType: String = config.getString(ConfigKeys.ES_DEVICE_STATE_TYPE)
 
   /**
-    * @return Elasticsearch avatarState index
-    */
-  def esAvatarStateIndex: String = config.getString(ConfigKeys.ES_AVATAR_STATE_INDEX)
-
-  /**
-    * @return Elasticsearch avatarState type
-    */
-  def esAvatarStateType: String = config.getString(ConfigKeys.ES_AVATAR_STATE_TYPE)
-
-  /**
     * @return ElasticSearch default size in regards to pagination
     */
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
+
+  /*
+   * Mongo Related
+   ************************************************************************************************/
+
+  def mongoCollectionAvatarState: String = config.getString(ConfigKeys.COLLECTION_AVATAR_STATE)
 
   /*
    * AWS

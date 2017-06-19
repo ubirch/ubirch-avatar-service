@@ -42,8 +42,10 @@ deviceId = "145db162-5b94-452b-8093-576dcaf1627f"
 username = "ubi"
 password = "ubirch123"
 host = "rmq.dev.ubirch.com"
+# host = "mq.dev.ubirch.com"
 port = 1883
-topic = "ubirch_dev/ubirch/devices/+/processed"
+# topic = "ubirch_dev/ubirch/devices/+/processed"
+topic = "ubirch_dev/ubirch/devices/%s/processed" % (deviceId)
 # topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
 
 mqttc = mqtt.Client(client_id="py_tester_1")

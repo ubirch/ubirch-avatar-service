@@ -38,7 +38,6 @@ object ConfigKeys {
   final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
   final val esDeviceStatePrefix = s"$esPrefix.devicestate"
-  final val esAvatarStatePrefix = s"$esPrefix.avatarState"
 
   // Device Index & Type
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
@@ -65,10 +64,6 @@ object ConfigKeys {
   final val ES_DEVICE_STATE_TYPE = s"$esDeviceStatePrefix.type"
 
 
-  // Avatar State
-  final val ES_AVATAR_STATE_INDEX = s"$esAvatarStatePrefix.index"
-  final val ES_AVATAR_STATE_TYPE = s"$esAvatarStatePrefix.type"
-
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
   final val ES_LARGE_PAGE_SIZE = s"$esPrefix.largePageSize"
@@ -78,6 +73,16 @@ object ConfigKeys {
   final val INTERNOUTBOX = "intern-outbox"
   final val EXTERNOUTBOX = "extern-outbox"
   final val DEVICEOUTBOX = "device-outbox"
+
+  /*
+   * Mongo
+   *********************************************************************************************/
+
+  final val MONGO_PREFIX = s"$prefix.mongo"
+
+  private final val mongoCollection = s"$MONGO_PREFIX.collection"
+
+  final val COLLECTION_AVATAR_STATE = s"$mongoCollection.avatarState"
 
   /* AWS Related Config Keys
    **********************************************************************/

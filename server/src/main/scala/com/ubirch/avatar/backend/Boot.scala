@@ -5,11 +5,12 @@ import java.util.concurrent.TimeUnit
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.backend.route.MainRoute
-import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.util.server.ElasticsearchMappings
 import com.ubirch.transformer.TransformerManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import org.elasticsearch.client.transport.TransportClient
 
@@ -40,10 +41,9 @@ object Boot extends App
 
   implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
 
-  logger.info("ubirchAvatarService started")
+  implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
-  //val c = ConfigFactory.load("application.docker.conf")
-  //c.entrySet().toString.split(",").foreach(println(_))
+  logger.info("ubirchAvatarService started")
 
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
@@ -82,11 +82,15 @@ object Boot extends App
             system.terminate()
             esClient.close()
             ws.close()
+            mongo.close()
+
           case Failure(f) =>
             logger.error("shutdown failed", f)
             system.terminate()
             esClient.close()
             ws.close()
+            mongo.close()
+
         }
 
       }

@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.11-SNAPSHOT",
+  version := "0.3.12-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -186,6 +186,7 @@ lazy val depServer = Seq(
 lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
   ubirchCrypto,
+  ubirchMongo,
   ubirchNotary,
   ubirchResponse,
   spireMath,
@@ -225,6 +226,7 @@ lazy val depUtil = Seq(
 
 lazy val depTestBase = Seq(
   scalatest,
+  ubirchMongoTest,
   ubirchRestAkkaHttpTest,
   beeClient,
   ubirchUUID,
@@ -306,6 +308,8 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLo
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.5" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.0" excludeAll (excludedLoggers: _*)
+lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.0" excludeAll(excludedLoggers: _*)
+lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.0" excludeAll(excludedLoggers: _*)
 lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.5" excludeAll (excludedLoggers: _*)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*

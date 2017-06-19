@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.device
 
-import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceInfo
 
 /**
   * author: derMicha

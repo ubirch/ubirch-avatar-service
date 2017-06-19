@@ -6,7 +6,8 @@ import akka.actor.Actor
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.rest.device.{Device, DeviceInfo}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceInfo
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.user.client.rest.UserServiceClientRest
 import com.ubirch.user.model.rest.Group
@@ -26,7 +27,7 @@ case class AllStubs(session: AvatarSession)
 case class CreateDevice(session: AvatarSession, device: Device)
 
 case class CreateResult(error: Option[JsonErrorResponse] = None,
-                        device: Option[rest.device.Device] = None
+                        device: Option[Device] = None
                        )
 
 case class AllDevicesResult(devices: Seq[Device])

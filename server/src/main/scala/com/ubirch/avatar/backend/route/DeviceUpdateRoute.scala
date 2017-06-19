@@ -1,7 +1,6 @@
 package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
@@ -11,12 +10,12 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
+import com.ubirch.util.mongo.connection.MongoUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor
@@ -28,7 +27,8 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-trait DeviceUpdateRoute extends ResponseUtil
+class DeviceUpdateRoute(implicit mongo: MongoUtil)
+  extends ResponseUtil
   with CORSDirective
   with StrictLogging  {
 
@@ -36,7 +36,7 @@ trait DeviceUpdateRoute extends ResponseUtil
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageValidatorActor]), ActorNames.MSG_VALIDATOR)
+  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
 
   private val oidcDirective = new OidcDirective()
 
