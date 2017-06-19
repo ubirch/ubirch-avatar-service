@@ -1,5 +1,7 @@
 package com.ubirch.avatar.core.actor
 
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.MessageVersion
@@ -7,8 +9,6 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.routing.RoundRobinPool
 import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
@@ -32,7 +32,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil) extends Actor with ActorL
 
       DeviceCoreUtil.validateSimpleMessage(hwDeviceId = drd.a).map {
         case Some(dev) =>
-          processorActor ! (s, drd, dev)
+          processorActor forward(s, drd, dev)
         case None =>
           s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid hwDeviceId: ${drd.a}")
       }
@@ -44,7 +44,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil) extends Actor with ActorL
 
       DeviceCoreUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s.getOrElse("nosignature"), payload = drd.p).map {
         case Some(dev) =>
-          processorActor ! (s, drd, dev)
+          processorActor forward(s, drd, dev)
         case None =>
           s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid simple signature: ${drd.a} / ${drd.s}")
       }
@@ -58,7 +58,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil) extends Actor with ActorL
         DeviceManager.infoByHashedHwId(drd.a).map {
           case Some(dev) =>
             if (DeviceCoreUtil.validateSignedMessage(key = drd.k.getOrElse("nokey"), signature = drd.s.getOrElse("nosignature"), payload = drd.p)) {
-              processorActor ! (s, drd, dev)
+              processorActor forward(s, drd, dev)
             }
             else {
               s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")

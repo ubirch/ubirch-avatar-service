@@ -259,7 +259,7 @@ lazy val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % "1.7.25",
-  "org.apache.logging.log4j" % "log4j-core" % "2.8.2",
+  //  "org.apache.logging.log4j" % "log4j-core" % "2.8.2",
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" exclude("org.slf4j", "slf4j-api"),
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
   "ch.qos.logback" % "logback-core" % "1.2.3" exclude("org.slf4j", "slf4j-api"),
@@ -308,8 +308,8 @@ lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLo
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.6" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.1" excludeAll(excludedLoggers: _*)
-lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.1" excludeAll(excludedLoggers: _*)
+lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.6" excludeAll (excludedLoggers: _*)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
