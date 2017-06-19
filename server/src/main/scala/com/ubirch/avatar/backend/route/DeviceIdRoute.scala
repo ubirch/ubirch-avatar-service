@@ -82,7 +82,7 @@ class DeviceIdRoute(implicit ws: StandaloneWSClient, mongo: MongoUtil)
           } ~ put {
             entity(as[Device]) { device =>
               complete {
-                DeviceManager.info(deviceId).map {
+                DeviceManager.info(deviceId).map { // TODO fix bug: this queries the database for a device which logically makes it a GET not a PUT
                   case None =>
                     requestErrorResponse(
                       errorType = "UpdateError",

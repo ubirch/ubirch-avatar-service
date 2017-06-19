@@ -59,7 +59,7 @@ class DeviceUpdateRoute(implicit mongo: MongoUtil)
               logger.error("update device data failed", t)
               complete(requestErrorResponse(
                 errorType = "UpdateDeviceError",
-                errorMessage = s"update failed for message ${ddr.id}, error occured: ${t.getMessage.replace("\"", "'")}")
+                errorMessage = s"update failed for message ${ddr.id}, error occurred: ${t.getMessage.replace("\"", "'")}")
               )
           }
         }
