@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.backend.actor.{CreateDevice, DeviceApiActor}
+import com.ubirch.avatar.backend.actor.{CreateDevice, CreateResult, DeviceApiActor}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
@@ -67,12 +67,19 @@ class DeviceIdRoute(implicit ws: StandaloneWSClient, mongo: MongoUtil)
               onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
                 case Success(resp) =>
                   resp match {
-                    case dev: Device =>
-                      complete(dev)
-                    case jer: JsonErrorResponse =>
-                      complete(requestErrorResponse(jer))
+
+                    case result: CreateResult if result.device.isDefined =>
+                      complete(result.device.get)
+
+                    case result: CreateResult if result.error.isDefined =>
+                      complete(requestErrorResponse(result.error.get))
+
+                    case result: CreateResult =>
+                      logger.error(s"unhandled CreateResult: createResult=$result")
+                      complete(serverErrorResponse(errorType = "CreationError", errorMessage = "DeviceIdRoute.post failed with unhandled case"))
+
                     case _ =>
-                      complete("doof")
+                      complete(serverErrorResponse(errorType = "CreationError", errorMessage = "DeviceIDRoute.post failed with unhandled message"))
                   }
                 case Failure(t) =>
                   logger.error("device creation failed", t)
