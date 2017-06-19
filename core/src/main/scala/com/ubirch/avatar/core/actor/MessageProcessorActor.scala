@@ -4,16 +4,16 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys}
-import com.ubirch.avatar.core.avatar.{AvatarStateManager, AvatarStateManagerREST}
+import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.DeviceStateManager
-import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.actors.MessageReceiver
-import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.language.postfixOps
@@ -44,7 +44,20 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       persistenceActor ! drd
 
-      AvatarStateManager.setReported(device = device, drd.p)
+      AvatarStateManagerREST.setReported(restDevice = device, drd.p) map {
+        case Some(currentAvatarState) =>
+
+          val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
+          DeviceStateManager.upsert(state = dsu)
+          s ! dsu
+
+          if (drd.uuid.isDefined) {
+            val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(dsu).get)
+            outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+          }
+        case None =>
+          JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State for ${device.deviceId}")
+      }
 
       if (DeviceCoreUtil.checkNotaryUsage(device)) //TODO check notary config for device
         notaryActor ! drd
@@ -54,24 +67,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           transformerActor ! Json4sUtil.jvalue2String(drdJson)
         case None =>
           log.error(s"could not create json for message: ${drd.id}")
-      }
-
-      //send back current device state
-      val dbDevice = Json4sUtil.any2any[db.device.Device](device)
-
-      AvatarStateManagerREST.byDeviceId(device.deviceId) map {
-        case Some(currentState) =>
-
-          val dsu = DeviceStateManager.createNewDeviceState(device, currentState)
-          DeviceStateManager.upsert(state = dsu)
-          s ! dsu
-
-          if (drd.uuid.isDefined) {
-            val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(dsu).get)
-            outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-          }
-        case None =>
-          log.error("device current state error")
       }
 
     case msg: CamelMessage =>
