@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.avatar
 
-import java.util.UUID
-
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
@@ -9,7 +7,6 @@ import com.ubirch.avatar.model.db.device.{AvatarState, Device}
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
-import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime
 import org.json4s.JValue
@@ -65,7 +62,7 @@ object AvatarStateManager extends MongoFormats
 
       case Some(_: AvatarState) =>
 
-        logger.error(s"unable to create avatarState for deviceId=${avatarState.deviceId}")
+        logger.error(s"unable to create avatarState (as it already exists) for deviceId=${avatarState.deviceId}")
         Future(None)
 
       case None =>
@@ -78,7 +75,7 @@ object AvatarStateManager extends MongoFormats
               logger.debug(s"created new avatarState: $avatarState")
               Some(avatarState)
             } else {
-              logger.error("failed to create user")
+              logger.error("failed to create avatarState")
               None
             }
 
