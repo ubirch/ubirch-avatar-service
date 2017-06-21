@@ -1,7 +1,5 @@
 package com.ubirch.avatar.model.db.device
 
-import java.util.UUID
-
 import org.joda.time.DateTime
 
 /**

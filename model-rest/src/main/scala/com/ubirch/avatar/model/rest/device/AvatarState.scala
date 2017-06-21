@@ -1,7 +1,5 @@
 package com.ubirch.avatar.model.rest.device
 
-import java.util.UUID
-
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 
