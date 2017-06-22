@@ -69,7 +69,8 @@ function build_container() {
       docker build -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL --build-arg GO_PIPELINE_NAME=$GO_PIPELINE_NAME \
       --build-arg GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL \
       --build-arg GO_PIPELINE_COUNTER=$GO_PIPELINE_COUNTER \
-      --build-arg GO_REVISION_UBIRCH_AVATAR_SERVICE_DEV=$GO_REVISION_UBIRCH_AVATAR_SERVICE_DEV .
+      --build-arg GO_STAGE_COUNTER=$GO_STAGE_COUNTER \
+      --build-arg GO_REVISION_GIT=$GO_REVISION_GIT .
   fi
 
   if [ $? -ne 0 ]; then
