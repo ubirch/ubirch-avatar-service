@@ -95,20 +95,31 @@ object AvatarStateManager extends MongoFormats
     */
   def update(avatarState: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    val selector = document("deviceId" -> avatarState.deviceId)
-    mongo.collection(collectionName) flatMap {
+    val deviceId = avatarState.deviceId
+    byDeviceId(deviceId) flatMap {
 
-      _.update(selector, avatarState) map { writeResult =>
+      case None =>
+        logger.error(s"unable to update if no AvatarState exists: deviceId=$deviceId")
+        Future(None)
 
-        if (writeResult.ok && writeResult.n == 1) {
-          logger.info(s"updated avatarState: deviceId=${avatarState.deviceId}")
-          Some(avatarState)
-        } else {
-          logger.error(s"failed to update avatarState: avatarState=$avatarState")
-          None
+      case Some(_: AvatarState) =>
+
+        val selector = document("deviceId" -> avatarState.deviceId)
+        mongo.collection(collectionName) flatMap {
+
+          _.update(selector, avatarState) map { writeResult =>
+
+            if (writeResult.ok) {
+              logger.info(s"updated avatarState: deviceId=${avatarState.deviceId}")
+              Some(avatarState)
+            } else {
+              logger.error(s"failed to update avatarState: avatarState=$avatarState; writeResult=$writeResult")
+              None
+            }
+
+          }
+
         }
-
-      }
 
     }
 

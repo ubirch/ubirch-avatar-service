@@ -70,7 +70,6 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       }
 
-
     }
 
     scenario("record with same deviceId exists -> create fails") {
@@ -114,7 +113,6 @@ class AvatarStateManagerSpec extends MongoSpec {
         AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(None))
         mongoTestUtils.countAll(collection) map (_ shouldBe 0)
 
-
       }
 
     }
@@ -138,7 +136,6 @@ class AvatarStateManagerSpec extends MongoSpec {
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
         }
-
 
       }
 
@@ -213,7 +210,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
-          state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+          state.deviceId should be(device.deviceId)
           state.desired should be(Some(deviceConfigString))
           state.reported should be(Some(Json4sUtil.jvalue2String(reported)))
 
@@ -289,7 +286,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
-          state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+          state.deviceId should be(device.deviceId)
           state.desired should be(Some(Json4sUtil.jvalue2String(desired)))
           state.reported should be(Some("""{}"""))
 

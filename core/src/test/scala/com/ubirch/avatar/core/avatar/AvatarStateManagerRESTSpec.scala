@@ -2,14 +2,13 @@ package com.ubirch.avatar.core.avatar
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.rest.device.AvatarState
 import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.AvatarState
 import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 
 import org.joda.time.DateTime
-import org.json4s.JsonAST.JNothing
 import org.json4s.native.JsonMethods._
 
 import scala.concurrent.Future
@@ -21,6 +20,7 @@ import scala.concurrent.Future
 class AvatarStateManagerRESTSpec extends MongoSpec {
 
   private val collection = Config.mongoCollectionAvatarState
+  private val emptyJson = Some(parse("{}"))
 
   feature("setReported()") {
 
@@ -43,7 +43,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
-          state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+          state.deviceId should be(device.deviceId)
           state.inSync should be(Some(false))
           state.desired should be(deviceConfig)
           state.reported should be(Some(reported))
@@ -89,7 +89,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
               val expectedDesiredAndDelta = Some(parse(existingState.desired.get))
 
-              state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+              state.deviceId should be(device.deviceId)
               state.inSync should be(Some(false))
               state.desired should be(expectedDesiredAndDelta)
               state.reported should be(Some(reported))
@@ -124,7 +124,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
-          state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+          state.deviceId should be(device.deviceId)
           state.inSync should be(Some(false))
           state.desired should be(Some(desired))
           state.reported should be(Some(parse("""{}""")))
@@ -171,7 +171,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
               val expectedDesiredAndDelta = Some(desired)
 
-              state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+              state.deviceId should be(device.deviceId)
               state.inSync should be(Some(false))
               state.desired should be(expectedDesiredAndDelta)
               state.reported.get should be(reported)
@@ -223,7 +223,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
               val expectedDesiredAndDelta = Some(parse("""{"i":1200,"foo":"bar"}"""))
 
-              state.deviceId should be(UUIDUtil.fromString(device.deviceId))
+              state.deviceId should be(device.deviceId)
               state.inSync should be(Some(false))
               state.desired should be(expectedDesiredAndDelta)
               state.reported.get should be(reported)
@@ -254,7 +254,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       // verify
       restState.deviceId should be(dbState.deviceId)
       restState.inSync should be(Some(true))
-      restState.delta should be(Some(JNothing))
+      restState.delta should be(emptyJson)
 
     }
 
@@ -264,7 +264,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val desired =
         """{"i":600}"""
       val reported = desired
-      val deltaExpected = Some(JNothing)
+      val deltaExpected = emptyJson
       val dbState = db.device.AvatarState(
         deviceId = UUIDUtil.uuidStr,
         desired = Some(desired),
@@ -339,7 +339,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
       val desired =
         """{"i":900}"""
       val reported = """{"i":900,"foo":"bar"}"""
-      val deltaExpected = Some(JNothing) // TODO is this what we want?
+      val deltaExpected = emptyJson
       val dbState = db.device.AvatarState(
         deviceId = UUIDUtil.uuidStr,
         desired = Some(desired),

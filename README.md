@@ -27,6 +27,7 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:oidc-utils_ to 0.4.6
 * update _com.ubirch.util:response-util_ to 0.2.1
 * update _com.ubirch.user:client-rest_ to 0.4.10
+* bugfix (UBI-264): updates on Azure's CosmosDB show the behavior of an upsert()
 
 ### Version 0.3.11 (2017-06-16)
 
