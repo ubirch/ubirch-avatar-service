@@ -2,8 +2,8 @@ package com.ubirch.avatar.backend.actor
 
 import java.util.UUID
 
-import akka.actor.Actor
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
@@ -13,7 +13,9 @@ import com.ubirch.user.client.rest.UserServiceClientRest
 import com.ubirch.user.model.rest.Group
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
-import play.api.libs.ws.StandaloneWSClient
+
+import akka.actor.Actor
+import play.api.libs.ws.WSClient
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -34,7 +36,7 @@ case class AllDevicesResult(devices: Seq[Device])
 
 case class AllStubsResult(stubs: Seq[DeviceInfo])
 
-class DeviceApiActor(implicit ws: StandaloneWSClient) extends Actor with StrictLogging {
+class DeviceApiActor(implicit ws: WSClient) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
 

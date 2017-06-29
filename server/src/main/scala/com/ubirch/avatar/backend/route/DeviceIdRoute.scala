@@ -1,6 +1,7 @@
 package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.backend.actor.{CreateDevice, CreateResult, DeviceApiActor}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
@@ -8,17 +9,16 @@ import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.json.MyJsonProtocol
-import com.ubirch.util.model.JsonErrorResponse
+import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
-import com.ubirch.util.mongo.connection.MongoUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.WSClient
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -29,7 +29,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceIdRoute(implicit ws: StandaloneWSClient, mongo: MongoUtil)
+class DeviceIdRoute(implicit ws: WSClient, mongo: MongoUtil)
   extends ResponseUtil
     with CORSDirective
     with StrictLogging {

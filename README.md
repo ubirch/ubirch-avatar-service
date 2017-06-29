@@ -20,6 +20,7 @@ ubirch Avatar Service is responsible for:
 
 * add scripts `dev-scripts/resetDatabase.sh` and `dev-scripts/initData.sh`
 * updated to _com.ubirch.util:json:0.4.2_ and all ubirch util libs depending on it, too
+* update to _com.ubirch.user:client-rest_ 0.4.13 to fix problem with incompatible Play WS implementations
 
 ### Version 0.3.12 (2017-06-22)
 

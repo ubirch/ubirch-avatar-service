@@ -1,5 +1,6 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
@@ -7,14 +8,15 @@ import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
+import com.ubirch.util.mongo.connection.MongoUtil
+
 import org.scalatest.{BeforeAndAfterAll, Matchers}
+
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import com.ubirch.avatar.config.ConfigKeys
-import com.ubirch.util.mongo.connection.MongoUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import play.api.libs.ws.StandaloneWSClient
-import play.api.libs.ws.ahc.StandaloneAhcWSClient
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ning.NingWSClient
 
 /**
   * author: cvandrei
@@ -25,7 +27,7 @@ class DeviceIdRouteSpec extends RouteSpec
   with BeforeAndAfterAll
   with ResponseUtil {
 
-  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
+  implicit val ws: WSClient = NingWSClient()
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   private val routes = (new MainRoute).myRoute
