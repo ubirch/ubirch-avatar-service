@@ -19,6 +19,7 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.13 (tbd)
 
 * add scripts `dev-scripts/resetDatabase.sh` and `dev-scripts/initData.sh`
+* updated to _com.ubirch.util:json:0.4.2_ and all ubirch util libs depending on it, too
 
 ### Version 0.3.12 (2017-06-22)
 
