@@ -18,7 +18,8 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.13 (tbd)
 
-* tbd
+* add scripts `dev-scripts/resetDatabase.sh` and `dev-scripts/initData.sh`
+* updated to _com.ubirch.util:json:0.4.2_ and all ubirch util libs depending on it, too
 
 ### Version 0.3.12 (2017-06-22)
 
@@ -608,6 +609,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
  2. reset database
 
+*Running `dev-scripts/resetDatabase.sh` does everything in this step.*
+
      ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ClearDb"
 
  3. start test data tool
@@ -623,6 +626,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
         export MQTT_PASSWORD={MQTT-Password}
 
     2. if using a terminal, change inside the project folder and
+
+*Running `dev-scripts/initData.sh` does everything in this step.*
 
         ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
 
