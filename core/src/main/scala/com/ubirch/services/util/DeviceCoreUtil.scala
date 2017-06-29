@@ -6,9 +6,12 @@ import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.keyservice.client.rest.KeyServiceClientRest
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.json4s._
 import org.json4s.native.Serialization._
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ning.NingWSClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -63,10 +66,26 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
   }
 
   def validateSignedMessage(key: String, signature: String, payload: JValue): Boolean = {
-
     val payloadString = write(payload)
     EccUtil.validateSignature(publicKey = key, signature = signature, payload = payloadString)
+  }
 
+
+  def validateSignedMessage(device: Device, signature: String, payload: JValue): Future[Boolean] = {
+
+    implicit val wsClient: WSClient = NingWSClient()
+
+
+    val payloadString = write(payload)
+    KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId) map {
+      case Some(keys) =>
+        keys.map { key =>
+          EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payloadString)
+        }.count(_ == true) > 0
+      case None =>
+        logger.error(s"no pubkeys found for deviceId: ${device.deviceId}")
+        false
+    }
   }
 
   /**

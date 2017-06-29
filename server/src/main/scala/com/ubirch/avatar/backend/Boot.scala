@@ -2,8 +2,12 @@ package com.ubirch.avatar.backend
 
 import java.util.concurrent.TimeUnit
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.Http.ServerBinding
+import akka.stream.ActorMaterializer
+import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
@@ -11,14 +15,7 @@ import com.ubirch.avatar.util.server.ElasticsearchMappings
 import com.ubirch.transformer.TransformerManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.mongo.connection.MongoUtil
-
 import org.elasticsearch.client.transport.TransportClient
-
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.Http.ServerBinding
-import akka.stream.ActorMaterializer
-import akka.util.Timeout
 import play.api.libs.ws.StandaloneWSClient
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
@@ -50,13 +47,16 @@ object Boot extends App
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
   createElasticsearchMappings()
 
+  //  val camel = CamelExtension(system)
+  //  val camelContext = camel.context
+  //  val registry = camel.context.getComponent("sqs")
+
   val bindingFuture = start()
 
   TransformerManager.init()
   DeviceTypeManager.init()
 
   stop()
-
 
   private def start(): Future[ServerBinding] = {
 

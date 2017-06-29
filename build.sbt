@@ -63,6 +63,13 @@ lazy val server = project
     }.taskValue
   )
 
+lazy val mqttBridge = project
+  .settings(commonSettings: _*)
+  .dependsOn(core, util, testBase)
+  .settings(
+    description := "mqtt to sqs bridge"
+  )
+
 lazy val cmdtools = project
   .settings(commonSettings: _*)
   .dependsOn(core, client, util, testBase)
@@ -171,6 +178,7 @@ lazy val depServer = Seq(
   akkaG %% "akka-actor" % akkaV,
   akkaG %% "akka-slf4j" % akkaV,
   akkaG %% "akka-http" % akkaHttpV,
+  akkaG %% "akka-camel" % akkaV,
 
   //testing
   scalatest % "test",
@@ -189,6 +197,7 @@ lazy val depCore = Seq(
   ubirchMongo,
   ubirchNotary,
   ubirchResponse,
+  ubirchKeyClientRest,
   spireMath,
   scalatest % "test",
   akkaTestkit % "test"
@@ -319,6 +328,7 @@ lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.7"
 lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.10" excludeAll (excludedLoggers: _*)
+lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.1.6" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
