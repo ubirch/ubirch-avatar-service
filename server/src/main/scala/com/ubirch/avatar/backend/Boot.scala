@@ -19,8 +19,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import play.api.libs.ws.StandaloneWSClient
-import play.api.libs.ws.ahc.StandaloneAhcWSClient
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ning.NingWSClient
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -39,7 +39,7 @@ object Boot extends App
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
-  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
+  implicit val ws: WSClient = NingWSClient()
 
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
