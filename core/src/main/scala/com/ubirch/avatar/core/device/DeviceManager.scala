@@ -10,8 +10,7 @@ import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.aws.ThingShadowState
 import com.ubirch.avatar.model.rest.device.DeviceInfo
-import com.ubirch.avatar.util.model.DeviceTypeUtil
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -71,33 +70,28 @@ object DeviceManager
 
   def create(device: db.device.Device): Future[Option[db.device.Device]] = {
 
-    // TODO/BUG check if device w/ hwDeviceId exists already
-    val devWithDefaults = device.copy(
-      hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
-      deviceProperties = Some(device.deviceProperties.getOrElse(
-        DeviceTypeUtil.defaultProps(device.deviceTypeKey)
-      )),
-      deviceConfig = Some(device.deviceConfig.getOrElse(
-        DeviceTypeUtil.defaultConf(device.deviceTypeKey)
-      )),
-      tags = if (device.tags.isEmpty) {
-        DeviceTypeUtil.defaultTags(device.deviceTypeKey)
-      } else {
-        device.tags
-      }
-    )
+    infoByHwId(device.hwDeviceId) flatMap {
 
-    Json4sUtil.any2jvalue(devWithDefaults) match {
+      case Some(_: db.device.Device) =>
+        logger.error(s"device with hwDeviceId already exists: hwDeviceId=${device.hwDeviceId}")
+        Future(None)
 
-      case Some(devJval) =>
-        ESSimpleStorage.storeDoc(
-          docIndex = Config.esDeviceIndex,
-          docType = Config.esDeviceType,
-          docIdOpt = Some(device.deviceId),
-          doc = devJval
-        ) map (_.extractOpt[db.device.Device])
+      case None =>
 
-      case None => Future(None)
+        val devWithDefaults = DeviceUtil.deviceWithDefaults(device)
+        Json4sUtil.any2jvalue(devWithDefaults) match {
+
+          case Some(devJval) =>
+            ESSimpleStorage.storeDoc(
+              docIndex = Config.esDeviceIndex,
+              docType = Config.esDeviceType,
+              docIdOpt = Some(device.deviceId),
+              doc = devJval
+            ) map (_.extractOpt[db.device.Device])
+
+          case None => Future(None)
+        }
+
     }
 
   }
