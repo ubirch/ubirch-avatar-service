@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.15 (tbd)
 
-* tbd
+* fixed problem with faulty log4j logging by adding the dependency `log4j-over-slf4j`
 
 ### Version 0.3.14 (2017-07-11)
 
