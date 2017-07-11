@@ -4,7 +4,7 @@ curl 'localhost:9200/ubirch-avatar-state/_mapping/?pretty' > ubirch-avatar-state
 curl 'localhost:9200/ubirch-device-raw-data/_mapping/?pretty' > ubirch-device-raw-mappings.json
 curl 'localhost:9200/ubirch-device-history/_mapping/?pretty' > ubirch-device-history-mappings.json
 curl 'localhost:9200/ubirch-device-raw-data-anchored/_mapping/?pretty' > ubirch-device-raw-anchored.json
-curl 'localhost:9200/ubirch-devices/_mapping/?pretty' > ubirch-device-raw-anchored.json
+curl 'localhost:9200/ubirch-devices/_mapping/?pretty' > ubirch-devices.json
 curl 'localhost:9200/ubirch-device-state/_mapping/?pretty' > ubirch-device-state.json
 curl 'localhost:9200/ubirch-device-type/_mapping/?pretty' > ubirch-device-type.json
 
