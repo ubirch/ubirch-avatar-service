@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.14 (tbd)
 
-* tbd
+* bugfix: it was possible to create two devices with the same hwDeviceId
 
 ### Version 0.3.13 (2017-06-29)
 
