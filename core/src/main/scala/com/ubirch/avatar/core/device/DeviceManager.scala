@@ -28,6 +28,9 @@ object DeviceManager
   extends MyJsonProtocol
     with StrictLogging {
 
+  private val esIndex = Config.esDeviceIndex
+  private val esType = Config.esDeviceType
+
   /**
     * Select all devices in any of the given groups.
     *
@@ -37,8 +40,8 @@ object DeviceManager
   def all(groups: Set[UUID]): Future[Seq[Device]] = {
 
     ESSimpleStorage.getDocs(
-      docIndex = Config.esDeviceIndex,
-      docType = Config.esDeviceType,
+      docIndex = esIndex,
+      docType = esType,
       query = groupsTermsQuery(groups),
       size = Some(Config.esLargePageSize)
     ).map { res =>
@@ -57,8 +60,8 @@ object DeviceManager
   def allStubs(groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
 
     ESSimpleStorage.getDocs(
-      docIndex = Config.esDeviceIndex,
-      docType = Config.esDeviceType,
+      docIndex = esIndex,
+      docType = esType,
       query = groupsTermsQuery(groups),
       size = Some(Config.esLargePageSize)
     ).map { res =>
@@ -83,8 +86,8 @@ object DeviceManager
 
           case Some(devJval) =>
             ESSimpleStorage.storeDoc(
-              docIndex = Config.esDeviceIndex,
-              docType = Config.esDeviceType,
+              docIndex = esIndex,
+              docType = esType,
               docIdOpt = Some(device.deviceId),
               doc = devJval
             ) map (_.extractOpt[db.device.Device])
@@ -103,8 +106,8 @@ object DeviceManager
       case Some(devJval) =>
 
         val dev = ESSimpleStorage.storeDoc(
-          docIndex = Config.esDeviceIndex,
-          docType = Config.esDeviceType,
+          docIndex = esIndex,
+          docType = esType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
         ).map(_.extractOpt[Device])
@@ -124,8 +127,8 @@ object DeviceManager
   def delete(device: Device): Future[Option[Device]] = {
 
     ESSimpleStorage.deleteDoc(
-      docIndex = Config.esDeviceIndex,
-      docType = Config.esDeviceType,
+      docIndex = esIndex,
+      docType = esType,
       docId = device.deviceId
     ).map {
       case true => Some(device)
@@ -138,8 +141,8 @@ object DeviceManager
 
     val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId)
     ESSimpleStorage.getDocs(
-      docIndex = Config.esDeviceIndex,
-      docType = Config.esDeviceType,
+      docIndex = esIndex,
+      docType = esType,
       query = Some(query)
     ).map {
 
@@ -156,8 +159,8 @@ object DeviceManager
 
     val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
     ESSimpleStorage.getDocs(
-      docIndex = Config.esDeviceIndex,
-      docType = Config.esDeviceType,
+      docIndex = esIndex,
+      docType = esType,
       query = Some(query)
     ).map {
 
@@ -174,7 +177,11 @@ object DeviceManager
 
   def info(deviceId: String): Future[Option[Device]] = {
 
-    ESSimpleStorage.getDoc(Config.esDeviceIndex, Config.esDeviceType, deviceId).map {
+    ESSimpleStorage.getDoc(
+      docIndex = esIndex,
+      docType = esType,
+      docId = deviceId
+    ).map {
       case Some(resJval) => Some(resJval.extract[Device])
       case None => None
     }
