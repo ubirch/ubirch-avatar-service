@@ -16,9 +16,13 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
-### Version 0.3.14 (tbd)
+### Version 0.3.15 (tbd)
 
-* tbd
+* fixed problem with faulty log4j logging by adding the dependency `log4j-over-slf4j`
+
+### Version 0.3.14 (2017-07-11)
+
+* bugfix: it was possible to create two devices with the same hwDeviceId
 
 ### Version 0.3.13 (2017-06-29)
 
@@ -120,7 +124,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "aws" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -132,7 +136,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "client" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -143,7 +147,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -154,7 +158,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "config" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -165,7 +169,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "core" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -176,7 +180,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-db" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-db" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -187,7 +191,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-rest" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-rest" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -200,7 +204,7 @@ resolvers ++= Seq(
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "server" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -213,7 +217,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "test-base" % "0.3.15-SNAPSHOT"
 )
 ```
 
@@ -224,7 +228,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.14-SNAPSHOT"
+  "com.ubirch.avatar" %% "util" % "0.3.15-SNAPSHOT"
 )
 ```
 
