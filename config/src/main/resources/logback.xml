@@ -12,6 +12,10 @@
     <logger name="reactivemongo-akka.actor" level="WARN"/>
     <logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>
     <logger name="org.apache.camel" level="INFO"/>
+    <logger name="org.apache.http" level="INFO"/>
+    <logger name="com.amazonaws" level="INFO"/>
+    <logger name="akka.event" level="INFO"/>
+    <logger name="reactivemongo.core" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
