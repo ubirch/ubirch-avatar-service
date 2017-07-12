@@ -106,7 +106,7 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |}""".stripMargin
     ),
 
-    // ubirch-device-state
+    // ubirch-device-state // TODO rename to ubirch-avatar-state-history?
     Config.esDeviceStateIndex -> Map(
       Config.esDeviceStateType ->
         s"""{

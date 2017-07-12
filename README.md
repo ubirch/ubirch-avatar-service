@@ -18,7 +18,10 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.16 (tbd)
 
-* tbd
+* add `MongoConstraints`
+* introduced `MongoStorageCleanup`
+* improved `MongoSpec`
+* added clean up of MongoDD to `ClearDb`
 
 ### Version 0.3.15 (2017-07-12)
 

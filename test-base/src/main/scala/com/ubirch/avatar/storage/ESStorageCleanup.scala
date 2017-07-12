@@ -12,7 +12,7 @@ import org.elasticsearch.index.IndexNotFoundException
   * author: cvandrei
   * since: 2016-10-26
   */
-trait StorageCleanup extends ElasticsearchMappings {
+trait ESStorageCleanup extends ElasticsearchMappings {
 
   implicit protected val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
 
