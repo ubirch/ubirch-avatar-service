@@ -1,14 +1,13 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
             <pattern>%date{ISO8601} [%-5level] [%logger{40}] - %msg - [%thread]%n</pattern>
         </encoder>
     </appender>
 
     <logger name="com.ubirch" level="DEBUG"/>
+    <logger name="akka.actor" level="WARN"/>
     <logger name="reactivemongo-akka.actor" level="WARN"/>
     <logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>
     <logger name="org.apache.camel" level="INFO"/>
@@ -20,4 +19,5 @@
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
+
 </configuration>
