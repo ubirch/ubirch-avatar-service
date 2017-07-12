@@ -22,6 +22,7 @@ ubirch Avatar Service is responsible for:
 * introduced `MongoStorageCleanup`
 * improved `MongoSpec`
 * added clean up of MongoDD to `ClearDb`
+* MongoDB constraints are now created during server start
 
 ### Version 0.3.15 (2017-07-12)
 
