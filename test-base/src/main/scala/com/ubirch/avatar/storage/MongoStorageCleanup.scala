@@ -28,6 +28,7 @@ trait MongoStorageCleanup extends MongoConstraints {
   def cleanMongoDb(): Unit = {
     dropDb()
     createMongoConstraints()
+    Thread.sleep(1000)
   }
 
 }
