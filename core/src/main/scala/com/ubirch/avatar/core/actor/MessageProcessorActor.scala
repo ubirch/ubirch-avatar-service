@@ -1,22 +1,25 @@
 package com.ubirch.avatar.core.actor
 
-import com.ubirch.avatar.config.{Config, ConfigKeys}
-import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.camel.CamelMessage
+import akka.routing.RoundRobinPool
+import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
+import com.ubirch.avatar.core.avatar.{AvatarStateManager, AvatarStateManagerREST}
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
-import com.ubirch.util.json.Json4sUtil
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+import org.json4s.JValue
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import akka.camel.CamelMessage
-import akka.routing.RoundRobinPool
-
+import scala.concurrent.Await
+import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
@@ -25,6 +28,7 @@ import scala.language.postfixOps
   */
 class MessageProcessorActor(implicit mongo: MongoUtil)
   extends Actor
+    with MyJsonProtocol
     with ActorLogging {
 
   private implicit val exContext = context.dispatcher
@@ -43,28 +47,39 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       log.debug(s"received message: $drd")
 
-      persistenceActor ! drd
+      if (device.checkProperty(Const.STOREDATA))
+        persistenceActor ! drd
 
-      AvatarStateManagerREST.setReported(restDevice = device, drd.p) map {
-
-        case Some(currentAvatarState) =>
-
-          val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
-          DeviceStateManager.upsert(state = dsu)
-          s ! dsu
-
-          if (drd.uuid.isDefined) {
-            val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(dsu).get)
-            outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+      drd.v match {
+        case MessageVersion.`v003` =>
+          drd.p.extract[Array[JValue]].foreach { payload =>
+            processPayload(device, payload)
           }
-
-        case None =>
-          log.error(s"Could not get current Avatar State for ${device.deviceId}")
-          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State for ${device.deviceId}")
-
+        case _ =>
+          processPayload(device, drd.p)
       }
 
-      if (DeviceCoreUtil.checkNotaryUsage(device)) //TODO check notary config for device
+      //Thread.sleep(5000)
+
+      AvatarStateManager.byDeviceId(device.deviceId).map {
+        case Some(currentAvatarState) =>
+          AvatarStateManagerREST.toRestModel(currentAvatarState).delta match {
+            case Some(delta) =>
+              s ! delta
+              if (drd.uuid.isDefined) {
+                val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(delta).get)
+                outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+              }
+            case None =>
+              log.error(s"current AvatarStateRest not available: ${device.deviceId}")
+              s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
+          }
+        case None =>
+          log.error(s"current AvatarState not available: ${device.deviceId}")
+          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State for ${device.deviceId}")
+      }
+
+      if (DeviceCoreUtil.checkNotaryUsage(device))
         notaryActor ! drd
 
       Json4sUtil.any2jvalue(drd) match {
@@ -82,4 +97,14 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   }
 
+  private def processPayload(device: Device, payload: JValue) = {
+    AvatarStateManagerREST.setReported(restDevice = device, payload) map {
+      case Some(currentAvatarState) =>
+
+        val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
+        val res = Await.result(DeviceStateManager.upsert(state = dsu), 10 seconds)
+      case None =>
+        log.error(s"Could not get current Avatar State for ${device.deviceId}")
+    }
+  }
 }
