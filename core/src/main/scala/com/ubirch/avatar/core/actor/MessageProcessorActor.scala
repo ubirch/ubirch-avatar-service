@@ -59,8 +59,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           processPayload(device, drd.p)
       }
 
-      //Thread.sleep(5000)
-
       AvatarStateManager.byDeviceId(device.deviceId).map {
         case Some(currentAvatarState) =>
           AvatarStateManagerREST.toRestModel(currentAvatarState).delta match {
