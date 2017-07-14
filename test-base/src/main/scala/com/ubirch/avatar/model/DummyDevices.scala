@@ -2,6 +2,7 @@ package com.ubirch.avatar.model
 
 import java.util.UUID
 
+import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
@@ -33,7 +34,7 @@ object DummyDevices {
              groups: Set[UUID] = Set(UUIDUtil.uuid),
              deviceName: String = "testHans001",
              hwDeviceId: String = UUIDUtil.uuidStr,
-             deviceTypeKey: String,
+             deviceTypeKey: String = Const.ENVIRONMENTSENSOR,
              deviceProperties: Option[JValue] = None
             ): Device = {
 

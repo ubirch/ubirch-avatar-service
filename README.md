@@ -16,6 +16,27 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
+### Version 0.3.15 (2017-07-13)
+
+* fixed problem with faulty log4j logging by adding the dependency `log4j-over-slf4j`
+* add `MongoConstraints`
+* introduced `MongoStorageCleanup`
+* improved `MongoSpec`
+* added clean up of MongoDD to `ClearDb`
+* MongoDB constraints are now created during server start
+* update _com.ubirch.util:mongo(-test)-utils_ to 0.3.3
+* update _com.ubirch.user:*_ to 0.4.14
+
+### Version 0.3.14 (2017-07-11)
+
+* bugfix: it was possible to create two devices with the same hwDeviceId
+
+### Version 0.3.13 (2017-06-29)
+
+* add scripts `dev-scripts/resetDatabase.sh` and `dev-scripts/initData.sh`
+* updated to _com.ubirch.util:json:0.4.2_ and all ubirch util libs depending on it, too
+* update to _com.ubirch.user:client-rest:0.4.13_
+
 ### Version 0.3.12 (2017-06-22)
 
 * AvatarState is no longer stored in AWS IoT but instead in a MongoDB
@@ -110,7 +131,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.12"
+  "com.ubirch.avatar" %% "aws" % "0.3.15"
 )
 ```
 
@@ -122,7 +143,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.12"
+  "com.ubirch.avatar" %% "client" % "0.3.15"
 )
 ```
 
@@ -133,7 +154,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.12"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.15"
 )
 ```
 
@@ -144,7 +165,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.12"
+  "com.ubirch.avatar" %% "config" % "0.3.15"
 )
 ```
 
@@ -155,7 +176,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.12"
+  "com.ubirch.avatar" %% "core" % "0.3.15"
 )
 ```
 
@@ -166,7 +187,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-db" % "0.3.12"
+  "com.ubirch.avatar" %% "model-db" % "0.3.15"
 )
 ```
 
@@ -177,7 +198,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-rest" % "0.3.12"
+  "com.ubirch.avatar" %% "model-rest" % "0.3.15"
 )
 ```
 
@@ -190,7 +211,7 @@ resolvers ++= Seq(
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.12"
+  "com.ubirch.avatar" %% "server" % "0.3.15"
 )
 ```
 
@@ -203,7 +224,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.12"
+  "com.ubirch.avatar" %% "test-base" % "0.3.15"
 )
 ```
 
@@ -214,7 +235,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.12"
+  "com.ubirch.avatar" %% "util" % "0.3.15"
 )
 ```
 
@@ -604,6 +625,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
  2. reset database
 
+*Running `dev-scripts/resetDatabase.sh` does everything in this step.*
+
      ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ClearDb"
 
  3. start test data tool
@@ -619,6 +642,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
         export MQTT_PASSWORD={MQTT-Password}
 
     2. if using a terminal, change inside the project folder and
+
+*Running `dev-scripts/initData.sh` does everything in this step.*
 
         ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
 

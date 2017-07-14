@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.12",
+  version := "0.3.15",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -219,6 +219,7 @@ lazy val depUtil = Seq(
   ubirchJson,
   ubirchElasticsearchClientBinary,
   ubirchElasticsearchUtil,
+  ubirchMongo,
   ubirchOidcUtils,
   ubirchUUID % "test",
   scalatest % "test"
@@ -245,6 +246,8 @@ lazy val awsSdkV = "1.11.93"
 lazy val camelV = "2.18.1"
 lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
+val logbackV = "1.2.3"
+val slf4jV = "1.7.25"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -258,12 +261,12 @@ lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaHttpV
 lazy val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
-  "org.slf4j" % "slf4j-api" % "1.7.25",
-  //  "org.apache.logging.log4j" % "log4j-core" % "2.8.2",
+  "org.slf4j" % "slf4j-api" % slf4jV,
+  "org.slf4j" % "log4j-over-slf4j" % slf4jV,
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" exclude("org.slf4j", "slf4j-api"),
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
-  "ch.qos.logback" % "logback-core" % "1.2.3" exclude("org.slf4j", "slf4j-api"),
-  "ch.qos.logback" % "logback-classic" % "1.2.3" exclude("org.slf4j", "slf4j-api"),
+  "ch.qos.logback" % "logback-core" % logbackV exclude("org.slf4j", "slf4j-api"),
+  "ch.qos.logback" % "logback-classic" % logbackV exclude("org.slf4j", "slf4j-api"),
   "com.internetitem" % "logback-elasticsearch-appender" % "1.5" exclude("org.slf4j", "slf4j-api")
 )
 
@@ -305,20 +308,21 @@ lazy val excludedLoggers = Seq(
 
 lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.6" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.7" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.6" excludeAll (excludedLoggers: _*)
+lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.2" excludeAll (excludedLoggers: _*)
+lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.3" excludeAll (excludedLoggers: _*)
+lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.3" excludeAll (excludedLoggers: _*)
+lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.7" excludeAll (excludedLoggers: _*)
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
 lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.7" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.7" excludeAll (excludedLoggers: _*)
-lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.2" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.10" excludeAll (excludedLoggers: _*)
+
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.14" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER

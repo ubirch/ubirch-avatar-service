@@ -4,6 +4,7 @@ import java.security._
 import java.util.Base64
 
 import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.JsonFormats
 
 import org.json4s._
@@ -59,6 +60,26 @@ object DeviceUtil {
     val sKey: PrivateKey = kp.getPrivate
     val pKey: PublicKey = kp.getPublic
     (sKey, pKey)
+
+  }
+
+  def deviceWithDefaults(device: Device): Device = {
+
+    // TODO automated tests
+    device.copy(
+      hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
+      deviceProperties = Some(device.deviceProperties.getOrElse(
+        DeviceTypeUtil.defaultProps(device.deviceTypeKey)
+      )),
+      deviceConfig = Some(device.deviceConfig.getOrElse(
+        DeviceTypeUtil.defaultConf(device.deviceTypeKey)
+      )),
+      tags = if (device.tags.isEmpty) {
+        DeviceTypeUtil.defaultTags(device.deviceTypeKey)
+      } else {
+        device.tags
+      }
+    )
 
   }
 

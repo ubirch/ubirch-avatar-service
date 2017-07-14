@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
-import com.ubirch.avatar.util.server.ElasticsearchMappings
+import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.transformer.TransformerManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -19,8 +19,8 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import play.api.libs.ws.StandaloneWSClient
-import play.api.libs.ws.ahc.StandaloneAhcWSClient
+import play.api.libs.ws.WSClient
+import play.api.libs.ws.ning.NingWSClient
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -33,15 +33,17 @@ import scala.util.{Failure, Success}
   */
 object Boot extends App
   with ElasticsearchMappings
+  with MongoConstraints
   with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
-  implicit val ws: StandaloneWSClient = StandaloneAhcWSClient()
+  implicit val ws: WSClient = NingWSClient()
 
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
+  createMongoConstraints()
 
   logger.info("ubirchAvatarService started")
 

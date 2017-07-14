@@ -1,16 +1,17 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.util.mongo.connection.MongoUtil
+
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.ubirch.util.mongo.connection.MongoUtil
-import play.api.libs.ws.StandaloneWSClient
+import play.api.libs.ws.WSClient
 
 /**
   * author: cvandrei
   * since: 2016-09-20
   */
-class MainRoute(implicit ws: StandaloneWSClient, mongo: MongoUtil) {
+class MainRoute(implicit ws: WSClient, mongo: MongoUtil) {
 
   val welcome = new WelcomeRoute {}
   val deepCheck = new DeepCheckRoute {}
