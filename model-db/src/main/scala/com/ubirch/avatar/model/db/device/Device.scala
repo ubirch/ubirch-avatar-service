@@ -5,7 +5,7 @@ import java.util.UUID
 import com.ubirch.avatar.config.Config
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
-import org.json4s.JsonAST.JBool
+import org.json4s.JsonAST.{JBool, JString}
 
 /**
   * author: cvandrei
@@ -45,7 +45,8 @@ case class Device(deviceId: String,
 
   def checkProperty(propertyKey: String): Boolean = {
     if (deviceConfig.isDefined) {
-      (deviceProperties.get.camelizeKeys \ propertyKey).equals(JBool(true))
+      (deviceProperties.get.camelizeKeys \ propertyKey).equals(JString("true")) ||
+        (deviceProperties.get.camelizeKeys \ propertyKey).equals(JBool(true))
     }
     else
       false
