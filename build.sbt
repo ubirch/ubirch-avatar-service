@@ -250,7 +250,7 @@ lazy val depTestBase = Seq(
 
 // VERSIONS
 lazy val akkaV = "2.4.18"
-lazy val akkaHttpV = "10.0.6"
+lazy val akkaHttpV = "10.0.9"
 lazy val json4sV = "3.5.2"
 lazy val awsSdkV = "1.11.93"
 lazy val camelV = "2.18.1"
