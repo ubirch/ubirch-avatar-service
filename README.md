@@ -23,7 +23,7 @@ ubirch Avatar Service is responsible for:
 * update _com.ubirch.util:response-util_ to 0.2.3
 * update _com.ubirch.util:oidc-utils_ to 0.4.8
 * update to `com.ubirch.key:client-rest:0.1.10`
-* update to `com.ubirch.user:*:0.4.15`
+* update to `com.ubirch.user:*:0.4.16`
 
 ### Version 0.3.15 (2017-07-13)
 
