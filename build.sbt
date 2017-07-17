@@ -332,7 +332,7 @@ lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.7"
 lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.2" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.14" excludeAll (excludedLoggers: _*)
-lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.1.6" excludeAll (excludedLoggers: _*)
+lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.1.9" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
