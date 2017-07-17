@@ -24,7 +24,7 @@ object InitData
   // NOTE if true this the NotaryService will be used. it is limited by it's wallet so please be careful when activating it.
   val notaryServiceEnabled = false
 
-  val numberOfRawMessages = 50
+  val numberOfRawMessages = 5
 
   DeviceTypeManager.init()
 
@@ -74,7 +74,9 @@ object InitData
       )
 
       series foreach { dataRaw =>
-        AvatarRestClient.deviceUpdatePOST(dataRaw)
+        logger.debug("-----------------------------------------------------------------------------------------")
+        val resp = AvatarRestClient.deviceUpdatePOST(dataRaw)
+        logger.debug(s"response: ${resp.body.asString}")
         Thread.sleep(500)
       }
 
