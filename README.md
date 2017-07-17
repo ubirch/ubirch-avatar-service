@@ -18,7 +18,12 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.16 (tbd)
 
-* update to `com.ubirch.key:client-rest:0.1.9`
+* update Akka HTTP to 10.0.9
+* update _com.ubirch.util:rest-akka-http(-test)_ to 0.3.8
+* update _com.ubirch.util:response-util_ to 0.2.3
+* update _com.ubirch.util:oidc-utils_ to 0.4.8
+* update to `com.ubirch.key:client-rest:0.1.10`
+* update to `com.ubirch.user:*:0.4.16`
 
 ### Version 0.3.15 (2017-07-13)
 
