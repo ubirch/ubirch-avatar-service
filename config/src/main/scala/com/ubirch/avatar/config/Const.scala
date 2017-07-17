@@ -28,7 +28,7 @@ object Const {
 
   final val PROP_CC = "countryCode"
   final val BLOCKC = "blockChain"
-  final val STOREDATA = "storesdata"
+  final val STOREDATA = "storesData"
 
   final val TAG_SENSOR = "sensor"
   final val TAG_ACTOR = "actor"

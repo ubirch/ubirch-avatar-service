@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by derMicha on 30/10/16.
   */
 
-class MqttDeviceConsumerActor(implicit mongo: MongoUtil)
+class MqttDeviceConsumerActor()
   extends Consumer
     with ActorLogging
     with MyJsonProtocol {
@@ -39,8 +39,6 @@ class MqttDeviceConsumerActor(implicit mongo: MongoUtil)
     s"MqttDeviceConsumerActor?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword&qualityOfService=$qualityOfService&cleanSession=false"
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
-
-  private val validatorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
 
   override def preStart(): Unit = {
     super.preStart()
@@ -71,7 +69,10 @@ class MqttDeviceConsumerActor(implicit mongo: MongoUtil)
           case Some(jval) =>
             jval.extractOpt[DeviceDataRaw] match {
               case Some(ddr) =>
-                validatorActor ! ddr.copy(uuid = Some(deviceUuid))
+
+              //TODO forward to SQS consumer
+
+              //validatorActor ! ddr.copy(uuid = Some(deviceUuid))
               case None =>
                 log.error(s"message is not a valid DeviceDataRaw object: $msgStr")
             }

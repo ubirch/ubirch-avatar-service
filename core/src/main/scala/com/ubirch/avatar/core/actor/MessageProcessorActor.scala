@@ -1,22 +1,24 @@
 package com.ubirch.avatar.core.actor
 
-import com.ubirch.avatar.config.{Config, ConfigKeys}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.camel.CamelMessage
+import akka.routing.RoundRobinPool
+import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.actor.TransformerProducerActor
-import com.ubirch.util.json.Json4sUtil
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+import org.json4s.JValue
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import akka.camel.CamelMessage
-import akka.routing.RoundRobinPool
-
+import scala.concurrent.Future
 import scala.language.postfixOps
 
 /**
@@ -25,6 +27,7 @@ import scala.language.postfixOps
   */
 class MessageProcessorActor(implicit mongo: MongoUtil)
   extends Actor
+    with MyJsonProtocol
     with ActorLogging {
 
   private implicit val exContext = context.dispatcher
@@ -43,29 +46,30 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       log.debug(s"received message: $drd")
 
-      persistenceActor ! drd
+      if (device.checkProperty(Const.STOREDATA))
+        persistenceActor ! drd
 
-      AvatarStateManagerREST.setReported(restDevice = device, drd.p) map {
+      if (DeviceCoreUtil.checkNotaryUsage(device))
+        notaryActor ! drd
 
-        case Some(currentAvatarState) =>
-
-          val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
-          DeviceStateManager.upsert(state = dsu)
-          s ! dsu
-
+      (drd.v match {
+        case MessageVersion.`v003` =>
+          drd.p.extract[Array[JValue]].map { payload =>
+            processPayload(device, payload)
+          }.toList.reverse.head
+        case _ =>
+          processPayload(device, drd.p)
+      }).map {
+        case Some(d) =>
+          s ! d
           if (drd.uuid.isDefined) {
-            val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(dsu).get)
+            val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
             outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
           }
-
         case None =>
-          log.error(s"Could not get current Avatar State for ${device.deviceId}")
-          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State for ${device.deviceId}")
-
+          log.error(s"current AvatarStateRest not available: ${device.deviceId}")
+          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
       }
-
-      if (DeviceCoreUtil.checkNotaryUsage(device)) //TODO check notary config for device
-        notaryActor ! drd
 
       Json4sUtil.any2jvalue(drd) match {
         case Some(drdJson) =>
@@ -80,6 +84,18 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
     case _ => log.error("received unknown message")
 
+  }
+
+  private def processPayload(device: Device, payload: JValue): Future[Option[DeviceStateUpdate]] = {
+    AvatarStateManagerREST.setReported(restDevice = device, payload) map {
+      case Some(currentAvatarState) =>
+        val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
+        DeviceStateManager.upsert(state = dsu)
+        Some(dsu)
+      case None =>
+        log.error(s"Could not get current Avatar State for ${device.deviceId}")
+        None
+    }
   }
 
 }

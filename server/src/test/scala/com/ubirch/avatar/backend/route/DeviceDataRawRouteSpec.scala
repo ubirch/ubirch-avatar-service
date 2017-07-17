@@ -1,16 +1,15 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.config.ConfigKeys
-import com.ubirch.util.mongo.connection.MongoUtil
-
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import play.api.libs.ws.WSClient
 import play.api.libs.ws.ning.NingWSClient

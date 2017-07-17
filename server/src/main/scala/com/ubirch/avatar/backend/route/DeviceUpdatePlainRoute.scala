@@ -25,7 +25,7 @@ import scala.util.{Failure, Success}
   */
 class DeviceUpdatePlainRoute(implicit mongo: MongoUtil)
   extends MyJsonProtocol
-  with StrictLogging {
+    with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
@@ -50,6 +50,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil)
                           val dsuString = Json4sUtil.jvalue2String(dsuJson)
                           complete(dsuString)
                         case _ =>
+                          logger.error("update device data failed")
                           complete("NOK: DeviceStateUpdate failed")
                       }
                     case Failure(t) =>

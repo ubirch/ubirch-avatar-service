@@ -40,7 +40,7 @@ object Boot extends App
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
-  implicit val ws: WSClient = NingWSClient()
+  implicit val wsClient: WSClient = NingWSClient()
 
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
   createMongoConstraints()
@@ -52,13 +52,16 @@ object Boot extends App
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
   createElasticsearchMappings()
 
+  //  val camel = CamelExtension(system)
+  //  val camelContext = camel.context
+  //  val registry = camel.context.getComponent("sqs")
+
   val bindingFuture = start()
 
   TransformerManager.init()
   DeviceTypeManager.init()
 
   stop()
-
 
   private def start(): Future[ServerBinding] = {
 
@@ -83,14 +86,14 @@ object Boot extends App
           case Success(_) =>
             system.terminate()
             esClient.close()
-            ws.close()
+            wsClient.close()
             mongo.close()
 
           case Failure(f) =>
             logger.error("shutdown failed", f)
             system.terminate()
             esClient.close()
-            ws.close()
+            wsClient.close()
             mongo.close()
 
         }

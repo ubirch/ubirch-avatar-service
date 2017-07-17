@@ -7,13 +7,12 @@ import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
-import com.ubirch.util.mongo.connection.MongoUtil
-
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import play.api.libs.ws.WSClient
 import play.api.libs.ws.ning.NingWSClient

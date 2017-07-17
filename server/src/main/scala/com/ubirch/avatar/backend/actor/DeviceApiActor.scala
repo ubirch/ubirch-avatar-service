@@ -2,7 +2,6 @@ package com.ubirch.avatar.backend.actor
 
 import java.util.UUID
 
-import akka.actor.Actor
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.core.device.DeviceManager
@@ -15,6 +14,7 @@ import com.ubirch.user.model.rest.Group
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
 
+import akka.actor.Actor
 import play.api.libs.ws.WSClient
 
 import scala.concurrent.{ExecutionContextExecutor, Future}

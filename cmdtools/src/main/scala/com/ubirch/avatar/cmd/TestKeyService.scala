@@ -16,7 +16,7 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 09/11/16.
   */
-object InitData
+object TestKeyService
   extends App
     with MyJsonProtocol
     with StrictLogging {
@@ -24,12 +24,11 @@ object InitData
   // NOTE if true this the NotaryService will be used. it is limited by it's wallet so please be careful when activating it.
   val notaryServiceEnabled = false
 
-  val numberOfRawMessages = 5
+  val numberOfRawMessages = 1
 
   DeviceTypeManager.init()
 
-
-  val properties_BC: JValue = read[JValue](
+  val properties: JValue = read[JValue](
     s"""
        |{
        |"${Const.BLOCKC}" : true,
@@ -38,25 +37,13 @@ object InitData
        |""".stripMargin
   )
 
-  val properties_NOBC: JValue = read[JValue](
-    s"""
-       |{
-       |"${Const.BLOCKC}" : false,
-       |"${Const.STOREDATA}" : true
-       |}
-       |""".stripMargin
-  )
-
   val device = if (notaryServiceEnabled) {
     DummyDevices.device(
       deviceTypeKey = Const.ENVIRONMENTSENSOR,
-      deviceProperties = Some(properties_BC)
+      deviceProperties = Some(properties)
     )
   } else {
-    DummyDevices.device(
-      deviceTypeKey = Const.ENVIRONMENTSENSOR,
-      deviceProperties = Some(properties_NOBC)
-    )
+    DummyDevices.device(deviceTypeKey = Const.ENVIRONMENTSENSOR)
   }
 
   Await.result(DeviceManager.create(device), 5 seconds) match {
@@ -74,9 +61,7 @@ object InitData
       )
 
       series foreach { dataRaw =>
-        logger.debug("-----------------------------------------------------------------------------------------")
-        val resp = AvatarRestClient.deviceUpdatePOST(dataRaw)
-        logger.debug(s"response: ${resp.body.asString}")
+        AvatarRestClient.deviceUpdatePOST(dataRaw)
         Thread.sleep(500)
       }
 

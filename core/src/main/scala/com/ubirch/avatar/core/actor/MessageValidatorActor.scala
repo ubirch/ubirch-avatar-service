@@ -57,12 +57,23 @@ class MessageValidatorActor(implicit mongo: MongoUtil) extends Actor with ActorL
       if (drd.k.isDefined)
         DeviceManager.infoByHashedHwId(drd.a).map {
           case Some(dev) =>
-            if (DeviceCoreUtil.validateSignedMessage(key = drd.k.getOrElse("nokey"), signature = drd.s.getOrElse("nosignature"), payload = drd.p)) {
-              processorActor forward(s, drd, dev)
-            }
-            else {
-              s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
-            }
+            if (drd.s.isDefined)
+              if (drd.k.isEmpty) {
+                DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p) map {
+                  case true =>
+                    processorActor forward(s, drd, dev)
+                  case false =>
+                    s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+                }
+              }
+              else if (DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)) {
+                processorActor forward(s, drd, dev)
+              }
+              else {
+                s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+              }
+            else
+              s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError")
           case None =>
             s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
         }

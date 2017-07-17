@@ -3,19 +3,17 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.aws.ThingShadowState
 import com.ubirch.avatar.model.rest.device.DeviceInfo
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.mongo.connection.MongoUtil
-
 import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
+import org.json4s.JsonAST.JBool
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -197,14 +195,10 @@ object DeviceManager
 
   }
 
-  def currentShadowState(device: Device): Option[ThingShadowState] = {
-    //TODO fix this
-    None
-  }
-
   private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {
     val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
     Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
   }
+
 
 }
