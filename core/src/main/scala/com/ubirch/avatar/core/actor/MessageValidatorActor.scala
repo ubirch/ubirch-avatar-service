@@ -11,13 +11,15 @@ import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 
+import play.api.libs.ws.WSClient
+
 import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by derMicha on 28/10/16.
   * This Actor checks incoming messages
   */
-class MessageValidatorActor(implicit mongo: MongoUtil) extends Actor with ActorLogging {
+class MessageValidatorActor(implicit mongo: MongoUtil, wsClient: WSClient) extends Actor with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 

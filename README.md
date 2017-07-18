@@ -19,11 +19,14 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.16 (tbd)
 
 * update Akka HTTP to 10.0.9
-* update _com.ubirch.util:rest-akka-http(-test)_ to 0.3.8
-* update _com.ubirch.util:response-util_ to 0.2.3
-* update _com.ubirch.util:oidc-utils_ to 0.4.8
-* update to `com.ubirch.key:client-rest:0.1.10`
-* update to `com.ubirch.user:*:0.4.16`
+* update to `com.ubirch.util:rest-akka-http(-test):0.3.8`
+* update to `com.ubirch.util:response-util:0.2.3`
+* update to `com.ubirch.util:oidc-utils_:0.4.8`
+* update to `com.ubirch.util:mongo(-test)-utils:0.3.4`
+* update to Akka 2.4.19
+* update to Play 2.5.3
+* update to `com.ubirch.key:client-rest:0.1.11`
+* update to `com.ubirch.user:*:0.4.17`
 
 ### Version 0.3.15 (2017-07-13)
 
