@@ -25,6 +25,7 @@ object RouteConstants {
   val day = "day"
   val update = "update"
   val bulk = "bulk"
+  val mpack = "mpack"
   val data = "data"
   val raw = "raw"
   val deviceType = "deviceType"
@@ -37,7 +38,7 @@ object RouteConstants {
 
   val pathDevice = s"$pathPrefix/$device"
 
-  val pathDeviceBulk = s"$pathDevice/$bulk"
+  val pathDeviceBulk = s"$pathDevice/$update/$bulk"
   val pathDeviceType = s"$pathDevice/$deviceType"
   val pathDeviceTypeInit = s"$pathDeviceType/$init"
 

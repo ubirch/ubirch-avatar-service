@@ -1,10 +1,9 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.util.server.RouteConstants
-import com.ubirch.util.mongo.connection.MongoUtil
-
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.util.mongo.connection.MongoUtil
 import play.api.libs.ws.WSClient
 
 /**
@@ -18,6 +17,8 @@ class MainRoute(implicit ws: WSClient, mongo: MongoUtil) {
 
   val device = new DeviceRoute {}
   val deviceUpdate = new DeviceUpdatePlainRoute {}
+  val deviceUpdateBulk = new DeviceUpdateBulkRoute {}
+  val deviceUpdateMsgPack = new DeviceUpdateMsgPackRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStub = new DeviceStubRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
@@ -35,7 +36,9 @@ class MainRoute(implicit ws: WSClient, mongo: MongoUtil) {
         pathPrefix(RouteConstants.currentVersion) {
 
           pathPrefix(RouteConstants.device) {
-            deviceUpdate.route ~
+            deviceUpdateBulk.route ~
+              deviceUpdateMsgPack.route ~
+              deviceUpdate.route ~
               deviceType.route ~
               deviceStubId.route ~
               deviceStub.route ~

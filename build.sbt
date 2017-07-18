@@ -56,7 +56,8 @@ lazy val server = project
     fork in run := true,
     resolvers ++= Seq(
       resolverSeebergerJson,
-      resolverTypesafeReleases
+      resolverTypesafeReleases,
+      resolverVelvia
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
     resourceGenerators in Compile += Def.task {
@@ -200,6 +201,7 @@ lazy val depCore = Seq(
   ubirchResponse,
   ubirchKeyClientRest,
   spireMath,
+  msgpack4s,
   scalatest % "test",
   akkaTestkit % "test"
 ) ++ akkaCamel ++ scalaLogging
@@ -212,7 +214,7 @@ lazy val depAws = Seq(
   ubirchJson,
   ubirchUUID % "test",
   scalatest % "test"
-) ++ awsIotSdk ++ awsSqsSdk ++ scalaLogging
+) ++ awsSqsSdk ++ scalaLogging
 
 lazy val depModelDb = Seq(
   json4sNative,
@@ -300,15 +302,13 @@ lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 lazy val spireMath = "org.spire-math" %% "spire" % spireV
 
 // list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
-lazy val awsIotSdk = Seq(
-  awsG % "aws-java-sdk-iot" % awsSdkV exclude("joda-time", "joda-time") exclude("com.fasterxml.jackson.core", "jackson-databind") exclude("com.fasterxml.jackson.dataformat", "jackson-dataformat-cbor"),
-  awsG % "aws-iot-device-sdk-java" % "1.1.0"
-)
 lazy val awsSqsSdk = Seq(
   awsG % "aws-java-sdk-sqs" % awsSdkV
 )
 
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
+
+lazy val msgpack4s = "org.velvia" %% "msgpack4s" % "0.6.0"
 
 lazy val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
@@ -345,6 +345,7 @@ lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roun
 lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
 lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
 lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
+lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
 
 /*
  * MISC
