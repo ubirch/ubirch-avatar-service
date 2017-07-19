@@ -7,6 +7,7 @@ import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
@@ -14,6 +15,8 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants.update
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.mongo.connection.MongoUtil
+
+import play.api.libs.ws.WSClient
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -23,7 +26,7 @@ import scala.util.{Failure, Success}
 /**
   * Created by derMicha on 26/02/17.
   */
-class DeviceUpdatePlainRoute(implicit mongo: MongoUtil)
+class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, wsClient: WSClient)
   extends MyJsonProtocol
     with StrictLogging {
 
