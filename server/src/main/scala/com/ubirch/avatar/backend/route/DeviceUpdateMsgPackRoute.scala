@@ -42,8 +42,8 @@ class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil)
 
         post {
 
-          entity(as[String]) { b64Data =>
-            onComplete(msgPackProcessorActor ? b64Data) {
+          entity(as[Array[Byte]]) { binData =>
+            onComplete(msgPackProcessorActor ? binData) {
               case Success(resp) =>
                 resp match {
                   case result: String =>
