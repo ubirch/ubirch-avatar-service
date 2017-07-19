@@ -25,8 +25,8 @@ ubirch Avatar Service is responsible for:
 * update to `com.ubirch.util:mongo(-test)-utils:0.3.4`
 * update to Akka 2.4.19
 * update to Play 2.5.3
-* update to `com.ubirch.key:client-rest:0.1.11`
-* update to `com.ubirch.user:*:0.4.17`
+* update to `com.ubirch.key:client-rest:0.1.10`
+* update to `com.ubirch.user:*:0.4.16`
 
 ### Version 0.3.15 (2017-07-13)
 
