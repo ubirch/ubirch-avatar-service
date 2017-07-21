@@ -41,7 +41,7 @@ object ImportTrackle
 
   private val device = Device(
     deviceId = UUIDUtil.uuidStr,
-    groups = immutable.Set.empty, // TODO create user with group (and use group.id here)
+    groups = immutable.Set.empty, // TODO create user with group (and use group.id here) and log user in (write oidc token to redis)
     deviceName = "trackle Sensor 001",
     hwDeviceId = hwDeviceId,
     deviceTypeKey = Const.TRACKLESENSOR
@@ -220,7 +220,7 @@ object ImportTrackle
               )
 
               //TODO use throttling, akka offers this for free
-              AvatarRestClient.deviceBulkPOST(ddr)
+              AvatarRestClient.deviceBulkPOST(ddr) // TODO refactor to add auth-token
               Thread.sleep(100)
 
             case None =>
