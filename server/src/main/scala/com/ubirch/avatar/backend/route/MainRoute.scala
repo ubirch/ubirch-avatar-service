@@ -3,15 +3,16 @@ package com.ubirch.avatar.backend.route
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.mongo.connection.MongoUtil
 
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import play.api.libs.ws.WSClient
+import akka.stream.Materializer
 
 /**
   * author: cvandrei
   * since: 2016-09-20
   */
-class MainRoute(implicit ws: WSClient, mongo: MongoUtil) {
+class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) {
 
   val welcome = new WelcomeRoute {}
   val deepCheck = new DeepCheckRoute {}

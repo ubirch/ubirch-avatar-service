@@ -15,7 +15,8 @@ import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
 
 import akka.actor.Actor
-import play.api.libs.ws.WSClient
+import akka.http.scaladsl.HttpExt
+import akka.stream.Materializer
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -36,7 +37,7 @@ case class AllDevicesResult(devices: Seq[Device])
 
 case class AllStubsResult(stubs: Seq[DeviceInfo])
 
-class DeviceApiActor(implicit ws: WSClient) extends Actor with StrictLogging {
+class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
 

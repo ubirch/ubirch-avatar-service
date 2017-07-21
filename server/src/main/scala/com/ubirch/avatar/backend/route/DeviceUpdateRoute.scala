@@ -9,18 +9,18 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
+import akka.stream.Materializer
 import akka.util.Timeout
-import com.ubirch.util.mongo.connection.MongoUtil
-
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import play.api.libs.ws.WSClient
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -31,7 +31,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateRoute(implicit mongo: MongoUtil, wsClient: WSClient)
+class DeviceUpdateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
   extends ResponseUtil
   with CORSDirective
   with StrictLogging  {
