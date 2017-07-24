@@ -13,7 +13,8 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.json4s._
 import org.json4s.native.Serialization._
 
-import play.api.libs.ws.WSClient
+import akka.http.scaladsl.HttpExt
+import akka.stream.Materializer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -77,7 +78,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
                             signature: String,
                             payload: JValue
                            )
-                           (implicit wsClient: WSClient): Future[Boolean] = {
+                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
 
     val payloadString = write(payload)
     KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId) map {
