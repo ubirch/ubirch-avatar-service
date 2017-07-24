@@ -220,7 +220,7 @@ object ImportTrackle
               )
 
               //TODO use throttling, akka offers this for free
-              AvatarRestClient.deviceBulkPOST(ddr) // TODO refactor to add auth-token
+              AvatarRestClient.deviceBulkPOST("", ddr) // TODO set auth-token
               Thread.sleep(100)
 
             case None =>

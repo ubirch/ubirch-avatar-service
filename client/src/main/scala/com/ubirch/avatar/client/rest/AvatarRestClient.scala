@@ -5,11 +5,13 @@ import java.net.URL
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.json.Json4sUtil
 
 import uk.co.bigbeeconsultants.http.HttpClient
+import uk.co.bigbeeconsultants.http.header.{Header, Headers}
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.request.RequestBody
 import uk.co.bigbeeconsultants.http.response.Response
@@ -35,9 +37,11 @@ object AvatarRestClient extends StrictLogging {
     */
   def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw): Response = {
 
-    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
-    val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
-    logger.info(s"msg: $msg")
+    val path = RouteConstants.pathDeviceUpdate
+    val url = new URL(s"$baseUrl$path")
+    logger.debug(s"try to call REST endpoint: $url")
+    val msg = Json4sUtil.any2String(deviceDataRaw).get
+    logger.info(s"POST $path: body=$msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
 
     httpClient.post(url, body)
@@ -50,14 +54,30 @@ object AvatarRestClient extends StrictLogging {
     * @param deviceDataRaw raw data to POST
     * @return http response
     */
-  def deviceBulkPOST(deviceDataRaw: DeviceDataRaw): Response = {
+  def deviceBulkPOST(authToken: String, deviceDataRaw: DeviceDataRaw): Response = {
 
-    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
-    val msg = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(deviceDataRaw).get)
-    logger.info(s"msg: $msg")
+    val path = RouteConstants.pathDeviceBulk
+    val url = new URL(s"$baseUrl$path")
+    logger.debug(s"try to call REST endpoint: $url")
+    val msg = Json4sUtil.any2String(deviceDataRaw).get
+    logger.info(s"POST $path: body=$msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
+    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
 
-    httpClient.post(url, body)
+    httpClient.post(url, body, headers)
+
+  }
+
+  def devicePOST(authToken: String, device: Device): Response = {
+
+    val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
+    logger.debug(s"try to call REST endpoint: $url")
+    val msg = Json4sUtil.any2String(device).get
+    logger.info(s"POST ${RouteConstants.pathDevice}: body=$msg")
+    val body = Some(RequestBody(msg, APPLICATION_JSON))
+    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+
+    httpClient.post(url, body, headers)
 
   }
 

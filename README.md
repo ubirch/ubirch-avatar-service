@@ -27,6 +27,7 @@ ubirch Avatar Service is responsible for:
 * update to Play 2.5.3
 * update to `com.ubirch.key:client-rest:0.1.10`
 * update to `com.ubirch.user:*:0.4.16`
+* add data import for remote environments like dev or demo (see `ImportTrackleRemote`)
 
 ### Version 0.3.15 (2017-07-13)
 
@@ -615,7 +616,7 @@ If you haven not yet install docker-compose follow the instructions found here h
     ./goBuild assembly && ./goBuild containerbuild
 
 
-## Generate Test Data
+## Generate Test Data (localhost)
 
 Running this removes all your local ElasticSearch indexes and recreates them!!
 
@@ -645,18 +646,42 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
     1. set AWS env vars:
 
+        ```bash
         export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
-        
         export MQTT_USER={MQTT-User}
-                
         export MQTT_PASSWORD={MQTT-Password}
+        ```
 
     2. if using a terminal, change inside the project folder and
 
 *Running `dev-scripts/initData.sh` does everything in this step.*
 
+        ```bash
         ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
+        ```
 
 3. now you should find one device "testHans001" and 50 data points
+
+## Generate Test Data (remote environments)
+
+1. Prepare User
+
+    The test data generation includes the generation of test data and a device. This means we still need a user which you'll
+    have to create/register manually by logging in on the AdminUI of the remote environment. Please remember the token
+    resulting from the registration or login.
+
+1. Prepare Data Import
+
+    ```bash
+    export AVATAR_CMD_USER_TOKEN=token-12345678 ## user token from registration or login
+    export AVATAR_CMD_IMPORT_AVATAR_BASE_URL=http://localhost:8080 ## base url of the remote environment's avatar-service
+    ```
+
+1. Run Data Import
+
+You can also run ``dev-scripts/initDataRemote.sh``.
+
+    ```bash
+    ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackleRemote"
+    ```
