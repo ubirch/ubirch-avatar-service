@@ -14,11 +14,12 @@ import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
+import akka.stream.Materializer
 import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import play.api.libs.ws.WSClient
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -29,7 +30,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceIdRoute(implicit ws: WSClient, mongo: MongoUtil)
+class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
   extends ResponseUtil
     with CORSDirective
     with StrictLogging {
