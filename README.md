@@ -665,7 +665,7 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
 3. now you should find one device "testHans001" and 50 data points
 
-## Generate Test Data (remote environments)
+## Import Trackle Data
 
 1. Prepare User
 
