@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.18 (tbd)
 
-* tbd
+* refactor where REST client connection timeouts are configured
 
 ### Version 0.3.17 (2017-07-25)
 
@@ -170,10 +170,12 @@ libraryDependencies ++= Seq(
 
 #### Configuration
    
-| Config Item                               | Mandatory  | Description                                                |
-|:------------------------------------------|:-----------|:-----------------------------------------------------------|
-| ubirchAvatarService.restClient.baseUrl    | no         | avatar-service base url (default = http://localhost:8080)  |
-| ubirchAvatarService.restClient.userToken  | yes        | user token from registration or login                      |
+| Config Item                                      | Mandatory  | Description                                                |
+|:-------------------------------------------------|:-----------|:-----------------------------------------------------------|
+| ubirchAvatarService.client.rest.baseUrl          | no         | avatar-service base url (default = http://localhost:8080)  |
+| ubirchAvatarService.client.rest.userToken        | yes        | user token from registration or login                      |
+| ubirchAvatarService.client.rest.timeout.connect  | no         | timeout during connection creation in milliseconds (default = 15000 ms) |
+| ubirchAvatarService.client.rest.timeout.read     | no         | timeout when reading from server in milliseconds (default = 15000 ms)   |
 
 #### Usage
 

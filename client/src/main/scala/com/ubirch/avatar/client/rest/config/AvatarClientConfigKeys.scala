@@ -6,10 +6,16 @@ package com.ubirch.avatar.client.rest.config
   */
 object AvatarClientConfigKeys {
 
-  private val prefix = "ubirchAvatarService.restClient"
+  private val prefix = "ubirchAvatarService.client.rest"
 
   final val USER_TOKEN = s"$prefix.userToken"
 
   final val BASE_URL = s"$prefix.baseUrl"
+
+  private val prefixTimeout = s"$prefix.timeout"
+
+  final val TIMEOUT_CONNECT = s"$prefixTimeout.connect"
+
+  final val TIMEOUT_READ = s"$prefixTimeout.read"
 
 }

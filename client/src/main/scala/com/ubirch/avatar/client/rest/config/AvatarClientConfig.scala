@@ -22,4 +22,14 @@ object AvatarClientConfig extends ConfigBase {
 
   def avatarBaseUrl: String = config.getString(AvatarClientConfigKeys.BASE_URL)
 
+  /**
+    * @return connection timeout in milliseconds
+    */
+  def timeoutConnect: Int = config.getInt(AvatarClientConfigKeys.TIMEOUT_CONNECT)
+
+  /**
+    * @return REST Client read timeout in milliseconds
+    */
+  def timeoutRead: Int = config.getInt(AvatarClientConfigKeys.TIMEOUT_READ)
+
 }

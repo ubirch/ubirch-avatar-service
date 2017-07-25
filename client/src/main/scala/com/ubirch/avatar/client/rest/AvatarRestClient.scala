@@ -5,7 +5,6 @@ import java.net.URL
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.client.rest.config.AvatarClientConfig
-import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.server.RouteConstants
@@ -24,8 +23,8 @@ import uk.co.bigbeeconsultants.http.response.Response
 object AvatarRestClient extends StrictLogging {
 
   private val httpClient = new HttpClient(commonConfig = uk.co.bigbeeconsultants.http.Config(
-    connectTimeout = Config.restClientTimeoutConnect,
-    readTimeout = Config.restClientTimeoutRead
+    connectTimeout = AvatarClientConfig.timeoutConnect,
+    readTimeout = AvatarClientConfig.timeoutRead
   ))
 
   private def baseUrl = AvatarClientConfig.avatarBaseUrl

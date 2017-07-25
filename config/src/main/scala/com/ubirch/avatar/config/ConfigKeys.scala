@@ -120,14 +120,6 @@ object ConfigKeys {
   final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"
   final val AWS_SQS_QUEUES_TRANSFORMER_OUT = s"$awsPrefix.sqs.queues.transformer_out"
 
-  /* REST Client Related Config Keys
-   **********************************************************************/
-
-  final val restClientPrefix = s"$prefix.restclient"
-  final val restClientTimeout = s"$restClientPrefix.timeout"
-
-  final val REST_CLIENT_TIMEOUT_CONNECT = s"$restClientTimeout.connect"
-  final val REST_CLIENT_TIMEOUT_READ = s"$restClientTimeout.read"
 
   /* MQTT Related Config Keys
  **********************************************************************/
