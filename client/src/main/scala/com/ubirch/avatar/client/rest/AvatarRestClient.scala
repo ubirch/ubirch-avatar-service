@@ -37,11 +37,9 @@ object AvatarRestClient extends StrictLogging {
     */
   def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw): Response = {
 
-    val path = RouteConstants.pathDeviceUpdate
-    val url = new URL(s"$baseUrl$path")
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
     logger.debug(s"try to call REST endpoint: $url")
     val msg = Json4sUtil.any2String(deviceDataRaw).get
-    logger.info(s"POST $path: body=$msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
 
     httpClient.post(url, body)
@@ -56,11 +54,9 @@ object AvatarRestClient extends StrictLogging {
     */
   def deviceBulkPOST(authToken: String, deviceDataRaw: DeviceDataRaw): Response = {
 
-    val path = RouteConstants.pathDeviceBulk
-    val url = new URL(s"$baseUrl$path")
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
     logger.debug(s"try to call REST endpoint: $url")
     val msg = Json4sUtil.any2String(deviceDataRaw).get
-    logger.info(s"POST $path: body=$msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
     val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
 
@@ -73,7 +69,6 @@ object AvatarRestClient extends StrictLogging {
     val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
     logger.debug(s"try to call REST endpoint: $url")
     val msg = Json4sUtil.any2String(device).get
-    logger.info(s"POST ${RouteConstants.pathDevice}: body=$msg")
     val body = Some(RequestBody(msg, APPLICATION_JSON))
     val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
 
