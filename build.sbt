@@ -16,7 +16,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.16-SNAPSHOT",
+  version := "0.3.16",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -332,8 +332,8 @@ lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.8"
 lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
 
-lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.16" excludeAll (excludedLoggers: _*)
-lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.1.10" excludeAll (excludedLoggers: _*)
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.18" excludeAll (excludedLoggers: _*)
+lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.1.12" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
