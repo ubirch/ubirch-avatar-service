@@ -18,7 +18,8 @@ class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Ma
   val deepCheck = new DeepCheckRoute {}
 
   val device = new DeviceRoute {}
-  val deviceUpdate = new DeviceUpdatePlainRoute {}
+  val deviceUpdatePlain = new DeviceUpdatePlainRoute {}
+  val deviceUpdateJson = new DeviceUpdateJsonRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStub = new DeviceStubRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
@@ -36,7 +37,8 @@ class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Ma
         pathPrefix(RouteConstants.currentVersion) {
 
           pathPrefix(RouteConstants.device) {
-            deviceUpdate.route ~
+            deviceUpdatePlain.route ~
+              deviceUpdateJson.route ~
               deviceType.route ~
               deviceStubId.route ~
               deviceStub.route ~

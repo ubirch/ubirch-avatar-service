@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.17 (tbd)
 
-* add data import for remote environments like dev or demo (see `ImportTrackleRemote`)
+* refactored `ImportTrackle` to work with remote environments, too (e.g. avatar-svc running in dev or demo environment)
 
 ### Version 0.3.16 (2017-07-25)
 
@@ -676,14 +676,16 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 1. Prepare Data Import
 
     ```bash
-    export AVATAR_CMD_USER_TOKEN=token-12345678 ## user token from registration or login
-    export AVATAR_CMD_IMPORT_AVATAR_BASE_URL=http://localhost:8080 ## base url of the remote environment's avatar-service
+    # user token from registration or login
+    export AVATAR_CMD_USER_TOKEN=token-12345678
+    # (optional) base url of the remote environment's avatar-service (defaults to http://localhost:8080)
+    export AVATAR_CMD_IMPORT_AVATAR_BASE_URL=https://avatar.myserver.com:8080
     ```
 
 1. Run Data Import
 
-You can also run ``dev-scripts/initDataRemote.sh``.
+You can also run `dev-scripts/importTrackle.sh $AVATAR_CMD_USER_TOKEN`.
 
     ```bash
-    ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackleRemote"
+    ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackle"
     ```
