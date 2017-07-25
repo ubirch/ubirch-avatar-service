@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.17 (tbd)
 
-* tbd
+* add data import for remote environments like dev or demo (see `ImportTrackleRemote`)
 
 ### Version 0.3.16 (2017-07-25)
 
@@ -30,7 +30,6 @@ ubirch Avatar Service is responsible for:
 * update to Akka 2.4.19
 * update to `com.ubirch.key:client-rest:0.1.12` (REST client based on Akka HTTP instead of PlayWS)
 * update to `com.ubirch.user:*:0.4.18` (REST client based on Akka HTTP instead of PlayWS)
-* add data import for remote environments like dev or demo (see `ImportTrackleRemote`)
 
 ### Version 0.3.15 (2017-07-13)
 
