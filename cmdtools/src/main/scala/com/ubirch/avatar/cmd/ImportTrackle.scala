@@ -28,7 +28,7 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2017-07-24
   */
-object ImportTrackleRemote extends App
+object ImportTrackle extends App
   with StrictLogging {
 
   /**
