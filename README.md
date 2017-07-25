@@ -23,6 +23,8 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.17 (2017-07-25)
 
 * refactored `ImportTrackle` to work with remote environments, too (e.g. avatar-svc running in dev or demo environment)
+* add route `POST /api/avatarService/v1/device/update` (accepting JSON)
+* add route `POST /api/avatarService/v1/device/bulk` (accepting JSON)
 
 ### Version 0.3.16 (2017-07-25)
 
@@ -369,6 +371,44 @@ Raw data comes directly from devices and is not yet human readable.
         "foo": 23,
         "bar": "ubirch-sensor-data"
       }
+    }'
+
+#### Update
+
+TODO: add description
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/update -H "Content-Type: application/json" -d '{
+        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
+        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "deviceType": "lightsLamp",
+        "timestamp": "2016-06-30T11:39:51Z",
+        "deviceTags": [
+          "ubirch#0",
+          "actor"
+        ],
+        "deviceMessage": {
+          "foo": 23,
+          "bar": "ubirch-sensor-data"
+        }
+    }'
+
+#### Bulk
+
+TODO: add description
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/bulk -H "Content-Type: application/json" -d '{
+        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
+        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "deviceType": "lightsLamp",
+        "timestamp": "2016-06-30T11:39:51Z",
+        "deviceTags": [
+          "ubirch#0",
+          "actor"
+        ],
+        "deviceMessage": {
+          "foo": 23,
+          "bar": "ubirch-sensor-data"
+        }
     }'
 
 #### History (From-To)
