@@ -168,6 +168,17 @@ libraryDependencies ++= Seq(
 )
 ```
 
+#### Configuration
+   
+| Config Item                               | Mandatory  | Description                                                |
+|:------------------------------------------|:-----------|:-----------------------------------------------------------|
+| ubirchAvatarService.restClient.baseUrl    | no         | avatar-service base url (default = http://localhost:8080)  |
+| ubirchAvatarService.restClient.userToken  | yes        | user token from registration or login                      |
+
+#### Usage
+
+See `com.ubirch.avatar.cmd.ImportTrackle` for an example usage.
+
 ### `cmdtools`
 
 ```scala
