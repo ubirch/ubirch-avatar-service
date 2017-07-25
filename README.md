@@ -618,7 +618,7 @@ If you haven not yet install docker-compose follow the instructions found here h
     ./goBuild assembly && ./goBuild containerbuild
 
 
-## Generate Test Data (localhost)
+## Generate Test Data
 
 Running this removes all your local ElasticSearch indexes and recreates them!!
 
