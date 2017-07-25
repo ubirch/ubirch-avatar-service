@@ -16,6 +16,10 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
+### Version 0.3.18 (tbd)
+
+* tbd
+
 ### Version 0.3.17 (2017-07-25)
 
 * refactored `ImportTrackle` to work with remote environments, too (e.g. avatar-svc running in dev or demo environment)
