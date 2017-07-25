@@ -677,14 +677,14 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
     ```bash
     # user token from registration or login
-    export AVATAR_CMD_USER_TOKEN=token-12345678
+    export AVATAR_USER_TOKEN=token-12345678
     # (optional) base url of the remote environment's avatar-service (defaults to http://localhost:8080)
-    export AVATAR_CMD_IMPORT_AVATAR_BASE_URL=https://avatar.myserver.com:8080
+    export AVATAR_BASE_URL=https://avatar.myserver.com:8080
     ```
 
 1. Run Data Import
 
-You can also run `dev-scripts/importTrackle.sh $AVATAR_CMD_USER_TOKEN`.
+You can also run `dev-scripts/importTrackle.sh $AVATAR_USER_TOKEN`.
 
     ```bash
     ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackle"

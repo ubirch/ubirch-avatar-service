@@ -4,6 +4,7 @@ import java.net.URL
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
+import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -27,7 +28,7 @@ object AvatarRestClient extends StrictLogging {
     readTimeout = Config.restClientTimeoutRead
   ))
 
-  private def baseUrl = s"${Config.protocol}${Config.interface}:${Config.port}"
+  private def baseUrl = AvatarClientConfig.avatarBaseUrl
 
   /**
     * Update a device by POSTing raw device data.

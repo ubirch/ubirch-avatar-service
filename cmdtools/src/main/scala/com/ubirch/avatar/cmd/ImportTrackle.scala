@@ -5,7 +5,7 @@ import java.io.File
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.client.rest.AvatarRestClient
-import com.ubirch.avatar.cmd.config.AvatarCmdToolsConfig
+import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
@@ -46,7 +46,7 @@ object ImportTrackle extends App
     deviceTypeKey = Const.TRACKLESENSOR
   )
 
-  AvatarCmdToolsConfig.userToken match {
+  AvatarClientConfig.userToken match {
 
     case None => logger.error("unable to import trackle data if auth token is not configured (see config key 'ubirchAvatarService.cmdTools.userToken'")
 
