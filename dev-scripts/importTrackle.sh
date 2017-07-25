@@ -11,7 +11,7 @@ function runInit() {
     echo "======"
 
     export AVATAR_USER_TOKEN=$token
-    ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackleRemote"
+    ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackle"
 
     echo "======"
     echo "====== STEP 1/1: finished creation of device with some data (avatar-service=$baseUrl)"
