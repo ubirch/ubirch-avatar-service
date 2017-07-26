@@ -4,6 +4,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.routing.RoundRobinPool
+import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
@@ -24,7 +25,7 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt)
+class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
   extends ResponseUtil
     with Directives
     with StrictLogging {

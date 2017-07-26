@@ -201,7 +201,7 @@ lazy val depCore = Seq(
   ubirchResponse,
   ubirchKeyClientRest,
   spireMath,
-  msgpack4s,
+  msgpackScala,
   scalatest % "test",
   akkaTestkit % "test"
 ) ++ akkaCamel ++ scalaLogging
@@ -309,6 +309,7 @@ lazy val awsSqsSdk = Seq(
 lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 lazy val msgpack4s = "org.velvia" %% "msgpack4s" % "0.6.0"
+lazy val msgpackScala = "org.msgpack" %% "msgpack-scala" % "0.6.11"
 
 lazy val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
