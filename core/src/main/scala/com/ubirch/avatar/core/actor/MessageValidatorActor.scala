@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.MessageVersion
@@ -11,13 +9,18 @@ import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.http.scaladsl.HttpExt
+import akka.routing.RoundRobinPool
+import akka.stream.Materializer
+
 import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by derMicha on 28/10/16.
   * This Actor checks incoming messages
   */
-class MessageValidatorActor(implicit mongo: MongoUtil) extends Actor with ActorLogging {
+class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends Actor with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 

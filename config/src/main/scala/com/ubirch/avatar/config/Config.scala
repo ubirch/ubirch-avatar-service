@@ -181,20 +181,6 @@ object Config extends ConfigBase {
   def awsSqsQueueTransformerOut: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER_OUT)
 
   /*
-   * ubirch REST Client
-   ************************************************************************************************/
-
-  /**
-    * @return REST Client connection timeout in milliseconds
-    */
-  def restClientTimeoutConnect: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_CONNECT)
-
-  /**
-    * @return REST Client read timeout in milliseconds
-    */
-  def restClientTimeoutRead: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_READ)
-
-  /*
    * MQTT
    ************************************************************************************************/
 

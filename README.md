@@ -16,14 +16,27 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
-### Version 0.3.16 (tbd)
+### Version 0.3.18 (tbd)
+
+* refactor where REST client connection timeouts are configured
+* less logging in `AvatarRestClient`
+
+### Version 0.3.17 (2017-07-25)
+
+* refactored `ImportTrackle` to work with remote environments, too (e.g. avatar-svc running in dev or demo environment)
+* add route `POST /api/avatarService/v1/device/update` (accepting JSON)
+* add route `POST /api/avatarService/v1/device/bulk` (accepting JSON)
+
+### Version 0.3.16 (2017-07-25)
 
 * update Akka HTTP to 10.0.9
-* update _com.ubirch.util:rest-akka-http(-test)_ to 0.3.8
-* update _com.ubirch.util:response-util_ to 0.2.3
-* update _com.ubirch.util:oidc-utils_ to 0.4.8
-* update to `com.ubirch.key:client-rest:0.1.10`
-* update to `com.ubirch.user:*:0.4.16`
+* update to `com.ubirch.util:rest-akka-http(-test):0.3.8`
+* update to `com.ubirch.util:response-util:0.2.3`
+* update to `com.ubirch.util:oidc-utils_:0.4.8`
+* update to `com.ubirch.util:mongo(-test)-utils:0.3.4`
+* update to Akka 2.4.19
+* update to `com.ubirch.key:client-rest:0.1.12` (REST client based on Akka HTTP instead of PlayWS)
+* update to `com.ubirch.user:*:0.4.18` (REST client based on Akka HTTP instead of PlayWS)
 
 ### Version 0.3.15 (2017-07-13)
 
@@ -137,10 +150,10 @@ ubirch Avatar Service is responsible for:
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "aws" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -148,22 +161,35 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "client" % "0.3.18-SNAPSHOT"
 )
 ```
+
+#### Configuration
+   
+| Config Item                                      | Mandatory  | Description                                                |
+|:-------------------------------------------------|:-----------|:-----------------------------------------------------------|
+| ubirchAvatarService.client.rest.baseUrl          | no         | avatar-service base url (default = http://localhost:8080)  |
+| ubirchAvatarService.client.rest.userToken        | yes        | user token from registration or login                      |
+| ubirchAvatarService.client.rest.timeout.connect  | no         | timeout during connection creation in milliseconds (default = 15000 ms) |
+| ubirchAvatarService.client.rest.timeout.read     | no         | timeout when reading from server in milliseconds (default = 15000 ms)   |
+
+#### Usage
+
+See `com.ubirch.avatar.cmd.ImportTrackle` for an example usage.
 
 ### `cmdtools`
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -171,10 +197,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "config" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -182,10 +208,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "core" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -193,10 +219,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-db" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-db" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -204,10 +230,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-rest" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-rest" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -215,12 +241,12 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("hseeberger", "maven"),
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "server" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -228,12 +254,12 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots"),
+  Resolver.sonatypeRepo("snapshots"),
   Resolver.bintrayRepo("hseeberger", "maven"),
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "test-base" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -241,10 +267,10 @@ libraryDependencies ++= Seq(
 
 ```scala
 resolvers ++= Seq(
-  Resolver.sonatypeRepo("snaphots")
+  Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.16-SNAPSHOT"
+  "com.ubirch.avatar" %% "util" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -359,6 +385,44 @@ Raw data comes directly from devices and is not yet human readable.
         "foo": 23,
         "bar": "ubirch-sensor-data"
       }
+    }'
+
+#### Update
+
+TODO: add description
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/update -H "Content-Type: application/json" -d '{
+        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
+        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "deviceType": "lightsLamp",
+        "timestamp": "2016-06-30T11:39:51Z",
+        "deviceTags": [
+          "ubirch#0",
+          "actor"
+        ],
+        "deviceMessage": {
+          "foo": 23,
+          "bar": "ubirch-sensor-data"
+        }
+    }'
+
+#### Bulk
+
+TODO: add description
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/bulk -H "Content-Type: application/json" -d '{
+        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
+        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "deviceType": "lightsLamp",
+        "timestamp": "2016-06-30T11:39:51Z",
+        "deviceTags": [
+          "ubirch#0",
+          "actor"
+        ],
+        "deviceMessage": {
+          "foo": 23,
+          "bar": "ubirch-sensor-data"
+        }
     }'
 
 #### History (From-To)
@@ -642,18 +706,44 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
     1. set AWS env vars:
 
+        ```bash
         export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
-        
         export MQTT_USER={MQTT-User}
-                
         export MQTT_PASSWORD={MQTT-Password}
+        ```
 
     2. if using a terminal, change inside the project folder and
 
 *Running `dev-scripts/initData.sh` does everything in this step.*
 
+        ```bash
         ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
+        ```
 
 3. now you should find one device "testHans001" and 50 data points
+
+## Import Trackle Data
+
+1. Prepare User
+
+    The test data generation includes the generation of test data and a device. This means we still need a user which you'll
+    have to create/register manually by logging in on the AdminUI of the remote environment. Please remember the token
+    resulting from the registration or login.
+
+1. Prepare Data Import
+
+    ```bash
+    # user token from registration or login
+    export AVATAR_USER_TOKEN=token-12345678
+    # (optional) base url of the remote environment's avatar-service (defaults to http://localhost:8080)
+    export AVATAR_BASE_URL=https://avatar.myserver.com:8080
+    ```
+
+1. Run Data Import
+
+You can also run `dev-scripts/importTrackle.sh $AVATAR_USER_TOKEN`.
+
+    ```bash
+    ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackle"
+    ```

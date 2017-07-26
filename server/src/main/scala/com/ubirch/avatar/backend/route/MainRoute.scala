@@ -1,24 +1,27 @@
 package com.ubirch.avatar.backend.route
 
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.mongo.connection.MongoUtil
-import play.api.libs.ws.WSClient
+
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
 
 /**
   * author: cvandrei
   * since: 2016-09-20
   */
-class MainRoute(implicit ws: WSClient, mongo: MongoUtil) {
+class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) {
 
   val welcome = new WelcomeRoute {}
   val deepCheck = new DeepCheckRoute {}
 
   val device = new DeviceRoute {}
-  val deviceUpdate = new DeviceUpdatePlainRoute {}
+  val deviceUpdatePlain = new DeviceUpdatePlainRoute {}
   val deviceUpdateBulk = new DeviceUpdateBulkRoute {}
   val deviceUpdateMsgPack = new DeviceUpdateMsgPackRoute {}
+  val deviceUpdateJson = new DeviceUpdateJsonRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStub = new DeviceStubRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
@@ -37,8 +40,9 @@ class MainRoute(implicit ws: WSClient, mongo: MongoUtil) {
 
           pathPrefix(RouteConstants.device) {
             deviceUpdateBulk.route ~
+              deviceUpdateJson.route ~
               deviceUpdateMsgPack.route ~
-              deviceUpdate.route ~
+            deviceUpdatePlain.route ~
               deviceType.route ~
               deviceStubId.route ~
               deviceStub.route ~
