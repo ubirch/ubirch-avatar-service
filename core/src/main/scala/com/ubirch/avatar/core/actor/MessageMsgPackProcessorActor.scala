@@ -72,8 +72,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil)
       }
     }
     val did = ids.mkString("-")
-    val ts = temps.toSet
+    val ts = temps.toSeq
     (did, ts)
   }
-
 }
