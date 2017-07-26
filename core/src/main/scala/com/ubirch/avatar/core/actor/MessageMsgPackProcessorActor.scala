@@ -33,11 +33,11 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil)
       val s = sender()
 
       val hexVal = Hex.encodeHexString(binData)
-      log.debug(s"got some MsgPack data: $hexVal")
+      log.info(s"got some MsgPack data: $hexVal")
 
       val (did, ts) = unpack(binData)
 
-      log.debug(s"deviceId: $did / t: $ts")
+      log.info(s"deviceId: $did / t: $ts")
 
       s ! "OK: Thanks!"
     case _ =>
