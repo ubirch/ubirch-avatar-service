@@ -3,7 +3,6 @@ package com.ubirch.avatar.cmd
 import java.io.File
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.config.Const
@@ -15,9 +14,9 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
-
+import org.json4s.JValue
+import org.json4s.native.JsonMethods.parse
 import uk.co.bigbeeconsultants.http.response.Status
 
 import scala.collection._
@@ -38,12 +37,27 @@ object ImportTrackle extends App
 
   private val hwDeviceId = UUIDUtil.uuidStr
   private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
+  private val ts = new DateTime().toLocalDateTime.toString
+
+  private val deviceProps: JValue = parse(
+    s"""{
+       |  "${Const.STOREDATA}": true,
+       |  "${Const.BLOCKC}": false
+       |}""".stripMargin
+  )
+
+  private val pubQ = Some(immutable.Set(
+    "dev_trackle_avatar_service_transformer_outbox",
+    "dev_trackle_trackle_service_transformer_outbox"
+  ))
 
   private val device = Device(
     deviceId = UUIDUtil.uuidStr,
-    deviceName = "trackle Sensor 001",
+    deviceName = s"trackle Sensor $ts",
     hwDeviceId = hwDeviceId,
-    deviceTypeKey = Const.TRACKLESENSOR
+    deviceTypeKey = Const.TRACKLESENSOR,
+    deviceProperties = Some(deviceProps),
+    pubQueues = pubQ
   )
 
   AvatarClientConfig.userToken match {
