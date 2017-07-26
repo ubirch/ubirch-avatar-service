@@ -1,6 +1,7 @@
 package com.ubirch.avatar.backend.route
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
@@ -17,14 +18,13 @@ import com.ubirch.util.mongo.connection.MongoUtil
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
-
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateBulkRoute(implicit mongo: MongoUtil)
+class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt)
   extends ResponseUtil
     with Directives
     with StrictLogging {
