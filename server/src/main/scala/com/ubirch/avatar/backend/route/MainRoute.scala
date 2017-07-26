@@ -20,7 +20,6 @@ class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Ma
   val deviceUpdatePlain = new DeviceUpdatePlainRoute {}
   val deviceUpdateBulk = new DeviceUpdateBulkRoute {}
   val deviceUpdateMsgPack = new DeviceUpdateMsgPackRoute {}
-  val deviceUpdateJson = new DeviceUpdateJsonRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStub = new DeviceStubRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
@@ -39,7 +38,6 @@ class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Ma
 
           pathPrefix(RouteConstants.device) {
             deviceUpdateBulk.route ~
-              deviceUpdateJson.route ~
               deviceUpdateMsgPack.route ~
               deviceUpdatePlain.route ~
               deviceType.route ~
