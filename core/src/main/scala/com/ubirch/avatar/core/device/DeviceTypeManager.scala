@@ -3,7 +3,7 @@ package com.ubirch.avatar.core.device
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.device.DeviceType
+import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}

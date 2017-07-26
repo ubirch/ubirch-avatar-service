@@ -18,6 +18,8 @@ object Const {
   final val LIGHTSSENSOR = "lightsSensor"
   final val LIGHTSLAMP = "lightsLamp"
   final val ENVIRONMENTSENSOR = "envSensor"
+  final val AQSENSOR = "aqSensor"
+  final val EMOSENSOR = "emoSensor"
   final val TRACKLESENSOR = "trackleSensor"
   final val GENERICSENSOR = "genericSensor"
 
@@ -26,7 +28,7 @@ object Const {
 
   final val PROP_CC = "countryCode"
   final val BLOCKC = "blockChain"
-  final val STOREDATA = "storesdata"
+  final val STOREDATA = "storesData"
 
   final val TAG_SENSOR = "sensor"
   final val TAG_ACTOR = "actor"

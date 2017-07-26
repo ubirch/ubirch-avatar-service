@@ -1,13 +1,14 @@
 package com.ubirch.avatar.core.device
 
 import com.ubirch.avatar.core.test.util.DeviceDataRawTestUtil
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionException}
 import scala.language.postfixOps
 
 /**
@@ -23,21 +24,18 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val rawData = DummyDeviceDataRaw.data(device = device)()
+      val rawData = DummyDeviceDataRaw.data(device = device)
 
       // test
       val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData), 1 seconds).get
-      Thread.sleep(1000)
+      Thread.sleep(1200)
 
       // verify
       val expectedStoredRaw = rawData.copy(id = storedRaw1.id)
       storedRaw1 should be(expectedStoredRaw)
 
-      val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
-      deviceDataRawList.size should be(1)
-
-      val deviceDataRawInDb = deviceDataRawList.head
-      deviceDataRawInDb should be(storedRaw1)
+      val deviceDataRawInDb = Await.result(DeviceDataRawManager.loadById(storedRaw1.id), 1 seconds)
+      Some(storedRaw1) should be(deviceDataRawInDb)
 
     }
 
@@ -46,14 +44,14 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       // prepare
       val device = DummyDevices.minimalDevice()
 
-      val rawData1 = DummyDeviceDataRaw.data(device = device)()
+      val rawData1 = DummyDeviceDataRaw.data(device = device)
       val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData1), 1 seconds).get
 
-      val rawData2 = DummyDeviceDataRaw.data(device = device, messageId = storedRaw1.id)()
+      val rawData2 = DummyDeviceDataRaw.data(device = device, messageId = storedRaw1.id)
 
       // test
       val storedRaw2 = Await.result(DeviceDataRawManager.store(rawData2), 1 seconds).get
-      Thread.sleep(1000)
+      Thread.sleep(1200)
 
       // verify
       val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
@@ -74,7 +72,7 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
     }
 
     scenario("deviceId does not exist; index does not exist") {
-      deleteIndexes()
+      deleteIndices()
       val device = DummyDevices.minimalDevice()
       Await.result(DeviceDataRawManager.history(device), 1 seconds) should be('isEmpty)
     }

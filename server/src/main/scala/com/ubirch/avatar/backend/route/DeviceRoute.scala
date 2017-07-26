@@ -2,21 +2,21 @@ package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-import com.ubirch.avatar.backend.actor.{CreateDevice, DeviceApiActor}
+import com.ubirch.avatar.backend.actor.{AllDevices, AllDevicesResult, CreateDevice, CreateResult, DeviceApiActor}
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.util.json.MyJsonProtocol
+import com.ubirch.avatar.util.server.AvatarSession
+import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
+import akka.stream.Materializer
 import akka.util.Timeout
-import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.model.JsonErrorResponse
-
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor
@@ -28,41 +28,76 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-trait DeviceRoute extends MyJsonProtocol
-  with CORSDirective
-  with ResponseUtil
-  with StrictLogging {
+class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer)
+  extends ResponseUtil
+    with CORSDirective
+    with StrictLogging {
 
   implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val deviceApiActor = system.actorOf(Props[DeviceApiActor], ActorNames.DEVICE_API)
+  private val deviceApiActor = system.actorOf(Props(new DeviceApiActor), ActorNames.DEVICE_API)
 
-  val route: Route = respondWithCORS {
+  private val oidcDirective = new OidcDirective()
 
-    // TODO authentication for all methods...or just for post?
-    get {
-      complete(DeviceManager.all())
-    } ~
-      post {
-        entity(as[Device]) { device =>
-          onComplete(deviceApiActor ? CreateDevice(device = device)) {
+  val route: Route =
+
+    respondWithCORS {
+      oidcDirective.oidcToken2UserContext { userContext =>
+
+        get {
+
+          onComplete(deviceApiActor ? AllDevices(session = AvatarSession(userContext = userContext))) {
+
             case Success(resp) =>
               resp match {
-                case dev: Device =>
-                  complete(dev)
-                case jer: JsonErrorResponse =>
-                  complete(requestErrorResponse(jer))
-                case _ =>
-                  complete("doof")
+                case devices: AllDevicesResult => complete(devices.devices)
+                case _ => complete(serverErrorResponse(errorType = "QueryError", errorMessage = "DeviceRoute.post failed with unhandled message"))
               }
-            case Failure(t) =>
-              logger.error("device creation failed", t)
-              complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
-          }
-        }
-      }
 
-  }
+            case Failure(t) =>
+              logger.error("querying all devices failed", t)
+              complete(serverErrorResponse(errorType = "QueryError", errorMessage = t.getMessage))
+
+          }
+
+        } ~ post {
+
+          entity(as[Device]) { device =>
+
+            val avatarSession = AvatarSession(userContext)
+            onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
+
+              case Success(resp) =>
+                resp match {
+
+                  case result: CreateResult if result.device.isDefined =>
+                    complete(result.device.get)
+
+                  case result: CreateResult if result.error.isDefined =>
+                    complete(requestErrorResponse(result.error.get))
+
+                  case result: CreateResult =>
+                    logger.error(s"unhandled CreateResult: createResult=$result")
+                    complete(serverErrorResponse(errorType = "CreationError", errorMessage = "DeviceRoute.post failed with unhandled case"))
+
+                  case _ =>
+                    complete(serverErrorResponse(errorType = "CreationError", errorMessage = "DeviceRoute.post failed with unhandled message"))
+
+                }
+
+              case Failure(t) =>
+                logger.error("device creation failed", t)
+                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
+
+            }
+
+          }
+
+        }
+
+      }
+    }
+
 }

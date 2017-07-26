@@ -4,17 +4,17 @@ import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
-import com.ubirch.avatar.awsiot.services.AwsShadowService
-import com.ubirch.avatar.awsiot.util.AwsShadowUtil
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.aws.ThingShadowState
-import com.ubirch.avatar.model.device.{Device, DeviceInfo}
-import com.ubirch.avatar.util.model.DeviceTypeUtil
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.avatar.core.avatar.AvatarStateManager
+import com.ubirch.avatar.model._
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceInfo
+import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.mongo.connection.MongoUtil
 
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -23,158 +23,183 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-23
   */
-object DeviceManager extends MyJsonProtocol
-  with StrictLogging {
+object DeviceManager
+  extends MyJsonProtocol
+    with StrictLogging {
 
-  def all(): Future[Seq[Device]] = {
-    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType).map { res =>
+  private val esIndex = Config.esDeviceIndex
+  private val esType = Config.esDeviceType
+
+  /**
+    * Select all devices in any of the given groups.
+    *
+    * @param groups select devices only if they're in any of these groups
+    * @return devices; empty if none found
+    */
+  def all(groups: Set[UUID]): Future[Seq[Device]] = {
+
+    ESSimpleStorage.getDocs(
+      docIndex = esIndex,
+      docType = esType,
+      query = groupsTermsQuery(groups),
+      size = Some(Config.esLargePageSize)
+    ).map { res =>
+      logger.debug(s"all(): result=$res")
       res.map(_.extract[Device])
     }
+
   }
 
-  def allStubs(): Future[Seq[DeviceInfo]] = {
-    ESSimpleStorage.getDocs(docIndex = Config.esDeviceIndex, docType = Config.esDeviceType, size = Some(100)).map { res =>
+  /**
+    * Select all device stubs in any of the given groups.
+    *
+    * @param groups select device stubs only if they're in any of these groups
+    * @return devices; empty if none found
+    */
+  def allStubs(groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
+
+    ESSimpleStorage.getDocs(
+      docIndex = esIndex,
+      docType = esType,
+      query = groupsTermsQuery(groups),
+      size = Some(Config.esLargePageSize)
+    ).map { res =>
       res.map { jv =>
-        DeviceStubManger.create(device = jv.extract[Device])
+        DeviceStubManger.toDeviceInfo(device = jv.extract[Device])
       }
     }
   }
 
-  def create(device: Device): Future[Option[Device]] = {
+  def create(device: db.device.Device): Future[Option[db.device.Device]] = {
 
-    val devWithDefaults = device.copy(
-      hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId),
-      deviceProperties = Some(device.deviceProperties.getOrElse(
-        DeviceTypeUtil.defaultProps(device.deviceTypeKey)
-      )),
-      deviceConfig = Some(device.deviceConfig.getOrElse(
-        DeviceTypeUtil.defaultConf(device.deviceTypeKey)
-      )),
-      tags = if (device.tags.isEmpty)
-        DeviceTypeUtil.defaultTags(device.deviceTypeKey)
-      else device.tags
-    )
+    infoByHwId(device.hwDeviceId) flatMap {
 
-    Json4sUtil.any2jvalue(devWithDefaults) match {
-
-      case Some(devJval) =>
-        ESSimpleStorage.storeDoc(
-          docIndex = Config.esDeviceIndex,
-          docType = Config.esDeviceType,
-          docIdOpt = Some(device.deviceId),
-          doc = devJval
-        ) map (_.extractOpt[Device])
-
-      case None =>
+      case Some(_: db.device.Device) =>
+        logger.error(s"device with hwDeviceId already exists: hwDeviceId=${device.hwDeviceId}")
         Future(None)
-    }
-  }
-
-  def createWithShadow(device: Device): Future[Option[Device]] = {
-    create(device: Device).map {
-      case Some(dev) =>
-
-        try {
-          AwsShadowUtil.createShadow(dev.awsDeviceThingId)
-          if (dev.deviceConfig.isDefined)
-            AwsShadowUtil.setDesired(dev, dev.deviceConfig.get)
-        }
-        catch {
-          case e: Exception =>
-            logger.error("could not create a shadow", e)
-        }
-
-        Some(dev)
 
       case None =>
-        None
+
+        val devWithDefaults = DeviceUtil.deviceWithDefaults(device)
+        Json4sUtil.any2jvalue(devWithDefaults) match {
+
+          case Some(devJval) =>
+            ESSimpleStorage.storeDoc(
+              docIndex = esIndex,
+              docType = esType,
+              docIdOpt = Some(device.deviceId),
+              doc = devJval
+            ) map (_.extractOpt[db.device.Device])
+
+          case None => Future(None)
+        }
+
     }
+
   }
 
-  def update(device: Device): Future[Option[Device]] = {
+  def update(device: Device)(implicit mongo: MongoUtil): Future[Option[Device]] = {
 
     Json4sUtil.any2jvalue(device) match {
 
       case Some(devJval) =>
+
         val dev = ESSimpleStorage.storeDoc(
-          docIndex = Config.esDeviceIndex,
-          docType = Config.esDeviceType,
+          docIndex = esIndex,
+          docType = esType,
           docIdOpt = Some(device.deviceId),
           doc = devJval
         ).map(_.extractOpt[Device])
 
-        if (device.deviceConfig.isDefined)
-          AwsShadowUtil.setDesired(device, device.deviceConfig.get)
+        if (device.deviceConfig.isDefined) {
+          AvatarStateManager.setDesired(device, device.deviceConfig.get)
+        }
 
         dev
-      case None =>
-        Future(None)
+
+      case None => Future(None)
+
     }
+
   }
 
   def delete(device: Device): Future[Option[Device]] = {
 
-    AwsShadowUtil.deleteShadow(device.awsDeviceThingId)
-
-    ESSimpleStorage.deleteDoc(Config.esDeviceIndex, Config.esDeviceType, device.deviceId).map {
-      case true =>
-
-        Some(device)
-
-      case _ =>
-        None
+    ESSimpleStorage.deleteDoc(
+      docIndex = esIndex,
+      docType = esType,
+      docId = device.deviceId
+    ).map {
+      case true => Some(device)
+      case _ => None
     }
+
   }
 
   def infoByHwId(hwDeviceId: String): Future[Option[Device]] = {
+
     val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId)
-    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
-      l.headOption match {
-        case Some(jval) =>
-          jval.extractOpt[Device]
-        case None =>
-          None
+    ESSimpleStorage.getDocs(
+      docIndex = esIndex,
+      docType = esType,
+      query = Some(query)
+    ).map {
+
+      _.headOption match {
+        case Some(jval) => jval.extractOpt[Device]
+        case None => None
       }
+
     }
+
   }
 
   def infoByHashedHwId(hashedHwDeviceId: String): Future[Option[Device]] = {
+
     val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
-    ESSimpleStorage.getDocs(Config.esDeviceIndex, Config.esDeviceType, query = Some(query)).map { l =>
-      l.headOption match {
-        case Some(jval) =>
-          jval.extractOpt[Device]
-        case None =>
-          None
+    ESSimpleStorage.getDocs(
+      docIndex = esIndex,
+      docType = esType,
+      query = Some(query)
+    ).map {
+
+      _.headOption match {
+        case Some(jval) => jval.extractOpt[Device]
+        case None => None
       }
+
     }
   }
 
 
-  def info(deviceId: UUID): Future[Option[Device]] = {
-    info(deviceId.toString)
-  }
+  def info(deviceId: UUID): Future[Option[Device]] = info(deviceId.toString)
 
   def info(deviceId: String): Future[Option[Device]] = {
-    ESSimpleStorage.getDoc(Config.esDeviceIndex, Config.esDeviceType, deviceId).map {
-      case Some(resJval) =>
-        Some(resJval.extract[Device])
-      case None =>
-        None
+
+    ESSimpleStorage.getDoc(
+      docIndex = esIndex,
+      docType = esType,
+      docId = deviceId
+    ).map {
+      case Some(resJval) => Some(resJval.extract[Device])
+      case None => None
     }
+
   }
 
   def stub(deviceId: UUID): Future[Option[DeviceInfo]] = {
+
     info(deviceId).map {
-      case Some(device) =>
-        Some(DeviceStubManger.create(device = device))
-      case None =>
-        None
+      case Some(device) => Some(DeviceStubManger.toDeviceInfo(device = device))
+      case None => None
     }
+
   }
 
-  def curretShadowState(device: Device): Option[ThingShadowState] = {
-    AwsShadowService.getCurrentDeviceState(device.awsDeviceThingId)
+  private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {
+    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
+    Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
   }
+
 
 }

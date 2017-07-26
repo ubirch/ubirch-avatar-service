@@ -2,14 +2,17 @@ package com.ubirch.avatar.core.actor
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.MessageVersion
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import akka.actor.{Actor, ActorLogging, Props}
+import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
+import akka.stream.Materializer
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -17,11 +20,11 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by derMicha on 28/10/16.
   * This Actor checks incoming messages
   */
-class MessageValidatorActor extends Actor with ActorLogging {
+class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends Actor with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  private val processorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageProcessorActor]), ActorNames.MSG_PROCESSOR)
+  private val processorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageProcessorActor())), ActorNames.MSG_PROCESSOR)
 
   override def receive: Receive = {
 
@@ -32,7 +35,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
 
       DeviceCoreUtil.validateSimpleMessage(hwDeviceId = drd.a).map {
         case Some(dev) =>
-          processorActor ! (s, drd, dev)
+          processorActor forward(s, drd, dev)
         case None =>
           s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid hwDeviceId: ${drd.a}")
       }
@@ -44,7 +47,7 @@ class MessageValidatorActor extends Actor with ActorLogging {
 
       DeviceCoreUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s.getOrElse("nosignature"), payload = drd.p).map {
         case Some(dev) =>
-          processorActor ! (s, drd, dev)
+          processorActor forward(s, drd, dev)
         case None =>
           s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid simple signature: ${drd.a} / ${drd.s}")
       }
@@ -57,14 +60,23 @@ class MessageValidatorActor extends Actor with ActorLogging {
       if (drd.k.isDefined)
         DeviceManager.infoByHashedHwId(drd.a).map {
           case Some(dev) =>
-
-            if (DeviceCoreUtil.validateSignedMessage(hashedHwDeviceId = drd.a, key = drd.k.getOrElse("nokey"), signature = drd.s.getOrElse("nosignature"), payload = drd.p)) {
-
-              processorActor ! (s, drd, dev)
-            }
-            else {
-              s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
-            }
+            if (drd.s.isDefined)
+              if (drd.k.isEmpty) {
+                DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p) map {
+                  case true =>
+                    processorActor forward(s, drd, dev)
+                  case false =>
+                    s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+                }
+              }
+              else if (DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)) {
+                processorActor forward(s, drd, dev)
+              }
+              else {
+                s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+              }
+            else
+              s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError")
           case None =>
             s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
         }

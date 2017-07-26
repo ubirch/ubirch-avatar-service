@@ -5,10 +5,10 @@ import akka.camel.{CamelMessage, Consumer}
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.uuid.UUIDUtil
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContextExecutor
   * Created by derMicha on 30/10/16.
   */
 
-class MqttDeviceConsumerActor
+class MqttDeviceConsumerActor()
   extends Consumer
     with ActorLogging
     with MyJsonProtocol {
@@ -29,16 +29,16 @@ class MqttDeviceConsumerActor
 
   val mqttDeviceInTopic: String = s"${Config.mqttTopicDevicesBase}/+/${Config.mqttTopicDevicesIn}"
 
-  val clientId: String = s"avatarService_${UUIDUtil.uuidStr}"
+  val qualityOfService = "ExactlyOnce"
 
-  //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl"
+  val clientId: String = s"avatarService_${Config.enviroment}"
+
+  //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl&qualityOfService=$qualityOfService"
 
   override def endpointUri = s"mqtt:" +
-    s"avatarService?host=$mqttBrokerUrl&subscribeTopicName=${mqttDeviceInTopic}&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
+    s"MqttDeviceConsumerActor?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword&qualityOfService=$qualityOfService&cleanSession=false"
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
-
-  private val validatorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessageValidatorActor]), ActorNames.MSG_VALIDATOR)
 
   override def preStart(): Unit = {
     super.preStart()
@@ -62,14 +62,17 @@ class MqttDeviceConsumerActor
             log.error(s"received invalid message body: ${msg.body}")
         }
       }
-    //      log.debug(s"received mqtt message: ${msg.bodyAs[String]}")
+
     case (msgStr: String, deviceUuid: String) =>
       try {
         Json4sUtil.string2JValue(msgStr) match {
           case Some(jval) =>
             jval.extractOpt[DeviceDataRaw] match {
               case Some(ddr) =>
-                validatorActor ! ddr.copy(uuid = Some(deviceUuid))
+
+              //TODO forward to SQS consumer
+
+              //validatorActor ! ddr.copy(uuid = Some(deviceUuid))
               case None =>
                 log.error(s"message is not a valid DeviceDataRaw object: $msgStr")
             }
@@ -80,7 +83,12 @@ class MqttDeviceConsumerActor
         case e: Exception =>
           log.error(s"received invalid data: $msgStr", e)
       }
+
+    case dsu: DeviceStateUpdate =>
+      log.debug(s"received DeviceStateUpdate: ${dsu.toString}, nothing to do!")
+
     case _ =>
-      log.error("received unknown message")
+      val sender = context.sender()
+      log.error(s"received from ${sender.getClass.toString} unknown message")
   }
 }

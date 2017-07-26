@@ -6,12 +6,11 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.backend.actor.{HistoryActor, HistoryAfter, HistoryBefore, HistoryByDate, HistoryByDay, HistorySeq}
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.device.DeviceDataProcessedManager
-import com.ubirch.avatar.model.device.DeviceDataProcessed
+import com.ubirch.avatar.core.device.DeviceHistoryManager
+import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import org.joda.time.DateTime
@@ -32,9 +31,8 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-30
   */
-trait DeviceDataHistoryRoute extends MyJsonProtocol
+trait DeviceDataHistoryRoute extends ResponseUtil
   with CORSDirective
-  with ResponseUtil
   with StrictLogging {
 
   implicit val system = ActorSystem()
@@ -185,17 +183,17 @@ trait DeviceDataHistoryRoute extends MyJsonProtocol
   private def queryHistory(deviceId: UUID,
                            fromOpt: Option[Int] = None,
                            sizeOpt: Option[Int] = None
-                          ): Future[Seq[DeviceDataProcessed]] = {
+                          ): Future[Seq[DeviceHistory]] = {
 
     fromOpt match {
 
       case Some(fromInt) =>
         sizeOpt match {
-          case Some(size) => DeviceDataProcessedManager.history(deviceId.toString, fromInt, size)
-          case None => DeviceDataProcessedManager.history(deviceId.toString, fromInt)
+          case Some(size) => DeviceHistoryManager.history(deviceId.toString, fromInt, size)
+          case None => DeviceHistoryManager.history(deviceId.toString, fromInt)
         }
 
-      case None => DeviceDataProcessedManager.history(deviceId.toString)
+      case None => DeviceHistoryManager.history(deviceId.toString)
 
     }
 

@@ -1,6 +1,9 @@
 package com.ubirch.avatar.model
 
-import com.ubirch.avatar.model.device.Device
+import java.util.UUID
+
+import com.ubirch.avatar.config.Const
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 
@@ -15,21 +18,29 @@ import org.json4s.native.JsonMethods._
 object DummyDevices {
 
   def minimalDevice(deviceId: String = UUIDUtil.uuidStr,
+                    groups: Set[UUID] = Set.empty,
                     hwDeviceId: String = HashUtil.sha256HexString(UUIDUtil.uuidStr)
                    ): Device = {
 
-    Device(deviceId = deviceId, hwDeviceId = hwDeviceId)
+    Device(
+      deviceId = deviceId,
+      groups = groups,
+      hwDeviceId = hwDeviceId
+    )
 
   }
 
   def device(deviceId: String = UUIDUtil.uuidStr,
+             groups: Set[UUID] = Set(UUIDUtil.uuid),
              deviceName: String = "testHans001",
              hwDeviceId: String = UUIDUtil.uuidStr,
-             deviceTypeKey: String,
+             deviceTypeKey: String = Const.ENVIRONMENTSENSOR,
              deviceProperties: Option[JValue] = None
             ): Device = {
 
-    Device(deviceId = deviceId,
+    Device(
+      deviceId = deviceId,
+      groups = groups,
       deviceName = deviceName,
       hwDeviceId = hwDeviceId,
       deviceTypeKey = deviceTypeKey,
@@ -55,6 +66,7 @@ object DummyDevices {
 
   lazy val device1 = Device(
     deviceId = device1Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "lightsSensor",
     deviceName = "lightsSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
@@ -69,6 +81,7 @@ object DummyDevices {
 
   lazy val device2 = Device(
     deviceId = device2Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "temperaturesSensor",
     deviceName = "temperaturesSensor_TU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
@@ -83,6 +96,7 @@ object DummyDevices {
 
   lazy val device3 = Device(
     deviceId = device3Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "machineSensor",
     deviceName = "machineSensor_WM_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
@@ -97,6 +111,7 @@ object DummyDevices {
 
   lazy val device4 = Device(
     deviceId = device4Id,
+    groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "trackleSensor",
     deviceName = "trackleSensor_LU_8caa2520-d8f0-4c85-9705-4707054f4e11",
     hwDeviceId = "860719022152999",
@@ -110,19 +125,19 @@ object DummyDevices {
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
-  lazy val device1Config = parse(
+  lazy val device1Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device1Properties = parse(
+  lazy val device1Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar1Desired = parse(
+  lazy val avatar1Desired: JValue = parse(
     """{
       |  "i": 1800,
       |  "bf": 1,
@@ -131,7 +146,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar1Reported = parse(
+  lazy val avatar1Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -145,19 +160,19 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val device2Config = parse(
+  lazy val device2Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device2Properties = parse(
+  lazy val device2Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar2Desired = parse(
+  lazy val avatar2Desired: JValue = parse(
     """{
       |  "i": 1800,
       |  "bf": 1,
@@ -166,7 +181,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar2Reported = parse(
+  lazy val avatar2Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -180,19 +195,19 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val device3Config = parse(
+  lazy val device3Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device3Properties = parse(
+  lazy val device3Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar3Desired = parse(
+  lazy val avatar3Desired: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -206,7 +221,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar3Reported = parse(
+  lazy val avatar3Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",
@@ -220,19 +235,19 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val device4Config = parse(
+  lazy val device4Config: JValue = parse(
     """{
       |  "i": 3600,
       |  "ir": 191,
       |  "s": 0
       |}""".stripMargin)
 
-  lazy val device4Properties = parse(
+  lazy val device4Properties: JValue = parse(
     """{
       |  "countryCode": "LU"
       |}""".stripMargin)
 
-  lazy val avatar4Desired = parse(
+  lazy val avatar4Desired: JValue = parse(
     """{
       |  "i": 1800,
       |  "bf": 1,
@@ -241,7 +256,7 @@ object DummyDevices {
       |  "b": 17840
       |}""".stripMargin)
 
-  lazy val avatar4Reported = parse(
+  lazy val avatar4Reported: JValue = parse(
     """{
       |  "la": "52.502769",
       |  "lo": "13.477947",

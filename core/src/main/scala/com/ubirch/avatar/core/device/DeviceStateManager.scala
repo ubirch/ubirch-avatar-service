@@ -2,8 +2,8 @@ package com.ubirch.avatar.core.device
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.aws.AvatarState
-import com.ubirch.avatar.model.device.{Device, DeviceStateUpdate}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceStateUpdate}
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESBulkStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -16,25 +16,14 @@ import scala.concurrent.Future
 /**
   * Created by derMicha on 09/11/16.
   */
-case class SimplePayLoad(i: Int = 900)
-
 object DeviceStateManager extends MyJsonProtocol with StrictLogging {
 
   private val index = Config.esDeviceStateIndex
   private val esType = Config.esDeviceStateType
 
-  def currentDeviceState(device: Device): DeviceStateUpdate = {
+  def createNewDeviceState(device: Device, avatarState: AvatarState): DeviceStateUpdate = {
 
-    //@TODO AWSIOT removed
-    //    val payload = AwsShadowService.getDelta(device.awsDeviceThingId) match {
-    //      case Some(pl) =>
-    //        pl
-    //      case None =>
-    //        read[JValue]("")
-    //    }
-    //    val payload = read[JValue]("{'i':900}")
-
-    val payload = device.deviceConfig.getOrElse(Json4sUtil.any2jvalue(SimplePayLoad()).get)
+    val payload = avatarState.delta.getOrElse(Json4sUtil.string2JValue("{}").get)
 
     val (k, s) = DeviceUtil.sign(payload, device)
 

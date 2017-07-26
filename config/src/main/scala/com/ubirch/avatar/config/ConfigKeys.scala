@@ -6,16 +6,18 @@ package com.ubirch.avatar.config
   */
 object ConfigKeys {
 
-  private final val prefix = "ubirchAvatarService"
+  final val prefix = "ubirchAvatarService"
 
-  final val GOPIPELINENAME = s"$prefix.gopipelinename"
-  final val GOPIPELINELABEL = s"$prefix.gopipelinelabel"
-  final val GOPIPELINEREV = s"$prefix.gopipelinerev"
+  final val GO_PIPELINE_NAME = s"$prefix.gopipelinename"
+  final val GO_PIPELINE_LABEL = s"$prefix.gopipelinelabel"
+  final val GO_PIPELINE_REVISION = s"$prefix.gopipelinerev"
 
   final val HTTPPROTOCOL = s"$prefix.protocol"
   final val HTTPINTERFACE = s"$prefix.interface"
   final val HTTPPORT = s"$prefix.port"
 
+
+  final val ENVIROMENT = s"$prefix.enviroment"
   /*
    * Akka related configs
    *********************************************************************************************/
@@ -30,19 +32,12 @@ object ConfigKeys {
 
   // Prefixes
   final val esPrefix = s"$prefix.es"
-  final val esPortPrefix = s"$esPrefix.port"
   final val esDevicePrefix = s"$esPrefix.device"
   final val esDeviceRawDataPrefix = s"$esPrefix.devicerawdata"
   final val esDeviceRawDataAnchoredPrefix = s"$esPrefix.devicerawdataAnchored"
   final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
   final val esDeviceStatePrefix = s"$esPrefix.devicestate"
-  final val esAvatarStatePrefix = s"$esPrefix.avatarState"
-
-  // Connection
-  final val ESPORT_REST = s"$esPortPrefix.rest"
-  final val DEVICE_DATA_DB_USER = s"$esPrefix.user"
-  final val DEVICE_DATA_DB_PASSWORD = s"$esPrefix.password"
 
   // Device Index & Type
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
@@ -57,8 +52,8 @@ object ConfigKeys {
   final val ES_DEVICE_DATA_RAW_ANCHORED_TYPE = s"$esDeviceRawDataAnchoredPrefix.type"
 
   // DeviceHistory Index & Type
-  final val ES_DEVICE_DATA_PROCESSED_INDEX = s"$esDeviceHistoryPrefix.index"
-  final val ES_DEVICE_DATA_PROCESSED_TYPE = s"$esDeviceHistoryPrefix.type"
+  final val ES_DEVICE_HISTORY_INDEX = s"$esDeviceHistoryPrefix.index"
+  final val ES_DEVICE_HISTORY_TYPE = s"$esDeviceHistoryPrefix.type"
 
   // Device Type
   final val ES_DEVICE_TYPE_INDEX = s"$esDeviceTypePrefix.index"
@@ -69,13 +64,25 @@ object ConfigKeys {
   final val ES_DEVICE_STATE_TYPE = s"$esDeviceStatePrefix.type"
 
 
-  // Avatar State
-  final val ES_AVATAR_STATE_INDEX = s"$esAvatarStatePrefix.index"
-  final val ES_AVATAR_STATE_TYPE = s"$esAvatarStatePrefix.type"
-
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
   final val ES_LARGE_PAGE_SIZE = s"$esPrefix.largePageSize"
+
+
+  // Global Message Queue Stuff
+  final val INTERNOUTBOX = "intern-outbox"
+  final val EXTERNOUTBOX = "extern-outbox"
+  final val DEVICEOUTBOX = "device-outbox"
+
+  /*
+   * Mongo
+   *********************************************************************************************/
+
+  final val MONGO_PREFIX = s"$prefix.mongo"
+
+  private final val mongoCollection = s"$MONGO_PREFIX.collection"
+
+  final val COLLECTION_AVATAR_STATE = s"$mongoCollection.avatarState"
 
   /* AWS Related Config Keys
    **********************************************************************/
@@ -106,24 +113,17 @@ object ConfigKeys {
   // AWS Auth keys
   final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
 
-  // AWS IoT
-  final val AWS_IOT_ENV_PREFIX = s"$awsPrefix.iot.env.prefix"
 
   // AWS SQS queues
+
+
   final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"
   final val AWS_SQS_QUEUES_TRANSFORMER_OUT = s"$awsPrefix.sqs.queues.transformer_out"
 
-  /* REST Client Related Config Keys
-   **********************************************************************/
-
-  final val restClientPrefix = s"$prefix.restclient"
-  final val restClientTimeout = s"$restClientPrefix.timeout"
-
-  final val REST_CLIENT_TIMEOUT_CONNECT = s"$restClientTimeout.connect"
-  final val REST_CLIENT_TIMEOUT_READ = s"$restClientTimeout.read"
 
   /* MQTT Related Config Keys
  **********************************************************************/
+
 
   final val mqttPrefix = s"$prefix.mqtt"
 
@@ -140,5 +140,7 @@ object ConfigKeys {
   final val MQTT_QUEUES_DEVICES_OUT = s"$mqttPrefix.queues.devicesTopicPartOut"
 
   final val MQTT_QUEUES_DEVICES_PROCESSED = s"$mqttPrefix.queues.devicesTopicPartProcessed"
+
+  final val MQTT_PUBLISH_PROCESSED = s"$mqttPrefix.publishProcessed"
 
 }

@@ -2,7 +2,8 @@ package com.ubirch.avatar.core.test.util
 
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.DummyDeviceDataRaw
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -22,12 +23,12 @@ object DeviceDataRawTestUtil {
     */
   def storeSeries(elementCount: Int): (Device, List[DeviceDataRaw]) = {
 
-    val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)()
+    val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)
 
     val storedSeries = dataSeries map { deviceData =>
       Await.result(DeviceDataRawManager.store(deviceData), 1 seconds).get
     }
-    Thread.sleep(3000)
+    Thread.sleep(1200 + elementCount * 5)
 
     (device, storedSeries)
 

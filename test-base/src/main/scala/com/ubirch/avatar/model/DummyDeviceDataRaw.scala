@@ -2,13 +2,14 @@ package com.ubirch.avatar.model
 
 import java.util.UUID
 
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw}
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
+import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._
 
 import scala.collection.mutable.ListBuffer
@@ -28,21 +29,21 @@ object DummyDeviceDataRaw {
            timestamp: DateTime = DateTime.now,
            hashedPubKey: String = "pretend-to-be-a-public-key"
           )
-          (payload: () => JValue = () => randomPayload())
   : DeviceDataRaw = {
 
-    val p = payload()
+    val p = randomPayload(timestamp)
     val (k, s) = DeviceUtil.sign(p, device)
 
     DeviceDataRaw(
       id = messageId,
+      uuid = Some(UUIDUtil.uuidStr),
+      fw = "V1.2.3",
       a = HashUtil.sha512Base64(device.hwDeviceId),
       ts = timestamp,
       k = Some(k),
       s = Some(s),
       p = p
     )
-
   }
 
   def dataSeries(messageId: Option[UUID] = None,
@@ -52,7 +53,6 @@ object DummyDeviceDataRaw {
                  timestampOffset: Long = -1000 * 60 * 60, // -1h
                  elementCount: Int = 5
                 )
-                (payload: () => JValue = () => randomPayload())
   : (Device, List[DeviceDataRaw]) = {
 
     val rawDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
@@ -77,7 +77,7 @@ object DummyDeviceDataRaw {
         pubKey = pubKey,
         timestamp = timestamp,
         hashedPubKey = hashedPubKey
-      )(payload)
+      )
 
       rawDataList.+=:(deviceData)
 
@@ -87,7 +87,7 @@ object DummyDeviceDataRaw {
 
   }
 
-  def randomPayload(): JValue =
+  def randomPayload(ts: DateTime): JValue =
     parse(
       s"""
          |[
@@ -97,7 +97,17 @@ object DummyDeviceDataRaw {
          |"h":${4000 + Random.nextInt(5500)},
          |"la":"52.51${10000 + Random.nextInt(20000)}",
          |"lo":"13.21${10000 + Random.nextInt(20000)}",
-         |"a":${5000 + Random.nextInt(10000)}
+         |"a":${5000 + Random.nextInt(10000)},
+         |"ts":"${ts.minusMinutes(2)}"
+         |},
+         |{
+         |"t":${2000 + Random.nextInt(1500)},
+         |"p":${90000 + Random.nextInt(20000)},
+         |"h":${4000 + Random.nextInt(5500)},
+         |"la":"52.51${10000 + Random.nextInt(20000)}",
+         |"lo":"13.21${10000 + Random.nextInt(20000)}",
+         |"a":${5000 + Random.nextInt(10000)},
+         |"ts":"${ts.minusMinutes(1)}"
          |}
          |]
         """.stripMargin

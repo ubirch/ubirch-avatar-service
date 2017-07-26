@@ -1,14 +1,15 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.core.test.util.DeviceTypeTestUtil
-import com.ubirch.avatar.model.device.DeviceType
+import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.avatar.test.tools.DeviceTypeTestUtil
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.util.model.JsonErrorResponse
+
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
-import com.ubirch.util.model.JsonErrorResponse
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
@@ -23,7 +24,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"GET ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> empty response") {
-      deleteIndexes()
+      deleteIndices()
       runTypeGetProducesEmptyResponse()
     }
 
@@ -56,7 +57,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"POST ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> create is successful") {
-      deleteIndexes()
+      deleteIndices()
       runTypePostCreatesRecord()
     }
 
@@ -90,7 +91,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"PUT ${RouteConstants.pathDeviceType}") {
 
     scenario("index does not exist --> update fails") {
-      deleteIndexes()
+      deleteIndices()
       runTypePutFails()
     }
 
@@ -124,7 +125,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   feature(s"GET ${RouteConstants.pathDeviceTypeInit}") {
 
     scenario("index does not exist --> default deviceTypes are created") {
-      deleteIndexes()
+      deleteIndices()
       runTypeInitCreatesRecords()
     }
 

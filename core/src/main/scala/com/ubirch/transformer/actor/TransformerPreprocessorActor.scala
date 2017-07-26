@@ -2,16 +2,15 @@ package com.ubirch.transformer.actor
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceTypeManager
-import com.ubirch.avatar.model.MessageVersion
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw, DeviceDataRawEnvelope}
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceDataRawEnvelope}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.util.json.MyJsonProtocol
-
 import org.json4s.JValue
-
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.routing.RoundRobinPool
+import com.ubirch.avatar.model.db.device.Device
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -53,6 +52,7 @@ class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorL
             drd.p.extract[Array[JValue]].foreach { payload =>
               log.debug(s"extracted payload: $payload")
               val newDrd = drd.copy(
+
                 v = MessageVersion.v002,
                 p = payload
               )

@@ -1,20 +1,25 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.core.device.DeviceTypeManager
-import com.ubirch.avatar.storage.StorageCleanup
+
+import com.ubirch.avatar.storage.{ESStorageCleanup, MongoStorageCleanup}
 
 /**
-  * Created by derMicha on 12/12/16.
+  * author: derMicha
+  * since: 12/12/16
   */
 object ClearDb
   extends App
     with StrictLogging
-    with StorageCleanup {
+    with ESStorageCleanup
+    with MongoStorageCleanup {
 
-  logger.info("reset avatar service db")
+  logger.info("reset avatar service db: Elasticsearch")
   cleanElasticsearch()
+  esClientClose()
 
-  DeviceTypeManager.init()
+  logger.info("reset avatar service db: MongoDb")
+  cleanMongoDb()
+  mongoClose()
 
 }

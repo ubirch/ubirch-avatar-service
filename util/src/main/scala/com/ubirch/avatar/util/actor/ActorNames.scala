@@ -16,6 +16,10 @@ object ActorNames {
 
   final val TRANSFORMER_POST: String = "transformer-post-actor"
 
+  final val TRANSFORMER_OUTBOX_MANAGER: String = "transformer-outbox-manager-actor"
+
+  final val DEVICE_OUTBOX_MANAGER: String = "device-outbox-manager-actor"
+
   final val MQTT_CONSUMER: String = "mqtt-consumer"
 
   final val PERSISTENCE_SVC: String = "persistence-service"
@@ -31,5 +35,7 @@ object ActorNames {
   final val NOTARY_SVC: String = "notary-service"
 
   final val OUT_PRODUCER: String = "out-producer"
+
+  final val DEEP_CHECK = "deep-check-actor"
 
 }

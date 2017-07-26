@@ -8,14 +8,14 @@ import com.ubirch.util.config.ConfigBase
   */
 object Config extends ConfigBase {
 
-  def goPipelineName: String = config.getString(ConfigKeys.GOPIPELINENAME)
+  def goPipelineName: String = config.getString(ConfigKeys.GO_PIPELINE_NAME)
 
-  def goPipelineLabel: String = config.getString(ConfigKeys.GOPIPELINELABEL)
-  
-  def goPipelineRev: String = config.getString(ConfigKeys.GOPIPELINEREV)
+  def goPipelineLabel: String = config.getString(ConfigKeys.GO_PIPELINE_LABEL)
+
+  def goPipelineRevision: String = config.getString(ConfigKeys.GO_PIPELINE_REVISION)
 
   /*
-   * SERVER RELATED
+   * Service
    ****************************************************************/
 
   /**
@@ -37,8 +37,11 @@ object Config extends ConfigBase {
     */
   def port: Int = config.getInt(ConfigKeys.HTTPPORT)
 
+
+  def enviroment: String = config.getString(ConfigKeys.ENVIROMENT)
+
   /*
-   * Akka Related
+   * Akka
    ************************************************************************************************/
 
   /**
@@ -51,23 +54,8 @@ object Config extends ConfigBase {
   def akkaNumberOfWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_WORKERS)
 
   /*
-   * Elasticsearch Related
+   * Elasticsearch
    ************************************************************************************************/
-
-  /**
-    * @return Elasticsearch REST client port
-    */
-  def esPortHttp: Int = config.getInt(ConfigKeys.ESPORT_REST)
-
-  /**
-    * @return Elasticsearch login user (not yet implemented)
-    */
-  def esUser: String = config.getString(ConfigKeys.DEVICE_DATA_DB_USER)
-
-  /**
-    * @return Elasticsearch login password (not yet implemented)
-    */
-  def esPassword: String = config.getString(ConfigKeys.DEVICE_DATA_DB_PASSWORD)
 
   /**
     * @return Elasticsearch DeviceData index
@@ -100,14 +88,14 @@ object Config extends ConfigBase {
   def esDeviceDataRawAnchoredType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_ANCHORED_TYPE)
 
   /**
-    * @return Elasticsearch processed device data index
+    * @return Elasticsearch device history index
     */
-  def esDeviceDataProcessedIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_INDEX)
+  def esDeviceDataHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
 
   /**
-    * @return Elasticsearch processed device data type
+    * @return Elasticsearch device history data type
     */
-  def esDeviceDataProcessedType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_PROCESSED_TYPE)
+  def esDeviceDataHistoryType: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_TYPE)
 
   /**
     * @return Elasticsearch deviceType index
@@ -130,26 +118,19 @@ object Config extends ConfigBase {
   def esDeviceStateType: String = config.getString(ConfigKeys.ES_DEVICE_STATE_TYPE)
 
   /**
-    * @return Elasticsearch avatarState index
-    */
-  def esAvatarStateIndex: String = config.getString(ConfigKeys.ES_AVATAR_STATE_INDEX)
-
-  /**
-    * @return Elasticsearch avatarState type
-    */
-  def esAvatarStateType: String = config.getString(ConfigKeys.ES_AVATAR_STATE_TYPE)
-
-  /**
     * @return ElasticSearch default size in regards to pagination
     */
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
-  /**
-    * defines a prefix for AWS IoT Shadownames
-    *
-    * @return
-    */
-  def awsIotEnvPrefix: String = config.getString(ConfigKeys.AWS_IOT_ENV_PREFIX)
+  /*
+   * Mongo Related
+   ************************************************************************************************/
+
+  def mongoCollectionAvatarState: String = config.getString(ConfigKeys.COLLECTION_AVATAR_STATE)
+
+  /*
+   * AWS
+   ************************************************************************************************/
 
   /**
     * @return ElasticSearch size of large pages in regards to pagination
@@ -199,17 +180,9 @@ object Config extends ConfigBase {
 
   def awsSqsQueueTransformerOut: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER_OUT)
 
-  /**
-    * @return REST Client connection timeout in milliseconds
-    */
-  def restClientTimeoutConnect: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_CONNECT)
-
-  /**
-    * @return REST Client read timeout in milliseconds
-    */
-  def restClientTimeoutRead: Int = config.getInt(ConfigKeys.REST_CLIENT_TIMEOUT_READ)
-
-  /* mqtt */
+  /*
+   * MQTT
+   ************************************************************************************************/
 
   def mqttBrokerUrl: String = config.getString(ConfigKeys.MQTT_BROKER_URL)
 
@@ -224,5 +197,7 @@ object Config extends ConfigBase {
   def mqttTopicDevicesOut: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_OUT)
 
   def mqttTopicDevicesProcessed: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_PROCESSED)
+
+  def mqttPublishProcessed: Boolean = config.getBoolean(ConfigKeys.MQTT_PUBLISH_PROCESSED)
 
 }

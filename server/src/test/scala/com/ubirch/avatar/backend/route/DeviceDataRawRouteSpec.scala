@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.route
 
 import com.ubirch.avatar.core.device.DeviceDataRawManager
-import com.ubirch.avatar.model.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
@@ -29,7 +29,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val deviceRaw = DummyDeviceDataRaw.data(device = device)()
+      val deviceRaw = DummyDeviceDataRaw.data(device = device)
 
       // test
       Post(RouteConstants.pathDeviceDataRaw, deviceRaw) ~> Route.seal(routes) ~> check {
@@ -53,9 +53,9 @@ class DeviceDataRawRouteSpec extends RouteSpec
 
       // prepare
       val device = DummyDevices.minimalDevice()
-      val raw1 = DummyDeviceDataRaw.data(device = device)()
+      val raw1 = DummyDeviceDataRaw.data(device = device)
       val storedRaw1 = Await.result(DeviceDataRawManager.store(raw1), 1 second).get
-      val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)()
+      val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)
 
       // test
       Post(RouteConstants.pathDeviceDataRaw, raw2) ~> Route.seal(routes) ~> check {

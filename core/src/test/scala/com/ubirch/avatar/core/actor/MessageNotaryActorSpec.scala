@@ -26,7 +26,7 @@ class MessageNotaryActorSpec extends ElasticsearchSpec {
       val notaryActor = TestActorRef(new MessageNotaryActor)
 
       val device = DummyDevices.minimalDevice()
-      val rawBefore = DummyDeviceDataRaw.data(device = device)()
+      val rawBefore = DummyDeviceDataRaw.data(device = device)
 
       // test
       notaryActor ! rawBefore
@@ -53,7 +53,7 @@ class MessageNotaryActorSpec extends ElasticsearchSpec {
       val notaryActor = TestActorRef(new MessageNotaryActor)
 
       val device = DummyDevices.minimalDevice()
-      val rawBefore = DummyDeviceDataRaw.data(device = device)().copy(txHash = Some("foo"), txHashLink = Some("http://example.com/foo"))
+      val rawBefore = DummyDeviceDataRaw.data(device = device).copy(txHash = Some("foo"), txHashLink = Some("http://example.com/foo"))
 
       // test
       notaryActor ! rawBefore

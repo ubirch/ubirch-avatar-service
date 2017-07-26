@@ -19,7 +19,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("all()") {
 
     scenario("index does not exist --> empty response") {
-      deleteIndexes()
+      deleteIndices()
       runAllReturnsEmpty()
     }
 
@@ -45,7 +45,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("getByKey()") {
 
     scenario("index does not exist --> result is None") {
-      deleteIndexes()
+      deleteIndices()
       runGetByKeyResultsInNone()
     }
 
@@ -55,7 +55,8 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
     scenario("record matching the given key exists") {
       val deviceType = DeviceTypeTestUtil.storeSeries(elementCount = 1).head
-      Await.result(DeviceTypeManager.getByKey(deviceType.key), 1 second) should be(Some(deviceType))
+      val result = Await.result(DeviceTypeManager.getByKey(deviceType.key), 1 second)
+      result should be(Some(deviceType))
     }
 
   }
@@ -63,7 +64,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("create()") {
 
     scenario("index does not exist --> create is successful") {
-      deleteIndexes()
+      deleteIndices()
       runCreateSuccessful()
     }
 
@@ -81,7 +82,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
       // test
       val result = Await.result(DeviceTypeManager.create(deviceType), 1 second)
-      Thread.sleep(1000)
+      Thread.sleep(1200)
 
       // verify
       result should be(None)
@@ -94,7 +95,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("update()") {
 
     scenario("index does not exist --> update fails") {
-      deleteIndexes()
+      deleteIndices()
       runUpdateFails()
     }
 
@@ -112,7 +113,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
       // test
       val result = Await.result(DeviceTypeManager.update(updatedDeviceType), 1 second)
-      Thread.sleep(1000)
+      Thread.sleep(1200)
 
       // verify
       result should be(Some(updatedDeviceType))
@@ -125,7 +126,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
   feature("init()") {
 
     scenario("index does not exist --> default deviceTypes are created") {
-      deleteIndexes()
+      deleteIndices()
       runInitDeviceTypesAreCreated()
     }
 
@@ -170,7 +171,7 @@ class DeviceTypeManagerSpec extends ElasticsearchSpec
 
   private def runInitDeviceTypesAreCreated() = {
     val result = Await.result(DeviceTypeManager.init(), 1 second)
-    result.toSet should be(DeviceTypeUtil.defaultDeviceTypes)
+    result should be(DeviceTypeUtil.defaultDeviceTypes)
   }
 
 }

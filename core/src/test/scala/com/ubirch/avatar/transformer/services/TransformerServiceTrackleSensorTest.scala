@@ -3,9 +3,11 @@ package com.ubirch.avatar.transformer.services
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.model.device.{Device, DeviceDataRaw, DeviceType}
-import com.ubirch.avatar.model.payload.{TrackleSensorPayload, TrackleSensorPayloadOut}
-import com.ubirch.avatar.model.{DummyDevices, MessageVersion}
+import com.ubirch.avatar.model.DummyDevices
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceType}
+import com.ubirch.avatar.model.rest.payload.{TrackleSensorPayload, TrackleSensorPayloadOut}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -15,6 +17,8 @@ import org.scalactic.TolerantNumerics
 import org.scalatest.{FeatureSpec, Matchers}
 
 import spire.implicits._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by derMicha on 30/11/16.
@@ -71,7 +75,8 @@ class TransformerServiceTrackleSensorTest extends FeatureSpec
         sdrd = ddrTrackleSensor
       )
 
-      val tPayload = trd.deviceMessage.extractOpt[TrackleSensorPayloadOut]
+      trd.isDefined shouldBe true
+      val tPayload = trd.get.deviceMessage.extractOpt[TrackleSensorPayloadOut]
 
       implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(2)
 

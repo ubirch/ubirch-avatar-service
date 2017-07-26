@@ -16,9 +16,86 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
-### Version 0.3.11 (tbd)
+### Version 0.3.18 (tbd)
 
-* tbd
+* refactor where REST client connection timeouts are configured
+* less logging in `AvatarRestClient`
+
+### Version 0.3.17 (2017-07-25)
+
+* refactored `ImportTrackle` to work with remote environments, too (e.g. avatar-svc running in dev or demo environment)
+* add route `POST /api/avatarService/v1/device/update` (accepting JSON)
+* add route `POST /api/avatarService/v1/device/bulk` (accepting JSON)
+
+### Version 0.3.16 (2017-07-25)
+
+* update Akka HTTP to 10.0.9
+* update to `com.ubirch.util:rest-akka-http(-test):0.3.8`
+* update to `com.ubirch.util:response-util:0.2.3`
+* update to `com.ubirch.util:oidc-utils_:0.4.8`
+* update to `com.ubirch.util:mongo(-test)-utils:0.3.4`
+* update to Akka 2.4.19
+* update to `com.ubirch.key:client-rest:0.1.12` (REST client based on Akka HTTP instead of PlayWS)
+* update to `com.ubirch.user:*:0.4.18` (REST client based on Akka HTTP instead of PlayWS)
+
+### Version 0.3.15 (2017-07-13)
+
+* fixed problem with faulty log4j logging by adding the dependency `log4j-over-slf4j`
+* add `MongoConstraints`
+* introduced `MongoStorageCleanup`
+* improved `MongoSpec`
+* added clean up of MongoDD to `ClearDb`
+* MongoDB constraints are now created during server start
+* update _com.ubirch.util:mongo(-test)-utils_ to 0.3.3
+* update _com.ubirch.user:*_ to 0.4.14
+
+### Version 0.3.14 (2017-07-11)
+
+* bugfix: it was possible to create two devices with the same hwDeviceId
+
+### Version 0.3.13 (2017-06-29)
+
+* add scripts `dev-scripts/resetDatabase.sh` and `dev-scripts/initData.sh`
+* updated to _com.ubirch.util:json:0.4.2_ and all ubirch util libs depending on it, too
+* update to _com.ubirch.user:client-rest:0.4.13_
+
+### Version 0.3.12 (2017-06-22)
+
+* AvatarState is no longer stored in AWS IoT but instead in a MongoDB
+* update to _json4s_ 3.5.2
+* update _com.ubirch.util:json_ to 0.4.1
+* update _com.ubirch.util:elasticsearch-client-binary_ to 2.0.6
+* update _com.ubirch.util:mongo-test-utils_ to 0.3.1
+* update _com.ubirch.util:mongo-utils_ to 0.3.1
+* update _com.ubirch.util:oidc-utils_ to 0.4.6
+* update _com.ubirch.util:response-util_ to 0.2.1
+* update _com.ubirch.user:client-rest_ to 0.4.10
+* bugfix (UBI-264): updates on Azure's CosmosDB show the behavior of an upsert()
+
+### Version 0.3.11 (2017-06-16)
+
+* update to _json4s_ 3.5.1
+* update to _de.heikoseeberger:akka-http-json4s_ 1.14.0
+* update Akka HTTP to 10.0.6
+* update _com.ubirch.notary:notary-client_ to 0.3.2
+* update _com.ubirch.util:elasticsearch-util_ to 2.0.0
+* update to Elasticsearch 5.3
+* update mappings to Elasticsearch 5.3
+* rename module _model_ to _model-rest_ and introduce module _model-db_
+* update _com.ubirch.util:rest-akka-http_ to 0.3.7
+* update _com.ubirch.util:rest-akka-http-test_ to 0.3.7
+* creating devices now stores groups as queried from user-service
+* update to Akka 2.4.18
+* update to Akka HTTP 10.0.6
+* creating a device remembers the user's groups (new field _Device.groups_)
+* change GO CI related environment variables to: _GO_PIPELINE_NAME_AVATAR_, _GO_PIPELINE_LABEL_AVATAR_ and _GO_REVISION_AVATAR_
+* introduce new endpoint: `/api/avatarService/v1/check`
+* update _com.ubirch.util:json_ to 0.4.0
+* introduce endpoint `/api/avatarService/v1/deepCheck`
+* update _com.ubirch.util:elasticsearch-client-binary_ to 2.0.5
+* update _com.ubirch.util:response-util_ to 0.2.0
+* update _com.ubirch.util:oidc-utils_ to 0.4.5
+* update _com.ubirch.user:client-rest_ to 0.4.9
 
 ### Version 0.3.10 (2017-03-01)
 
@@ -76,7 +153,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "aws" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -88,9 +165,22 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "client" % "0.3.18-SNAPSHOT"
 )
 ```
+
+#### Configuration
+   
+| Config Item                                      | Mandatory  | Description                                                |
+|:-------------------------------------------------|:-----------|:-----------------------------------------------------------|
+| ubirchAvatarService.client.rest.baseUrl          | no         | avatar-service base url (default = http://localhost:8080)  |
+| ubirchAvatarService.client.rest.userToken        | yes        | user token from registration or login                      |
+| ubirchAvatarService.client.rest.timeout.connect  | no         | timeout during connection creation in milliseconds (default = 15000 ms) |
+| ubirchAvatarService.client.rest.timeout.read     | no         | timeout when reading from server in milliseconds (default = 15000 ms)   |
+
+#### Usage
+
+See `com.ubirch.avatar.cmd.ImportTrackle` for an example usage.
 
 ### `cmdtools`
 
@@ -99,7 +189,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -110,7 +200,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "config" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -121,18 +211,29 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "core" % "0.3.18-SNAPSHOT"
 )
 ```
 
-### `model`
+### `model-db`
 
 ```scala
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-db" % "0.3.18-SNAPSHOT"
+)
+```
+
+### `model-rest`
+
+```scala
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots")
+)
+libraryDependencies ++= Seq(
+  "com.ubirch.avatar" %% "model-rest" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -141,10 +242,11 @@ libraryDependencies ++= Seq(
 ```scala
 resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
-  Resolver.bintrayRepo("hseeberger", "maven")
+  Resolver.bintrayRepo("hseeberger", "maven"),
+  "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "server" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -157,7 +259,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "test-base" % "0.3.18-SNAPSHOT"
 )
 ```
 
@@ -168,20 +270,35 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.11-SNAPSHOT"
+  "com.ubirch.avatar" %% "util" % "0.3.18-SNAPSHOT"
 )
 ```
 
 
 ## REST Methods
 
-### Welcome / Health
+### Welcome / Health / Check
 
     curl localhost:8080/
+    curl localhost:8080/api/avatarService/v1
+    curl localhost:8080/api/avatarService/v1/check
 
 If server is healthy response is:
 
-    200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService"}
+    200 {"version":"1.0","status":"OK","message":"Welcome to the ubirchAvatarService  ( $GO_PIPELINE_NAME / $GO_PIPELINE_LABEL / $GO_PIPELINE_REVISION )"}
+
+### Deep Check / Server Health
+
+    curl localhost:8092/api/avatarService/v1/deepCheck
+
+If healthy the response is:
+
+    200 {"status":true,"messages":[]}
+
+If not healthy the status is `false` and the `messages` array not empty:
+
+    503 {"status":false,"messages":["unable to connect to the database"]}
+
 
 ### Device CRUD
 
@@ -268,6 +385,44 @@ Raw data comes directly from devices and is not yet human readable.
         "foo": 23,
         "bar": "ubirch-sensor-data"
       }
+    }'
+
+#### Update
+
+TODO: add description
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/update -H "Content-Type: application/json" -d '{
+        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
+        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "deviceType": "lightsLamp",
+        "timestamp": "2016-06-30T11:39:51Z",
+        "deviceTags": [
+          "ubirch#0",
+          "actor"
+        ],
+        "deviceMessage": {
+          "foo": 23,
+          "bar": "ubirch-sensor-data"
+        }
+    }'
+
+#### Bulk
+
+TODO: add description
+
+    curl -XPOST localhost:8080/api/avatarService/v1/device/bulk -H "Content-Type: application/json" -d '{
+        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
+        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "deviceType": "lightsLamp",
+        "timestamp": "2016-06-30T11:39:51Z",
+        "deviceTags": [
+          "ubirch#0",
+          "actor"
+        ],
+        "deviceMessage": {
+          "foo": 23,
+          "bar": "ubirch-sensor-data"
+        }
     }'
 
 #### History (From-To)
@@ -496,129 +651,8 @@ The AvatarService opens a connection to AWS which depends on the following envir
 
 ### Elasticsearch
 
-The service requires the following mappings for things to work as expected:
-
-    curl -XPOST 'localhost:9200/ubirch-devices' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "device" : {
-          "properties" : {
-            "deviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "hwDeviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "hashedHwDeviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-raw-data' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicemessage" : {
-          "properties" : {
-            "timestamp": {
-                "type": "date",
-                "format": "strict_date_optional_time||epoch_millis"
-            },
-            "a" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "id" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-raw-data-anchored' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicemessage" : {
-          "properties" : {
-            "timestamp": {
-                "type": "date",
-                "format": "strict_date_optional_time||epoch_millis"
-            },
-            "a" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "id" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-history' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicedata" : {
-          "properties" : {
-            "timestamp": {
-              "type": "date",
-              "format": "strict_date_optional_time||epoch_millis"
-            },
-            "deviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "messageId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "deviceDataRawId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "id" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            },
-            "a" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-device-type' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "devicetype" : {
-          "properties" : {
-            "key" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
-
-    curl -XPOST 'localhost:9200/ubirch-avatar-state' -H "Content-Type: application/json" -d '{
-      "mappings": {
-        "avatarstate" : {
-          "properties" : {
-            "deviceId" : {
-              "type" : "string",
-              "index": "not_analyzed"
-            }
-          }
-        }
-      }
-    }'
+The service requires the mappings defined in `ElasticsearchMappings`. They are automatically created during server boot
+if they don't exist.
 
 
 ## Automated Tests
@@ -662,20 +696,54 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
         ./sbt server/run
 
- 2. start test data tool
+ 2. reset database
+
+*Running `dev-scripts/resetDatabase.sh` does everything in this step.*
+
+     ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ClearDb"
+
+ 3. start test data tool
 
     1. set AWS env vars:
 
+        ```bash
         export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-
         export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
-        
         export MQTT_USER={MQTT-User}
-                
         export MQTT_PASSWORD={MQTT-Password}
+        ```
 
     2. if using a terminal, change inside the project folder and
 
+*Running `dev-scripts/initData.sh` does everything in this step.*
+
+        ```bash
         ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.InitData"
+        ```
 
 3. now you should find one device "testHans001" and 50 data points
+
+## Import Trackle Data
+
+1. Prepare User
+
+    The test data generation includes the generation of test data and a device. This means we still need a user which you'll
+    have to create/register manually by logging in on the AdminUI of the remote environment. Please remember the token
+    resulting from the registration or login.
+
+1. Prepare Data Import
+
+    ```bash
+    # user token from registration or login
+    export AVATAR_USER_TOKEN=token-12345678
+    # (optional) base url of the remote environment's avatar-service (defaults to http://localhost:8080)
+    export AVATAR_BASE_URL=https://avatar.myserver.com:8080
+    ```
+
+1. Run Data Import
+
+You can also run `dev-scripts/importTrackle.sh $AVATAR_USER_TOKEN`.
+
+    ```bash
+    ./sbt "cmdtools/runMain com.ubirch.avatar.cmd.ImportTrackle"
+    ```

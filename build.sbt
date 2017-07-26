@@ -18,7 +18,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.3.11-SNAPSHOT",
+  version := "0.3.18-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -32,24 +32,45 @@ lazy val commonSettings = Seq(
 
 lazy val avatarService = (project in file("."))
   .settings(commonSettings: _*)
-  .aggregate(server, cmdtools, client, core, aws, config, model, testBase, util)
+  .aggregate(
+    aws,
+    client,
+    cmdtools,
+    config,
+    core,
+    modelDb,
+    modelRest,
+    mqttBridge,
+    server,
+    testBase,
+    testTools,
+    util
+  )
 
 lazy val server = project
   .settings(commonSettings: _*)
   .settings(mergeStrategy: _*)
-  .dependsOn(util, core, config, testBase % "test")
+  .dependsOn(util, core, config, testBase % "test", testTools % "test")
   .enablePlugins(DockerPlugin)
   .settings(
     description := "REST interface and Akka HTTP specific code",
     libraryDependencies ++= depServer,
     fork in run := true,
     resolvers ++= Seq(
-      resolverSeebergerJson
+      resolverSeebergerJson,
+      resolverTypesafeReleases
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
     resourceGenerators in Compile += Def.task {
-      generateDockerFile(baseDirectory.value / ".." / "Dockerfile.input", name.value, version.value, (assemblyOutputPath in assembly).value)
+      generateDockerFile(baseDirectory.value / ".." / "Dockerfile.input", (assemblyOutputPath in assembly).value)
     }.taskValue
+  )
+
+lazy val mqttBridge = project
+  .settings(commonSettings: _*)
+  .dependsOn(core, util, testBase)
+  .settings(
+    description := "mqtt to sqs bridge"
   )
 
 lazy val cmdtools = project
@@ -65,7 +86,7 @@ lazy val cmdtools = project
 
 lazy val client = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, util)
+  .dependsOn(config, modelRest, util)
   .settings(
     description := "REST client for the avatarService",
     libraryDependencies ++= depClient,
@@ -76,19 +97,20 @@ lazy val client = project
 
 lazy val core = project
   .settings(commonSettings: _*)
-  .dependsOn(config, aws, model, util, testBase % "test")
+  .dependsOn(config, aws, modelDb, modelRest, util, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore,
     resolvers ++= Seq(
       resolverRoundEights,
-      resolverEclipse
+      resolverEclipse,
+      resolverElasticsearch
     )
   )
 
 lazy val aws = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model, util, testBase % "test")
+  .dependsOn(config, modelRest, util, testBase % "test")
   .settings(
     description := "aws related stuff",
     libraryDependencies ++= depAws
@@ -101,18 +123,27 @@ lazy val config = project
     libraryDependencies += ubirchConfig
   )
 
-lazy val model = project
+lazy val modelDb = (project in file("model-db"))
   .settings(commonSettings: _*)
   .dependsOn(config)
   .settings(
-    name := "model",
+    name := "model-db",
+    description := "database models",
+    libraryDependencies ++= depModelDb
+  )
+
+lazy val modelRest = (project in file("model-rest"))
+  .settings(commonSettings: _*)
+  .dependsOn(config)
+  .settings(
+    name := "model-rest",
     description := "JSON models",
-    libraryDependencies ++= depModel
+    libraryDependencies ++= depModelRest
   )
 
 lazy val testBase = (project in file("test-base"))
   .settings(commonSettings: _*)
-  .dependsOn(model, config, util)
+  .dependsOn(modelDb, modelRest, config, util)
   .settings(
     name := "test-base",
     description := "test tools",
@@ -123,15 +154,24 @@ lazy val testBase = (project in file("test-base"))
     )
   )
 
+lazy val testTools = (project in file("test-tools"))
+  .settings(commonSettings: _*)
+  .dependsOn(core)
+  .settings(
+    name := "test-tools",
+    description := "test tools for use outside of core"
+  )
+
 lazy val util = project
   .settings(commonSettings: _*)
-  .dependsOn(config, model)
+  .dependsOn(config, modelDb, modelRest)
   .settings(
     description := "ubirch-avatar-service specific utils",
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
       resolverBeeClient,
-      resolverRoundEights
+      resolverRoundEights,
+      resolverElasticsearch
     )
   )
 
@@ -149,22 +189,26 @@ lazy val depServer = Seq(
   akkaG %% "akka-actor" % akkaV,
   akkaG %% "akka-slf4j" % akkaV,
   akkaG %% "akka-http" % akkaHttpV,
+  akkaG %% "akka-camel" % akkaV,
 
   //testing
   scalatest % "test",
 
   ubirchJson,
-  ubirchJsonAutoConvert,
   ubirchRestAkkaHttp,
-  ubirchResponse
+  ubirchResponse,
+  ubirchOidcUtils,
+  ubirchUserClientRest
 
 ) ++ scalaLogging
 
 lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
   ubirchCrypto,
+  ubirchMongo,
   ubirchNotary,
   ubirchResponse,
+  ubirchKeyClientRest,
   spireMath,
   scalatest % "test",
   akkaTestkit % "test"
@@ -180,8 +224,12 @@ lazy val depAws = Seq(
   scalatest % "test"
 ) ++ awsIotSdk ++ awsSqsSdk ++ scalaLogging
 
-lazy val depModel = Seq(
-  ubirchJsonAutoConvert,
+lazy val depModelDb = Seq(
+  json4sNative,
+  ubirchUUID
+) ++ joda
+
+lazy val depModelRest = Seq(
   json4sNative,
   ubirchUUID
 ) ++ joda
@@ -191,12 +239,15 @@ lazy val depUtil = Seq(
   ubirchJson,
   ubirchElasticsearchClientBinary,
   ubirchElasticsearchUtil,
+  ubirchMongo,
+  ubirchOidcUtils,
   ubirchUUID % "test",
   scalatest % "test"
 ) ++ json4s ++ scalaLogging
 
 lazy val depTestBase = Seq(
   scalatest,
+  ubirchMongoTest,
   ubirchRestAkkaHttpTest,
   beeClient,
   ubirchUUID,
@@ -208,13 +259,15 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-lazy val akkaV = "2.4.17"
-lazy val akkaHttpV = "10.0.3"
-lazy val json4sV = "3.4.2"
+lazy val akkaV = "2.4.19"
+lazy val akkaHttpV = "10.0.9"
+lazy val json4sV = "3.5.2"
 lazy val awsSdkV = "1.11.93"
 lazy val camelV = "2.18.1"
 lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
+val logbackV = "1.2.3"
+val slf4jV = "1.7.25"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -228,12 +281,13 @@ lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaHttpV
 lazy val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
-  "org.slf4j" % "slf4j-api" % "1.7.21",
+  "org.slf4j" % "slf4j-api" % slf4jV,
+  "org.slf4j" % "log4j-over-slf4j" % slf4jV,
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" exclude("org.slf4j", "slf4j-api"),
   "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
-  "ch.qos.logback" % "logback-core" % "1.1.7",
-  "ch.qos.logback" % "logback-classic" % "1.1.7",
-  "com.internetitem" % "logback-elasticsearch-appender" % "1.4"
+  "ch.qos.logback" % "logback-core" % logbackV exclude("org.slf4j", "slf4j-api"),
+  "ch.qos.logback" % "logback-classic" % logbackV exclude("org.slf4j", "slf4j-api"),
+  "com.internetitem" % "logback-elasticsearch-appender" % "1.5" exclude("org.slf4j", "slf4j-api")
 )
 
 lazy val akkaCamel = Seq(
@@ -272,19 +326,24 @@ lazy val excludedLoggers = Seq(
   ExclusionRule(organization = "ch.qos.logback")
 )
 
-lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll(excludedLoggers: _*)
-lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.3" excludeAll(excludedLoggers: _*)
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "0.6.0" excludeAll(excludedLoggers: _*)
-lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "0.1.0" excludeAll(excludedLoggers: _*)
-lazy val ubirchJson = ubirchUtilG %% "json" % "0.3.2" excludeAll(excludedLoggers: _*)
-lazy val ubirchJsonAutoConvert = ubirchUtilG %% "json-auto-convert" % "0.3.2" excludeAll(excludedLoggers: _*)
-lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.1" excludeAll(
+lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.7" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.2" excludeAll (excludedLoggers: _*)
+lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.4" excludeAll (excludedLoggers: _*)
+lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.4" excludeAll (excludedLoggers: _*)
+lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.8" excludeAll (excludedLoggers: _*)
+lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
-)
-lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.3" excludeAll(excludedLoggers: _*)
-lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.3" excludeAll(excludedLoggers: _*)
-lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.1.2" excludeAll(excludedLoggers: _*)
-lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll(excludedLoggers: _*)
+  )
+lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.8" excludeAll (excludedLoggers: _*)
+lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.8" excludeAll (excludedLoggers: _*)
+lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.3" excludeAll (excludedLoggers: _*)
+lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
+
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.4.18" excludeAll (excludedLoggers: _*)
+lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.1.12" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
@@ -294,6 +353,8 @@ lazy val resolverSeebergerJson = Resolver.bintrayRepo("hseeberger", "maven")
 lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
 lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
 lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
+lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
+lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 
 
 /*
@@ -315,8 +376,7 @@ lazy val mergeStrategy = Seq(
   }
 )
 
-def generateDockerFile(file: File, nameString: String, versionString: String, jarFile: sbt.File): Seq[File] = {
-  val jarTargetPath = s"/opt/jar/${jarFile.name}"
+def generateDockerFile(file: File, jarFile: sbt.File): Seq[File] = {
   val contents =
     s"""SOURCE=server/target/scala-2.11/${jarFile.getName}
        |TARGET=${jarFile.getName}

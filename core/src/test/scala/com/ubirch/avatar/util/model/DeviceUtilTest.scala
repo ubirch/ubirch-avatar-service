@@ -3,7 +3,7 @@ package com.ubirch.avatar.util.model
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.model.DummyDevices
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.MyJsonProtocol
 
@@ -26,12 +26,15 @@ class DeviceUtilTest extends FeatureSpec
     scenario("sign message") {
 
       val payload = read[JValue](
-        """{"a":"b"}""".stripMargin
+        """[{"t":2630,"p":1014,"h":2783,"a":2587090,"la":"52.481083","lo":"13.3643","ba":100,"lp":1,"e":0,"aq":111,"aqr":121,"ts":"2004-1-1/0:0:32"},{"t":2630,"p":1014,"h":2783,"a":2587090,"la":"52.481083","lo":"13.3643","ba":100,"lp":2,"e":0,"aq":111,"aqr":121,"ts":"2004-01-01 00:00:33"}]"""
       )
 
       val (k, s) = DeviceUtil.sign(payload, device)
 
-      val checkedD = DeviceCoreUtil.validateSignedMessage(device.hwDeviceId, k, s, payload)
+      logger.info(s"k: $k")
+      logger.info(s"s: $s")
+
+      val checkedD = DeviceCoreUtil.validateSignedMessage(k, s, payload)
       checkedD shouldBe true
     }
 
@@ -41,7 +44,7 @@ class DeviceUtilTest extends FeatureSpec
 
       val (k, s) = DeviceUtil.sign(payload, device)
 
-      val checkedD = DeviceCoreUtil.validateSignedMessage(device.hwDeviceId, k, s, payload)
+      val checkedD = DeviceCoreUtil.validateSignedMessage(k, s, payload)
       checkedD shouldBe true
 
     }

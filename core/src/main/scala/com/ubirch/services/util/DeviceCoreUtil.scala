@@ -1,18 +1,20 @@
 package com.ubirch.services.util
 
-import java.security._
-import java.util.Base64
-
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model.device.Device
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.keyservice.client.rest.KeyServiceClientRest
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec, EdDSAPublicKeySpec}
-import net.i2p.crypto.eddsa.{EdDSAEngine, EdDSAPublicKey}
+
 import org.json4s._
 import org.json4s.native.Serialization._
+
+import akka.http.scaladsl.HttpExt
+import akka.stream.Materializer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -66,61 +68,29 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def validateSignedMessage(hashedHwDeviceId: String, key: String, signature: String, payload: JValue): Boolean = {
+  def validateSignedMessage(key: String, signature: String, payload: JValue): Boolean = {
+    val payloadString = write(payload)
+    EccUtil.validateSignature(publicKey = key, signature = signature, payload = payloadString)
+  }
 
-    val spec: EdDSAParameterSpec = EdDSANamedCurveTable.getByName("ed25519-sha-512")
 
-    val decoded = Base64.getDecoder.decode(key)
-    val pubKeyBytes: Array[Byte] = decoded.length match {
-      case 32 => decoded
-      case _ => EdDSAPublicKey.decode(decoded)
-    }
-    val pubKey: EdDSAPublicKeySpec = new EdDSAPublicKeySpec(pubKeyBytes, spec)
-    val pKey: PublicKey = new EdDSAPublicKey(pubKey)
+  def validateSignedMessage(device: Device,
+                            signature: String,
+                            payload: JValue
+                           )
+                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
 
-    val signatureByte: Array[Byte] = Base64.getDecoder.decode(signature)
-    val sgr: EdDSAEngine = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
-
-    sgr.initVerify(pKey)
-    sgr.update(write(payload).getBytes())
-    sgr.verify(signatureByte) match {
-      case true =>
-        true
-      case _ =>
+    val payloadString = write(payload)
+    KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId) map {
+      case Some(keys) =>
+        keys.map { key =>
+          EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payloadString)
+        }.count(_ == true) > 0
+      case None =>
+        logger.error(s"no pubkeys found for deviceId: ${device.deviceId}")
         false
     }
   }
-
-
-  def _validateSignedMessage(hashedHwDeviceId: String, key: String, signature: String, payload: JValue): Future[Option[Device]] = {
-    DeviceManager.infoByHashedHwId(hashedHwDeviceId).map {
-      case Some(device: Device) =>
-        val spec: EdDSAParameterSpec = EdDSANamedCurveTable.getByName("ed25519-sha-512")
-
-        val decoded = Base64.getDecoder.decode(key)
-        val pubKeyBytes: Array[Byte] = decoded.length match {
-          case 32 => decoded
-          case _ => EdDSAPublicKey.decode(decoded)
-        }
-        val pubKey: EdDSAPublicKeySpec = new EdDSAPublicKeySpec(pubKeyBytes, spec)
-        val pKey: PublicKey = new EdDSAPublicKey(pubKey)
-
-        val signatureByte: Array[Byte] = Base64.getDecoder.decode(signature)
-        val sgr: EdDSAEngine = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
-
-        sgr.initVerify(pKey)
-        sgr.update(write(payload).getBytes())
-        sgr.verify(signatureByte) match {
-          case true =>
-            Some(device)
-          case _ =>
-            None
-        }
-      case None =>
-        None
-    }
-  }
-
 
   /**
     * checks whether notary service should be used for this device
@@ -129,15 +99,6 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     * @return
     */
   def checkNotaryUsage(device: Device): Boolean = {
-    if (device.deviceProperties.isDefined) {
-      (device.deviceProperties.get \ Const.BLOCKC).extractOpt[String].getOrElse(Const.BOOL_FALSE).toLowerCase match {
-        case Const.BOOL_TRUE =>
-          true
-        case _ =>
-          false
-      }
-    }
-    else
-      false
+    device.checkProperty(Const.BLOCKC)
   }
 }

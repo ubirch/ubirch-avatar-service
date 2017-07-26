@@ -24,26 +24,41 @@ object InitData
   // NOTE if true this the NotaryService will be used. it is limited by it's wallet so please be careful when activating it.
   val notaryServiceEnabled = false
 
-  val numberOfRawMessages = 50
+  val numberOfRawMessages = 5
 
   DeviceTypeManager.init()
 
 
-  val properties: JValue = read[JValue](
-    """{"blockChain":"true"}""".stripMargin
+  val properties_BC: JValue = read[JValue](
+    s"""
+       |{
+       |"${Const.BLOCKC}" : true,
+       |"${Const.STOREDATA}" : true
+       |}
+       |""".stripMargin
+  )
+
+  val properties_NOBC: JValue = read[JValue](
+    s"""
+       |{
+       |"${Const.BLOCKC}" : false,
+       |"${Const.STOREDATA}" : true
+       |}
+       |""".stripMargin
   )
 
   val device = if (notaryServiceEnabled) {
     DummyDevices.device(
       deviceTypeKey = Const.ENVIRONMENTSENSOR,
-      deviceProperties = Some(properties)
+      deviceProperties = Some(properties_BC)
     )
   } else {
-    DummyDevices.device(deviceTypeKey = Const.ENVIRONMENTSENSOR)
+    DummyDevices.device(
+      deviceTypeKey = Const.ENVIRONMENTSENSOR,
+      deviceProperties = Some(properties_NOBC)
+    )
   }
 
-  //@TODO AWSIOT removed
-  //  Await.result(DeviceManager.createWithShadow(device), 5 seconds) match {
   Await.result(DeviceManager.create(device), 5 seconds) match {
     case Some(dev) =>
 
@@ -56,10 +71,12 @@ object InitData
         elementCount = numberOfRawMessages,
         intervalMillis = 1000 * 60 * 5, // 5 mins
         timestampOffset = 0
-      )()
+      )
 
       series foreach { dataRaw =>
-        AvatarRestClient.deviceUpdatePOST(dataRaw)
+        logger.debug("-----------------------------------------------------------------------------------------")
+        val resp = AvatarRestClient.deviceUpdatePOST(dataRaw)
+        logger.debug(s"response: ${resp.body.asString}")
         Thread.sleep(500)
       }
 

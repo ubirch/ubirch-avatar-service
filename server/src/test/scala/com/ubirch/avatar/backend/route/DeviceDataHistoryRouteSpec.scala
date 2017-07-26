@@ -1,18 +1,17 @@
 package com.ubirch.avatar.backend.route
 
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.history.HistoryIndexUtil
+import com.ubirch.avatar.model.rest.device.DeviceHistory
+import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
+import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
+import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.uuid.UUIDUtil
 
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.test.util.DeviceDataProcessedTestUtil
-import com.ubirch.avatar.history.HistoryIndexUtil
-import com.ubirch.avatar.model.device.DeviceDataProcessed
-import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
-import com.ubirch.avatar.util.server.RouteConstants
-import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.model.JsonErrorResponse
-import com.ubirch.util.uuid.UUIDUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.language.postfixOps
@@ -210,7 +209,8 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
 
     // prepare
-    val dataSeries: Seq[DeviceDataProcessed] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+    val dataSeries: Seq[DeviceHistory] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
+    Thread.sleep(500)
     val deviceId = dataSeries.head.deviceId
     val url = urlForTest(deviceId, from, size)
 
@@ -229,7 +229,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
           verifyCORSHeader()
 
           responseEntity.contentType should be(`application/json`)
-          val resultSeq = responseAs[Seq[DeviceDataProcessed]]
+          val resultSeq = responseAs[Seq[DeviceHistory]]
 
           val beginIndex = HistoryIndexUtil.calculateBeginIndex(from)
           val endIndexOpt = size match {
@@ -268,6 +268,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
     }
     val deviceId = UUIDUtil.uuidStr
     val url = urlForTest(deviceId, from, size)
+    logger.info(s"url=$url")
 
     // test
     Get(url) ~> Route.seal(routes) ~> check {
@@ -276,14 +277,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
       (from.isDefined && from.get < 0) || (size.isDefined && size.get < 0) match {
 
         case true => verifyNotFound()
-
-        case false =>
-
-          indexExists match {
-            case true => verifyBadRequestDeviceNotFound(deviceId, from, size)
-            case false => verifyInternalServerError()
-
-          }
+        case false => verifyEmptyArray()
 
       }
 
@@ -312,20 +306,13 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
     verifyCORSHeader(exist = false)
   }
 
-  private def verifyInternalServerError(): Unit = {
-    status shouldEqual InternalServerError
-    verifyCORSHeader(exist = false)
-  }
+  private def verifyEmptyArray(): Unit = {
 
-  private def verifyBadRequestDeviceNotFound(deviceId: String, from: Option[Int], size: Option[Int]): Unit = {
+    status should be(OK)
+    verifyCORSHeader(exist = true)
 
-    status shouldEqual BadRequest
-
-    val expectedError = requestErrorResponse("QueryError", s"deviceId not found: deviceId=$deviceId, from=$from, size=$size")
     responseEntity.contentType should be(`application/json`)
-    responseAs[JsonErrorResponse] shouldEqual expectedError
-
-    verifyCORSHeader()
+    responseAs[Seq[DeviceHistory]] should be(Seq.empty)
 
   }
 
