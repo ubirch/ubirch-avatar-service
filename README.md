@@ -23,6 +23,11 @@ ubirch Avatar Service is responsible for:
 * add method `AvatarRestClient.deviceStubGET`
 * update to `com.ubirch.util:json:0.4.3`
 * update to `com.ubirch.util:oidc-utils:0.4.9`
+* update to `com.ubirch.util:elasticsearch-client-binary:2.0.8`
+* update to `com.ubirch.util:mongo-utils:0.3.5`
+* update to `com.ubirch.util:mongo-test-utils:0.3.5`
+* update to `com.ubirch.util:response-util:0.2.4`
+* update to `com.ubirch.util:oidc-utils:0.4.9`
 
 ### Version 0.3.17 (2017-07-25)
 
