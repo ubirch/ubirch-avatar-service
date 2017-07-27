@@ -91,7 +91,7 @@ object AvatarRestClient extends StrictLogging {
     if (res.status == Status.S200_OK) {
 
       val jsonString = res.body.asString
-      val deviceInfos = Json4sUtil.any2any[Set[DeviceInfo]](jsonString)
+      val deviceInfos = Json4sUtil.string2any[Set[DeviceInfo]](jsonString)
       Some(deviceInfos)
 
     } else {
