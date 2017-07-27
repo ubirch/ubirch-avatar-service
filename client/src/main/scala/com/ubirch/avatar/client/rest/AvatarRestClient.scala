@@ -6,15 +6,15 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceInfo}
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.json.Json4sUtil
 
 import uk.co.bigbeeconsultants.http.HttpClient
-import uk.co.bigbeeconsultants.http.header.{Header, Headers}
 import uk.co.bigbeeconsultants.http.header.MediaType._
+import uk.co.bigbeeconsultants.http.header.{Header, Headers}
 import uk.co.bigbeeconsultants.http.request.RequestBody
-import uk.co.bigbeeconsultants.http.response.Response
+import uk.co.bigbeeconsultants.http.response.{Response, Status}
 
 /**
   * author: cvandrei
@@ -73,6 +73,33 @@ object AvatarRestClient extends StrictLogging {
     val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
 
     httpClient.post(url, body, headers)
+
+  }
+
+  /**
+    * @param authToken token of the user whose device stubs will be listed
+    * @return None in case of an error; other a sequence (empty if no devices are found)
+    */
+  def deviceStubGET(authToken: String): Option[Set[DeviceInfo]] = {
+
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceStub}")
+    logger.debug(s"try to call REST endpoint: $url")
+    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+
+    val res = httpClient.get(url, headers)
+
+    if (res.status == Status.S200_OK) {
+
+      val jsonString = res.body.asString
+      val deviceInfos = Json4sUtil.string2any[Set[DeviceInfo]](jsonString)
+      Some(deviceInfos)
+
+    } else {
+
+      logger.error(s"failed to query device stubs: response=$res")
+      None
+
+    }
 
   }
 
