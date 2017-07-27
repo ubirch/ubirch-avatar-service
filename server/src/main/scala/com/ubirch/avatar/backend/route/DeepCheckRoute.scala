@@ -11,10 +11,12 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
+import akka.stream.Materializer
 import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -27,7 +29,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2017-06-08
   */
-trait DeepCheckRoute extends CORSDirective
+class DeepCheckRoute(implicit httpClient: HttpExt, materializer: Materializer) extends CORSDirective
   with ResponseUtil
   with StrictLogging {
 
