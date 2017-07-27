@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.20 (tbd)
 
-* tbd
+* improve endpoint documentation
 
 ### Version 0.3.19 (2017-07-27)
 
@@ -322,7 +322,7 @@ If not healthy the status is `false` and the `messages` array not empty:
 
 returns an array of all devices the authenticated user has connected
 
-    curl -XGET localhost:8080/api/avatarService/v1/device
+    curl -XGET localhost:8080/api/avatarService/v1/device -H "Authorization: Bearer token-12345678"
 
 to list devices as short info objects use stub endpoint
 
