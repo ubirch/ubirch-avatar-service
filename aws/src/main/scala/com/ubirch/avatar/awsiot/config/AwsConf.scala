@@ -1,8 +1,6 @@
 package com.ubirch.avatar.awsiot.config
 
 import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.services.iot.AWSIotClient
-import com.amazonaws.services.iotdata.AWSIotDataClient
 import com.amazonaws.services.sqs.AmazonSQSClient
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
@@ -19,29 +17,6 @@ object AwsConf extends StrictLogging {
   val secretKey = Config.awsSecretAccessKey
 
   val awsCredentials = new BasicAWSCredentials(accessKey, secretKey)
-
-  lazy val awsIotDataClient: AWSIotDataClient = {
-    Config.awsLocalMode match {
-      case true =>
-        //        val cred = new ProfileCredentialsProvider()
-        val cred = new BasicAWSCredentials(accessKey, secretKey)
-        new AWSIotDataClient(cred)
-      case _ =>
-        new AWSIotDataClient()
-    }
-  }
-
-  lazy val awsIotClient: AWSIotClient = {
-
-    Config.awsLocalMode match {
-      case true =>
-        //        val cred = new ProfileCredentialsProvider()
-        val cred = new BasicAWSCredentials(accessKey, secretKey)
-        new AWSIotClient(cred)
-      case _ => new
-          AWSIotClient()
-    }
-  }
 
   lazy val awsSqsClient: AmazonSQSClient = {
 

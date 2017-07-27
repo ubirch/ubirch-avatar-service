@@ -1,12 +1,11 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.util.server.RouteConstants
-import com.ubirch.util.mongo.connection.MongoUtil
-
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
+import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.util.mongo.connection.MongoUtil
 
 /**
   * author: cvandrei
@@ -19,7 +18,8 @@ class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Ma
 
   val device = new DeviceRoute {}
   val deviceUpdatePlain = new DeviceUpdatePlainRoute {}
-  val deviceUpdateJson = new DeviceUpdateJsonRoute {}
+  val deviceUpdateBulk = new DeviceUpdateBulkRoute {}
+  val deviceUpdateMsgPack = new DeviceUpdateMsgPackRoute {}
   val deviceId = new DeviceIdRoute {}
   val deviceStub = new DeviceStubRoute {}
   val deviceStubId = new DeviceStubIdRoute {}
@@ -37,8 +37,9 @@ class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Ma
         pathPrefix(RouteConstants.currentVersion) {
 
           pathPrefix(RouteConstants.device) {
-            deviceUpdatePlain.route ~
-              deviceUpdateJson.route ~
+            deviceUpdateBulk.route ~
+              deviceUpdateMsgPack.route ~
+              deviceUpdatePlain.route ~
               deviceType.route ~
               deviceStubId.route ~
               deviceStub.route ~

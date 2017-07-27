@@ -37,7 +37,7 @@ object RouteConstants {
 
   val pathDevice = s"$pathPrefix/$device"
 
-  val pathDeviceBulk = s"$pathDevice/$bulk"
+  val pathDeviceBulk = s"$pathDevice/$update/$bulk"
   val pathDeviceType = s"$pathDevice/$deviceType"
   val pathDeviceTypeInit = s"$pathDeviceType/$init"
 

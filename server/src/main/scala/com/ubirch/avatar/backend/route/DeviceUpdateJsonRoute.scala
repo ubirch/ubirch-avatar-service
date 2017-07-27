@@ -45,7 +45,7 @@ class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   private val oidcDirective = new OidcDirective()
 
   val route: Route = {
-    path(update) {
+    path(update / json) {
       post {
         entity(as[DeviceDataRaw]) { ddr =>
           onComplete(validatorActor ? ddr) {
@@ -68,18 +68,6 @@ class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
           }
         }
       }
-    } ~
-      path(bulk) {
-        respondWithCORS {
-          oidcDirective.oidcToken2UserContext { userContext =>
-            post {
-              entity(as[DeviceDataRaw]) { sdm =>
-                validatorActor ! sdm
-                complete(JsonResponse(message = "processing started"))
-              }
-            }
-          }
-        }
-      }
+    }
   }
 }

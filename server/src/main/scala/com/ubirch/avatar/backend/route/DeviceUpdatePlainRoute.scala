@@ -38,35 +38,37 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
   private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
 
   val route: Route = {
-    post {
-      path(update) {
-        entity(as[String]) { ddrString =>
-          Json4sUtil.string2JValue(ddrString) match {
-            case Some(ddrJson) =>
-              ddrJson.extractOpt[DeviceDataRaw] match {
-                case Some(ddr) =>
-                  onComplete(validatorActor ? ddr) {
-                    case Success(resp) =>
-                      resp match {
-                        case dm: DeviceStateUpdate =>
-                          //                      complete(dm)
-                          val dsuJson = Json4sUtil.any2jvalue(dm).get
-                          val dsuString = Json4sUtil.jvalue2String(dsuJson)
-                          complete(dsuString)
-                        case _ =>
-                          logger.error("update device data failed")
-                          complete("NOK: DeviceStateUpdate failed")
-                      }
-                    case Failure(t) =>
-                      logger.error("update device data failed", t)
-                      complete("NOK: internal Server Error")
-                  }
-                case None =>
-                  complete("NOK: wrong json")
-              }
+    path(update) {
+      pathEnd {
+        post {
+          entity(as[String]) { ddrString =>
+            Json4sUtil.string2JValue(ddrString) match {
+              case Some(ddrJson) =>
+                ddrJson.extractOpt[DeviceDataRaw] match {
+                  case Some(ddr) =>
+                    onComplete(validatorActor ? ddr) {
+                      case Success(resp) =>
+                        resp match {
+                          case dm: DeviceStateUpdate =>
+                            //                      complete(dm)
+                            val dsuJson = Json4sUtil.any2jvalue(dm).get
+                            val dsuString = Json4sUtil.jvalue2String(dsuJson)
+                            complete(dsuString)
+                          case _ =>
+                            logger.error("update device data failed")
+                            complete("NOK: DeviceStateUpdate failed")
+                        }
+                      case Failure(t) =>
+                        logger.error("update device data failed", t)
+                        complete("NOK: internal Server Error")
+                    }
+                  case None =>
+                    complete("NOK: wrong json")
+                }
 
-            case None =>
-              complete("NOK: invalid json input")
+              case None =>
+                complete("NOK: invalid json input")
+            }
           }
         }
       }

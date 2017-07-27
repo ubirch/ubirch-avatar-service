@@ -30,6 +30,8 @@ object ActorNames {
 
   final val MSG_VALIDATOR: String = "message-validator"
 
+  final val MSG_MSGPACK_PROCESSOR: String = "message-msgpack-processor"
+
   final val DEVICE_API: String = "device-api"
 
   final val NOTARY_SVC: String = "notary-service"
