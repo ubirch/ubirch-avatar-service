@@ -18,9 +18,10 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.19 (tbd)
 
-* tbd
+* update to `com.ubirch.user:client-rest:0.4.19`
+* update to `com.ubirch.key:client-rest:0.1.13`
 
-### Version 0.3.18 (2017-07-27)
+### Version 0.3.18 (sbt)
 
 * refactor where REST client connection timeouts are configured
 * less logging in `AvatarRestClient`
