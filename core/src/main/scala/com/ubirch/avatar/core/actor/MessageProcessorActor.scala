@@ -53,6 +53,10 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         notaryActor ! drd
 
       (drd.v match {
+        case MessageVersion.`v40` =>
+          drd.p.extract[Array[JValue]].map { payload =>
+            processPayload(device, payload)
+          }.toList.reverse.head
         case MessageVersion.`v003` =>
           drd.p.extract[Array[JValue]].map { payload =>
             processPayload(device, payload)
@@ -62,9 +66,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       }).map {
         case Some(d) =>
           s ! d
-          if (drd.uuid.isDefined) {
+          if (drd.did.isDefined) {
             val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-            outboxManagerActor ! MessageReceiver(drd.uuid.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+            outboxManagerActor ! MessageReceiver(drd.did.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
           }
         case None =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")

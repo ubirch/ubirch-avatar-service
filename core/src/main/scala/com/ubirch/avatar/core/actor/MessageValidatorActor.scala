@@ -1,5 +1,9 @@
 package com.ubirch.avatar.core.actor
 
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.http.scaladsl.HttpExt
+import akka.routing.RoundRobinPool
+import akka.stream.Materializer
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.MessageVersion
@@ -8,11 +12,6 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
-
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.http.scaladsl.HttpExt
-import akka.routing.RoundRobinPool
-import akka.stream.Materializer
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -84,6 +83,18 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         log.error("valid pubKey missing")
         s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"valid  pubKey missing: ${drd.a} / ${drd.s}")
       }
+    case drd: DeviceDataRaw if drd.v == MessageVersion.v40 =>
+      val s = sender()
+
+      log.debug(s"received message version: ${drd.v}")
+
+      DeviceManager.infoByHashedHwId(drd.a).map {
+        case Some(dev) =>
+          processorActor forward(s, drd, dev)
+        case None =>
+          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
+      }
+
     case drd: DeviceDataRaw =>
       sender ! logAndCreateErrorResponse(s"received unknown message version: ${drd.v}", "ValidationError")
     case _ =>

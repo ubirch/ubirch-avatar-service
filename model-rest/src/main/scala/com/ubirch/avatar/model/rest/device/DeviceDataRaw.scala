@@ -4,7 +4,6 @@ import java.util.UUID
 
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 import org.json4s._
 
@@ -24,13 +23,14 @@ import org.json4s._
   */
 case class DeviceDataRaw(
                           id: UUID = UUIDUtil.uuid, // messageId
-                          uuid: Option[String] = None,
                           v: String = MessageVersion.v003,
                           fw: String = "n.a.",
                           a: String,
+                          did: Option[String] = None, //deviceHwId
                           ts: DateTime = DateTime.now(),
                           k: Option[String] = None,
                           s: Option[String] = None,
+                          mpraw: Option[String] = None, //raw msgpack as hex string
                           p: JValue,
                           deviceId: Option[String] = None,
                           deviceName: Option[String] = None,
