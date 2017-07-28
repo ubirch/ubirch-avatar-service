@@ -7,7 +7,9 @@ import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.mongo.connection.MongoUtil
+import com.ubirch.util.redis.RedisClientUtil
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 
@@ -25,23 +27,34 @@ object DeepCheckManager {
     *
     * @return deep check response with _status:OK_ if ok; otherwise with _status:NOK_
     */
-  def connectivityCheck()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer): Future[DeepCheckResponse] = {
+  def connectivityCheck()(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer): Future[DeepCheckResponse] = {
 
     // TODO check MQTT connection
     // TODO check SQS connections
-    // TODO check Redis connection
 
     for {
 
+    // direct dependencies
       esDeepCheck <- ESSimpleStorage.connectivityCheck()
+      esDeepCheckWithPrefix = DeepCheckResponseUtil.addServicePrefix("avatar-service", esDeepCheck)
       mongoConnectivity <- AvatarStateManager.connectivityCheck()
+      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service")
+
+      // other services
       keyDeepCheck <- KeyServiceClientRest.deepCheck()
       userDeepCheck <- UserServiceClientRest.deepCheck()
 
     } yield {
 
-      val esDeepCheckWithPrefix = DeepCheckResponseUtil.addServicePrefix("avatar-service", esDeepCheck)
-      DeepCheckResponseUtil.merge(Seq(esDeepCheckWithPrefix, mongoConnectivity, keyDeepCheck, userDeepCheck))
+      DeepCheckResponseUtil.merge(
+        Seq(
+          esDeepCheckWithPrefix,
+          mongoConnectivity,
+          redisConnectivity,
+          keyDeepCheck,
+          userDeepCheck
+        )
+      )
 
     }
 

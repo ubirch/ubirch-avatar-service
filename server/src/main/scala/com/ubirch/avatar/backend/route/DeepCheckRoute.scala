@@ -30,15 +30,14 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2017-06-08
   */
-class DeepCheckRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends CORSDirective
+class DeepCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer) extends CORSDirective
   with ResponseUtil
   with StrictLogging {
 
-  implicit val system = ActorSystem()
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = _system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val deepCheckActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new DeepCheckActor())), ActorNames.DEEP_CHECK)
+  private val deepCheckActor = _system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new DeepCheckActor())), ActorNames.DEEP_CHECK)
 
   val route: Route = {
 

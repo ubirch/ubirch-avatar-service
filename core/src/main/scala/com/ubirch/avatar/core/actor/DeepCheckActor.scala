@@ -8,7 +8,6 @@ import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 /**
@@ -17,6 +16,9 @@ import scala.concurrent.Future
   */
 class DeepCheckActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends Actor
   with ActorLogging {
+
+  private implicit val system = context.system
+  private implicit val executionContext = system.dispatcher
 
   override def receive: Receive = {
 
