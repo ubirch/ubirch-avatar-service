@@ -4,6 +4,8 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.{AvatarState, Device}
+import com.ubirch.util.deepCheck.model.DeepCheckResponse
+import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
@@ -188,6 +190,14 @@ object AvatarStateManager extends MongoFormats
         )
         update(toUpdate)
 
+    }
+
+  }
+
+  def connectivityCheck()(implicit mongo: MongoUtil): Future[DeepCheckResponse] = {
+
+    mongo.connectivityCheck[AvatarState](collectionName) map { deepCheckRes =>
+      DeepCheckResponseUtil.addServicePrefix("avatar-service", deepCheckRes)
     }
 
   }

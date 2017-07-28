@@ -19,6 +19,12 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.20 (tbd)
 
 * improve endpoint documentation
+* update to `com.ubirch.key:client-rest:0.2.0`
+* update to `com.ubirch.user:client-rest:0.5.0`
+* deepCheck() includes the key-service deepCheck now
+* deepCheck() includes the user-service deepCheck now
+* deepCheck() includes a MongoDB connectivity check now
+* deepCheck() includes a Redis connectivity check now
 
 ### Version 0.3.19 (2017-07-27)
 
@@ -326,14 +332,14 @@ returns an array of all devices the authenticated user has connected
 
 to list devices as short info objects use stub endpoint
 
-    curl -XGET localhost:8080/api/avatarService/v1/device/stub
+    curl -XGET localhost:8080/api/avatarService/v1/device/stub -H "Authorization: Bearer token-12345678"
 
 
 #### CREATE device
 
 creates a new device
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device -H "Content-Type: application/json" -d '{
+    curl -XPOST localhost:8080/api/avatarService/v1/device -H "Content-Type: application/json" -H "Authorization: Bearer token-12345678" -d '{
         "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
         "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
         "deviceName":"new device",
@@ -353,11 +359,11 @@ creates a new device
 
 READ device with given id
 
-    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer token-12345678"
 
 UPDATE device with given id
 
-    curl -XPUT localhost:8080/api/avatarService/v1/device/<DEVICE_ID>  -H "Content-Type: application/json" -d '{
+    curl -XPUT localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer token-12345678" -H "Content-Type: application/json" -d '{
           "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
           "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
           "deviceName":"new device",
@@ -374,7 +380,7 @@ UPDATE device with given id
 
 DELETE device with given id
 
-    curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID>
+    curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer token-12345678"
 
 #### Device State
 

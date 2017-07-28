@@ -8,13 +8,16 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
 import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.{ActorSystem, Props}
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
+import akka.stream.Materializer
 import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -27,15 +30,14 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2017-06-08
   */
-trait DeepCheckRoute extends CORSDirective
+class DeepCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer) extends CORSDirective
   with ResponseUtil
   with StrictLogging {
 
-  implicit val system = ActorSystem()
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = _system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val deepCheckActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new DeepCheckActor())), ActorNames.DEEP_CHECK)
+  private val deepCheckActor = _system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new DeepCheckActor())), ActorNames.DEEP_CHECK)
 
   val route: Route = {
 

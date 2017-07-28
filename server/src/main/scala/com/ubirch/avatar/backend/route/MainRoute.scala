@@ -7,11 +7,13 @@ import akka.stream.Materializer
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.mongo.connection.MongoUtil
 
+import akka.actor.ActorSystem
+
 /**
   * author: cvandrei
   * since: 2016-09-20
   */
-class MainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) {
+class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer) {
 
   val welcome = new WelcomeRoute {}
   val deepCheck = new DeepCheckRoute {}
