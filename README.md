@@ -19,8 +19,10 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.20 (tbd)
 
 * improve endpoint documentation
-* update to `com.ubirch.user:client-rest:0.4.20`
+* update to `com.ubirch.key:client-rest:0.2.0`
+* update to `com.ubirch.user:client-rest:0.5.0`
 * deepCheck() includes the key-service deepCheck now
+* deepCheck() includes the user-service deepCheck now
 
 ### Version 0.3.19 (2017-07-27)
 
