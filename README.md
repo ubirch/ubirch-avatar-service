@@ -23,6 +23,7 @@ ubirch Avatar Service is responsible for:
 * update to `com.ubirch.user:client-rest:0.5.0`
 * deepCheck() includes the key-service deepCheck now
 * deepCheck() includes the user-service deepCheck now
+* deepCheck() includes a MongoDB connectivity check now
 
 ### Version 0.3.19 (2017-07-27)
 

@@ -2,6 +2,7 @@ package com.ubirch.avatar.core.actor
 
 import com.ubirch.avatar.core.check.DeepCheckManager
 import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
@@ -14,7 +15,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2017-06-08
   */
-class DeepCheckActor(implicit httpClient: HttpExt, materializer: Materializer) extends Actor
+class DeepCheckActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends Actor
   with ActorLogging {
 
   override def receive: Receive = {

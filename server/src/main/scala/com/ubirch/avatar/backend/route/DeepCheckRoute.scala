@@ -8,6 +8,7 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
 import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import akka.actor.{ActorSystem, Props}
@@ -29,7 +30,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2017-06-08
   */
-class DeepCheckRoute(implicit httpClient: HttpExt, materializer: Materializer) extends CORSDirective
+class DeepCheckRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends CORSDirective
   with ResponseUtil
   with StrictLogging {
 
