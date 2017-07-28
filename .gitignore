@@ -25,3 +25,4 @@ TMP
 .sbt.ivy.lock
 .sbt.cache.lock
 /cache
+dump.rdb
