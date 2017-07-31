@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.21 (tbd)
 
-* tbd
+* fixed broken logging (would lead to a Throwable not being logged)
 
 ### Version 0.3.20 (2017-07-28)
 

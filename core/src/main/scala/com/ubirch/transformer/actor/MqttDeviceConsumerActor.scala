@@ -81,7 +81,7 @@ class MqttDeviceConsumerActor()
         }
       } catch {
         case e: Exception =>
-          log.error(s"received invalid data: $msgStr", e)
+          log.error(e, "received invalid data: %s", msgStr)
       }
 
     case dsu: DeviceStateUpdate =>
