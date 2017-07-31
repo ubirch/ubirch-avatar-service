@@ -19,6 +19,12 @@ ubirch Avatar Service is responsible for:
 ### Version 0.3.21 (tbd)
 
 * fixed broken logging (would lead to a Throwable not being logged)
+* update to `com.ubirch.util:elasticsearch-client-binary:2.1.0` 
+* update to `com.ubirch.util:elasticsearch-util:2.1.0` 
+* update to `com.ubirch.util:mongo-utils:0.3.6` 
+* update to `com.ubirch.util:mongo-test-utils:0.3.6` 
+* update to `com.ubirch.util:oidc-utils:0.4.10`
+* update to `com.ubirch.user:client-rest:0.5.1` 
 
 ### Version 0.3.20 (2017-07-28)
 
