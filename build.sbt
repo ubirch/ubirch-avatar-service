@@ -319,8 +319,8 @@ lazy val excludedLoggers = Seq(
 
 lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.1.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.1.0" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.8" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.6" excludeAll (excludedLoggers: _*)
 lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.6" excludeAll (excludedLoggers: _*)
