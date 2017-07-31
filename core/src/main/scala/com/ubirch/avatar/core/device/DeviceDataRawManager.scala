@@ -103,11 +103,11 @@ object DeviceDataRawManager
     * @param did
     * @param vals
     */
-  def create(did: String, vals: Seq[Int], mpraw: Array[Byte]): Option[DeviceDataRaw] = {
-    case class pval(t: Int)
+  def create(did: String, vals: Map[DateTime, Int], mpraw: Array[Byte]): Option[DeviceDataRaw] = {
+    case class pval(t: Int, ts: DateTime)
 
-    val p = vals.map { v =>
-      pval(t = v)
+    val p = vals.keySet.map { ts =>
+      pval(t = vals.get(ts).get, ts = ts)
     }
 
     val ddr = DeviceDataRaw(
