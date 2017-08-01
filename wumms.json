@@ -1,30 +1,23 @@
 {
-  "id": "ffbb0961-c94a-4714-b530-7d496c5c8063",
-  "uuid": "b6b7b791-8c62-4b36-ae25-63086474056b",
-  "v": "0.0.3",
-  "fw": "V1.2.3",
-  "a": "2B3j4Ik4UEryAIYxqagP56Wx8VFnYfp/pzRNFMW5nF7qMaTbUu12d6Hg+qNrpL6lpbn6GqEeU3OwgWsZGRYecA==",
-  "ts": "2017-07-17T17:53:16.739Z",
-  "k": "MC0wCAYDK2VkCgEBAyEA7DwF8q2DRkUQmIY/GkBtetRsSW8LEq267pduk7EAZYw=",
-  "s": "tlbkYxt1VQ+f9NGGoL8MmeUVQXv1ijhTUzLJw6gZE86o1rKs/7LpERgOdPBtd44eYng5VLRiJuTy1MGXkhl5BA==",
-  "p": [
-    {
-      "t": 3120,
-      "p": 97765,
-      "h": 8942,
-      "la": "52.5126484",
-      "lo": "13.2118195",
-      "a": 9521,
-      "ts": "2017-07-17T17:51:16.739Z"
-    },
-    {
-      "t": 2989,
-      "p": 92008,
-      "h": 9072,
-      "la": "52.5118662",
-      "lo": "13.2116980",
-      "a": 14296,
-      "ts": "2017-07-17T17:52:16.739Z"
-    }
-  ]
+  "v": "4.0",
+  "fw": "V.3.1",
+  "a": "f6dfd40f-10b3-46fc-8f7a-1d811de33588",
+  "types": [
+    [
+      1,
+      512,
+      "t"
+    ],
+    [
+      1,
+      245,
+      "p"
+    ],
+    [
+      1,
+      234,
+      "h"
+    ]
+  ],
+  "s": "guwm0lQho14EnoZUurLmr1n6qocWG8nxXUBoHyi04ycuXlNRFuZOgywnCVMsgu3Th7FZGJBQMSscti+fJ6P2Aw="
 }

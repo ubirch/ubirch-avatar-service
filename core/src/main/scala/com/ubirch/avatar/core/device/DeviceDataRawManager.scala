@@ -3,15 +3,17 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
+import org.apache.commons.codec.binary.Hex
 import org.elasticsearch.index.query.QueryBuilders
+import org.joda.time.DateTime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionException, Future}
@@ -93,5 +95,30 @@ object DeviceDataRawManager
       case None => Future(None)
 
     }
+  }
+
+  /**
+    * evil dirty hack, works just for trackle
+    *
+    * @param did
+    * @param vals
+    */
+  def create(did: String, vals: Map[DateTime, Int], mpraw: Array[Byte]): Option[DeviceDataRaw] = {
+    case class pval(t: Int, ts: DateTime)
+
+    val p = vals.keySet.map { ts =>
+      pval(t = vals.get(ts).get, ts = ts)
+    }
+
+    val ddr = DeviceDataRaw(
+      v = MessageVersion.v40,
+      did = Some(did),
+      a = HashUtil.sha512Base64(did),
+      mpraw = Some(Hex.encodeHexString(mpraw)),
+      p = Json4sUtil.any2jvalue(p).get,
+      ts = new DateTime()
+    )
+
+    Some(ddr)
   }
 }

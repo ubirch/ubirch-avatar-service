@@ -1,22 +1,21 @@
 package com.ubirch.avatar.core.actor
 
-import java.io.ByteArrayInputStream
-
-import akka.actor.{Actor, ActorLogging}
-import com.ubirch.avatar.util.actor.ActorNames
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.http.scaladsl.HttpExt
+import akka.stream.Materializer
+import com.ubirch.avatar.core.device.DeviceDataRawManager
+import com.ubirch.avatar.core.msgpack.MsgPacker
 import com.ubirch.util.json.MyJsonProtocol
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
-import org.msgpack.ScalaMessagePack
-import org.msgpack.`type`.ValueType
 
-import scala.collection.mutable
 import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by derMicha on 18/07/17.
   */
-class MessageMsgPackProcessorActor(implicit mongo: MongoUtil)
+class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
   extends Actor
     with MyJsonProtocol
 
@@ -25,8 +24,8 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil)
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  //  private val validatorActor = context.system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
-  private val validatorActor = context.system.actorSelection(ActorNames.MSG_VALIDATOR)
+  private val validatorActor = context.system.actorOf(Props(new MessageValidatorActor()))
+  //private val validatorActor = context.system.actorSelection(ActorNames.MSG_VALIDATOR)
 
   override def receive: Receive = {
     case binData: Array[Byte] =>
@@ -34,45 +33,24 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil)
 
       val hexVal = Hex.encodeHexString(binData)
       log.info(s"got some MsgPack data: $hexVal")
-
-      val (did, ts) = unpack(binData)
-
-      log.info(s"deviceId: $did / t: $ts")
-
-      s ! "OK: Thanks!"
+      try {
+        val (u, t) = MsgPacker.unpack(binData)
+        DeviceDataRawManager.create(did = u, vals = t, mpraw = binData) match {
+          case Some(drd) =>
+            validatorActor forward drd
+          case None =>
+            log.error("could not parse input msgpack data")
+            s ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "Invalid Data")
+        }
+      }
+      catch {
+        case e: Exception =>
+          log.error("received invalid data", e)
+          sender ! JsonErrorResponse(errorType = "Invalid Data Error", errorMessage = "Incalid Dataformat")
+      }
     case _ =>
       log.error("received unknown message")
-      sender ! "NOK: received unknown message"
+      sender ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "Invalid Input Data")
   }
 
-  private def unpack(binData: Array[Byte]) = {
-
-    val ids: mutable.ArrayBuffer[Long] = mutable.ArrayBuffer.empty
-    val temps: mutable.ArrayBuffer[Int] = mutable.ArrayBuffer.empty
-
-    val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
-    val itr = unpacker.iterator()
-    var done = false
-    while (itr.hasNext && !done) {
-      val v = itr.next()
-      v.getType match {
-        case ValueType.INTEGER =>
-          val value = v.asIntegerValue.getLong
-          ids.append(value)
-        case ValueType.ARRAY =>
-          println(v.getType)
-          val arr = v.asArrayValue()
-          val itr2 = arr.iterator()
-          while (itr2.hasNext) {
-            val tval = itr2.next().asIntegerValue().getInt
-            temps.append(tval)
-          }
-          done = true
-        case _ =>
-      }
-    }
-    val did = ids.mkString("-")
-    val ts = temps.toSeq
-    (did, ts)
-  }
 }

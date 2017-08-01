@@ -50,7 +50,6 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                       case Success(resp) =>
                         resp match {
                           case dm: DeviceStateUpdate =>
-                            //                      complete(dm)
                             val dsuJson = Json4sUtil.any2jvalue(dm).get
                             val dsuString = Json4sUtil.jvalue2String(dsuJson)
                             complete(dsuString)

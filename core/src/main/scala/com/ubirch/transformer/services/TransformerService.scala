@@ -144,10 +144,13 @@ object TransformerService
           }
         case _ =>
           logger.error("invalid trackle payload")
+
           (Some(drd.p), None)
       }
-    else
-      (Some(drd.p), None)
+    else {
+      val ts = (drd.p \ "ts").extractOpt[DateTime]
+      (Some(drd.p), ts)
+    }
 
     if (transformedPayload.isDefined)
       Some(DeviceHistory(

@@ -36,7 +36,7 @@ object DummyDeviceDataRaw {
 
     DeviceDataRaw(
       id = messageId,
-      uuid = Some(UUIDUtil.uuidStr),
+      did = Some(UUIDUtil.uuidStr),
       fw = "V1.2.3",
       a = HashUtil.sha512Base64(device.hwDeviceId),
       ts = timestamp,
