@@ -54,7 +54,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       if (DeviceCoreUtil.checkNotaryUsage(device))
         notaryActor ! drd
       else
-        log.info(s"does not use notary service: ${device.deviceId}")
+        log.info(s"does not use the notary service: ${device.deviceId}")
 
       (drd.v match {
         case MessageVersion.`v40` =>
