@@ -36,6 +36,8 @@ object ActorNames {
 
   final val NOTARY_SVC: String = "notary-service"
 
+  final val CHAIN_SVC: String = "chain-service"
+
   final val OUT_PRODUCER: String = "out-producer"
 
   final val DEEP_CHECK = "deep-check-actor"

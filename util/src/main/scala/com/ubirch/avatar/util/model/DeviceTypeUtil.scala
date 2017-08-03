@@ -101,35 +101,60 @@ object DeviceTypeUtil {
 
     val props = deviceTypeKey match {
 
-      case Const.LIGHTSLAMP => Map.empty
+      case Const.LIGHTSLAMP =>
+        Map(
+          Const.STOREDATA -> Const.BOOL_TRUE,
+          Const.BLOCKC -> Const.BOOL_FALSE,
+          Const.CHAINDATA -> Const.BOOL_FALSE,
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+        )
 
       case Const.LIGHTSSENSOR =>
-        Map(Const.STOREDATA -> Const.BOOL_TRUE)
+        Map(
+          Const.STOREDATA -> Const.BOOL_TRUE,
+          Const.BLOCKC -> Const.BOOL_FALSE,
+          Const.CHAINDATA -> Const.BOOL_FALSE,
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+        )
 
       case Const.ENVIRONMENTSENSOR =>
         Map(
           Const.STOREDATA -> Const.BOOL_TRUE,
-          Const.BLOCKC -> Const.BOOL_FALSE
+          Const.BLOCKC -> Const.BOOL_FALSE,
+          Const.CHAINDATA -> Const.BOOL_FALSE,
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
         )
 
       case Const.AQSENSOR =>
         Map(
           Const.STOREDATA -> Const.BOOL_TRUE,
-          Const.BLOCKC -> Const.BOOL_FALSE
+          Const.BLOCKC -> Const.BOOL_FALSE,
+          Const.CHAINDATA -> Const.BOOL_FALSE,
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
         )
 
       case Const.EMOSENSOR =>
         Map(
           Const.STOREDATA -> Const.BOOL_TRUE,
-          Const.BLOCKC -> Const.BOOL_FALSE
+          Const.BLOCKC -> Const.BOOL_FALSE,
+          Const.CHAINDATA -> Const.BOOL_FALSE,
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
         )
 
       case Const.GENERICSENSOR =>
         Map(
-          Const.STOREDATA -> Const.BOOL_TRUE
+          Const.STOREDATA -> Const.BOOL_TRUE,
+          Const.BLOCKC -> Const.BOOL_FALSE,
+          Const.CHAINDATA -> Const.BOOL_FALSE,
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
         )
 
-      case Const.UNKNOWN_DEVICE => Map.empty
+      case Const.UNKNOWN_DEVICE => Map(
+        Const.STOREDATA -> Const.BOOL_TRUE,
+        Const.BLOCKC -> Const.BOOL_FALSE,
+        Const.CHAINDATA -> Const.BOOL_FALSE,
+        Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+      )
 
       case _ => Map.empty
 
@@ -185,7 +210,8 @@ object DeviceTypeUtil {
 
       case Const.ENVIRONMENTSENSOR =>
         Map(
-          Const.CONF_INTERVALL -> (15 * 60),
+          Const.CONF_INTERVALL -> (10 * 60),
+          Const.CONF_INTERVALLMEASSURE -> 60,
           Const.CONF_THRESHOLD -> 0
         )
 

@@ -113,13 +113,19 @@ object ConfigKeys {
   // AWS Auth keys
   final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
 
+  //AWS Region
+  final val AWS_REGION = s"$awsPrefix.region"
+
+  //AWS Queue Owner
+  final val AWS_QUEUE_OWNER_ID = s"$awsPrefix.queueOwnerId"
 
   // AWS SQS queues
-
+  final val AWS_SQS_MAX_MESSAGES_PER_POLL = s"$awsPrefix.sqs.maxMessagesPerPoll"
 
   final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"
   final val AWS_SQS_QUEUES_TRANSFORMER_OUT = s"$awsPrefix.sqs.queues.transformer_out"
-
+  final val AWS_SQS_UBIRCH_CHAIN_DEVICE_MSG_IN = s"$awsPrefix.sqs.queues.deviceDataIn"
+  final val AWS_SQS_UBIRCH_CHAIN_DEVICE_HASH_IN = s"$awsPrefix.sqs.queues.deviceDataHashIn"
 
   /* MQTT Related Config Keys
  **********************************************************************/
