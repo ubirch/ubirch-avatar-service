@@ -7,6 +7,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.util.CamelActorUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import scala.concurrent.ExecutionContextExecutor
@@ -14,12 +15,16 @@ import scala.concurrent.ExecutionContextExecutor
 /**
   * Created by derMicha on 30/10/16.
   */
-class TransformerConsumerActor extends Consumer with ActorLogging with MyJsonProtocol {
+class TransformerConsumerActor
+  extends Consumer
+    with CamelActorUtil
+    with MyJsonProtocol
+    with ActorLogging {
 
   val accessKey: String = Config.awsAccessKey
   val secretKey: String = Config.awsSecretAccessKey
 
-  override def endpointUri = s"aws-sqs://${Config.awsSqsQueueTransformer}?accessKey=$accessKey&secretKey=$secretKey&concurrentConsumers=2&maxMessagesPerPoll=10"
+  override def endpointUri = sqsEndpointConsumer(Config.awsSqsQueueTransformer)
 
   override def autoAck: Boolean = true
 

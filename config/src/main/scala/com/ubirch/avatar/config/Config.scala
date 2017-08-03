@@ -171,14 +171,23 @@ object Config extends ConfigBase {
     */
   def awsStatesTimestamp: String = config.getString(ConfigKeys.AWS_STATES_TIMESTAMP)
 
+  def awsRegion: String = config.getString(ConfigKeys.AWS_REGION)
+
+  def awsQueueOwnerId: String = config.getString(ConfigKeys.AWS_QUEUE_OWNER_ID)
 
   def awsAccessKey: String = config.getString(ConfigKeys.AWS_ACCESS_KEY)
 
   def awsSecretAccessKey: String = config.getString(ConfigKeys.AWS_SECRET_ACCESS_KEY)
 
+  def awsSqsMaxMessagesPerPoll: Int = config.getInt(ConfigKeys.AWS_SQS_MAX_MESSAGES_PER_POLL)
+
   def awsSqsQueueTransformer: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER)
 
   def awsSqsQueueTransformerOut: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER_OUT)
+
+  def awsSqsUbirchChainDeviceMsgIn: String = config.getString(ConfigKeys.AWS_SQS_UBIRCH_CHAIN_DEVICE_MSG_IN)
+
+  def awsSqsUbirchChainDeviceHashIn: String = config.getString(ConfigKeys.AWS_SQS_UBIRCH_CHAIN_DEVICE_HASH_IN)
 
   /*
    * MQTT

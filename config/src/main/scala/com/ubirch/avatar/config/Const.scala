@@ -29,6 +29,8 @@ object Const {
   final val PROP_CC = "countryCode"
   final val BLOCKC = "blockChain"
   final val STOREDATA = "storesData"
+  final val CHAINDATA = "chainData"
+  final val CHAINHASHEDDATA = "chainHashedData"
 
   final val TAG_SENSOR = "sensor"
   final val TAG_ACTOR = "actor"
@@ -38,8 +40,8 @@ object Const {
 
   final val TAG_BTCD = "btcDemo"
 
-  final val BOOL_TRUE = "true"
-  final val BOOL_FALSE = "false"
+  final val BOOL_TRUE = true
+  final val BOOL_FALSE = false
 
   final val ENCODING_HEX = "hex"
   final val ENCODING_B64 = "base64"
@@ -50,6 +52,7 @@ object Const {
   final val CONF_INFRARED = "ir"
   final val CONF_BLINKING = "bf"
   final val CONF_INTERVALL = "i"
+  final val CONF_INTERVALLMEASSURE = "im"
   final val CONF_THRESHOLD = "th"
 
 

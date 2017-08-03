@@ -38,6 +38,8 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private val notaryActor = context.actorOf(Props[MessageNotaryActor], ActorNames.NOTARY_SVC)
 
+  private val chainActor = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
+
   val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
 
   override def receive: Receive = {
@@ -46,15 +48,26 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       log.debug(s"received message: $drd")
 
-      if (device.checkProperty(Const.STOREDATA))
+      if (device.checkProperty(Const.STOREDATA)) {
+        log.debug(s"stores data: ${device.deviceId}")
         persistenceActor ! drd
+      }
       else
-        log.info(s"stores no data: ${device.deviceId}")
+        log.debug(s"stores no data: ${device.deviceId}")
 
-      if (DeviceCoreUtil.checkNotaryUsage(device))
+      if (DeviceCoreUtil.checkNotaryUsage(device)) {
+        log.debug(s"does not use the notary service: ${device.deviceId}")
         notaryActor ! drd
+      }
       else
         log.info(s"does not use the notary service: ${device.deviceId}")
+
+      if (device.checkProperty(Const.CHAINDATA) || device.checkProperty(Const.CHAINHASHEDDATA)) {
+        log.debug(s"chain data: ${device.deviceId}")
+        chainActor ! (drd, device)
+      }
+      else
+        log.debug(s"does not chain data: ${device.deviceId}")
 
       (drd.v match {
         case MessageVersion.`v40` =>
