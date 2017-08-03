@@ -48,9 +48,13 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       if (device.checkProperty(Const.STOREDATA))
         persistenceActor ! drd
+      else
+        log.info(s"stores no data: ${device.deviceId}")
 
       if (DeviceCoreUtil.checkNotaryUsage(device))
         notaryActor ! drd
+      else
+        log.info(s"does not use the notary service: ${device.deviceId}")
 
       (drd.v match {
         case MessageVersion.`v40` =>
