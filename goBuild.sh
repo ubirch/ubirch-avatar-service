@@ -96,6 +96,13 @@ function container_tag () {
 
 }
 
+function container_tag_stable () {
+    docker pull ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL
+    docker tag ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL ubirch/ubirch-avatar-service:stable
+    docker push ubirch/ubirch-avatar-service:stable
+
+}
+
 case "$1" in
     build)
         init
@@ -111,8 +118,11 @@ case "$1" in
     containertag)
         container_tag
         ;;
+    containertagstable)
+        container_tag_stable
+        ;;
     *)
-        echo "Usage: $0 {build|assembly|containerbuild|containertag}"
+        echo "Usage: $0 { build|assembly | containerbuild | containertag | containertagstable}"
         exit 1
 esac
 
