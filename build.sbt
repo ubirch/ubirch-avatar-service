@@ -326,7 +326,7 @@ lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.0.1"
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.6" excludeAll (excludedLoggers: _*)
 lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.6" excludeAll (excludedLoggers: _*)
-lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.11-SNAPSHOT" excludeAll (excludedLoggers: _*)
+lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.4.11" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.8" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.8" excludeAll (excludedLoggers: _*)
 lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.4" excludeAll (excludedLoggers: _*)
@@ -336,7 +336,7 @@ lazy val ubirchChainModel = ubirchChainG %% "model-rest" % "0.1.4" excludeAll (e
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
-lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.5.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.6.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
 
 /*
