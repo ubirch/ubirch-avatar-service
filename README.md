@@ -18,7 +18,7 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.23 (tbd)
 
-* tbd
+* update to `com.ubirch.util:oidc-utils:0.4.11-SNAPSHOT`
 
 ### Version 0.3.22 (2017-07-31)
 
