@@ -18,7 +18,8 @@ ubirch Avatar Service is responsible for:
 
 ### Version 0.3.24 (tbd)
 
-* tbd
+* add field `owners: Set[UUID]` to `Device`
+* update `DummyDevices` to sometimes set a random ownerId 
 
 ### Version 0.3.23 (2017-08-10)
 
