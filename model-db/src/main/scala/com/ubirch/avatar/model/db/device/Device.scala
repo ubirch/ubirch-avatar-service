@@ -12,6 +12,7 @@ import org.json4s.JsonAST.{JBool, JString}
   * since: 2017-05-12
   */
 case class Device(deviceId: String,
+                  owners: Set[UUID] = Set.empty,
                   groups: Set[UUID] = Set.empty,
                   deviceTypeKey: String = "unknownDeviceType",
                   deviceName: String = "unnamedDevice",
