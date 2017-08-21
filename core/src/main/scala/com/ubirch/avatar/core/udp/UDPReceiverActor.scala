@@ -2,10 +2,20 @@ package com.ubirch.avatar.core.udp
 
 import java.net.InetSocketAddress
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorRef, Props}
+import akka.http.scaladsl.HttpExt
 import akka.io.{IO, Udp}
+import akka.routing.RoundRobinPool
+import akka.stream.Materializer
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.core.msgpack.MsgPacker
+import com.ubirch.avatar.model.rest.MessageVersion
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.util.model.JsonErrorResponse
+import com.ubirch.util.mongo.connection.MongoUtil
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
@@ -23,12 +33,11 @@ case class CountPaket()
 
 case class CountDuplicatePaket()
 
-class UDPReceiverActor extends Actor with akka.actor.ActorLogging {
+class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends Actor with akka.actor.ActorLogging {
 
   import context.{dispatcher, system}
 
-  //private val processorActor = system.actorOf(new RoundRobinPool(5).props(Props[UDPProcessorActor]))
-  //    private val processorActor = system.actorOf(Props[UDPProcessorActor])
+  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
 
   val udpInterface = Config.udpInterface
   val udpPort = Config.udpPort
@@ -81,12 +90,26 @@ class UDPReceiverActor extends Actor with akka.actor.ActorLogging {
       log.debug(s"received from: $remote data: $data")
       val cData = MsgPacker.unpackCalliope(data.toArray)
       log.debug(s"calliope data. $cData")
+
+      cData.foreach { cd =>
+        val drd = DeviceDataRaw(
+          v = MessageVersion.v000,
+          a = HashUtil.sha512Base64(cd.deviceId.toString),
+          did = Some(cd.deviceId.toString),
+          p = cd.payload
+        )
+        validatorActor ! drd
+      }
+
     case Udp.Unbind =>
       log.info("Unbind")
       socket ! Udp.Unbind
     case Udp.Unbound =>
       log.info("Unbound")
       context.stop(self)
+
+    case jer: JsonErrorResponse =>
+    case dsu: DeviceStateUpdate =>
     case _ =>
       log.error("received unknown message")
   }
