@@ -11,7 +11,6 @@ import com.ubirch.avatar.model.rest.device.DeviceInfo
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.user.client.rest.UserServiceClientRest
 import com.ubirch.user.model.rest.Group
-import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
 
 import akka.actor.Actor
@@ -76,9 +75,9 @@ class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) e
     }
   }
 
-  private def createDevice(session: AvatarSession, device: Device): Future[CreateResult] = {
+  private def createDevice(session: AvatarSession, deviceInput: Device): Future[CreateResult] = {
 
-    DeviceManager.info(device.deviceId).flatMap {
+    DeviceManager.info(deviceInput.deviceId).flatMap {
 
       case Some(dev) =>
         logger.error(s"createDevice(): device already exists: ${dev.deviceId}")
@@ -95,41 +94,40 @@ class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) e
 
       case None =>
 
-        addGroup(session, device) flatMap {
+        addGroupsAndOwner(session, deviceInput) flatMap {
 
           case None =>
-            logger.error(s"createDevice(): unable to create device if user has no groups: device.hwDeviceId=${device.hwDeviceId}, userContext=${session.userContext}")
+            logger.error(s"createDevice(): failed to prepare device creation: device.hwDeviceId=${deviceInput.hwDeviceId}, userContext=${session.userContext}")
             Future(
               CreateResult(
                 error = Some(
                   JsonErrorResponse(
                     errorType = "CreationError",
-                    errorMessage = "unable to create device: user has no groups"
+                    errorMessage = "failed to prepare device creation"
                   )
                 )
               )
             )
 
-          case Some(dbDevice: db.device.Device) =>
+          case Some(deviceToCreate: db.device.Device) =>
 
-            logger.debug(s"creating: db.device.Device=$dbDevice")
-            DeviceManager.create(dbDevice).map {
+            logger.debug(s"creating: db.device.Device=$deviceToCreate")
+            DeviceManager.create(deviceToCreate).map {
 
               case None =>
-                logger.error(s"createDevice(): failed to create device: ${device.hwDeviceId}")
+                logger.error(s"createDevice(): failed to create device: ${deviceInput.hwDeviceId}")
                 CreateResult(
                   error = Some(
                     JsonErrorResponse(
                       errorType = "CreationError",
-                      errorMessage = "failed to create device"
+                      errorMessage = "failed to save device to database"
                     )
                   )
                 )
 
-              case Some(deviceObject: db.device.Device) =>
+              case Some(deviceCreated: db.device.Device) =>
                 logger.debug("convert db.device.Device to rest.device.Device")
-                val restDevice = Json4sUtil.any2any[Device](deviceObject)
-                CreateResult(device = Some(restDevice))
+                CreateResult(device = Some(deviceCreated))
 
             }
 
@@ -139,26 +137,30 @@ class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) e
 
   }
 
-  private def addGroup(session: AvatarSession, device: Device): Future[Option[db.device.Device]] = {
+  private def addGroupsAndOwner(session: AvatarSession, device: Device): Future[Option[db.device.Device]] = {
 
-    UserServiceClientRest.groups(
-      contextName = session.userContext.context,
-      providerId = session.userContext.providerId,
-      externalUserId = session.userContext.userId
-    ) map {
+    for {
 
-      case None => None
+      groupIds <- queryGroups(session)
+      ownerId <- queryOwnerId(session)
 
-      case Some(groups: Set[Group]) =>
+    } yield {
 
-        logger.debug(s"addGroup(): found $groups")
-        val groupIds = groups map (_.id.get)
+      if (ownerId.isEmpty) {
 
-        if (groupIds.isEmpty) {
-          None
-        } else {
-          Some(Json4sUtil.any2any[db.device.Device](device).copy(groups = groupIds))
-        }
+        logger.error(s"unable to create device if ownerId is missing: $device, session=$session")
+        None
+
+      } else {
+
+        Some(
+          device.copy(
+            groups = groupIds,
+            owners = ownerId
+          )
+        )
+
+      }
 
     }
 
@@ -181,6 +183,29 @@ class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) e
       case Some(groups: Set[Group]) =>
         logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")
         groups filter (_.id.isDefined) map (_.id.get)
+    }
+
+  }
+
+  private def queryOwnerId(session: AvatarSession): Future[Set[UUID]] = {
+
+    UserServiceClientRest.userGET(
+      providerId = session.userContext.providerId,
+      externalUserId = session.userContext.userId
+    ) map {
+
+      case None =>
+        logger.debug(s"queryOwnerId: missing user record (session=$session)")
+        Set.empty
+
+      case Some(user) if user.id.isDefined =>
+        logger.debug(s"queryOwnerId: ${user.id} (session=$session)")
+        Set(user.id.get)
+
+      case Some(user) if user.id.isEmpty =>
+        logger.debug(s"queryOwnerId: user without id (user=$user, session=$session)")
+        Set()
+
     }
 
   }

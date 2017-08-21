@@ -18,19 +18,23 @@ import org.json4s.native.JsonMethods._
 object DummyDevices {
 
   def minimalDevice(deviceId: String = UUIDUtil.uuidStr,
+                    owners: Set[UUID] = Set.empty,
                     groups: Set[UUID] = Set.empty,
-                    hwDeviceId: String = HashUtil.sha256HexString(UUIDUtil.uuidStr)
+                    hwDeviceId: String = UUIDUtil.uuidStr
                    ): Device = {
 
     Device(
       deviceId = deviceId,
+      owners = owners,
       groups = groups,
-      hwDeviceId = hwDeviceId
+      hwDeviceId = hwDeviceId,
+      hashedHwDeviceId = HashUtil.sha256HexString(hwDeviceId)
     )
 
   }
 
   def device(deviceId: String = UUIDUtil.uuidStr,
+             owners: Set[UUID] = Set(UUIDUtil.uuid),
              groups: Set[UUID] = Set(UUIDUtil.uuid),
              deviceName: String = "testHans001",
              hwDeviceId: String = UUIDUtil.uuidStr,
@@ -40,6 +44,7 @@ object DummyDevices {
 
     Device(
       deviceId = deviceId,
+      owners = owners,
       groups = groups,
       deviceName = deviceName,
       hwDeviceId = hwDeviceId,

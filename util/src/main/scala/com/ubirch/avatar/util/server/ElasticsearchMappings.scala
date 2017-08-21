@@ -86,6 +86,9 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      "deviceId" : {
            |        "type" : "keyword"
            |      },
+           |      "owners" : {
+           |        "type" : "keyword"
+           |      },
            |      "groups" : {
            |        "type" : "keyword"
            |      },
