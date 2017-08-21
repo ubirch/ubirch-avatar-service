@@ -34,7 +34,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       val hexVal = Hex.encodeHexString(binData)
       log.info(s"got some MsgPack data: $hexVal")
       try {
-        val (u, t) = MsgPacker.unpack(binData)
+        val (u, t) = MsgPacker.unpackTrackle(binData)
         DeviceDataRawManager.create(did = u, vals = t, mpraw = binData) match {
           case Some(drd) =>
             validatorActor forward drd
