@@ -16,7 +16,11 @@ ubirch Avatar Service is responsible for:
 
 ## Release History
 
-### Version 0.3.24 (2017)-08-11
+### Version 0.3.25 (2017-08-21)
+
+* add missing Elasticsearch mappings
+
+### Version 0.3.24 (2017-08-11)
 
 * add field `owners: Set[UUID]` to `Device`
 * update `DummyDevices` to sometimes set a random ownerId
@@ -203,7 +207,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.3.24"
+  "com.ubirch.avatar" %% "aws" % "0.3.25"
 )
 ```
 
@@ -215,7 +219,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.3.24"
+  "com.ubirch.avatar" %% "client" % "0.3.25"
 )
 ```
 
@@ -238,7 +242,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.3.24"
+  "com.ubirch.avatar" %% "cmdtools" % "0.3.25"
 )
 ```
 
@@ -249,7 +253,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.3.24"
+  "com.ubirch.avatar" %% "config" % "0.3.25"
 )
 ```
 
@@ -260,7 +264,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.3.24"
+  "com.ubirch.avatar" %% "core" % "0.3.25"
 )
 ```
 
@@ -271,7 +275,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-db" % "0.3.24"
+  "com.ubirch.avatar" %% "model-db" % "0.3.25"
 )
 ```
 
@@ -282,7 +286,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-rest" % "0.3.24"
+  "com.ubirch.avatar" %% "model-rest" % "0.3.25"
 )
 ```
 
@@ -295,7 +299,7 @@ resolvers ++= Seq(
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.3.24"
+  "com.ubirch.avatar" %% "server" % "0.3.25"
 )
 ```
 
@@ -308,7 +312,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.3.24"
+  "com.ubirch.avatar" %% "test-base" % "0.3.25"
 )
 ```
 
@@ -319,7 +323,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("releases")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.3.24"
+  "com.ubirch.avatar" %% "util" % "0.3.25"
 )
 ```
 
