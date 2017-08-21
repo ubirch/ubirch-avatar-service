@@ -42,25 +42,25 @@ class MsgPackTrackleTest extends FeatureSpec
     }
 
     scenario("unpack valid trackle data") {
-      val (u, t) = MsgPacker.unpack(validBinData)
+      val (u, t) = MsgPacker.unpackTrackle(validBinData)
       u shouldBe uid
       t shouldBe tempVals
     }
 
     scenario("unpack empty trackle data") {
-      val (u, t) = MsgPacker.unpack(emptyBinData)
+      val (u, t) = MsgPacker.unpackTrackle(emptyBinData)
       u shouldBe uid
       t shouldBe Seq[Int]()
     }
 
     scenario("unpack invalid trackle data") {
       intercept[Exception] {
-        val (u, t) = MsgPacker.unpack(invalidBinData)
+        val (u, t) = MsgPacker.unpackTrackle(invalidBinData)
       }
     }
 
     scenario("create DeviceRawData") {
-      val (u, t) = MsgPacker.unpack(validBinData)
+      val (u, t) = MsgPacker.unpackTrackle(validBinData)
 
       val drd = DeviceDataRawManager.create(did = u, vals = t, mpraw = validBinData).get
       val pJsonStr = Json4sUtil.jvalue2String(drd.p)

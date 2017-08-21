@@ -28,15 +28,28 @@ object Config extends ConfigBase {
     *
     * @return interface
     */
-  def interface: String = config.getString(ConfigKeys.HTTPINTERFACE)
+  def httpInterface: String = config.getString(ConfigKeys.HTTPINTERFACE)
 
   /**
     * Port the server listens on.
     *
     * @return port number
     */
-  def port: Int = config.getInt(ConfigKeys.HTTPPORT)
+  def httpPort: Int = config.getInt(ConfigKeys.HTTPPORT)
 
+  /**
+    * The interface the server runs on.
+    *
+    * @return interface
+    */
+  def udpInterface: String = config.getString(ConfigKeys.UDPINTERFACE)
+
+  /**
+    * Port the server listens on.
+    *
+    * @return port number
+    */
+  def udpPort: Int = config.getInt(ConfigKeys.UDPPORT)
 
   def enviroment: String = config.getString(ConfigKeys.ENVIROMENT)
 
