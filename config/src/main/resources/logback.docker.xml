@@ -67,6 +67,7 @@
     </appender>
 
     <logger name="com.ubirch" level="DEBUG"/>
+    <logger name="com.ubirch.avatar.core" level="DEBUG"/>
     <logger name="akka.actor" level="WARN"/>
     <logger name="reactivemongo-akka.actor" level="WARN"/>
     <logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>
