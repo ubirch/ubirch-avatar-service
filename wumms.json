@@ -1,23 +1,17 @@
 {
-  "v": "4.0",
-  "fw": "V.3.1",
-  "a": "f6dfd40f-10b3-46fc-8f7a-1d811de33588",
-  "types": [
-    [
-      1,
-      512,
-      "t"
-    ],
-    [
-      1,
-      245,
-      "p"
-    ],
-    [
-      1,
-      234,
-      "h"
-    ]
+  "id": "db1488ae-becc-40a3-a5c2-b6daadd6715b",
+  "displayName": "ubirch Team",
+  "ownerIds": [
+    "33bbbd4d-1d8a-496a-a168-d45a13019c8b"
   ],
-  "s": "guwm0lQho14EnoZUurLmr1n6qocWG8nxXUBoHyi04ycuXlNRFuZOgywnCVMsgu3Th7FZGJBQMSscti+fJ6P2Aw="
+  "contextId": "4d906061-1106-4929-8b26-3b023cfea68e",
+  "allowedUsers": [
+    "33bbbd4d-1d8a-496a-a168-d45a13019c8b",
+    "1d345faf-ba1c-412d-8943-e6fcf6f2c2e8",
+    "d107fe54-afee-43ac-ac10-164679f02daa",
+    "bd17ca6f-1c7c-442c-8cd0-ae4ae6e53c0c",
+    "72e75c35-4464-46fb-a837-24dd0a3aa60e",
+    "92fc7d57-2140-4cc7-9e2d-a917811bcaba",
+    "7b07dbbc-4249-4e66-949b-a481109402be"
+  ]
 }
