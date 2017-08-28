@@ -2,16 +2,18 @@ package com.ubirch.avatar.core.msgpack
 
 import java.io.ByteArrayInputStream
 
+import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.util.json.Json4sUtil
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 import org.msgpack.ScalaMessagePack
 import org.msgpack.`type`.ValueType
+import org.apache.commons.codec.binary.Hex
 
 import scala.collection.mutable
 
-case class CalliopeData(deviceId: Long, payload: JValue)
+case class CalliopeData(deviceId: String, payload: JValue)
 
 object MsgPacker extends StrictLogging {
 
@@ -55,7 +57,7 @@ object MsgPacker extends StrictLogging {
   def unpackCalliope(binData: Array[Byte]) = {
 
     val data: mutable.Set[CalliopeData] = mutable.Set.empty
-    var currentId: Long = 0
+    var currentId: Int = 0
 
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
     val itr = unpacker.iterator()
@@ -63,12 +65,13 @@ object MsgPacker extends StrictLogging {
       val v = itr.next()
       v.getType match {
         case ValueType.INTEGER =>
-          currentId = v.asIntegerValue.getLong
+          currentId = v.asIntegerValue().intValue()
         case ValueType.RAW =>
           Json4sUtil.string2JValue(v.asRawValue().getString) match {
             case Some(p) =>
+              val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
               val cd = CalliopeData(
-                deviceId = currentId,
+                deviceId = currentIdHex,
                 payload = p
               )
               data += cd
