@@ -22,6 +22,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      },
            |      "id" : {
            |        "type" : "keyword"
+           |      },
+           |      "ts" : {
+           |        "type" : "date",
+           |        "format" : "strict_date_time"
            |      }
            |    }
            |  }
@@ -51,6 +55,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      },
            |      "deviceName" : {
            |        "type" : "keyword"
+           |      },
+           |      "timestamp" : {
+           |        "type" : "date",
+           |        "format" : "strict_date_time"
            |      }
            |    }
            |  }
@@ -71,6 +79,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      },
            |      "deviceName" : {
            |        "type" : "keyword"
+           |      },
+           |      "timestamp" : {
+           |        "type" : "date",
+           |        "format" : "strict_date_time"
            |      }
            |    }
            |  }
@@ -103,6 +115,10 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      },
            |      "deviceName" : {
            |        "type" : "keyword"
+           |      },
+           |      "created" : {
+           |        "type" : "date",
+           |        "format" : "strict_date_time"
            |      }
            |    }
            |  }
