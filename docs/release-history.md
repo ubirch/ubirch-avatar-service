@@ -1,5 +1,9 @@
 ## Release History
 
+### Version 0.3.27 (tbd)
+
+* tbd
+
 ### Version 0.3.26 (2017-09-11)
 
 * add optional docker env var _ES_LARGE_PAGE_SIZE_
