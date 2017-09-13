@@ -4,16 +4,15 @@ import java.io.ByteArrayInputStream
 
 import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.model.rest.device.MsgPackMessage
 import com.ubirch.util.json.Json4sUtil
+import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
-import org.json4s.JValue
 import org.msgpack.ScalaMessagePack
 import org.msgpack.`type`.ValueType
-import org.apache.commons.codec.binary.Hex
+import org.msgpack.unpacker.Unpacker
 
 import scala.collection.mutable
-
-case class CalliopeData(deviceId: String, payload: JValue)
 
 object MsgPacker extends StrictLogging {
 
@@ -55,11 +54,26 @@ object MsgPacker extends StrictLogging {
   }
 
   def unpackCalliope(binData: Array[Byte]) = {
-
-    val data: mutable.Set[CalliopeData] = mutable.Set.empty
-    var currentId: Int = 0
-
+    val data: mutable.Set[MsgPackMessage] = mutable.Set.empty
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
+    unpacker.readInt() match {
+      case 0 =>
+        val cd = processMessage(unpacker)
+        if (cd.isDefined)
+          data.add(cd.get)
+      case 1 =>
+        val cd = processSigendMessage(unpacker)
+        if (cd.isDefined)
+          data.add(cd.get)
+      case _ =>
+        logger.error("unsupported message type")
+    }
+    data.toSet
+  }
+
+  private def processMessage(unpacker: Unpacker): Option[MsgPackMessage] = {
+    var currentId: Int = 0
+    var cd: Option[MsgPackMessage] = None
     val itr = unpacker.iterator()
     while (itr.hasNext) {
       val v = itr.next()
@@ -67,14 +81,17 @@ object MsgPacker extends StrictLogging {
         case ValueType.INTEGER =>
           currentId = v.asIntegerValue().intValue()
         case ValueType.RAW =>
-          Json4sUtil.string2JValue(v.asRawValue().getString) match {
+          val payStr = v.asRawValue().getString
+          Json4sUtil.string2JValue(payStr) match {
             case Some(p) =>
               val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
-              val cd = CalliopeData(
-                deviceId = currentIdHex,
-                payload = p
+              cd = Some(
+                MsgPackMessage(
+                  messageType = 1,
+                  deviceId = currentIdHex,
+                  payload = p
+                )
               )
-              data += cd
             case None =>
               logger.error(s"invalid payload data: ${v.asRawValue().getString}")
           }
@@ -82,6 +99,39 @@ object MsgPacker extends StrictLogging {
           logger.error(s"invalid msgPack data: ${v.getType}")
       }
     }
-    data.toSet
+    cd
+  }
+
+  private def processSigendMessage(unpacker: Unpacker): Option[MsgPackMessage] = {
+    var currentId: Int = 0
+    var cd: Option[MsgPackMessage] = None
+    val itr = unpacker.iterator()
+    while (itr.hasNext) {
+      val v = itr.next()
+      v.getType match {
+        case ValueType.INTEGER =>
+          currentId = v.asIntegerValue().intValue()
+        case ValueType.RAW =>
+          val dat = v.asRawValue().getByteArray
+          val sig = dat.slice(0, 64)
+          val pay = dat.slice(64, dat.length)
+          val payStr = new String(pay, "UTF-8")
+          Json4sUtil.string2JValue(payStr) match {
+            case Some(p) =>
+              val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
+              cd = Some(MsgPackMessage(
+                messageType = 1,
+                deviceId = currentIdHex,
+                payload = p,
+                signature = Some(Hex.encodeHexString(sig))
+              ))
+            case None =>
+              logger.error(s"invalid payload data")
+          }
+        case _ =>
+          logger.error(s"invalid msgPack data: ${v.getType}")
+      }
+    }
+    cd
   }
 }

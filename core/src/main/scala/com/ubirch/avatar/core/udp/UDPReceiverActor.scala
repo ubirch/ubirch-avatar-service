@@ -16,6 +16,7 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+import org.apache.commons.codec.binary.Hex
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
@@ -87,7 +88,8 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
     case Udp.Received(data, remote) =>
       val bytes = data.toByteBuffer.array()
-      log.debug(s"received from: $remote data: $data")
+      val dataHex = Hex.encodeHexString(bytes)
+      log.debug(s"received from: $remote data: $dataHex")
       val cData = MsgPacker.unpackCalliope(data.toArray)
       log.debug(s"calliope data. $cData")
 
