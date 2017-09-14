@@ -56,34 +56,34 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       log.debug(s"received message version: ${drd.v}")
 
-      if (drd.k.isDefined)
-        DeviceManager.infoByHashedHwId(drd.a).map {
-          case Some(dev) =>
-            if (drd.s.isDefined)
-              if (drd.k.isEmpty) {
-                DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p) map {
-                  case true =>
-                    processorActor forward(s, drd, dev)
-                  case false =>
-                    s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
-                }
+      DeviceManager.infoByHashedHwId(drd.a).map {
+        case Some(dev) =>
+          if (drd.s.isDefined)
+            if (drd.k.isEmpty) {
+
+              DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p) map {
+                case true =>
+                  processorActor forward(s, drd, dev)
+                case false =>
+                  s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
               }
-              else if (DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)) {
-                processorActor forward(s, drd, dev)
-              }
-              else {
-                s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
-              }
-            else
-              s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError")
-          case None =>
-            s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
-        }
-      else {
-        log.error("valid pubKey missing")
-        s ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"valid  pubKey missing: ${drd.a} / ${drd.s}")
+            }
+            else if (
+              DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)) {
+              processorActor forward(s, drd, dev)
+            }
+            else {
+              s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+            }
+          else
+            s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError")
+        case None =>
+          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
       }
-    case drd: DeviceDataRaw if drd.v == MessageVersion.v40 =>
+
+    case drd: DeviceDataRaw
+      if drd.v == MessageVersion.v40
+    =>
       val s = sender()
 
       log.debug(s"received message version: ${drd.v}")

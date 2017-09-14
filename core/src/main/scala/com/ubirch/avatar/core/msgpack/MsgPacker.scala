@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.msgpack
 
 import java.io.ByteArrayInputStream
+import java.util.Base64
 
 import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
@@ -105,32 +106,38 @@ object MsgPacker extends StrictLogging {
   private def processSigendMessage(unpacker: Unpacker): Option[MsgPackMessage] = {
     var currentId: Int = 0
     var cd: Option[MsgPackMessage] = None
-    val itr = unpacker.iterator()
-    while (itr.hasNext) {
-      val v = itr.next()
-      v.getType match {
-        case ValueType.INTEGER =>
-          currentId = v.asIntegerValue().intValue()
-        case ValueType.RAW =>
-          val dat = v.asRawValue().getByteArray
-          val sig = dat.slice(0, 64)
-          val pay = dat.slice(64, dat.length)
-          val payStr = new String(pay, "UTF-8")
-          Json4sUtil.string2JValue(payStr) match {
-            case Some(p) =>
-              val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
-              cd = Some(MsgPackMessage(
-                messageType = 1,
-                deviceId = currentIdHex,
-                payload = p,
-                signature = Some(Hex.encodeHexString(sig))
-              ))
-            case None =>
-              logger.error(s"invalid payload data")
-          }
-        case _ =>
-          logger.error(s"invalid msgPack data: ${v.getType}")
+    try {
+      val itr = unpacker.iterator()
+      while (itr.hasNext) {
+        val v = itr.next()
+        v.getType match {
+          case ValueType.INTEGER =>
+            currentId = v.asIntegerValue().intValue()
+          case ValueType.RAW =>
+            val dat = v.asRawValue().getByteArray
+            val sig = dat.slice(0, 64)
+            val pay = dat.slice(64, dat.length)
+            val payStr = new String(pay, "UTF-8")
+            Json4sUtil.string2JValue(payStr) match {
+              case Some(p) =>
+                val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
+                cd = Some(MsgPackMessage(
+                  messageType = 1,
+                  deviceId = currentIdHex,
+                  payload = p,
+                  signature = Some(Base64.getEncoder.encodeToString(sig))
+                ))
+              case None =>
+                logger.error(s"invalid payload data")
+            }
+          case _ =>
+            logger.error(s"invalid msgPack data: ${v.getType}")
+        }
       }
+    }
+    catch {
+      case e: Exception =>
+        logger.error("error while processing processSigendMessage")
     }
     cd
   }

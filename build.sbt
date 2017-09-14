@@ -338,7 +338,6 @@ lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   )
 lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.6.2" excludeAll (excludedLoggers: _*)
 lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
-
 /*
  * RESOLVER
  ********************************************************/
