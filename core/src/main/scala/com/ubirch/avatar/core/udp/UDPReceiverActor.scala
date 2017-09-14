@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.udp
 
 import java.net.InetSocketAddress
+import java.util.Base64
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.http.scaladsl.HttpExt
@@ -16,6 +17,7 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+import org.apache.commons.codec.binary.Hex
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
@@ -87,16 +89,19 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
     case Udp.Received(data, remote) =>
       val bytes = data.toByteBuffer.array()
-      log.debug(s"received from: $remote data: $data")
+      val dataHex = Hex.encodeHexString(bytes)
+      log.debug(s"received from: $remote data: $dataHex")
       val cData = MsgPacker.unpackCalliope(data.toArray)
       log.debug(s"calliope data. $cData")
 
       cData.foreach { cd =>
         val drd = DeviceDataRaw(
-          v = MessageVersion.v000,
-          a = HashUtil.sha512Base64(cd.deviceId.toString),
+          v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
+          a = HashUtil.sha512Base64(cd.deviceId.toString.toLowerCase()),
           did = Some(cd.deviceId.toString),
-          p = cd.payload
+          p = cd.payload,
+          //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
+          s = cd.signature
         )
         validatorActor ! drd
       }

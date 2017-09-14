@@ -1,7 +1,8 @@
 package com.ubirch.services.util
 
+import akka.http.scaladsl.HttpExt
+import akka.stream.Materializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
@@ -9,12 +10,8 @@ import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.keyservice.client.rest.KeyServiceClientRest
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
 import org.json4s._
 import org.json4s.native.Serialization._
-
-import akka.http.scaladsl.HttpExt
-import akka.stream.Materializer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -81,14 +78,21 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
                            (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
 
     val payloadString = write(payload)
-    KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId) map {
-      case Some(keys) =>
-        keys.map { key =>
-          EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payloadString)
-        }.count(_ == true) > 0
-      case None =>
-        logger.error(s"no pubkeys found for deviceId: ${device.deviceId}")
-        false
+    try {
+      KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId) map {
+        case Some(keys) =>
+          keys.map { key =>
+            EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payloadString)
+          }.count(_ == true) > 0
+        case None =>
+          logger.error(s"no pubkeys found for deviceId: ${device.deviceId}")
+          false
+      }
+    }
+    catch {
+      case e: Exception =>
+        logger.error("Error while key lookup")
+        Future(false)
     }
   }
 
