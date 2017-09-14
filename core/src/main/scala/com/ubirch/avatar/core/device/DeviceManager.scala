@@ -138,7 +138,7 @@ object DeviceManager
 
   def infoByHwId(hwDeviceId: String): Future[Option[Device]] = {
 
-    val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId)
+    val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId.toLowerCase)
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
       docType = esType,

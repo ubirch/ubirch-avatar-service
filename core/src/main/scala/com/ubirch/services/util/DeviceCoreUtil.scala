@@ -79,7 +79,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
 
     val payloadString = write(payload)
     try {
-      KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId) map {
+      KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId.toLowerCase) map {
         case Some(keys) =>
           keys.map { key =>
             EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payloadString)

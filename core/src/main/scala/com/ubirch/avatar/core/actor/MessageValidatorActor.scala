@@ -73,7 +73,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
               processorActor forward(s, drd, dev)
             }
             else {
-              s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s}", "ValidationError")
+              s ! logAndCreateErrorResponse(s"invalid ecc signature (: ${drd.a} / ${drd.s}", "ValidationError")
             }
           else
             s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError")

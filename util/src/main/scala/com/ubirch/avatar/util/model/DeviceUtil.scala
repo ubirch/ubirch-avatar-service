@@ -68,6 +68,7 @@ object DeviceUtil {
     // TODO automated tests
     device.copy(
       hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId.toLowerCase),
+      hwDeviceId = device.hwDeviceId.toLowerCase,
       deviceProperties = Some(device.deviceProperties.getOrElse(
         DeviceTypeUtil.defaultProps(device.deviceTypeKey)
       )),
