@@ -47,7 +47,7 @@ object DummyDevices {
       owners = owners,
       groups = groups,
       deviceName = deviceName,
-      hwDeviceId = hwDeviceId,
+      hwDeviceId = hwDeviceId.toLowerCase,
       deviceTypeKey = deviceTypeKey,
       hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId),
       deviceProperties = deviceProperties
