@@ -74,8 +74,6 @@ object DeviceManager
 
   def create(device: db.device.Device): Future[Option[db.device.Device]] = {
 
-    // TODO test case: two devices w/ hwDevice lowercase and uppercase
-    // TODO create w/ hwDeviceId.toLowerCase
     val deviceToStore = device.copy(hwDeviceId = device.hwDeviceId.toLowerCase)
     infoByHwId(deviceToStore.hwDeviceId) flatMap {
 
