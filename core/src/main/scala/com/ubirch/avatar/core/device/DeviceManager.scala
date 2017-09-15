@@ -38,6 +38,7 @@ object DeviceManager
     */
   def all(groups: Set[UUID]): Future[Seq[Device]] = {
 
+    // TODO automated tests
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
       docType = esType,
@@ -58,6 +59,7 @@ object DeviceManager
     */
   def allStubs(groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
 
+    // TODO automated tests
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
       docType = esType,
@@ -72,22 +74,23 @@ object DeviceManager
 
   def create(device: db.device.Device): Future[Option[db.device.Device]] = {
 
-    infoByHwId(device.hwDeviceId) flatMap {
+    val deviceToStore = device.copy(hwDeviceId = device.hwDeviceId.toLowerCase)
+    infoByHwId(deviceToStore.hwDeviceId) flatMap {
 
-      case Some(_: db.device.Device) =>
-        logger.error(s"device with hwDeviceId already exists: hwDeviceId=${device.hwDeviceId}")
+      case Some(_) =>
+        logger.error(s"device with hwDeviceId already exists: hwDeviceId=${deviceToStore.hwDeviceId}")
         Future(None)
 
       case None =>
 
-        val devWithDefaults = DeviceUtil.deviceWithDefaults(device)
+        val devWithDefaults = DeviceUtil.deviceWithDefaults(deviceToStore)
         Json4sUtil.any2jvalue(devWithDefaults) match {
 
           case Some(devJval) =>
             ESSimpleStorage.storeDoc(
               docIndex = esIndex,
               docType = esType,
-              docIdOpt = Some(device.deviceId),
+              docIdOpt = Some(deviceToStore.deviceId),
               doc = devJval
             ) map (_.extractOpt[db.device.Device])
 
@@ -100,6 +103,8 @@ object DeviceManager
 
   def update(device: Device)(implicit mongo: MongoUtil): Future[Option[Device]] = {
 
+    // TODO automated tests
+    // TODO updating _id_ or _hwDeviceId_ is not allowed
     Json4sUtil.any2jvalue(device) match {
 
       case Some(devJval) =>
@@ -125,6 +130,7 @@ object DeviceManager
 
   def delete(device: Device): Future[Option[Device]] = {
 
+    // TODO automated tests
     ESSimpleStorage.deleteDoc(
       docIndex = esIndex,
       docType = esType,
@@ -138,6 +144,8 @@ object DeviceManager
 
   def infoByHwId(hwDeviceId: String): Future[Option[Device]] = {
 
+    // TODO automated tests
+    // TODO test case: hwDevice exist w/ lowercase and uppercase
     val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId.toLowerCase)
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
@@ -156,6 +164,7 @@ object DeviceManager
 
   def infoByHashedHwId(hashedHwDeviceId: String): Future[Option[Device]] = {
 
+    // TODO automated tests
     val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
@@ -172,10 +181,12 @@ object DeviceManager
   }
 
 
+  // TODO automated tests
   def info(deviceId: UUID): Future[Option[Device]] = info(deviceId.toString)
 
   def info(deviceId: String): Future[Option[Device]] = {
 
+    // TODO automated tests
     ESSimpleStorage.getDoc(
       docIndex = esIndex,
       docType = esType,
@@ -189,6 +200,7 @@ object DeviceManager
 
   def stub(deviceId: UUID): Future[Option[DeviceInfo]] = {
 
+    // TODO automated tests
     info(deviceId).map {
       case Some(device) => Some(DeviceStubManger.toDeviceInfo(device = device))
       case None => None

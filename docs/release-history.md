@@ -2,7 +2,7 @@
 
 ### Version 0.3.27 (tbd)
 
-* tbd
+* `DeviceManager.create()` automatically converts _hwDeviceId_ to lower case
 
 ### Version 0.3.26 (2017-09-11)
 

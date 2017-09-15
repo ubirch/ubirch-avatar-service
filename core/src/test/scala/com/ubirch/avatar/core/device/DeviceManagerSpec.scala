@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.device
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.test.base.ElasticsearchSpecAsync
 import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.util.uuid.UUIDUtil
 
 /**
   * author: cvandrei
@@ -34,10 +35,11 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; hwDeviceId does not exist --> succeed to create device") {
+    scenario("index exists; hwDeviceId (lower case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
 
       // prepare
-      val device = DummyDevices.device()
+      val hwDeviceId = UUIDUtil.uuidStr.toLowerCase
+      val device = DummyDevices.device(hwDeviceId = hwDeviceId)
 
       // test
       DeviceManager.create(device) flatMap {
@@ -58,6 +60,31 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
+    scenario("index exists; hwDeviceId (upper case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
+
+      // prepare
+      val hwDeviceId = UUIDUtil.uuidStr.toUpperCase
+      val device = DummyDevices.device(hwDeviceId = hwDeviceId)
+
+      // test
+      DeviceManager.create(device) flatMap {
+
+        // verify
+        case None => fail("failed to create device")
+
+        case Some(created) =>
+
+          val expected = DeviceUtil.deviceWithDefaults(device).copy(hwDeviceId = hwDeviceId.toLowerCase)
+          created should be(expected)
+
+          Thread.sleep(2000)
+          DeviceManager.info(device.deviceId) map (_ should be(Some(expected)))
+          DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
+
+      }
+
+    }
+
     scenario("index exists; hwDeviceId exists --> fails to create device") {
 
       // prepare
@@ -65,7 +92,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
       DeviceManager.create(device) flatMap {
 
-        // verify
         case None => fail("failed to create device during preparation")
 
         case Some(prepared) =>
