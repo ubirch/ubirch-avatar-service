@@ -1,7 +1,6 @@
 package com.ubirch.avatar.core.udp
 
 import java.net.InetSocketAddress
-import java.util.Base64
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.http.scaladsl.HttpExt
@@ -95,9 +94,10 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
       log.debug(s"calliope data. $cData")
 
       cData.foreach { cd =>
+        val hwDeviceId = cd.deviceId.toString.toLowerCase()
         val drd = DeviceDataRaw(
           v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
-          a = HashUtil.sha512Base64(cd.deviceId.toString.toLowerCase()),
+          a = HashUtil.sha512Base64(hwDeviceId),
           did = Some(cd.deviceId.toString),
           p = cd.payload,
           //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),

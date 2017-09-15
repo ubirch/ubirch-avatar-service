@@ -5,7 +5,7 @@ import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
-import com.ubirch.avatar.core.device.DeviceStateManager
+import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
@@ -83,9 +83,12 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       }).map {
         case Some(d) =>
           s ! d
-          if (drd.did.isDefined) {
-            val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-            outboxManagerActor ! MessageReceiver(drd.did.get, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+          DeviceManager.infoByHashedHwId(drd.a).map {
+            case Some(device) =>
+              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+            case None =>
+              log.error("lookup device by hasedHwDeviceId failed")
           }
         case None =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
