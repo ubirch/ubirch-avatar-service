@@ -15,6 +15,7 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.mongo.connection.MongoUtil
 
 import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
+import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -77,6 +78,7 @@ object DeviceManager
     val deviceToStore = device.copy(hwDeviceId = device.hwDeviceId.toLowerCase)
 
     for {
+
       existingId <- info(deviceToStore.deviceId)
       existingHwDeviceId <- infoByHwId(deviceToStore.hwDeviceId)
 
@@ -92,28 +94,14 @@ object DeviceManager
 
   def update(device: Device)(implicit mongo: MongoUtil): Future[Option[Device]] = {
 
-    // TODO automated tests
-    // TODO updating _id_ or _hwDeviceId_ is not allowed
-    Json4sUtil.any2jvalue(device) match {
+    for {
 
-      case Some(devJval) =>
+      existingId <- info(device.deviceId)
+      existingHwDeviceId <- infoByHwId(device.hwDeviceId)
 
-        val dev = ESSimpleStorage.storeDoc(
-          docIndex = esIndex,
-          docType = esType,
-          docIdOpt = Some(device.deviceId),
-          doc = devJval
-        ).map(_.extractOpt[Device])
+      updated <- updateWithChecks(existingId: Option[Device], existingHwDeviceId: Option[Device], device)
 
-        if (device.deviceConfig.isDefined) {
-          AvatarStateManager.setDesired(device, device.deviceConfig.get)
-        }
-
-        dev
-
-      case None => Future(None)
-
-    }
+    } yield updated
 
   }
 
@@ -209,12 +197,12 @@ object DeviceManager
 
     if (existingId.isDefined) {
 
-      logger.error(s"device with deviceId already exists: deviceId=${deviceToStore.deviceId}")
+      logger.error(s"deviceId exists already: deviceId=${deviceToStore.deviceId}")
       Future(None)
 
     } else if (existingHwDeviceId.isDefined) {
 
-      logger.error(s"device with hwDeviceId already exists: hwDeviceId=${deviceToStore.hwDeviceId}")
+      logger.error(s"hwDeviceId exists already: hwDeviceId=${deviceToStore.hwDeviceId}")
       Future(None)
 
     } else {
@@ -232,6 +220,70 @@ object DeviceManager
 
         case None => Future(None)
       }
+
+    }
+
+  }
+
+  private def updateWithChecks(existingIdOpt: Option[Device],
+                               existingHardwareIdOpt: Option[Device],
+                               device: Device
+                              )(implicit mongo: MongoUtil): Future[Option[Device]] = {
+
+    if (existingIdOpt.isEmpty) {
+
+      logger.error(s"deviceId does not exist: deviceId=${device.deviceId}")
+      Future(None)
+
+    } else if (existingHardwareIdOpt.isEmpty) {
+
+      logger.error(s"hwDeviceId does not exist: hwDeviceId=${device.hwDeviceId}")
+      Future(None)
+
+    } else if (existingIdOpt.get.deviceId == existingHardwareIdOpt.get.deviceId &&
+      existingIdOpt.get.hwDeviceId == existingHardwareIdOpt.get.hwDeviceId
+    ) {
+
+      if (existingIdOpt.get.hashedHwDeviceId != device.hashedHwDeviceId) {
+        logger.error(s"someone tried to change the hashedHwDeviceId: deviceId=${device.deviceId}, hwDeviceId=${device.hashedHwDeviceId}")
+        Future(None)
+      } else if (existingIdOpt.get.created != device.created) {
+        logger.error(s"someone tried to change the created field: deviceId=${device.deviceId}, created=${device.hashedHwDeviceId}")
+        Future(None)
+      } else {
+
+        val toUpdate = device.copy(
+          hashedHwDeviceId = existingIdOpt.get.hashedHwDeviceId,
+          created = existingIdOpt.get.created,
+          updated = Some(DateTime.now(DateTimeZone.UTC))
+        )
+        Json4sUtil.any2jvalue(toUpdate) match {
+
+          case Some(devJval) =>
+
+            val dev = ESSimpleStorage.storeDoc(
+              docIndex = esIndex,
+              docType = esType,
+              docIdOpt = Some(toUpdate.deviceId),
+              doc = devJval
+            ).map(_.extractOpt[Device])
+
+            if (device.deviceConfig.isDefined) {
+              AvatarStateManager.setDesired(toUpdate, toUpdate.deviceConfig.get)
+            }
+
+            dev
+
+          case None => Future(None)
+
+        }
+
+      }
+
+    } else {
+
+      logger.error(s"someone tried to change a device's (hardware) id to: deviceId=${device.deviceId}, hwDeviceId=${device.hwDeviceId}")
+      Future(None)
 
     }
 
