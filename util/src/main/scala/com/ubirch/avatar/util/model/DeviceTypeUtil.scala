@@ -3,7 +3,6 @@ package com.ubirch.avatar.util.model
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.rest.device.{DeviceType, DeviceTypeDefaults, DeviceTypeName}
 import com.ubirch.util.json.Json4sUtil
-
 import org.json4s.JValue
 
 import scala.collection.mutable.ListBuffer
@@ -16,7 +15,7 @@ object DeviceTypeUtil {
 
   val defaultKey = "defaultDeviceType"
 
-  val defaultDeviceTypesSet: Set[String] = Set(Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.AQSENSOR, Const.EMOSENSOR, Const.TRACKLESENSOR, Const.GENERICSENSOR, Const.UNKNOWN_DEVICE
+  val defaultDeviceTypesSet: Set[String] = Set(Const.CALLIOPEMINI, Const.LIGHTSSENSOR, Const.LIGHTSLAMP, Const.ENVIRONMENTSENSOR, Const.AQSENSOR, Const.EMOSENSOR, Const.TRACKLESENSOR, Const.GENERICSENSOR, Const.UNKNOWN_DEVICE
   )
 
   def dataSeries(prefix: String = defaultKey,
@@ -56,6 +55,8 @@ object DeviceTypeUtil {
 
     deviceType match {
 
+      case Const.CALLIOPEMINI => DeviceTypeName("Calliope mini", "Calliope mini")
+
       case Const.LIGHTSSENSOR => DeviceTypeName("Lichtsensor", "Light Sensor")
 
       case Const.LIGHTSLAMP => DeviceTypeName("Lampe", "Lamp")
@@ -84,6 +85,7 @@ object DeviceTypeUtil {
 
     deviceType match {
 
+      case Const.CALLIOPEMINI => "ion-flash"
       case Const.LIGHTSSENSOR => "ion-ios-sunny"
       case Const.LIGHTSLAMP => "ion-ios-lightbulb"
       case Const.ENVIRONMENTSENSOR => "ion-speedometer"
@@ -100,6 +102,11 @@ object DeviceTypeUtil {
   def defaultProps(deviceTypeKey: String): JValue = {
 
     val props = deviceTypeKey match {
+
+      case Const.CALLIOPEMINI =>
+        Map(
+          Const.STOREDATA -> Const.BOOL_TRUE
+        )
 
       case Const.LIGHTSLAMP =>
         Map(
@@ -246,10 +253,9 @@ object DeviceTypeUtil {
 
     deviceTypeKey match {
 
-      case Const.LIGHTSLAMP =>
+      case Const.CALLIOPEMINI =>
         Set(
-          Const.TAG_UBB0,
-          Const.TAG_ACTOR
+          Const.TAG_CALLIOPE
         )
 
       case Const.LIGHTSSENSOR =>
