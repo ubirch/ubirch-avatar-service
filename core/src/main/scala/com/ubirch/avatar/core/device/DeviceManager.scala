@@ -75,29 +75,18 @@ object DeviceManager
   def create(device: db.device.Device): Future[Option[db.device.Device]] = {
 
     val deviceToStore = device.copy(hwDeviceId = device.hwDeviceId.toLowerCase)
-    infoByHwId(deviceToStore.hwDeviceId) flatMap {
 
-      case Some(_) =>
-        logger.error(s"device with hwDeviceId already exists: hwDeviceId=${deviceToStore.hwDeviceId}")
-        Future(None)
+    for {
+      existingId <- info(deviceToStore.deviceId)
+      existingHwDeviceId <- infoByHwId(deviceToStore.hwDeviceId)
 
-      case None =>
+      created <- createWithChecks(
+        existingId = existingId,
+        existingHwDeviceId = existingHwDeviceId,
+        deviceToStore
+      )
 
-        val devWithDefaults = DeviceUtil.deviceWithDefaults(deviceToStore)
-        Json4sUtil.any2jvalue(devWithDefaults) match {
-
-          case Some(devJval) =>
-            ESSimpleStorage.storeDoc(
-              docIndex = esIndex,
-              docType = esType,
-              docIdOpt = Some(deviceToStore.deviceId),
-              doc = devJval
-            ) map (_.extractOpt[db.device.Device])
-
-          case None => Future(None)
-        }
-
-    }
+    } yield created
 
   }
 
@@ -213,5 +202,39 @@ object DeviceManager
     Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
   }
 
+  private def createWithChecks(existingId: Option[Device],
+                               existingHwDeviceId: Option[Device],
+                               deviceToStore: Device
+                              ): Future[Option[Device]] = {
+
+    if (existingId.isDefined) {
+
+      logger.error(s"device with deviceId already exists: deviceId=${deviceToStore.deviceId}")
+      Future(None)
+
+    } else if (existingHwDeviceId.isDefined) {
+
+      logger.error(s"device with hwDeviceId already exists: hwDeviceId=${deviceToStore.hwDeviceId}")
+      Future(None)
+
+    } else {
+
+      val devWithDefaults = DeviceUtil.deviceWithDefaults(deviceToStore)
+      Json4sUtil.any2jvalue(devWithDefaults) match {
+
+        case Some(devJval) =>
+          ESSimpleStorage.storeDoc(
+            docIndex = esIndex,
+            docType = esType,
+            docIdOpt = Some(deviceToStore.deviceId),
+            doc = devJval
+          ) map (_.extractOpt[db.device.Device])
+
+        case None => Future(None)
+      }
+
+    }
+
+  }
 
 }

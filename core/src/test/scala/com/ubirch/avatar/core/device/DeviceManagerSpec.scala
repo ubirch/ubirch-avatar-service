@@ -13,7 +13,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
   feature("create()") {
 
-    scenario("index does not exist; hwDeviceId does not exist --> succeed to create device") {
+    scenario("index does not exist; empty database --> succeed to create device") {
 
       // prepare
       deleteIndices()
@@ -101,8 +101,35 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
           Thread.sleep(2000)
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
 
+          val deviceToCreate = device.copy(deviceId = UUIDUtil.uuidStr)
+
           // test && verify
-          DeviceManager.create(device) map(_ should be(None))
+          DeviceManager.create(deviceToCreate) map(_ should be(None))
+
+      }
+
+    }
+
+    scenario("index exists; deviceId exists --> fails to create device") {
+
+      // prepare
+      val device = DummyDevices.device()
+
+      DeviceManager.create(device) flatMap {
+
+        case None => fail("failed to create device during preparation")
+
+        case Some(prepared) =>
+
+          val expected = DeviceUtil.deviceWithDefaults(device)
+          prepared should be(expected)
+          Thread.sleep(2000)
+          DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
+
+          val deviceToCreate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toLowerCase)
+
+          // test && verify
+          DeviceManager.create(deviceToCreate) map(_ should be(None))
 
       }
 
