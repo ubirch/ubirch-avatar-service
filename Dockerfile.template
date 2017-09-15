@@ -1,4 +1,4 @@
-FROM ubirch/java
+FROM ubirch/java:latest
 ARG GO_PIPELINE_NAME=manual
 ARG GO_PIPELINE_LABEL=manual
 ARG GO_PIPELINE_COUNTER=manual

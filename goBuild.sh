@@ -63,10 +63,10 @@ function build_container() {
 
   if [ -z $GO_PIPELINE_LABEL ]; then
       # building without GoCD
-      docker build -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL .
+      docker build --pull -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL .
   else
       # build with GoCD
-      docker build -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL --build-arg GO_PIPELINE_NAME=$GO_PIPELINE_NAME \
+      docker build --pull -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL --build-arg GO_PIPELINE_NAME=$GO_PIPELINE_NAME \
       --build-arg GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL \
       --build-arg GO_PIPELINE_COUNTER=$GO_PIPELINE_COUNTER \
       --build-arg GO_STAGE_COUNTER=$GO_STAGE_COUNTER \
@@ -96,13 +96,6 @@ function container_tag () {
 
 }
 
-function container_tag_stable () {
-    docker pull ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL
-    docker tag ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL ubirch/ubirch-avatar-service:stable
-    docker push ubirch/ubirch-avatar-service:stable
-
-}
-
 case "$1" in
     build)
         init
@@ -118,11 +111,8 @@ case "$1" in
     containertag)
         container_tag
         ;;
-    containertagstable)
-        container_tag_stable
-        ;;
     *)
-        echo "Usage: $0 { build|assembly | containerbuild | containertag | containertagstable}"
+        echo "Usage: $0 {build|assembly|containerbuild|containertag}"
         exit 1
 esac
 

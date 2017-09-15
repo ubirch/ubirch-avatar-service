@@ -15,6 +15,7 @@ object Const {
   final val HASHDEFAULT = HASHSHA512
 
   final val UNKNOWN_DEVICE = "unknownDeviceType"
+  final val CALLIOPEMINI = "calliopeMini"
   final val LIGHTSSENSOR = "lightsSensor"
   final val LIGHTSLAMP = "lightsLamp"
   final val ENVIRONMENTSENSOR = "envSensor"
@@ -34,6 +35,8 @@ object Const {
 
   final val TAG_SENSOR = "sensor"
   final val TAG_ACTOR = "actor"
+
+  final val TAG_CALLIOPE = "calliopeMini"
 
   final val TAG_UBB0 = "ubirch#0"
   final val TAG_UBB1 = "ubirch#1"
