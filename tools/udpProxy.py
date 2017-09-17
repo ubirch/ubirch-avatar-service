@@ -27,7 +27,7 @@ def server():
     print("used server: %s" % (serverUri))
     s = socket(AF_INET, SOCK_DGRAM)
     s.bind(('', PORT))
-    print('udp echo server ready')
+    print('udp proxy server ready')
     while 1:
         data, addr = s.recvfrom(BUFSIZE)
         print('server received %r from %r' % (data, addr))
