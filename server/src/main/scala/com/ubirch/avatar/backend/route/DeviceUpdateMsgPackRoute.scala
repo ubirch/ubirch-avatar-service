@@ -62,7 +62,6 @@ class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil, httpClient: HttpExt, m
                   case _ =>
                     complete(s"ERROR 1: invlaid response")
                 }
-
               case Failure(t) =>
                 logger.error("got no result", t)
                 complete(s"ERROR 2: no result")

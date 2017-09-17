@@ -88,9 +88,11 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
     case Udp.Received(data, remote) =>
       val bytes = data.toByteBuffer.array()
+
       val dataHex = Hex.encodeHexString(bytes)
       log.debug(s"received from: $remote data: $dataHex")
-      val cData = MsgPacker.unpackCalliope(data.toArray)
+
+      val cData = MsgPacker.unpackSingleValue(data.toArray)
       log.debug(s"calliope data. $cData")
 
       cData.foreach { cd =>

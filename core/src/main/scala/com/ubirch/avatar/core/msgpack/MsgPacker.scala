@@ -17,7 +17,7 @@ import scala.collection.mutable
 
 object MsgPacker extends StrictLogging {
 
-  def unpackTrackle(binData: Array[Byte]) = {
+  def unpackTimeseries(binData: Array[Byte]) = {
 
     val ids: mutable.ArrayBuffer[Long] = mutable.ArrayBuffer.empty
     val temps: mutable.Map[DateTime, Int] = mutable.HashMap.empty
@@ -54,7 +54,7 @@ object MsgPacker extends StrictLogging {
       throw new Exception("invalid data")
   }
 
-  def unpackCalliope(binData: Array[Byte]) = {
+  def unpackSingleValue(binData: Array[Byte]): Set[MsgPackMessage] = {
     val data: mutable.Set[MsgPackMessage] = mutable.Set.empty
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
     unpacker.readInt() match {

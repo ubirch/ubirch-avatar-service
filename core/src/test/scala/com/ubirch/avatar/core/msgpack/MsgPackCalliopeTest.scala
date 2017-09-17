@@ -36,7 +36,7 @@ class MsgPackCalliopeTest extends FeatureSpec
     }
 
     scenario("unpack calliope data") {
-      val cData = MsgPacker.unpackCalliope(validBinData)
+      val cData = MsgPacker.unpackSingleValue(validBinData)
       cData.size shouldBe 2
 
       cData.head.deviceId shouldBe did1.toLowerCase

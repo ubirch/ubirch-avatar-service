@@ -48,7 +48,7 @@ object Boot extends App
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
   createElasticsearchMappings()
 
-  private val udpReceiverActor = system.actorOf(Props(new UDPReceiverActor))
+  //private val udpReceiverActor = system.actorOf(Props(new UDPReceiverActor))
 
   //  val camel = CamelExtension(system)
   //  val camelContext = camel.context

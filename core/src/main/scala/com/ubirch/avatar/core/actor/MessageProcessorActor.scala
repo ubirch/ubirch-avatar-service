@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
-import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
+import com.ubirch.avatar.core.avatar.{AvatarStateManager, AvatarStateManagerREST}
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
