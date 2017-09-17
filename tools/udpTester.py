@@ -2,12 +2,12 @@ import binascii
 import socket
 import time
 
-UDP_IP = "127.0.0.1"
+# UDP_IP = "127.0.0.1"
 # UDP_IP = "13.93.47.253"
 # UDP_IP = "13.93.92.129" #demo@aws
 # UDP_IP = "13.80.77.86"  # ubirch-dev@azure
 # UDP_IP = "23.101.65.255"  # ubirch-demo@azure
-# UDP_IP = "34.251.87.35"
+UDP_IP = "34.251.87.35"
 # UDP_IP = "udp.api.ubirch.dev.ubirch.com"
 
 UDP_PORT = 6060
