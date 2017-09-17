@@ -11,7 +11,6 @@ import os
 import requests
 
 BUFSIZE = 1024
-PORT = 7070
 
 SERVERHOSTKEY = "SERVERHOST"
 SERVERPORTKEY = "SERVERPORT"
@@ -36,7 +35,7 @@ def server():
         print('server received %r from %r' % (data, addr))
 
         try:
-            requests.post(url=url, data=data, headers={'Content-Type': 'application/octet-stream'})
+            requests.post(url=serverUri, data=data, headers={'Content-Type': 'application/octet-stream'})
             print("posted data")
         except:
             print("post error")
