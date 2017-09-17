@@ -79,7 +79,7 @@
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
-        <!--<appender-ref ref="ELASTIC"/>-->
+        <appender-ref ref="ELASTIC"/>
     </root>
 
 </configuration>
