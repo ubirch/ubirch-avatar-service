@@ -10,7 +10,7 @@ UDP_IP = "127.0.0.1"
 # UDP_IP = "34.251.87.35"
 # UDP_IP = "udp.api.ubirch.dev.ubirch.com"
 
-UDP_PORT = 7070
+UDP_PORT = 6060
 
 # MESSAGE = bytes("Hello, World!", "utf-8")
 hexDatas = [

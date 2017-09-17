@@ -14,10 +14,13 @@ BUFSIZE = 1024
 PORT = 7070
 
 SERVERHOSTKEY = "SERVERHOST"
+SERVERPORTKEY = "SERVERPORT"
 
 serverHost = os.environ[SERVERHOSTKEY]
 serverUrl = "/api/avatarService/v1/device/update/mpack"
 serverUri = "%s%s" % (serverHost, serverUrl)
+
+serverPort = int(os.environ[SERVERPORTKEY])
 
 def main():
     server()
@@ -26,8 +29,8 @@ def main():
 def server():
     print("used server: %s" % (serverUri))
     s = socket(AF_INET, SOCK_DGRAM)
-    s.bind(('', PORT))
-    print('udp proxy server ready')
+    s.bind(('', int(serverPort)))
+    print("udp proxy server ready on %s " % (serverPort))
     while 1:
         data, addr = s.recvfrom(BUFSIZE)
         print('server received %r from %r' % (data, addr))
