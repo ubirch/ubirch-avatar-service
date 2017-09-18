@@ -209,7 +209,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; changing the hwDeviceId--> update fails") {
+    scenario("index exists; device exists; update to a new hwDeviceId (lower case)--> update fails") {
 
       // prepare
       DeviceManager.create(DummyDevices.device()) flatMap {
@@ -219,10 +219,61 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case Some(device) =>
 
           Thread.sleep(2000)
-          val toUpdate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toLowerCase())
+          val toUpdate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toLowerCase)
 
           // test && verify
           DeviceManager.update(toUpdate) map(_ should be(None))
+
+      }
+
+    }
+
+    scenario("index exists; device exists; update to a new hwDeviceId (upper case)--> update fails") {
+
+      // prepare
+      DeviceManager.create(DummyDevices.device()) flatMap {
+
+        case None => fail("failed to prepare device")
+
+        case Some(device) =>
+
+          Thread.sleep(2000)
+          val toUpdate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toUpperCase)
+
+          // test && verify
+          DeviceManager.update(toUpdate) map(_ should be(None))
+
+      }
+
+    }
+
+    scenario("index exists; device exists; update to same hwDeviceId (upper case)--> update fails") {
+
+      // prepare
+      DeviceManager.create(DummyDevices.device()) flatMap {
+
+        case None => fail("failed to prepare device")
+
+        case Some(device) =>
+
+          Thread.sleep(2000)
+          val toUpdate = device.copy(hwDeviceId = device.hwDeviceId.toUpperCase)
+
+          // test
+          DeviceManager.update(toUpdate) map { updatedOpt =>
+
+            // verify
+            updatedOpt should be('isDefined)
+            val updated = updatedOpt.get
+            updated should be(device.copy(updated = updated.updated))
+
+            if (device.updated.isEmpty) {
+              updated.updated should be('isDefined)
+            } else {
+              updated.updated.get.isAfter(device.updated.get) should be(true)
+            }
+
+          }
 
       }
 

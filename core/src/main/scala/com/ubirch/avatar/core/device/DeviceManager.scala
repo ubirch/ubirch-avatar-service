@@ -253,6 +253,7 @@ object DeviceManager
       } else {
 
         val toUpdate = device.copy(
+          hwDeviceId = device.hwDeviceId.toLowerCase,
           hashedHwDeviceId = existingIdOpt.get.hashedHwDeviceId,
           created = existingIdOpt.get.created,
           updated = Some(DateTime.now(DateTimeZone.UTC))
