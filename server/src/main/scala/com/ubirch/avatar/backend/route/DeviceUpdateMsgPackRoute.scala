@@ -37,7 +37,7 @@ class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil, httpClient: HttpExt, m
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val msgPackProcessorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageMsgPackProcessorActor())), ActorNames.MSG_MSGPACK_PROCESSOR)
+  private val msgPackProcessorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfFrontendWorkers).props(Props(new MessageMsgPackProcessorActor())), ActorNames.MSG_MSGPACK_PROCESSOR)
 
   val route: Route = {
 

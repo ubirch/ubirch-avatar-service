@@ -28,6 +28,7 @@ object ConfigKeys {
 
   final val ACTOR_TIMEOUT = s"$akkaPrefix.actorTimeout"
   final val AKKA_NUMBER_OF_WORKERS = s"$akkaPrefix.numberOfWorkers"
+  final val AKKA_NUMBER_OF_FRONTEND_WORKERS = s"$akkaPrefix.numberOfFrontendWorkers"
 
   /* Elasticsearch Related Config Keys
    **********************************************************************/
