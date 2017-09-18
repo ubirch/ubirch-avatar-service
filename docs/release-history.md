@@ -5,6 +5,7 @@
 * `DeviceManager.create()` automatically converts _hwDeviceId_ to lower case
 * `DeviceManager.create()` checks that the deviceId and hwDeviceId don't exist already
 * `DeviceManager.update()` no longer allows updating the following device fields: _created_, _deviceId_, _hwDeviceId_ or _hashedHwDeviceId_
+* fixed handling of faulty `Future` handling in `DeviceIdRoute`
 
 ### Version 0.3.26 (2017-09-11)
 
