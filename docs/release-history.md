@@ -7,6 +7,7 @@
 * `DeviceManager.update()` no longer allows updating the following device fields: _created_, _deviceId_, _hwDeviceId_ or _hashedHwDeviceId_
 * fixed handling of faulty `Future` handling in `DeviceIdRoute`
 * `DeviceManager.update()` always stores _hwDeviceId_ as lower case
+* update to `com.ubirch.user:client-rest:0.6.3`
 
 ### Version 0.3.26 (2017-09-11)
 
