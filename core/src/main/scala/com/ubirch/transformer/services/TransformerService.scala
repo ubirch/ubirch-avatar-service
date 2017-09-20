@@ -1,5 +1,8 @@
 package com.ubirch.transformer.services
 
+import java.text.NumberFormat
+import java.util.Locale
+
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
@@ -33,6 +36,9 @@ object TransformerService
   def transform(deviceType: DeviceType, device: Device, drd: DeviceDataRaw, sdrd: DeviceDataRaw)(implicit ec: ExecutionContext): Option[DeviceHistory] = {
 
     logger.debug(s"transform data from $deviceType / $device")
+
+    val nf = NumberFormat.getInstance(Locale.US)
+
     //@TODO this is ugly !!!
     val (transformedPayload: Option[JValue], timestamp: Option[DateTime]) = if (device.deviceTypeKey == Const.ENVIRONMENTSENSOR)
       drd.p.extractOpt[EnvSensorRawPayload] match {
@@ -159,8 +165,8 @@ object TransformerService
         val pay = if (la.isDefined && lo.isDefined) {
           logger.debug("found lo/la")
           val geo = GeoLocation(
-            longitude = lo.get.toDouble,
-            latitude = la.get.toDouble
+            longitude = nf.parse(lo.get).doubleValue(),
+            latitude = nf.parse(la.get).doubleValue()
           )
           drd.p merge Json4sUtil.any2jvalue(geo).get
         }
@@ -170,8 +176,7 @@ object TransformerService
         (Some(pay), ts)
       }
       catch {
-        case e: Exception
-        =>
+        case e: Exception =>
           logger.error(s"error parsing lo/la for: ${drd.did}", e)
           (Some(drd.p), ts)
       }
