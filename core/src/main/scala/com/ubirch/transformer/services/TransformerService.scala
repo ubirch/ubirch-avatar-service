@@ -150,21 +150,31 @@ object TransformerService
           (Some(drd.p), None)
       }
     else {
+
       val ts = (drd.p \ "ts").extractOpt[DateTime]
       val la = (drd.p \ "la").extractOpt[String]
       val lo = (drd.p \ "lo").extractOpt[String]
 
-      val pay = if (la.isDefined && lo.isDefined) {
-        val geo = GeoLocation(
-          longitude = lo.get.toDouble,
-          latitude = la.get.toDouble
-        )
-        drd.p merge Json4sUtil.any2jvalue(geo).get
-      }
-      else
-        drd.p
+      try {
+        val pay = if (la.isDefined && lo.isDefined) {
+          logger.debug("found lo/la")
+          val geo = GeoLocation(
+            longitude = lo.get.toDouble,
+            latitude = la.get.toDouble
+          )
+          drd.p merge Json4sUtil.any2jvalue(geo).get
+        }
+        else
+          drd.p
 
-      (Some(pay), ts)
+        (Some(pay), ts)
+      }
+      catch {
+        case e: Exception
+        =>
+          logger.error(s"error parsing lo/la for: ${drd.did}", e)
+          (Some(drd.p), ts)
+      }
     }
 
     if (transformedPayload.isDefined)
