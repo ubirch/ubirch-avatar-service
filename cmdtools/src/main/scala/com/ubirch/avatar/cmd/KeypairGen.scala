@@ -1,14 +1,15 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.util.model.DeviceUtil
+
+import com.ubirch.crypto.ecc.EccUtil
 
 /**
   * Created by derMicha on 14/11/16.
   */
 object KeypairGen extends App with StrictLogging {
 
-  val (sKey, pKey) = DeviceUtil.createKeyPair
+  val (sKey, pKey) = EccUtil.generateEccKeyPair
 
 
   logger.debug(s"skey: ${sKey.getFormat}")

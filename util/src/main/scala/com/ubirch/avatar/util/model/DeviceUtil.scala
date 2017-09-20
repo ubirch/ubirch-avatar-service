@@ -47,22 +47,6 @@ object DeviceUtil {
 
   }
 
-  def createKeyPair: (PrivateKey, PublicKey) = {
-
-    val sgr: Signature = new EdDSAEngine(MessageDigest.getInstance("SHA-512"))
-    val spec: EdDSAParameterSpec = EdDSANamedCurveTable.getByName(EdDSANamedCurveTable.CURVE_ED25519_SHA512)
-    val kpg: KeyPairGenerator = new KeyPairGenerator
-
-    kpg.initialize(spec, new SecureRandom(java.util.UUID.randomUUID.toString.getBytes))
-
-    val kp: KeyPair = kpg.generateKeyPair
-
-    val sKey: PrivateKey = kp.getPrivate
-    val pKey: PublicKey = kp.getPublic
-    (sKey, pKey)
-
-  }
-
   def deviceWithDefaults(device: Device): Device = {
 
     // TODO automated tests
