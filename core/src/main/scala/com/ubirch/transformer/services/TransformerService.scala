@@ -1,11 +1,10 @@
 package com.ubirch.transformer.services
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceHistory, DeviceType}
-import com.ubirch.avatar.model.rest.payload.{AqSensorPayload, AqSensorRawPayload, EmoSensorPayload, EmoSensorRawPayload, EnvSensorPayload, EnvSensorRawPayload, TrackleSensorPayload, TrackleSensorPayloadOut}
+import com.ubirch.avatar.model.rest.payload._
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
@@ -16,6 +15,9 @@ import scala.concurrent.ExecutionContext
 /**
   * Created by derMicha on 29/11/16.
   */
+
+case class GeoLocation(longitude: Double, latitude: Double)
+
 object TransformerService
   extends StrictLogging
     with MyJsonProtocol {
@@ -149,7 +151,20 @@ object TransformerService
       }
     else {
       val ts = (drd.p \ "ts").extractOpt[DateTime]
-      (Some(drd.p), ts)
+      val la = (drd.p \ "la").extractOpt[String]
+      val lo = (drd.p \ "lo").extractOpt[String]
+
+      val pay = if (la.isDefined && lo.isDefined) {
+        val geo = GeoLocation(
+          longitude = lo.get.toDouble,
+          latitude = la.get.toDouble
+        )
+        drd.p merge Json4sUtil.any2jvalue(geo).get
+      }
+      else
+        drd.p
+
+      (Some(pay), ts)
     }
 
     if (transformedPayload.isDefined)
