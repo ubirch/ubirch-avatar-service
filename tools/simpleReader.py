@@ -11,20 +11,8 @@ def on_connect(mosq, obj, rc):
 
 
 def on_message(mosq, obj, msg):
-    global counter
-    # print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-    message = msg.payload
-    counter += 1
-    print("counter: %s" % (str(counter)))
-    jsonMsg = json.loads(msg.payload)
-    # print(jsonMsg)
-    nowTs = datetime.utcnow()
-    # msgTs = datetime.strptime(jsonMsg['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
-    msgTs = datetime.strptime(jsonMsg['deviceDataRaw']['ts'], "%Y-%m-%dT%H:%M:%S.%fZ")
-    mId = jsonMsg['deviceDataRaw']['id']
-    diff = (nowTs - msgTs).total_seconds()
-    print("%s: %s -> %s : %s" % (
-        mId, msgTs.strftime("%Y-%m-%d %H:%M:%S:%f%Z"), nowTs.strftime("%Y-%m-%d %H:%M:%S:%f%Z"), str(diff)))
+    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+
 
 def on_publish(mosq, obj, mid):
     print("mid: " + str(mid))
@@ -44,7 +32,7 @@ password = "SmartPublicLife2017"
 host = "mq.demo.ubirch.com"
 # host = "mq.dev.ubirch.com"
 port = 1883
-topic = "ubirch_dev/ubirch/devices/+/processed"
+topic = "ubirch_demo/ubirch/devices/+/processed"
 # topic = "ubirch_demo/ubirch/devices/%s/processed" % (deviceId)
 # topic = "ubirch_dev/ubirch/devices/%s/out" % (deviceId)
 
@@ -52,12 +40,10 @@ mqttc = mqtt.Client(client_id="py_tester_1")
 mqttc.username_pw_set(username, password)
 
 mqttc.on_message = on_message
-# mqttc.on_connect = on_connect
-# mqttc.on_publish = on_publish
-# mqttc.on_subscribe = on_subscribe
-
+mqttc.on_connect = on_connect
+mqttc.on_publish = on_publish
+mqttc.on_subscribe = on_subscribe
 mqttc.connect(host, port, 60)
-
 mqttc.subscribe(topic, 1)
 
 rc = 0
