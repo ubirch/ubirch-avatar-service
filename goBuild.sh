@@ -2,6 +2,8 @@
 
 SBT_CONTAINER_VERSION="latest"
 CURRENT_SERVICE_NAME="ubirch-avatar-service"
+#DOCKER_REPO=tracklecontainerregistry-on.azurecr.io
+DOCKER_REPO=ubirch
 
 function init() {
 
@@ -90,7 +92,7 @@ function build_container() {
 function container_tag () {
     label=$1
     docker pull ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL
-    docker tag ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL ubirch/$CURRENT_SERVICE_NAME:$label
+    docker tag ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL $DOCKER_REPO/$CURRENT_SERVICE_NAME:$label
     docker push ubirch/$CURRENT_SERVICE_NAME:$label
 
 }
