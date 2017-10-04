@@ -10,7 +10,7 @@ object ConfigKeys {
 
   final val GO_PIPELINE_NAME = s"$prefix.gopipelinename"
   final val GO_PIPELINE_LABEL = s"$prefix.gopipelinelabel"
-  final val GO_PIPELINE_REVISION = s"$prefix.gopipelinerev"
+  final val GO_REVISION_GIT = s"$prefix.gopipelinerev"
 
   final val HTTPPROTOCOL = s"$prefix.protocol"
   final val HTTPINTERFACE = s"$prefix.interface"

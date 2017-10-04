@@ -1,8 +1,7 @@
 #!/bin/bash -x
 
 SBT_CONTAINER_VERSION="latest"
-
-
+CURRENT_SERVICE_NAME="ubirch-avatar-service"
 
 function init() {
 
@@ -63,10 +62,11 @@ function build_container() {
 
   if [ -z $GO_PIPELINE_LABEL ]; then
       # building without GoCD
-      docker build --pull -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL .
+      docker build --pull -t ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL .
   else
       # build with GoCD
-      docker build --pull -t ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL --build-arg GO_PIPELINE_NAME=$GO_PIPELINE_NAME \
+      docker build --pull -t ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL \
+      --build-arg GO_PIPELINE_NAME=$GO_PIPELINE_NAME \
       --build-arg GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL \
       --build-arg GO_PIPELINE_COUNTER=$GO_PIPELINE_COUNTER \
       --build-arg GO_STAGE_COUNTER=$GO_STAGE_COUNTER \
@@ -79,27 +79,19 @@ function build_container() {
   fi
 
   # push Docker image
-  docker push ubirch/ubirch-avatar-service
-  docker push ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL
+  docker push ubirch/$CURRENT_SERVICE_NAME
+  docker push ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL
   if [ $? -ne 0 ]; then
     echo "Docker push failed"
     exit 1
   fi
-
-
 }
 
 function container_tag () {
-    docker pull ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL
-    docker tag ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL ubirch/ubirch-avatar-service:latest
-    docker push ubirch/ubirch-avatar-service:latest
-
-}
-
-function container_tag_stable () {
-    docker pull ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL
-    docker tag ubirch/ubirch-avatar-service:v$GO_PIPELINE_LABEL ubirch/ubirch-avatar-service:stable
-    docker push ubirch/ubirch-avatar-service:stable
+    label=$1
+    docker pull ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL
+    docker tag ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL ubirch/$CURRENT_SERVICE_NAME:$label
+    docker push ubirch/$CURRENT_SERVICE_NAME:$label
 
 }
 
@@ -110,19 +102,18 @@ case "$1" in
         ;;
     assembly)
         build_software "clean server/assembly"
-        build_container
         ;;
     containerbuild)
         build_container
         ;;
     containertag)
-        container_tag
+        container_tag "latest"
         ;;
     containertagstable)
-        container_tag_stable
+        container_tag "stable"
         ;;
     *)
-        echo "Usage: $0 { build|assembly | containerbuild | containertag | containertagstable}"
+        echo "Usage: $0 { build | assembly | containerbuild | containertag | containertagstable }"
         exit 1
 esac
 
