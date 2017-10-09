@@ -12,6 +12,7 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.rest.payload.TrackleSensorPayload
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
+import com.ubirch.transformer.services.PtxTransformerService
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
@@ -47,8 +48,7 @@ object ImportTrackle extends App
   )
 
   private val pubQ = Some(immutable.Set(
-    "dev_trackle_avatar_service_transformer_outbox",
-    "dev_trackle_trackle_service_transformer_outbox"
+    "dev_trackle_avatar_service_transformer_outbox"
   ))
 
   private val device = Device(
@@ -155,16 +155,14 @@ object ImportTrackle extends App
         val cdp = csvDataPoint.get
         val ldp = logDataPoint.get
 
+        val t1 = PtxTransformerService.pt100_temperature(ldp.t1Adc)
+        val t2 = PtxTransformerService.pt100_temperature(ldp.t2Adc)
+
         val tracklePayload = TrackleSensorPayload(
-          ts = ldp.timestamp,
-          ba = ldp.batteryPower,
-          pc = ldp.paketCounter,
-          t1 = ldp.t1Adc,
-          t2 = ldp.t2Adc,
-          t3 = ldp.t2Adc,
-          la = "0.0",
-          lo = "0.0",
-          e = 0
+          ts = cdp.dateTime,
+          t = (t1 + t2) / 2,
+          cy = cdp.paketCounter,
+          er = 0
         )
 
         Json4sUtil.any2jvalue(tracklePayload) match {

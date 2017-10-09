@@ -129,24 +129,17 @@ object TransformerService
     else if (device.deviceTypeKey == Const.TRACKLESENSOR)
       drd.p.extractOpt[TrackleSensorPayload] match {
         case Some(tracklePayload) =>
-          val trackleP = TrackleSensorPayloadOut(
+          val trackleP = TrackleSensorMeasurement(
+            mid = drd.id,
+            did = device.deviceId,
             ts = tracklePayload.ts,
-            ba = tracklePayload.ba,
-            pc = tracklePayload.pc,
-            t1Adc = tracklePayload.t1,
-            t2Adc = tracklePayload.t2,
-            t3Adc = tracklePayload.t3,
-            t1 = PtxTransformerService.pt100_temperature(tracklePayload.t1).toDouble,
-            t2 = PtxTransformerService.pt100_temperature(tracklePayload.t2).toDouble,
-            t3 = PtxTransformerService.pt100_temperature(tracklePayload.t3).toDouble,
-            la = tracklePayload.la,
-            lo = tracklePayload.lo,
-            e = tracklePayload.e,
-            dt = tracklePayload.dt
+            cy = tracklePayload.cy,
+            te = tracklePayload.t,
+            er = tracklePayload.er
           )
           Json4sUtil.any2jvalue(trackleP) match {
             case Some(jval) =>
-              (Some(jval), trackleP.dt)
+              (Some(jval), Some(trackleP.ts))
             case _ =>
               (Some(drd.p), None)
           }

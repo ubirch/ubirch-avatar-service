@@ -182,7 +182,7 @@ object DeviceTypeUtil {
       case Const.LIGHTSSENSOR =>
         Array("r", "g", "b", "ba")
       case Const.TRACKLESENSOR =>
-        Array("t1", "t2", "tAvg", "batteryPower")
+        Array("te", "cy")
       case _ => Array()
     }
   }

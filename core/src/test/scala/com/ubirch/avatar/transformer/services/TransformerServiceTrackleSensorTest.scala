@@ -1,21 +1,18 @@
 package com.ubirch.avatar.transformer.services
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceType}
-import com.ubirch.avatar.model.rest.payload.{TrackleSensorPayload, TrackleSensorPayloadOut}
+import com.ubirch.avatar.model.rest.payload.{TrackleSensorMeasurement, TrackleSensorPayload}
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
 import org.json4s.JValue
 import org.scalactic.TolerantNumerics
 import org.scalatest.{FeatureSpec, Matchers}
-
 import spire.implicits._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -76,14 +73,12 @@ class TransformerServiceTrackleSensorTest extends FeatureSpec
       )
 
       trd.isDefined shouldBe true
-      val tPayload = trd.get.deviceMessage.extractOpt[TrackleSensorPayloadOut]
+      val tPayload = trd.get.deviceMessage.extractOpt[TrackleSensorMeasurement]
 
       implicit val doubleEquality = TolerantNumerics.tolerantDoubleEquality(2)
 
       tPayload.isDefined shouldBe true
-      tPayload.get.t1.toBigDecimal.setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe 36.68
-      tPayload.get.t2.toBigDecimal.setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe 36.84
-      tPayload.get.t3.toBigDecimal.setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe 36.94
+      tPayload.get.te.toBigDecimal.setScale(2, BigDecimal.RoundingMode.HALF_UP) shouldBe 36.68
     }
   }
 }
