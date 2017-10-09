@@ -3,7 +3,7 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, Props}
 import akka.camel.Producer
 import com.ubirch.avatar.config.Config
-import com.ubirch.util.CamelActorUtil
+import com.ubirch.util.camel.CamelActorUtil
 
 class MessageChainProducerActor(sqsQueueName: String)
   extends Actor
@@ -14,7 +14,7 @@ class MessageChainProducerActor(sqsQueueName: String)
 
   val secretKey = Config.awsSecretAccessKey
 
-  override def endpointUri = sqsEndpointConsumer(sqsQueueName)
+  override def endpointUri: String = sqsEndpointConsumer(Config.sqsConfig(sqsQueueName))
 
   override def oneway: Boolean = true
 }

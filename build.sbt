@@ -115,7 +115,7 @@ lazy val config = project
   .settings(commonSettings: _*)
   .settings(
     description := "config code",
-    libraryDependencies += ubirchConfig
+    libraryDependencies ++= depConfig
   )
 
 lazy val modelDb = (project in file("model-db"))
@@ -192,8 +192,14 @@ lazy val depServer = Seq(
 
 ) ++ scalaLogging
 
+lazy val depConfig = Seq(
+  ubirchCamelUtils,
+  ubirchConfig
+)
+
 lazy val depCore = Seq(
   ubirchElasticsearchClientBinary,
+  ubirchCamelUtils,
   ubirchCrypto,
   ubirchMongo,
   ubirchNotary,
@@ -319,6 +325,7 @@ lazy val excludedLoggers = Seq(
   ExclusionRule(organization = "ch.qos.logback")
 )
 
+lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0-SNAPSHOT" excludeAll (excludedLoggers: _*)
 lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.0.8" excludeAll (excludedLoggers: _*)

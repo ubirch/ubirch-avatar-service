@@ -7,7 +7,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.util.CamelActorUtil
+import com.ubirch.util.camel.CamelActorUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import scala.concurrent.ExecutionContextExecutor
@@ -24,7 +24,7 @@ class TransformerConsumerActor
   val accessKey: String = Config.awsAccessKey
   val secretKey: String = Config.awsSecretAccessKey
 
-  override def endpointUri = sqsEndpointConsumer(Config.awsSqsQueueTransformer)
+  override def endpointUri: String = sqsEndpointConsumer(Config.sqsConfig(Config.awsSqsQueueTransformer))
 
   override def autoAck: Boolean = true
 

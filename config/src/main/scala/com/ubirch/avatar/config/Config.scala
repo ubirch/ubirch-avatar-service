@@ -1,5 +1,6 @@
 package com.ubirch.avatar.config
 
+import com.ubirch.util.camel.SqsConfig
 import com.ubirch.util.config.ConfigBase
 
 /**
@@ -203,6 +204,25 @@ object Config extends ConfigBase {
   def awsSqsUbirchChainDeviceMsgIn: String = config.getString(ConfigKeys.AWS_SQS_UBIRCH_CHAIN_DEVICE_MSG_IN)
 
   def awsSqsUbirchChainDeviceHashIn: String = config.getString(ConfigKeys.AWS_SQS_UBIRCH_CHAIN_DEVICE_HASH_IN)
+
+  def sqsConfig(queue: String): SqsConfig = SqsConfig(
+    queue = queue,
+    region = awsRegion,
+    queueOwnerId = awsQueueOwnerId,
+    accessKey = awsAccessKey,
+    secretAccessKey = awsSecretAccessKey,
+    concurrentConsumers = 2
+  )
+
+  def sqsFullConfig(queue: String): SqsConfig = SqsConfig(
+    queue = queue,
+    region = awsRegion,
+    queueOwnerId = awsQueueOwnerId,
+    accessKey = awsAccessKey,
+    secretAccessKey = awsSecretAccessKey,
+    concurrentConsumers = 2,
+    maxMessagesPerPoll = Some(awsSqsMaxMessagesPerPoll)
+  )
 
   /*
    * MQTT
