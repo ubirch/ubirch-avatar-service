@@ -1,6 +1,6 @@
 ## Release History
 
-### Version 0.3.27 (tbd)
+### Version 0.3.27 (2017-10-16)
 
 * `DeviceManager.create()` automatically converts _hwDeviceId_ to lower case
 * `DeviceManager.create()` checks that the deviceId and hwDeviceId don't exist already
