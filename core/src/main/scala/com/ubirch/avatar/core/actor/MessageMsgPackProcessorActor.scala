@@ -68,13 +68,17 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     MsgPacker.unpackTimeseries(binData) match {
       case Some(mpData) =>
         log.debug(s"msgPack data. $mpData")
-        DeviceDataRaw(
+        val ddr = DeviceDataRaw(
           v = MessageVersion.v003,
           a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
           s = mpData.signature,
+          mpraw = Some(hexVal),
           p = mpData.payload,
           ts = mpData.created
         )
+        validatorActor forward ddr
+      case None =>
+        sender ! JsonErrorResponse(errorType = "Validation Error", errorMessage = s"Invalid MsgPack Input Data: $hexVal")
     }
   }
 
@@ -87,7 +91,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     log.debug(s"msgPack data. $cData")
     cData foreach { cd =>
       val hwDeviceId = cd.deviceId.toString.toLowerCase()
-      val drd = DeviceDataRaw(
+      val ddr = DeviceDataRaw(
         v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
         a = HashUtil.sha512Base64(hwDeviceId.toLowerCase),
         did = Some(cd.deviceId.toString),
@@ -96,7 +100,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
         s = cd.signature
       )
-      validatorActor forward drd
+      validatorActor forward ddr
     }
   }
 
