@@ -26,6 +26,7 @@ object RouteConstants {
   val update = "update"
   val bulk = "bulk"
   val mpack = "mpack"
+  val mpacks = "mpacks"
   val data = "data"
   val raw = "raw"
   val deviceType = "deviceType"

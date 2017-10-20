@@ -14,3 +14,15 @@ case class MsgPackMessage(
                            created: DateTime = DateTime.now,
                            signature: Option[String] = None
                          )
+
+case class MsgPackMessageV2(
+                             messageId: UUID = UUIDUtil.uuid,
+                             messageVersion: String,
+                             firmwareVersion: String,
+                             hwDeviceId: String,
+                             prevMessageHash: Option[String] = None,
+                             payload: JValue,
+                             errorCode: Int,
+                             created: DateTime = DateTime.now,
+                             signature: Option[String] = None
+                           )

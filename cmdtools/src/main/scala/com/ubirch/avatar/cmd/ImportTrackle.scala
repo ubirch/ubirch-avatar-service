@@ -48,7 +48,7 @@ object ImportTrackle extends App
   )
 
   private val pubQ = Some(immutable.Set(
-    "dev_trackle_avatar_service_transformer_outbox"
+    "local_dev_trackle_avatar_service_transformer_outbox"
   ))
 
   private val device = Device(

@@ -1,5 +1,7 @@
 package com.ubirch.avatar.core.actor
 
+import java.io.ByteArrayInputStream
+
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
@@ -11,6 +13,8 @@ import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
+import org.msgpack.ScalaMessagePack
+import org.msgpack.`type`.ValueType
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -30,37 +34,20 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
   //private val validatorActor = context.system.actorSelection(ActorNames.MSG_VALIDATOR)
 
   override def receive: Receive = {
+
     case binData: Array[Byte] =>
       val s = sender()
 
-      val hexVal = Hex.encodeHexString(binData)
-      log.info(s"got some MsgPack data: $hexVal")
+
       try {
-
-        //val (u, t) = MsgPacker.unpackTrackle(binData)
-
-        val cData = MsgPacker.unpackSingleValue(binData.toArray)
-        log.debug(s"calliope data. $cData")
-        cData foreach { cd =>
-          val hwDeviceId = cd.deviceId.toString.toLowerCase()
-          val drd = DeviceDataRaw(
-            v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
-            a = HashUtil.sha512Base64(hwDeviceId.toLowerCase),
-            did = Some(cd.deviceId.toString),
-            mpraw = Some(hexVal),
-            p = cd.payload,
-            //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
-            s = cd.signature
-          )
-
-          //        DeviceDataRawManager.create(did = u, vals = t, mpraw = binData) match {
-          //          case Some(drd) =>
-          //            validatorActor forward drd
-          //          case None =>
-          //            log.error("could not parse input msgpack data")
-          //            s ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "Invalid Data")
-          //        }
-          validatorActor forward drd
+        val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
+        unpacker.getNextType match {
+          case ValueType.ARRAY =>
+            processMsgPack(binData)
+          case ValueType.INTEGER =>
+            processLegacyMsgPack(binData)
+          case vt: ValueType =>
+            log.error(s"invalid messagePack header type: ${vt.name()}")
         }
       }
       catch {
@@ -71,6 +58,46 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     case _ =>
       log.error("received unknown msgPack message ")
       sender ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "Invalid Input Data")
+  }
+
+
+  private def processMsgPack(binData: Array[Byte]) = {
+    val hexVal = Hex.encodeHexString(binData)
+    log.info(s"got some msgPack data: $hexVal")
+
+    MsgPacker.unpackTimeseries(binData) match {
+      case Some(mpData) =>
+        log.debug(s"msgPack data. $mpData")
+        DeviceDataRaw(
+          v = MessageVersion.v003,
+          a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
+          s = mpData.signature,
+          p = mpData.payload,
+          ts = mpData.created
+        )
+    }
+  }
+
+  private def processLegacyMsgPack(binData: Array[Byte]) = {
+
+    val hexVal = Hex.encodeHexString(binData)
+    log.info(s"got some legacyMsgPack data: $hexVal")
+
+    val cData = MsgPacker.unpackSingleValue(binData)
+    log.debug(s"msgPack data. $cData")
+    cData foreach { cd =>
+      val hwDeviceId = cd.deviceId.toString.toLowerCase()
+      val drd = DeviceDataRaw(
+        v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
+        a = HashUtil.sha512Base64(hwDeviceId.toLowerCase),
+        did = Some(cd.deviceId.toString),
+        mpraw = Some(hexVal),
+        p = cd.payload,
+        //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
+        s = cd.signature
+      )
+      validatorActor forward drd
+    }
   }
 
 }
