@@ -76,6 +76,12 @@ class MsgPackTrackleTest extends FeatureSpec
       (plvs(i - 1) \ "t").extractOpt[Int].isDefined shouldBe true
       tempVals(i - 1) shouldBe (plvs(i - 1) \ "t").extract[Int]
     }
+
+    m.get.payload.children.foreach { p =>
+      (p \ "t").extractOpt[Int].isDefined shouldBe true
+      tempVals.contains((p \ "t").extract[Int]) shouldBe true
+      (p \ "ts").extractOpt[String].isDefined shouldBe true
+    }
   }
 
   scenario("unpack empty trackle data") {

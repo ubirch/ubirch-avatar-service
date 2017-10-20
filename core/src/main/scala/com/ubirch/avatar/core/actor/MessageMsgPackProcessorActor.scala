@@ -9,6 +9,7 @@ import com.ubirch.avatar.core.msgpack.MsgPacker
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -68,15 +69,17 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     MsgPacker.unpackTimeseries(binData) match {
       case Some(mpData) =>
         log.debug(s"msgPack data. $mpData")
-        val ddr = DeviceDataRaw(
-          v = MessageVersion.v003,
-          a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
-          s = mpData.signature,
-          mpraw = Some(hexVal),
-          p = mpData.payload,
-          ts = mpData.created
-        )
-        validatorActor forward ddr
+        mpData.payload.children.foreach { p =>
+          val ddr = DeviceDataRaw(
+            v = MessageVersion.v001,
+            a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
+            s = Some(DeviceCoreUtil.createSimpleSignature(p, mpData.hwDeviceId)),
+            mpraw = Some(hexVal),
+            p = p,
+            ts = mpData.created
+          )
+          validatorActor forward ddr
+        }
       case None =>
         sender ! JsonErrorResponse(errorType = "Validation Error", errorMessage = s"Invalid MsgPack Input Data: $hexVal")
     }
