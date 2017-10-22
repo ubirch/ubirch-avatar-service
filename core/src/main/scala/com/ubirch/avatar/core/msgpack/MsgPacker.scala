@@ -46,7 +46,10 @@ object MsgPacker extends StrictLogging {
         val hwDeviceId = new UUID(byteBuffer.getLong(), byteBuffer.getLong())
 
         val prevMessageHashBytes = va.get(3).asRawValue().getByteArray
-        val prevMessageHash = binary.Hex.encodeHexString(prevMessageHashBytes)
+        val prevMessageHash = if (prevMessageHashBytes.size > 0)
+          Some(binary.Hex.encodeHexString(prevMessageHashBytes))
+        else
+          None
 
         val data = va.get(4).asMapValue()
         val plList = data.keySet().toArray flatMap { plKey =>
@@ -78,6 +81,7 @@ object MsgPacker extends StrictLogging {
           firmwareVersion = firmwareVersion,
           hwDeviceId = hwDeviceId.toString,
           payload = payload,
+          prevMessageHash = prevMessageHash,
           errorCode = error,
           signature = Some(signature)
         ))
