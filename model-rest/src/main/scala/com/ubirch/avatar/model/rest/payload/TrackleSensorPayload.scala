@@ -26,7 +26,6 @@ final case class TrackleSensorPayload(
   * @param mid measurementid
   * @param did tarckle device id
   * @param ts  Timestamp of measurement
-  * @param cy  measurement cycles
   * @param te  temperature
   * @param er  error code
   */
@@ -35,7 +34,6 @@ final case class TrackleSensorMeasurement(
                                            pid: Option[UUID] = None,
                                            did: String,
                                            ts: DateTime = DateTime.now(DateTimeZone.UTC),
-                                           cy: Long = 0,
                                            te: BigDecimal,
                                            er: Int = 0
                                          )

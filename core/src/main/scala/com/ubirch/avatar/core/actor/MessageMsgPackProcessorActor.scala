@@ -66,7 +66,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       catch {
         case e: Exception =>
           log.error("received invalid data", e)
-          sender ! JsonErrorResponse(errorType = "Invalid Data Error", errorMessage = "Incalid Dataformat")
+          sender ! JsonErrorResponse(errorType = "Invalid Data Error", errorMessage = "Invalid Dataformat")
       }
     case _ =>
       log.error("received unknown msgPack message ")

@@ -133,8 +133,7 @@ object TransformerService
             mid = drd.id,
             did = device.deviceId,
             ts = tracklePayload.ts,
-            cy = tracklePayload.cy,
-            te = tracklePayload.t,
+            te = tracklePayload.t.toDouble / 100,
             er = tracklePayload.er
           )
           Json4sUtil.any2jvalue(trackleP) match {

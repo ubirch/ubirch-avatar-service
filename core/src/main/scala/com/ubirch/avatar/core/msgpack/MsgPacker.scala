@@ -2,7 +2,8 @@ package com.ubirch.avatar.core.msgpack
 
 import java.io.ByteArrayInputStream
 import java.lang.{Long => JavaLong}
-import java.util.Base64
+import java.nio.ByteBuffer
+import java.util.{Base64, UUID}
 
 import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
@@ -41,7 +42,8 @@ object MsgPacker extends StrictLogging {
         val firmwareVersion = va.get(1).asRawValue().getString
 
         val hwDeviceIdBytes = va.get(2).asRawValue().getByteArray
-        val hwDeviceId = binary.Hex.encodeHexString(hwDeviceIdBytes)
+        val byteBuffer = ByteBuffer.wrap(hwDeviceIdBytes)
+        val hwDeviceId = new UUID(byteBuffer.getLong(), byteBuffer.getLong())
 
         val prevMessageHashBytes = va.get(3).asRawValue().getByteArray
         val prevMessageHash = binary.Hex.encodeHexString(prevMessageHashBytes)
@@ -74,7 +76,7 @@ object MsgPacker extends StrictLogging {
         Some(MsgPackMessageV2(
           messageVersion = messageVersion,
           firmwareVersion = firmwareVersion,
-          hwDeviceId = hwDeviceId,
+          hwDeviceId = hwDeviceId.toString,
           payload = payload,
           errorCode = error,
           signature = Some(signature)
