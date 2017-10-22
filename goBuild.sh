@@ -2,8 +2,8 @@
 
 SBT_CONTAINER_VERSION="latest"
 CURRENT_SERVICE_NAME="ubirch-avatar-service"
-#DOCKER_REPO=tracklecontainerregistry-on.azurecr.io
-DOCKER_REPO=ubirch
+DOCKER_REPO=tracklecontainerregistry-on.azurecr.io
+### DOCKER_REPO=ubirch
 
 function init() {
 
@@ -64,10 +64,10 @@ function build_container() {
 
   if [ -z $GO_PIPELINE_LABEL ]; then
       # building without GoCD
-      docker build --pull -t ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL .
+      docker build --pull -t $DOCKER_REPO/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL .
   else
       # build with GoCD
-      docker build --pull -t ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL \
+      docker build --pull -t $DOCKER_REPO/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL \
       --build-arg GO_PIPELINE_NAME=$GO_PIPELINE_NAME \
       --build-arg GO_PIPELINE_LABEL=$GO_PIPELINE_LABEL \
       --build-arg GO_PIPELINE_COUNTER=$GO_PIPELINE_COUNTER \
@@ -81,8 +81,8 @@ function build_container() {
   fi
 
   # push Docker image
-  docker push ubirch/$CURRENT_SERVICE_NAME
-  docker push ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL
+  docker push $DOCKER_REPO/$CURRENT_SERVICE_NAME
+  docker push $DOCKER_REPO/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL
   if [ $? -ne 0 ]; then
     echo "Docker push failed"
     exit 1
@@ -91,9 +91,9 @@ function build_container() {
 
 function container_tag () {
     label=$1
-    docker pull ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL
-    docker tag ubirch/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL $DOCKER_REPO/$CURRENT_SERVICE_NAME:$label
-    docker push ubirch/$CURRENT_SERVICE_NAME:$label
+    docker pull $DOCKER_REPO/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL
+    docker tag $DOCKER_REPO/$CURRENT_SERVICE_NAME:v$GO_PIPELINE_LABEL $DOCKER_REPO/$CURRENT_SERVICE_NAME:$label
+    docker push $DOCKER_REPO/$CURRENT_SERVICE_NAME:$label
 
 }
 
