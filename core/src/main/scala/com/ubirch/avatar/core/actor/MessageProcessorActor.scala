@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
-import com.ubirch.avatar.core.avatar.{AvatarStateManager, AvatarStateManagerREST}
+import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
@@ -48,7 +48,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       log.debug(s"received message: $drd")
 
-      if (device.checkProperty(Const.STOREDATA)) {
+      if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
         log.debug(s"stores data: ${device.deviceId}")
         persistenceActor ! drd
       }
@@ -56,13 +56,13 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         log.debug(s"stores no data: ${device.deviceId}")
 
       if (DeviceCoreUtil.checkNotaryUsage(device)) {
-        log.debug(s"does not use the notary service: ${device.deviceId}")
+        log.debug(s"does use the notary service: ${device.deviceId}")
         notaryActor ! drd
       }
       else
         log.info(s"does not use the notary service: ${device.deviceId}")
 
-      if (device.checkProperty(Const.CHAINDATA) || device.checkProperty(Const.CHAINHASHEDDATA)) {
+      if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
         log.debug(s"chain data: ${device.deviceId}")
         chainActor ! (drd, device)
       }

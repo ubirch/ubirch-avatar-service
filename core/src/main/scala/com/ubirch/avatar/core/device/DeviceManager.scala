@@ -290,4 +290,20 @@ object DeviceManager
 
   }
 
+  def checkProperty(device: Device, propertyKey: String): Boolean = {
+    if (device.deviceConfig.isDefined) {
+      (device.deviceProperties.get.camelizeKeys \ propertyKey).extractOpt[String] match {
+        case None =>
+          false
+        case Some(boolVal) =>
+          if (boolVal.trim.toLowerCase == "true")
+            true
+          else
+            false
+      }
+    }
+    else
+      false
+  }
+
 }

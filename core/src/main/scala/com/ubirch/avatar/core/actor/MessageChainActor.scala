@@ -2,6 +2,7 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.ubirch.avatar.config.{Config, Const}
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.chain.model.rest.{DeviceMsgHashIn, DeviceMsgIn}
@@ -25,7 +26,7 @@ class MessageChainActor extends Actor
 
     case (drd: DeviceDataRaw, device: Device) =>
       log.debug(s"received message: $drd")
-      if (device.checkProperty(Const.CHAINHASHEDDATA))
+      if (DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA))
         drd.s match {
           case Some(s) =>
             Json4sUtil.any2String(DeviceMsgHashIn(id = drd.id.toString, hash = s)) match {

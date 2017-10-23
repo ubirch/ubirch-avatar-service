@@ -43,13 +43,4 @@ case class Device(deviceId: String,
   }
 
   override def hashCode(): Int = this.deviceId.hashCode
-
-  def checkProperty(propertyKey: String): Boolean = {
-    if (deviceConfig.isDefined) {
-      (deviceProperties.get.camelizeKeys \ propertyKey).equals(JString("true")) ||
-        (deviceProperties.get.camelizeKeys \ propertyKey).equals(JBool(true))
-    }
-    else
-      false
-  }
 }
