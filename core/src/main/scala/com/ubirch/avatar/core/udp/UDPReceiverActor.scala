@@ -8,7 +8,7 @@ import akka.io.{IO, Udp}
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.core.actor.MessageDeviceCheckActor
 import com.ubirch.avatar.core.msgpack.MsgPacker
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
@@ -38,7 +38,7 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
   import context.{dispatcher, system}
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
+  private val deviceCheckActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageDeviceCheckActor())), ActorNames.MSG_VALIDATOR)
 
   val udpInterface = Config.udpInterface
   val udpPort = Config.udpPort
@@ -105,7 +105,7 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
           //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
           s = cd.signature
         )
-        validatorActor ! drd
+        deviceCheckActor ! drd
       }
 
     case Udp.Unbind =>

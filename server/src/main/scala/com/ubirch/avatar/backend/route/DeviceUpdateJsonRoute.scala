@@ -3,7 +3,7 @@ package com.ubirch.avatar.backend.route
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.core.actor.MessageDeviceCheckActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
@@ -40,7 +40,7 @@ class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
+  private val deviceCheckActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageDeviceCheckActor())), ActorNames.MSG_VALIDATOR)
 
   private val oidcDirective = new OidcDirective()
 
@@ -48,7 +48,7 @@ class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
     path(update / json) {
       post {
         entity(as[DeviceDataRaw]) { ddr =>
-          onComplete(validatorActor ? ddr) {
+          onComplete(deviceCheckActor ? ddr) {
             case Success(resp) =>
               resp match {
                 case dm: DeviceStateUpdate => complete(dm)

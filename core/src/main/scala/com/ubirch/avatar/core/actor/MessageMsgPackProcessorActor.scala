@@ -37,7 +37,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = context.system.actorOf(Props(new MessageValidatorActor()))
+  private val deviceCheckActor = context.system.actorOf(Props(new MessageDeviceCheckActor()))
   //private val validatorActor = context.system.actorSelection(ActorNames.MSG_VALIDATOR)
 
   override def receive: Receive = {
@@ -51,7 +51,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           case ValueType.ARRAY =>
             processMsgPack(sender, binData) match {
               case Some(ddrs) =>
-                ddrs.foreach(validatorActor forward _)
+                ddrs.foreach(d => deviceCheckActor forward d)
               case None =>
                 val hexVal = Hex.encodeHexString(binData)
                 s ! JsonErrorResponse(errorType = "Validation Error", errorMessage = s"Invalid MsgPack Input Data: $hexVal")
@@ -117,7 +117,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
         s = cd.signature
       )
-      validatorActor forward ddr
+      deviceCheckActor forward ddr
     }
   }
 

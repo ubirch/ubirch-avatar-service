@@ -8,7 +8,7 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.core.actor.MessageDeviceCheckActor
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
@@ -34,7 +34,7 @@ class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
+  private val deviceCheckActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageDeviceCheckActor())), ActorNames.MSG_VALIDATOR)
 
   val route: Route = {
 
@@ -47,7 +47,7 @@ class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
           post {
             entity(as[DeviceDataRaw]) { sdm =>
 
-              validatorActor ! sdm
+              deviceCheckActor ! sdm
 
               complete(JsonResponse(message = "processing started"))
             }

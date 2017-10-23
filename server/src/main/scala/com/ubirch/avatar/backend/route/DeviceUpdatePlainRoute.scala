@@ -3,7 +3,7 @@ package com.ubirch.avatar.backend.route
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.core.actor.MessageDeviceCheckActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants.update
@@ -35,7 +35,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfFrontendWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
+  private val checkDeviceActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfFrontendWorkers).props(Props(new MessageDeviceCheckActor())), ActorNames.MSG_VALIDATOR)
 
   val route: Route = {
     path(update) {
@@ -46,7 +46,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
               case Some(ddrJson) =>
                 ddrJson.extractOpt[DeviceDataRaw] match {
                   case Some(ddr) =>
-                    onComplete(validatorActor ? ddr) {
+                    onComplete(checkDeviceActor ? ddr) {
                       case Success(resp) =>
                         resp match {
                           case dm: DeviceStateUpdate =>
