@@ -89,6 +89,7 @@ object DeviceTypeUtil {
       case Const.LIGHTSSENSOR => "ion-ios-sunny"
       case Const.LIGHTSLAMP => "ion-ios-lightbulb"
       case Const.ENVIRONMENTSENSOR => "ion-speedometer"
+      case Const.TRACKLESENSOR => "ion-radio-waves"
       case Const.AQSENSOR => "ion-ios-cloud-outline"
       case Const.EMOSENSOR => "ion-ios-pulse"
       case Const.GENERICSENSOR => "ion-radio-waves"
@@ -140,6 +141,14 @@ object DeviceTypeUtil {
           Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
         )
 
+      case Const.TRACKLESENSOR =>
+        Map(
+          Const.STOREDATA -> Const.BOOL_TRUE,
+          Const.BLOCKC -> Const.BOOL_FALSE,
+          Const.CHAINDATA -> Const.BOOL_FALSE,
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+        )
+
       case Const.EMOSENSOR =>
         Map(
           Const.STOREDATA -> Const.BOOL_TRUE,
@@ -182,7 +191,7 @@ object DeviceTypeUtil {
       case Const.LIGHTSSENSOR =>
         Array("r", "g", "b", "ba")
       case Const.TRACKLESENSOR =>
-        Array("te", "cy")
+        Array("te", "er")
       case _ => Array()
     }
   }
