@@ -46,28 +46,28 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
     case (s: ActorRef, drd: DeviceDataRaw, device: Device) =>
 
-      log.debug(s"received message: $drd")
+      log.debug(s"received for deviceId ${device.deviceId} message: $drd")
 
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
-        log.debug(s"stores data: ${device.deviceId}")
+        log.debug(s"stores data for ${device.deviceId}")
         persistenceActor ! drd
       }
       else
-        log.debug(s"stores no data: ${device.deviceId}")
+        log.debug(s"stores no data for ${device.deviceId}")
 
       if (DeviceCoreUtil.checkNotaryUsage(device)) {
-        log.debug(s"does use the notary service: ${device.deviceId}")
+        log.debug(s"use notary service for ${device.deviceId}")
         notaryActor ! drd
       }
       else
-        log.info(s"does not use the notary service: ${device.deviceId}")
+        log.info(s"do not use notary service for ${device.deviceId}")
 
       if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
         log.debug(s"chain data: ${device.deviceId}")
         chainActor ! (drd, device)
       }
       else
-        log.debug(s"does not chain data: ${device.deviceId}")
+        log.debug(s"do not chain data for ${device.deviceId}")
 
       (drd.v match {
         case MessageVersion.`v40` =>

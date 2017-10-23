@@ -48,18 +48,19 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
 
               if (device.pubQueues.isDefined) {
                 device.pubQueues.get.foreach { sqsQueueName =>
-                  log.debug(s"send processed message to $sqsQueueName")
+                  log.debug(s"send processed message for deviceId ${device.deviceId} to $sqsQueueName")
                   outboxManagerActor ! MessageReceiver(sqsQueueName, jvalStr, ConfigKeys.INTERNOUTBOX)
                 }
               }
+              else
+                log.info(s"no pubQueues defined for deviceId: ${device.deviceId}")
 
               if (Config.mqttPublishProcessed) {
-                log.debug("send processed message to mqtt")
+                log.debug(s"send processed message to mqtt for deviceId ${device.deviceId}")
                 outboxManagerActor ! MessageReceiver(ddp.deviceId, jvalStr, ConfigKeys.EXTERNOUTBOX)
               }
               else
-                log.info("do not send processed message to mqtt")
-
+                log.info(s"do not send processed message for deviceId ${device.deviceId} to mqtt")
 
             case None =>
               log.error(s"could not parse to json: $ddp")

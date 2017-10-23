@@ -44,7 +44,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       log.debug(s"received message with version ${drd.v}")
 
-      DeviceCoreUtil.validateMessage(hwDeviceId = drd.a, authToken = drd.s.getOrElse("nosignature"), payload = drd.p).map {
+      DeviceCoreUtil.validateMessage(hashedHwDeviceId = drd.a, authToken = drd.s.getOrElse("nosignature"), payload = drd.p).map {
         case Some(dev) =>
           processorActor forward(s, drd, dev)
         case None =>

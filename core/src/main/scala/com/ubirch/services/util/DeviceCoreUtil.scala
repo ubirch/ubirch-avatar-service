@@ -46,21 +46,21 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def validateMessage(hwDeviceId: String, authToken: String, payload: JValue): Future[Option[Device]] = {
+  def validateMessage(hashedHwDeviceId: String, authToken: String, payload: JValue): Future[Option[Device]] = {
     logger.info("validateMessage")
-    DeviceManager.infoByHashedHwId(hwDeviceId).map {
+    DeviceManager.infoByHashedHwId(hashedHwDeviceId).map {
       case Some(device) =>
-        logger.debug(s"found device with primaryKey: $hwDeviceId")
+        logger.debug(s"found device with primaryKey: $hashedHwDeviceId")
         val currentAuthToken = createSimpleSignature(payload, device)
         currentAuthToken == authToken match {
           case true =>
             Some(device)
           case _ =>
-            logger.error(s"playload for device with primaryKey=$hwDeviceId has invalid authToken (currentAuthToken: $currentAuthToken != authToken: $authToken ")
+            logger.error(s"playload for device with primaryKey=$hashedHwDeviceId has invalid authToken (currentAuthToken: $currentAuthToken != authToken: $authToken ")
             None
         }
       case None =>
-        logger.error(s"device with primaryKey=$hwDeviceId not found")
+        logger.error(s"device with hashedHwDeviceId=$hashedHwDeviceId not found")
         None
     }
   }
