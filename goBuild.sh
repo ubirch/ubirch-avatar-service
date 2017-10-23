@@ -2,8 +2,8 @@
 
 SBT_CONTAINER_VERSION="latest"
 CURRENT_SERVICE_NAME="ubirch-avatar-service"
-DOCKER_REPO=tracklecontainerregistry-on.azurecr.io
-### DOCKER_REPO=ubirch
+### DOCKER_REPO=tracklecontainerregistry-on.azurecr.io
+DOCKER_REPO=ubirch
 
 function init() {
 
