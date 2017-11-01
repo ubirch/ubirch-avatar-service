@@ -28,10 +28,7 @@ object MsgPacker extends StrictLogging {
 
     val temps: mutable.Map[DateTime, Int] = mutable.HashMap.empty
 
-    val mpData = binData.take(binData.length - 64)
-    val sigData = binData.takeRight(64)
-
-    val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(mpData))
+    val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
     val itr = unpacker.iterator()
 
     unpacker.getNextType() match {
@@ -42,8 +39,13 @@ object MsgPacker extends StrictLogging {
         val firmwareVersion = va.get(1).asRawValue().getString
 
         val hwDeviceIdBytes = va.get(2).asRawValue().getByteArray
-        val byteBuffer = ByteBuffer.wrap(hwDeviceIdBytes)
-        val hwDeviceId = new UUID(byteBuffer.getLong(), byteBuffer.getLong())
+        //val byteBuffer = ByteBuffer.wrap(hwDeviceIdBytes)
+        //val hwDeviceId = new UUID(byteBuffer.getLong(), byteBuffer.getLong())
+        val hwDeviceIdHex = binary.Hex.encodeHexString(hwDeviceIdBytes)
+        val hwDeviceId =
+          hwDeviceIdHex.take(hwDeviceIdHex.size / 2) +
+            "-" +
+            hwDeviceIdHex.takeRight(hwDeviceIdHex.size / 2)
 
         val prevMessageHashBytes = va.get(3).asRawValue().getByteArray
         val prevMessageHash = if (prevMessageHashBytes.size > 0)
@@ -74,12 +76,14 @@ object MsgPacker extends StrictLogging {
         val payload = JsonAST.JArray(plList)
 
         val error = va.get(5).asIntegerValue().getInt
+        val sigData = va.get(6).asRawValue().getByteArray
+
         val signature = Hex.encodeHexString(sigData)
 
         Some(MsgPackMessageV2(
           messageVersion = messageVersion,
           firmwareVersion = firmwareVersion,
-          hwDeviceId = hwDeviceId.toString,
+          hwDeviceId = hwDeviceId,
           payload = payload,
           prevMessageHash = prevMessageHash,
           errorCode = error,
