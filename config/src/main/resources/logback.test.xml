@@ -1,16 +1,41 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{ISO8601} [%-5level] [logger: %-60logger{60}] -- %-120msg -- [Ex: %ex{short}] [thread:
+                %thread]%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>avatar-service.log</file>
+        <append>true</append>
+        <!-- set immediateFlush to false for much higher logging throughput -->
+        <immediateFlush>true</immediateFlush>
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%date{ISO8601} %-5level - %msg -[%logger{36}] - [%thread]%n</pattern>
+            <pattern>%date{ISO8601} [%-5level] %msg [logger: %logger{60}] [%ex{short}] [%thread]%n</pattern>
         </encoder>
     </appender>
 
     <logger name="com.ubirch" level="DEBUG"/>
+    <logger name="com.ubirch.avatar.core.actor" level="DEBUG"/>
+    <logger name="org.apache.http" level="INFO"/>
+    <logger name="akka.camel.internal" level="DEBUG"/>
+    <logger name="com.amazonaws" level="INFO"/>
+    <logger name="reactivemongo.core" level="INFO"/>
+
+    <!--<logger name="akka.actor" level="WARN"/>-->
+    <!--<logger name="akka.event" level="WARN"/>-->
+    <!--<logger name="reactivemongo-akka.actor" level="WARN"/>-->
+    <!--<logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>-->
+    <!--<logger name="org.apache.camel" level="WARN"/>-->
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
+        <!--<appender-ref ref="FILE"/>-->
     </root>
+
 </configuration>

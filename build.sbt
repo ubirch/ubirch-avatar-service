@@ -266,7 +266,11 @@ lazy val camelV = "2.18.1"
 lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
 val logbackV = "1.2.3"
+val logbackESV = "1.5"
 val slf4jV = "1.7.25"
+val log4jV = "2.9.1"
+val scalaLogV = "3.7.2"
+val scalaLogSLF4JV = "2.1.2"
 
 // GROUP NAMES
 lazy val akkaG = "com.typesafe.akka"
@@ -282,13 +286,29 @@ lazy val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 lazy val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
+  "org.slf4j" % "slf4j-jdk14" % slf4jV,
   "org.slf4j" % "log4j-over-slf4j" % slf4jV,
-  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" exclude("org.slf4j", "slf4j-api"),
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0" exclude("org.slf4j", "slf4j-api"),
-  "ch.qos.logback" % "logback-core" % logbackV exclude("org.slf4j", "slf4j-api"),
-  "ch.qos.logback" % "logback-classic" % logbackV exclude("org.slf4j", "slf4j-api"),
-  "com.internetitem" % "logback-elasticsearch-appender" % "1.5" exclude("org.slf4j", "slf4j-api")
+  "org.slf4j" % "jul-to-slf4j" % slf4jV,
+  //"org.apache.logging.log4j" % "log4j-to-slf4j" % log4jV,
+  "ch.qos.logback" % "logback-core" % logbackV,
+  "ch.qos.logback" % "logback-classic" % logbackV,
+  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
+  "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV,
+  "com.internetitem" % "logback-elasticsearch-appender" % logbackESV
 )
+
+//lazy val scalaLogging = Seq(
+//  "org.slf4j" % "slf4j-api" % slf4jV,
+//  "org.slf4j" % "log4j-over-slf4j" % slf4jV,
+//  "org.slf4j" % "jcl-over-slf4j" % slf4jV,
+//  "org.slf4j" % "jul-to-slf4j" % slf4jV,
+//  "org.apache.logging.log4j" % "log4j-to-slf4j" % log4jV,
+//  "ch.qos.logback" % "logback-classic" % logbackV,
+//  "ch.qos.logback" % "logback-core" % logbackV,
+//  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
+//  "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV,
+//  "com.internetitem" % "logback-elasticsearch-appender" % logbackESV
+//)
 
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
@@ -322,7 +342,8 @@ lazy val msgpackScala = "org.msgpack" %% "msgpack-scala" % "0.6.11"
 lazy val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
-  ExclusionRule(organization = "ch.qos.logback")
+  ExclusionRule(organization = "ch.qos.logback"),
+  ExclusionRule(organization = "org.apache.logging")
 )
 
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
