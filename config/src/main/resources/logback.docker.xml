@@ -67,17 +67,12 @@
     </appender>
 
     <logger name="com.ubirch" level="DEBUG"/>
-    <logger name="com.ubirch.avatar.core" level="DEBUG"/>
-    <logger name="akka.actor" level="WARN"/>
-    <logger name="reactivemongo-akka.actor" level="WARN"/>
-    <logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>
-    <logger name="org.apache.camel" level="INFO"/>
     <logger name="org.apache.http" level="INFO"/>
+    <logger name="akka.camel.internal" level="DEBUG"/>
     <logger name="com.amazonaws" level="INFO"/>
-    <logger name="akka.event" level="INFO"/>
     <logger name="reactivemongo.core" level="INFO"/>
 
-    <root level="DEBUG">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ELASTIC"/>
     </root>
