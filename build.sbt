@@ -288,26 +288,12 @@ lazy val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
   "org.slf4j" % "log4j-over-slf4j" % slf4jV,
   "org.slf4j" % "jul-to-slf4j" % slf4jV,
-  //"org.apache.logging.log4j" % "log4j-to-slf4j" % log4jV,
   "ch.qos.logback" % "logback-core" % logbackV,
   "ch.qos.logback" % "logback-classic" % logbackV,
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV,
   "com.internetitem" % "logback-elasticsearch-appender" % logbackESV
 )
-
-//lazy val scalaLogging = Seq(
-//  "org.slf4j" % "slf4j-api" % slf4jV,
-//  "org.slf4j" % "log4j-over-slf4j" % slf4jV,
-//  "org.slf4j" % "jcl-over-slf4j" % slf4jV,
-//  "org.slf4j" % "jul-to-slf4j" % slf4jV,
-//  "org.apache.logging.log4j" % "log4j-to-slf4j" % log4jV,
-//  "ch.qos.logback" % "logback-classic" % logbackV,
-//  "ch.qos.logback" % "logback-core" % logbackV,
-//  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
-//  "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV,
-//  "com.internetitem" % "logback-elasticsearch-appender" % logbackESV
-//)
 
 lazy val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
@@ -348,8 +334,8 @@ lazy val excludedLoggers = Seq(
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
 lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.3.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.3.0" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.3.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.3.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.6" excludeAll (excludedLoggers: _*)
 lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.3.6" excludeAll (excludedLoggers: _*)
