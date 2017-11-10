@@ -1,11 +1,11 @@
 package com.ubirch.avatar.cmd
 
 import java.io.File
+import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.client.rest.AvatarRestClient
 import com.ubirch.avatar.client.rest.config.AvatarClientConfig
-import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -16,8 +16,6 @@ import com.ubirch.transformer.services.PtxTransformerService
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
-import org.json4s.JValue
-import org.json4s.native.JsonMethods.parse
 import uk.co.bigbeeconsultants.http.response.Status
 
 import scala.collection._
@@ -31,44 +29,51 @@ import scala.language.postfixOps
 object ImportTrackle extends App
   with StrictLogging {
 
+  val userId = UUID.fromString("884e57da-e02f-415a-bfab-7d6bb0b7ed44")
+
   /**
     * may be you have to fix that, usually Google Drive is a root folder inside your home folder
     */
   private val googleDriveBasePath = s"${System.getProperty("user.home")}/"
 
-  private val hwDeviceId = UUIDUtil.uuidStr
+  //  private val hwDeviceId = UUIDUtil.uuidStr
+
+  private val hwDeviceId = "123123"
   private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
   private val ts = new DateTime().toLocalDateTime.toString
 
-  private val deviceProps: JValue = parse(
-    s"""{
-       |  "${Const.STOREDATA}": true,
-       |  "${Const.BLOCKC}": false
-       |}""".stripMargin
-  )
+  //private val deviceProps: JValue = parse(
+  //    s"""{
+  //       |  "${Const.STOREDATA}": true,
+  //       |  "${Const.BLOCKC}": false
+  //       |}""".stripMargin
+  //  )
+  //
+  //  private val pubQ = Some(immutable.Set(
+  //    "local_dev_trackle_avatar_service_transformer_outbox"
+  //  ))
 
-  private val pubQ = Some(immutable.Set(
-    "local_dev_trackle_avatar_service_transformer_outbox"
-  ))
-
-  private val device = Device(
-    deviceId = UUIDUtil.uuidStr,
-    deviceName = s"trackle Sensor $ts",
-    hwDeviceId = hwDeviceId,
-    deviceTypeKey = Const.TRACKLESENSOR,
-    deviceProperties = Some(deviceProps),
-    pubQueues = pubQ
-  )
+  //  private val device = Device(
+  //    deviceId = UUIDUtil.uuidStr,
+  //    owners = Set(userId),
+  //    deviceName = s"trackle Sensor $ts",
+  //    hwDeviceId = hwDeviceId,
+  //    deviceTypeKey = Const.TRACKLESENSOR,
+  //    deviceProperties = Some(deviceProps),
+  //    pubQueues = pubQ
+  //  )
 
   AvatarClientConfig.userToken match {
 
-    case None => logger.error("unable to import trackle data if auth token is not configured (see config key 'ubirchAvatarService.cmdTools.userToken'")
+    case None =>
+      logger.error("unable to import trackle data if auth token is not configured (see config key 'ubirchAvatarService.cmdTools.userToken'")
 
     case Some(token) =>
-
-      if (createDevice(token, device)) {
-        importData(token)
-      }
+      logger.info(s"start import for $hwDeviceId / $hashedHwDeviceId")
+      importData(token)
+    //      if (createDevice(token, device)) {
+    //        importData(token)
+    //      }
 
   }
 
@@ -160,7 +165,7 @@ object ImportTrackle extends App
 
         val tracklePayload = TrackleSensorPayload(
           ts = cdp.dateTime,
-          t = (t1 + t2) / 2,
+          t = (((t1 + t2) / 2)*100).toInt,
           cy = cdp.paketCounter,
           er = 0
         )

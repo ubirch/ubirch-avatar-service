@@ -35,10 +35,12 @@ object DeepCheckManager {
     for {
 
       // direct dependencies
+
       esDeepCheck <- ESSimpleStorage.connectivityCheck(
         docIndex = Config.esDeviceDataRawIndex,
         docType = Config.esDeviceDataRawType
       )
+
       esDeepCheckWithPrefix = DeepCheckResponseUtil.addServicePrefix("avatar-service", esDeepCheck)
       mongoConnectivity <- AvatarStateManager.connectivityCheck()
       redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service")

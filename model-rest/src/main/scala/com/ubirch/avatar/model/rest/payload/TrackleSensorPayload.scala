@@ -17,7 +17,7 @@ import org.joda.time.{DateTime, DateTimeZone}
   */
 final case class TrackleSensorPayload(
                                        cy: Long = 0,
-                                       t: BigDecimal,
+                                       t: Int,
                                        er: Int = 0,
                                        ts: DateTime = DateTime.now(DateTimeZone.UTC)
                                      )

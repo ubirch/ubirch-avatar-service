@@ -2,9 +2,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%date{ISO8601} [%-5level] [logger: %-60logger{60}] -- %-120msg -- [Ex: %ex{short}] [thread:
-                %thread]%n
-            </pattern>
+            <pattern>%date{ISO8601} [%-5level] [logger: %-60logger{60}] -- %-120msg -- [Ex: %ex{short}] [thread: %thread]%n</pattern>
         </encoder>
     </appender>
 
@@ -16,9 +14,7 @@
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%date{ISO8601} [%-5level] [logger: %-60logger{60}] -- %-120msg -- [Ex: %ex{short}] [thread:
-                %thread]%n
-            </pattern>
+            <pattern>%date{ISO8601} [%-5level] [logger: %-60logger{60}] -- %-120msg -- [Ex: %ex{short}] [thread: %thread]%n</pattern>
         </encoder>
     </appender>
 
@@ -36,7 +32,7 @@
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
-        <!-- <appender-ref ref="FILE"/> -->
+        <appender-ref ref="FILE"/>
     </root>
 
 </configuration>

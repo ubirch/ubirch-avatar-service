@@ -1,13 +1,11 @@
 package com.ubirch.avatar.core.device
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}
-
 import org.elasticsearch.index.query.QueryBuilders
 import org.json4s.Formats
 
@@ -124,7 +122,7 @@ object DeviceTypeManager extends StrictLogging {
     * @return deviceTypes currently in the database; never empty unless database is empty and the list of default deviceTypes is empty, too
     */
   def init(): Future[Set[DeviceType]] = {
-
+    logger.debug("init DeviceTypes")
     all() map { allTypes =>
 
       allTypes.isEmpty match {
