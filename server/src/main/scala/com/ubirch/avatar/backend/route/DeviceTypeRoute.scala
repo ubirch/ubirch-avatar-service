@@ -1,16 +1,16 @@
 package com.ubirch.avatar.backend.route
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
 import akka.actor.ActorSystem
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.util.{Failure, Success}
@@ -19,7 +19,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-11-09
   */
-trait DeviceTypeRoute extends ResponseUtil
+class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer) extends ResponseUtil
   with CORSDirective
   with StrictLogging {
 

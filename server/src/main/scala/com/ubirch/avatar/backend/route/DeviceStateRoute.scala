@@ -3,7 +3,9 @@ package com.ubirch.avatar.backend.route
 import java.util.UUID
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.AvatarState
@@ -20,7 +22,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   * author: cvandrei
   * since: 2016-10-27
   */
-class DeviceStateRoute(implicit mongo: MongoUtil)
+class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
   extends ResponseUtil
     with CORSDirective {
 
