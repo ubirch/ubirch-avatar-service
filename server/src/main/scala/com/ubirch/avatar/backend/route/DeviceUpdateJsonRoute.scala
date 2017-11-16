@@ -31,16 +31,18 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
+class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
   with CORSDirective
   with StrictLogging  {
 
-  implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
+  private val validatorActor = system.actorOf(
+    new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())),
+    s"DeviceUpdateJsonRoute-${ActorNames.MSG_VALIDATOR}"
+  )
 
   private val oidcDirective = new OidcDirective()
 

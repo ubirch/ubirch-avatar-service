@@ -181,6 +181,7 @@ lazy val depServer = Seq(
   akkaG %% "akka-slf4j" % akkaV,
   akkaG %% "akka-http" % akkaHttpV,
   akkaG %% "akka-camel" % akkaV,
+  akkaG %% "akka-cluster" % akkaV,
 
   //testing
   scalatest % "test",
@@ -190,7 +191,7 @@ lazy val depServer = Seq(
   ubirchResponse,
   ubirchOidcUtils
 
-) ++ scalaLogging
+) ++ constructr ++ scalaLogging
 
 lazy val depConfig = Seq(
   ubirchCamelUtils,
@@ -329,6 +330,11 @@ lazy val excludedLoggers = Seq(
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
   ExclusionRule(organization = "org.apache.logging")
+)
+
+lazy val constructr = Seq(
+  "de.heikoseeberger" %% "constructr" % "0.18.0",
+  "de.heikoseeberger" %% "constructr-coordination-etcd" % "0.18.0"
 )
 
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)

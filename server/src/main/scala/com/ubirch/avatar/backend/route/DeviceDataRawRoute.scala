@@ -16,10 +16,8 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-11-02
   */
-trait DeviceDataRawRoute extends ResponseUtil
+class DeviceDataRawRoute(implicit system:ActorSystem) extends ResponseUtil
   with CORSDirective {
-
-  implicit val system = ActorSystem()
 
   val route: Route = {
 

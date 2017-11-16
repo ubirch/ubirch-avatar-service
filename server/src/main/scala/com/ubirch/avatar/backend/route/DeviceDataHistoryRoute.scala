@@ -31,11 +31,10 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-30
   */
-trait DeviceDataHistoryRoute extends ResponseUtil
+class DeviceDataHistoryRoute(implicit system:ActorSystem) extends ResponseUtil
   with CORSDirective
   with StrictLogging {
 
-  implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 

@@ -28,12 +28,11 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
+class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends ResponseUtil
     with Directives
     with StrictLogging {
 
-  implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 

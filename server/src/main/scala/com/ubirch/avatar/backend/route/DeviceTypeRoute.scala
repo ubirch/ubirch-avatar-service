@@ -19,11 +19,9 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-11-09
   */
-class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer) extends ResponseUtil
+class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, system:ActorSystem) extends ResponseUtil
   with CORSDirective
   with StrictLogging {
-
-  implicit val system = ActorSystem()
 
   private val oidcDirective = new OidcDirective()
 

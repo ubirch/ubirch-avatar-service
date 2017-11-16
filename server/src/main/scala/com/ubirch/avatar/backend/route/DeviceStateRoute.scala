@@ -22,11 +22,10 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   * author: cvandrei
   * since: 2016-10-27
   */
-class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
+class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
     with CORSDirective {
 
-  implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   private val oidcDirective = new OidcDirective()

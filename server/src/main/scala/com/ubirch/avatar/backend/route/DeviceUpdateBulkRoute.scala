@@ -25,16 +25,18 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
+class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
     with Directives
     with StrictLogging {
 
-  implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
+  private val validatorActor = system.actorOf(
+    new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())),
+    s"DeviceUpdateBulkRoute-${ActorNames.MSG_VALIDATOR}"
+  )
 
   val route: Route = {
 

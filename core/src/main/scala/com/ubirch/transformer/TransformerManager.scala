@@ -10,11 +10,7 @@ import com.ubirch.util.mongo.connection.MongoUtil
   */
 object TransformerManager {
 
-  implicit val system = ActorSystem()
-
-  def init()(implicit mongo: MongoUtil): Unit = {
-
+  def init(system: ActorSystem)(implicit mongo: MongoUtil) = {
     system.actorOf(Props[TransformerConsumerActor], ActorNames.TRANSFORMER_CONSUMER)
-
   }
 }

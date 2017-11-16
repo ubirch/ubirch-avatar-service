@@ -32,7 +32,7 @@ object Boot extends App
   with MongoConstraints
   with StrictLogging {
 
-  implicit val system = ActorSystem()
+  implicit val system = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext = system.dispatcher
 
@@ -56,7 +56,7 @@ object Boot extends App
 
   val bindingFuture = start()
 
-  TransformerManager.init()
+  TransformerManager.init(system)
   DeviceTypeManager.init()
 
   stop()

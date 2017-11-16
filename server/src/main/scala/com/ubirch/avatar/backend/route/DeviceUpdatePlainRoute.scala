@@ -1,15 +1,5 @@
 package com.ubirch.avatar.backend.route
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
-import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
-import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.avatar.util.server.RouteConstants.update
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.mongo.connection.MongoUtil
-
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Directives._
@@ -18,6 +8,14 @@ import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
+import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.avatar.util.server.RouteConstants.update
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -27,15 +25,17 @@ import scala.util.{Failure, Success}
 /**
   * Created by derMicha on 26/02/17.
   */
-class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
+class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends MyJsonProtocol
     with StrictLogging {
 
-  implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfFrontendWorkers).props(Props(new MessageValidatorActor())), ActorNames.MSG_VALIDATOR)
+  private val validatorActor = system.actorOf(
+    new RoundRobinPool(Config.akkaNumberOfFrontendWorkers).props(Props(new MessageValidatorActor())),
+    s"DeviceUpdatePlainRoute-${ActorNames.MSG_VALIDATOR}"
+  )
 
   val route: Route = {
     path(update) {

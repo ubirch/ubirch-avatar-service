@@ -15,14 +15,13 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2017-02-23
   */
-class MessageNotaryActorSpec extends ElasticsearchSpec {
+class MessageNotaryActorSpec(implicit system:ActorSystem) extends ElasticsearchSpec {
 
   feature("receive DeviceDataRaw") {
 
     scenario("incoming DeviceDataRaw has no txHash; is written to Elasticsearch") {
 
       // prepare
-      implicit val system = ActorSystem()
       val notaryActor = TestActorRef(new MessageNotaryActor)
 
       val device = DummyDevices.minimalDevice()
@@ -49,7 +48,6 @@ class MessageNotaryActorSpec extends ElasticsearchSpec {
     scenario("incoming DeviceDataRaw has a txHash and txHashLink (which are ignored); is written to Elasticsearch") {
 
       // prepare
-      implicit val system = ActorSystem()
       val notaryActor = TestActorRef(new MessageNotaryActor)
 
       val device = DummyDevices.minimalDevice()

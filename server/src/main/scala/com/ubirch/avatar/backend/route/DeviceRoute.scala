@@ -28,16 +28,18 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer)
+class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
     with CORSDirective
     with StrictLogging {
 
-  implicit val system = ActorSystem()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val deviceApiActor = system.actorOf(Props(new DeviceApiActor), ActorNames.DEVICE_API)
+  private val deviceApiActor = system.actorOf(
+    Props(new DeviceApiActor),
+    ActorNames.DEVICE_API
+  )
 
   private val oidcDirective = new OidcDirective()
 
