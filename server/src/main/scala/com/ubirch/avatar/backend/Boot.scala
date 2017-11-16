@@ -2,7 +2,13 @@ package com.ubirch.avatar.backend
 
 import java.util.concurrent.TimeUnit
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http.ServerBinding
+import akka.http.scaladsl.{Http, HttpExt}
+import akka.stream.ActorMaterializer
+import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.backend.actor.util.ActorStarter
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
@@ -11,12 +17,6 @@ import com.ubirch.transformer.TransformerManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.elasticsearch.client.transport.TransportClient
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.{Http, HttpExt}
-import akka.http.scaladsl.Http.ServerBinding
-import akka.stream.ActorMaterializer
-import akka.util.Timeout
-import com.ubirch.avatar.core.udp.UDPReceiverActor
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -47,6 +47,8 @@ object Boot extends App
 
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
   createElasticsearchMappings()
+
+  ActorStarter.init(system)
 
   //private val udpReceiverActor = system.actorOf(Props(new UDPReceiverActor))
 

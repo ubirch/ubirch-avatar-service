@@ -36,8 +36,7 @@ class DeviceStubRoute(implicit httpClient: HttpExt, materializer: Materializer, 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  //private val deviceApiActor = system.actorOf(Props(new DeviceApiActor), ActorNames.DEVICE_API)
-  private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API)
+  private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
   private val oidcDirective = new OidcDirective()
 

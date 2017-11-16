@@ -30,9 +30,13 @@ object ActorNames {
 
   final val MSG_VALIDATOR: String = "message-validator"
 
+  final val MSG_VALIDATOR_PATH: String = s"user/$MSG_VALIDATOR"
+
   final val MSG_MSGPACK_PROCESSOR: String = "message-msgpack-processor"
 
   final val DEVICE_API: String = "device-api"
+
+  final val DEVICE_API_PATH: String = s"user/$DEVICE_API"
 
   final val NOTARY_SVC: String = "notary-service"
 

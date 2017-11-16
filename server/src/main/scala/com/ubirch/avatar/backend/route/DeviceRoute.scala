@@ -1,8 +1,13 @@
 package com.ubirch.avatar.backend.route
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.stream.Materializer
+import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import com.ubirch.avatar.backend.actor.{AllDevices, AllDevicesResult, CreateDevice, CreateResult, DeviceApiActor}
+import com.ubirch.avatar.backend.actor._
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.actor.ActorNames
@@ -10,13 +15,6 @@ import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.stream.Materializer
-import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor
@@ -28,7 +26,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
+class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends ResponseUtil
     with CORSDirective
     with StrictLogging {
@@ -36,15 +34,11 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val deviceApiActor = system.actorOf(
-    Props(new DeviceApiActor),
-    ActorNames.DEVICE_API
-  )
+  private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
   private val oidcDirective = new OidcDirective()
 
   val route: Route =
-
     respondWithCORS {
       oidcDirective.oidcToken2UserContext { userContext =>
 

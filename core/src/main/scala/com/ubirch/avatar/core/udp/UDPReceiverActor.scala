@@ -38,10 +38,7 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
   import context.{dispatcher, system}
 
-  private val validatorActor = system.actorOf(
-    new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())),
-    s"UDPReceiverActor-${ActorNames.MSG_VALIDATOR}"
-  )
+  private val validatorActor = system.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
 
   val udpInterface = Config.udpInterface
   val udpPort = Config.udpPort

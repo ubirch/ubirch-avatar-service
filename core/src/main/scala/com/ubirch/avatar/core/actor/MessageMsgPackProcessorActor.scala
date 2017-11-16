@@ -11,6 +11,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.msgpack.MsgPacker
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.MyJsonProtocol
@@ -37,8 +38,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = context.system.actorOf(Props(new MessageValidatorActor()))
-  //private val validatorActor = context.system.actorSelection(ActorNames.MSG_VALIDATOR)
+  private val validatorActor = context.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
 
   override def receive: Receive = {
 

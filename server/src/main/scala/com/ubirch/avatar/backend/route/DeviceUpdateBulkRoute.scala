@@ -33,10 +33,7 @@ class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val validatorActor = system.actorOf(
-    new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageValidatorActor())),
-    s"DeviceUpdateBulkRoute-${ActorNames.MSG_VALIDATOR}"
-  )
+  private val validatorActor = system.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
 
   val route: Route = {
 

@@ -43,7 +43,7 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
   //    Props(new DeviceApiActor),
   //    s"DeviceIdRoute-${ActorNames.DEVICE_API}"
   //  )
-  private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API)
+  private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
   private val oidcDirective = new OidcDirective()
 

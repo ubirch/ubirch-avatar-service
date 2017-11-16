@@ -38,7 +38,6 @@ lazy val avatarService = (project in file("."))
     core,
     modelDb,
     modelRest,
-    mqttBridge,
     server,
     testBase,
     testTools,
@@ -63,13 +62,6 @@ lazy val server = project
     resourceGenerators in Compile += Def.task {
       generateDockerFile(baseDirectory.value / ".." / "Dockerfile.input", (assemblyOutputPath in assembly).value)
     }.taskValue
-  )
-
-lazy val mqttBridge = project
-  .settings(commonSettings: _*)
-  .dependsOn(core, util, testBase)
-  .settings(
-    description := "mqtt to sqs bridge"
   )
 
 lazy val cmdtools = project
