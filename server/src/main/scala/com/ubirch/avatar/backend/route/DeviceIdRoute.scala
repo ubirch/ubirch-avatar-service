@@ -39,10 +39,6 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
-  //  private val deviceApiActor = system.actorOf(
-  //    Props(new DeviceApiActor),
-  //    s"DeviceIdRoute-${ActorNames.DEVICE_API}"
-  //  )
   private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
   private val oidcDirective = new OidcDirective()
