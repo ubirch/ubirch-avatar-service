@@ -81,9 +81,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
           s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
       }
 
-    case drd: DeviceDataRaw
-      if drd.v == MessageVersion.v40
-    =>
+^    case drd: DeviceDataRaw if drd.v == MessageVersion.v40 =>
       val s = sender()
 
       log.debug(s"received message version: ${drd.v}")
