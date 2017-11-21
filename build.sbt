@@ -183,7 +183,7 @@ lazy val depServer = Seq(
   ubirchResponse,
   ubirchOidcUtils
 
-) ++ constructr ++ scalaLogging
+) ++ prometheus ++ constructr ++ scalaLogging
 
 lazy val depConfig = Seq(
   ubirchCamelUtils,
@@ -327,6 +327,13 @@ lazy val excludedLoggers = Seq(
 lazy val constructr = Seq(
   "de.heikoseeberger" %% "constructr" % "0.18.0",
   "de.heikoseeberger" %% "constructr-coordination-etcd" % "0.18.0"
+)
+
+lazy val prometheus = Seq(
+  "io.prometheus" % "simpleclient" % "0.1.0",
+  "io.prometheus" % "simpleclient_hotspot" % "0.1.0",
+  "io.prometheus" % "simpleclient_httpserver" % "0.1.0",
+  "io.prometheus" % "simpleclient_pushgateway" % "0.1.0"
 )
 
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)

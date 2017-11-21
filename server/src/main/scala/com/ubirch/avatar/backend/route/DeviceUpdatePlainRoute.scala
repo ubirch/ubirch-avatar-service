@@ -1,16 +1,14 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
-import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants.update
@@ -25,7 +23,7 @@ import scala.util.{Failure, Success}
 /**
   * Created by derMicha on 26/02/17.
   */
-class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
+class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem, allCounter: AllCounter)
   extends MyJsonProtocol
     with StrictLogging {
 
@@ -49,20 +47,25 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                           case dm: DeviceStateUpdate =>
                             val dsuJson = Json4sUtil.any2jvalue(dm).get
                             val dsuString = Json4sUtil.jvalue2String(dsuJson)
+                            allCounter.requests.inc
                             complete(dsuString)
                           case _ =>
+                            allCounter.requestsErrors.inc
                             logger.error("update device data failed")
                             complete("NOK: DeviceStateUpdate failed")
                         }
                       case Failure(t) =>
+                        allCounter.requestsErrors.inc
                         logger.error("update device data failed", t)
                         complete("NOK: internal Server Error")
                     }
                   case None =>
+                    allCounter.requestsErrors.inc
                     complete("NOK: wrong json")
                 }
 
               case None =>
+                allCounter.requestsErrors.inc
                 complete("NOK: invalid json input")
             }
           }

@@ -60,7 +60,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         notaryActor ! drd
       }
       else
-        log.info(s"do not use notary service for ${device.deviceId}")
+        log.debug(s"do not use notary service for ${device.deviceId}")
 
       if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
         log.debug(s"chain data: ${device.deviceId}")

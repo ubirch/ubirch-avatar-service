@@ -23,12 +23,11 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
-
 /**
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
+class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem, allCounter: AllCounter)
   extends ResponseUtil
     with Directives
     with StrictLogging {
@@ -49,6 +48,7 @@ class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil, httpClient: HttpExt, m
           entity(as[Array[Byte]]) { binData =>
             onComplete(msgPackProcessorActor ? binData) {
               case Success(resp) =>
+                allCounter.requests.inc
                 resp match {
                   case dsu: DeviceStateUpdate =>
                     val dsuJson = Json4sUtil.any2jvalue(dsu).get
@@ -59,9 +59,11 @@ class DeviceUpdateMsgPackRoute(implicit mongo: MongoUtil, httpClient: HttpExt, m
                   case jErrorRepsonse: JsonErrorResponse =>
                     complete(jErrorRepsonse.toJsonString)
                   case _ =>
+                    allCounter.requestsErrors.inc
                     complete(s"ERROR 1: invlaid response")
                 }
               case Failure(t) =>
+                allCounter.requestsErrors.inc
                 logger.error("got no result", t)
                 complete(s"ERROR 2: no result")
             }

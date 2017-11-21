@@ -6,14 +6,30 @@ import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.mongo.connection.MongoUtil
-
 import akka.actor.ActorSystem
+import io.prometheus.client.Counter
+
+class AllCounter {
+  val requests: Counter = Counter.build()
+    .name("requests_total")
+    .help("Total msgPack device updates")
+//    .labelNames("deviceUpdateMsgPack")
+    .register()
+
+  val requestsErrors: Counter = Counter.build()
+    .name("requests_failed_total")
+    .help("Total msgPack device update errors")
+//    .labelNames("deviceUpdateMsgPackErrors")
+    .register()
+}
 
 /**
   * author: cvandrei
   * since: 2016-09-20
   */
 class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer) {
+
+  implicit val allCounter = new AllCounter
 
   val welcome = new WelcomeRoute {}
   val deepCheck = new DeepCheckRoute {}
