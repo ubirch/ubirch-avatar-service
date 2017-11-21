@@ -8,6 +8,7 @@ import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.backend.prometheus.ReqCounter
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
@@ -23,7 +24,7 @@ import scala.util.{Failure, Success}
 /**
   * Created by derMicha on 26/02/17.
   */
-class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem, allCounter: AllCounter)
+class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends MyJsonProtocol
     with StrictLogging {
 
@@ -31,6 +32,8 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
   private val validatorActor = system.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
+
+  val reqCounter = new ReqCounter("device_update_plain")
 
   val route: Route = {
     path(update) {
@@ -47,25 +50,27 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                           case dm: DeviceStateUpdate =>
                             val dsuJson = Json4sUtil.any2jvalue(dm).get
                             val dsuString = Json4sUtil.jvalue2String(dsuJson)
-                            allCounter.requests.inc
+                            reqCounter.requests.inc
                             complete(dsuString)
                           case _ =>
-                            allCounter.requestsErrors.inc
+                            reqCounter.requestsErrors.inc
                             logger.error("update device data failed")
                             complete("NOK: DeviceStateUpdate failed")
                         }
+
                       case Failure(t) =>
-                        allCounter.requestsErrors.inc
+                        reqCounter.requestsErrors.inc
                         logger.error("update device data failed", t)
                         complete("NOK: internal Server Error")
                     }
+
                   case None =>
-                    allCounter.requestsErrors.inc
+                    reqCounter.requestsErrors.inc
                     complete("NOK: wrong json")
                 }
 
               case None =>
-                allCounter.requestsErrors.inc
+                reqCounter.requestsErrors.inc
                 complete("NOK: invalid json input")
             }
           }

@@ -7,6 +7,7 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
+import com.ubirch.avatar.backend.prometheus.ReqCounter
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import io.prometheus.client.Counter
 
@@ -16,8 +17,10 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-11-02
   */
-class DeviceDataRawRoute(implicit system:ActorSystem, allCounter: AllCounter) extends ResponseUtil
+class DeviceDataRawRoute(implicit system:ActorSystem) extends ResponseUtil
   with CORSDirective {
+
+  val reqCounter = new ReqCounter("device_update_raw")
 
   val route: Route = {
 
@@ -32,15 +35,15 @@ class DeviceDataRawRoute(implicit system:ActorSystem, allCounter: AllCounter) ex
 
               case Success(res) => res match {
                 case None =>
-                  allCounter.requestsErrors.inc
+                  reqCounter.requestsErrors.inc
                   complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
                 case Some(storedMessage) =>
-                  allCounter.requests.inc
+                  reqCounter.requests.inc()
                   complete(storedMessage)
               }
 
               case Failure(t) =>
-                allCounter.requestsErrors.inc
+                reqCounter.requestsErrors.inc
                 complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
 
             }

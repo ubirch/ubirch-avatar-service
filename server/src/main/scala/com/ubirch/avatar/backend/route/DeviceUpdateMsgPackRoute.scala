@@ -8,6 +8,7 @@ import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.backend.prometheus.ReqCounter
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageMsgPackProcessorActor
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
@@ -17,6 +18,7 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
 import com.ubirch.util.mongo.connection.MongoUtil
+import io.prometheus.client.Counter
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -27,7 +29,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem, allCounter: AllCounter)
+class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends ResponseUtil
     with Directives
     with StrictLogging {
@@ -36,6 +38,8 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
   private val msgPackProcessorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfFrontendWorkers).props(Props(new MessageMsgPackProcessorActor())), ActorNames.MSG_MSGPACK_PROCESSOR)
+
+  val reqCounter = new ReqCounter(counterName = "device_update_mpack")
 
   val route: Route = {
 
@@ -48,22 +52,24 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
           entity(as[Array[Byte]]) { binData =>
             onComplete(msgPackProcessorActor ? binData) {
               case Success(resp) =>
-                allCounter.requests.inc
                 resp match {
                   case dsu: DeviceStateUpdate =>
+                    reqCounter.requests.inc
                     val dsuJson = Json4sUtil.any2jvalue(dsu).get
                     val dsuString = Json4sUtil.jvalue2String(dsuJson)
                     complete(dsuString)
                   case jRepsonse: JsonResponse =>
+                    reqCounter.requestsErrors.inc
                     complete(jRepsonse.toJsonString)
                   case jErrorRepsonse: JsonErrorResponse =>
+                    reqCounter.requestsErrors.inc
                     complete(jErrorRepsonse.toJsonString)
                   case _ =>
-                    allCounter.requestsErrors.inc
+                    reqCounter.requestsErrors.inc
                     complete(s"ERROR 1: invlaid response")
                 }
               case Failure(t) =>
-                allCounter.requestsErrors.inc
+                reqCounter.requestsErrors.inc
                 logger.error("got no result", t)
                 complete(s"ERROR 2: no result")
             }

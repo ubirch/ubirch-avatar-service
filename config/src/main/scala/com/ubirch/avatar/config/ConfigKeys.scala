@@ -16,6 +16,9 @@ object ConfigKeys {
   final val HTTPINTERFACE = s"$prefix.interface"
   final val HTTPPORT = s"$prefix.port"
 
+  final val HTTPPINTERFACE = s"$prefix.prometheus.interface"
+  final val HTTPPPORT = s"$prefix.prometheus.port"
+
   final val UDPINTERFACE = s"$prefix.udp.interface"
   final val UDPPORT = s"$prefix.udp.port"
 

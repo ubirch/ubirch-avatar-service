@@ -32,11 +32,26 @@ object Config extends ConfigBase {
   def httpInterface: String = config.getString(ConfigKeys.HTTPINTERFACE)
 
   /**
+    * The interface the prometheus server runs on.
+    *
+    * @return pinterface
+    */
+  def httpPrometheusInterface: String = config.getString(ConfigKeys.HTTPPINTERFACE)
+
+  /**
     * Port the server listens on.
     *
     * @return port number
     */
   def httpPort: Int = config.getInt(ConfigKeys.HTTPPORT)
+
+  /**
+    * Port the prometheus server listens on.
+    *
+    * @return pport number
+    */
+  def httpPrometheusPort: Int = config.getInt(ConfigKeys.HTTPPPORT)
+
 
   /**
     * The interface the server runs on.

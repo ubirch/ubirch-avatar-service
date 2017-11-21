@@ -67,11 +67,14 @@ object Boot extends App
 
     val interface = Config.httpInterface
     val port = Config.httpPort
+    val pinterface = Config.httpPrometheusInterface
+    val pport = Config.httpPrometheusPort
+
     implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
-    logger.info(s"start prometheus http server on $interface:7777")
+    logger.info(s"start prometheus http server on $pinterface:$pport")
     import io.prometheus.client.exporter.HTTPServer
-    val server = new HTTPServer(interface, 8081)
+    val server = new HTTPServer(pinterface, pport)
 
     logger.info(s"start http server on $interface:$port")
 
