@@ -8,7 +8,7 @@ import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.backend.prometheus.ReqCounter
+import com.ubirch.avatar.backend.prometheus.ReqMetrics
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageMsgPackProcessorActor
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
@@ -18,7 +18,7 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
 import com.ubirch.util.mongo.connection.MongoUtil
-import io.prometheus.client.Counter
+import io.prometheus.client.Histogram
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -39,37 +39,42 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
 
   private val msgPackProcessorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfFrontendWorkers).props(Props(new MessageMsgPackProcessorActor())), ActorNames.MSG_MSGPACK_PROCESSOR)
 
-  val reqCounter = new ReqCounter(counterName = "device_update_mpack")
+  val reqMetrics = new ReqMetrics(counterName = "device_update_mpack")
 
   val route: Route = {
 
     path(update / mpack) {
 
       pathEnd {
-
+        val requestTimer: Histogram.Timer = reqMetrics.requestLatency.startTimer
         post {
-
           entity(as[Array[Byte]]) { binData =>
             onComplete(msgPackProcessorActor ? binData) {
               case Success(resp) =>
                 resp match {
                   case dsu: DeviceStateUpdate =>
-                    reqCounter.requests.inc
+
                     val dsuJson = Json4sUtil.any2jvalue(dsu).get
                     val dsuString = Json4sUtil.jvalue2String(dsuJson)
+                    reqMetrics.requests.inc
+                    requestTimer.observeDuration()
                     complete(dsuString)
                   case jRepsonse: JsonResponse =>
-                    reqCounter.requestsErrors.inc
+                    reqMetrics.requestsErrors.inc
+                    requestTimer.observeDuration()
                     complete(jRepsonse.toJsonString)
                   case jErrorRepsonse: JsonErrorResponse =>
-                    reqCounter.requestsErrors.inc
+                    reqMetrics.requestsErrors.inc
+                    requestTimer.observeDuration()
                     complete(jErrorRepsonse.toJsonString)
                   case _ =>
-                    reqCounter.requestsErrors.inc
+                    reqMetrics.requestsErrors.inc
+                    requestTimer.observeDuration()
                     complete(s"ERROR 1: invlaid response")
                 }
               case Failure(t) =>
-                reqCounter.requestsErrors.inc
+                reqMetrics.requestsErrors.inc
+                requestTimer.observeDuration()
                 logger.error("got no result", t)
                 complete(s"ERROR 2: no result")
             }

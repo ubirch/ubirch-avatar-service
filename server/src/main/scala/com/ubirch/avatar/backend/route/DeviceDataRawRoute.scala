@@ -7,7 +7,7 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
-import com.ubirch.avatar.backend.prometheus.ReqCounter
+import com.ubirch.avatar.backend.prometheus.ReqMetrics
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import io.prometheus.client.Counter
 
@@ -20,7 +20,7 @@ import scala.util.{Failure, Success}
 class DeviceDataRawRoute(implicit system:ActorSystem) extends ResponseUtil
   with CORSDirective {
 
-  val reqCounter = new ReqCounter("device_update_raw")
+  val reqCounter = new ReqMetrics("device_update_raw")
 
   val route: Route = {
 

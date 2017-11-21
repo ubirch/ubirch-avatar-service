@@ -204,7 +204,7 @@ lazy val depCore = Seq(
   msgpackScala,
   scalatest % "test",
   akkaTestkit % "test"
-) ++ akkaCamel ++ scalaLogging
+) ++ prometheus ++ akkaCamel ++ scalaLogging
 
 lazy val depClient = Seq(
   beeClient

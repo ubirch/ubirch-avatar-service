@@ -16,9 +16,10 @@ import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+import io.prometheus.client.Histogram
 import org.json4s.JValue
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 
 /**
@@ -30,17 +31,17 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
     with MyJsonProtocol
     with ActorLogging {
 
-  private implicit val exContext = context.dispatcher
+  private implicit val exContext: ExecutionContextExecutor = context.dispatcher
 
-  private val transformerActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerProducerActor]), ActorNames.TRANSFORMER_PRODUCER)
+  private val transformerActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerProducerActor]), ActorNames.TRANSFORMER_PRODUCER)
 
-  private val persistenceActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
+  private val persistenceActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
 
-  private val notaryActor = context.actorOf(Props[MessageNotaryActor], ActorNames.NOTARY_SVC)
+  private val notaryActor: ActorRef = context.actorOf(Props[MessageNotaryActor], ActorNames.NOTARY_SVC)
 
-  private val chainActor = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
+  private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
-  val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
+  private val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
 
   override def receive: Receive = {
 
@@ -111,15 +112,26 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
   }
 
   private def processPayload(device: Device, payload: JValue): Future[Option[DeviceStateUpdate]] = {
+    val requestTimer: Histogram.Timer = MessageProcessorActor.requestLatency.startTimer
     AvatarStateManagerREST.setReported(restDevice = device, payload) map {
       case Some(currentAvatarState) =>
         val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
         DeviceStateManager.upsert(state = dsu)
+        requestTimer.observeDuration()
         Some(dsu)
       case None =>
         log.error(s"Could not get current Avatar State for ${device.deviceId}")
+        requestTimer.observeDuration()
         None
     }
   }
 
+}
+
+object MessageProcessorActor {
+  private val requestLatency: Histogram = Histogram
+    .build()
+    .name("akka_processState_seconds")
+    .help("Akka process state latency in seconds.")
+    .register()
 }

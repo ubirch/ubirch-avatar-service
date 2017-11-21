@@ -1,13 +1,11 @@
 package com.ubirch.avatar.backend.route
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.rest.akka.directives.CORSDirective
-
 import akka.http.scaladsl.model.StatusCodes.Forbidden
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
 import akka.http.scaladsl.server.Route
+import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.rest.akka.directives.CORSDirective
 
 import scala.language.postfixOps
 
