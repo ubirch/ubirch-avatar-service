@@ -71,7 +71,7 @@ object Boot extends App
 
     logger.info(s"start prometheus http server on $interface:7777")
     import io.prometheus.client.exporter.HTTPServer
-    val server = new HTTPServer(interface, 1212)
+    val server = new HTTPServer(interface, 8081)
 
     logger.info(s"start http server on $interface:$port")
 
