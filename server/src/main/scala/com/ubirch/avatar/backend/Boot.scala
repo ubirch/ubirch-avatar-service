@@ -50,6 +50,11 @@ object Boot extends App
 
   ActorStarter.init(system)
 
+  import io.prometheus.client.hotspot.DefaultExports
+
+  // start defualt prometheus JVM collectors
+  DefaultExports.initialize()
+
   //private val udpReceiverActor = system.actorOf(Props(new UDPReceiverActor))
 
   //  val camel = CamelExtension(system)
