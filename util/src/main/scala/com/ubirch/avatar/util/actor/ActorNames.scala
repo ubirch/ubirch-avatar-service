@@ -6,44 +6,44 @@ package com.ubirch.avatar.util.actor
   */
 object ActorNames {
 
-  final val HISTORY: String = "device-data-history-actor"
+  final val HISTORY: String = "AVS-device-data-history-actor"
 
-  final val TRANSFORMER_PRODUCER: String = "transformer-producer"
+  final val TRANSFORMER_PRODUCER: String = "AVS-transformer-producer"
 
-  final val TRANSFORMER_CONSUMER: String = "transformer-consumer"
+  final val TRANSFORMER_CONSUMER: String = "AVS-transformer-consumer"
 
-  final val TRANSFORMER_PRE: String = "transformer-pre-actor"
+  final val TRANSFORMER_PRE: String = "AVS-transformer-pre-actor"
 
-  final val TRANSFORMER_POST: String = "transformer-post-actor"
+  final val TRANSFORMER_POST: String = "AVS-transformer-post-actor"
 
-  final val TRANSFORMER_OUTBOX_MANAGER: String = "transformer-outbox-manager-actor"
+  final val TRANSFORMER_OUTBOX_MANAGER: String = "AVS-transformer-outbox-manager-actor"
 
-  final val DEVICE_OUTBOX_MANAGER: String = "device-outbox-manager-actor"
+  final val DEVICE_OUTBOX_MANAGER: String = "AVS-device-outbox-manager-actor"
 
-  final val MQTT_CONSUMER: String = "mqtt-consumer"
+  final val MQTT_CONSUMER: String = "AVS-mqtt-consumer"
 
-  final val PERSISTENCE_SVC: String = "persistence-service"
+  final val PERSISTENCE_SVC: String = "AVS-persistence-service"
 
-  final val DEVICESTATEUPDATER: String = "devicestateupdate-service"
+  final val DEVICESTATEUPDATER: String = "AVS-devicestateupdate-service"
 
-  final val MSG_PROCESSOR: String = "message-processor"
+  final val MSG_PROCESSOR: String = "AVS-message-processor"
 
-  final val MSG_VALIDATOR: String = "message-validator"
+  final val MSG_VALIDATOR: String = "AVS-message-validator"
 
   final val MSG_VALIDATOR_PATH: String = s"/user/$MSG_VALIDATOR"
 
-  final val MSG_MSGPACK_PROCESSOR: String = "message-msgpack-processor"
+  final val MSG_MSGPACK_PROCESSOR: String = "AVS-message-msgpack-processor"
 
-  final val DEVICE_API: String = "device-api"
+  final val DEVICE_API: String = "AVS-device-api"
 
   final val DEVICE_API_PATH: String = s"/user/$DEVICE_API"
 
-  final val NOTARY_SVC: String = "notary-service"
+  final val NOTARY_SVC: String = "AVS-notary-service"
 
-  final val CHAIN_SVC: String = "chain-service"
+  final val CHAIN_SVC: String = "AVS-chain-service"
 
-  final val OUT_PRODUCER: String = "out-producer"
+  final val OUT_PRODUCER: String = "AVS-out-producer"
 
-  final val DEEP_CHECK = "deep-check-actor"
+  final val DEEP_CHECK = "AVS-deep-check-actor"
 
 }
