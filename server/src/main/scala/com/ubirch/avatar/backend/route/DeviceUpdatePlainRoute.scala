@@ -39,7 +39,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
   val route: Route = {
     path(update) {
       pathEnd {
-        val requestTimer: Histogram.Timer = reqMetrics.requestLatency.startTimer
+        reqMetrics.start
         post {
           entity(as[String]) { ddrString =>
             Json4sUtil.string2JValue(ddrString) match {
@@ -52,32 +52,32 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                           case dm: DeviceStateUpdate =>
                             val dsuJson = Json4sUtil.any2jvalue(dm).get
                             val dsuString = Json4sUtil.jvalue2String(dsuJson)
-                            reqMetrics.requests.inc
-                            requestTimer.observeDuration()
+                            reqMetrics.inc
+                            reqMetrics.stop
                             complete(dsuString)
                           case _ =>
-                            reqMetrics.requestsErrors.inc
-                            requestTimer.observeDuration()
+                            reqMetrics.incError
+                            reqMetrics.stop
                             logger.error("update device data failed")
                             complete("NOK: DeviceStateUpdate failed")
                         }
 
                       case Failure(t) =>
-                        reqMetrics.requestsErrors.inc
-                        requestTimer.close()
+                        reqMetrics.incError
+                        reqMetrics.stop
                         logger.error("update device data failed", t)
                         complete("NOK: internal Server Error")
                     }
 
                   case None =>
-                    reqMetrics.requestsErrors.inc
-                    requestTimer.observeDuration()
+                    reqMetrics.incError
+                    reqMetrics.stop
                     complete("NOK: wrong json")
                 }
 
               case None =>
-                reqMetrics.requestsErrors.inc
-                requestTimer.observeDuration()
+                reqMetrics.incError
+                reqMetrics.stop
                 complete("NOK: invalid json input")
             }
           }

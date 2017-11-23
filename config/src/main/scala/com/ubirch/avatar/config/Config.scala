@@ -52,6 +52,8 @@ object Config extends ConfigBase {
     */
   def httpPrometheusPort: Int = config.getInt(ConfigKeys.HTTPPPORT)
 
+  def prometheusEnabled: Boolean = config.getBoolean(ConfigKeys.PENABLED)
+
 
   /**
     * The interface the server runs on.

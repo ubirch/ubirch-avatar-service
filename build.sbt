@@ -334,6 +334,7 @@ lazy val prometheus = Seq(
   "io.prometheus" % "simpleclient_hotspot" % "0.1.0",
   "io.prometheus" % "simpleclient_httpserver" % "0.1.0",
   "io.prometheus" % "simpleclient_pushgateway" % "0.1.0"
+  //,"com.workday" %% "prometheus-akka" % "0.8.1"
 )
 
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)

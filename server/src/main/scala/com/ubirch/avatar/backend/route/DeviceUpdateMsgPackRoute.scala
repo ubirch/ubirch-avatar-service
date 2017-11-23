@@ -46,7 +46,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
     path(update / mpack) {
 
       pathEnd {
-        val requestTimer: Histogram.Timer = reqMetrics.requestLatency.startTimer
+        reqMetrics.start
         post {
           entity(as[Array[Byte]]) { binData =>
             onComplete(msgPackProcessorActor ? binData) {
@@ -56,25 +56,25 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
 
                     val dsuJson = Json4sUtil.any2jvalue(dsu).get
                     val dsuString = Json4sUtil.jvalue2String(dsuJson)
-                    reqMetrics.requests.inc
-                    requestTimer.observeDuration()
+                    reqMetrics.inc
+                    reqMetrics.stop
                     complete(dsuString)
                   case jRepsonse: JsonResponse =>
-                    reqMetrics.requestsErrors.inc
-                    requestTimer.observeDuration()
+                    reqMetrics.incError
+                    reqMetrics.stop
                     complete(jRepsonse.toJsonString)
                   case jErrorRepsonse: JsonErrorResponse =>
-                    reqMetrics.requestsErrors.inc
-                    requestTimer.observeDuration()
+                    reqMetrics.incError
+                    reqMetrics.stop
                     complete(jErrorRepsonse.toJsonString)
                   case _ =>
-                    reqMetrics.requestsErrors.inc
-                    requestTimer.observeDuration()
+                    reqMetrics.inc
+                    reqMetrics.stop
                     complete(s"ERROR 1: invlaid response")
                 }
               case Failure(t) =>
-                reqMetrics.requestsErrors.inc
-                requestTimer.observeDuration()
+                reqMetrics.incError
+                reqMetrics.stop
                 logger.error("got no result", t)
                 complete(s"ERROR 2: no result")
             }
