@@ -66,11 +66,11 @@
         </headers>
     </appender>
 
-    <logger name="com.ubirch" level="DEBUG"/>
-    <logger name="org.apache.http" level="INFO"/>
-    <logger name="akka.camel.internal" level="DEBUG"/>
-    <logger name="com.amazonaws" level="INFO"/>
-    <logger name="reactivemongo.core" level="INFO"/>
+    <logger name="com.ubirch" level="INFO"/>
+    <logger name="org.apache.http" level="WARN"/>
+    <logger name="akka.camel.internal" level="INFO"/>
+    <logger name="com.amazonaws" level="WARN"/>
+    <logger name="reactivemongo.core" level="WARN"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
