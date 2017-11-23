@@ -5,6 +5,8 @@ import io.prometheus.client.{Counter, Histogram}
 
 class Timer(timerName: String) {
 
+  private val prefix = Config.enviroment
+
   private val enabled = Config.prometheusEnabled
 
   private var timer : Histogram.Timer =  null
@@ -24,7 +26,7 @@ class Timer(timerName: String) {
 
   private val requestLatency = Histogram
     .build()
-    .name(s"${timerName}_latency_seconds")
+    .name(s"${prefix}_${timerName}_latency_seconds")
     .help(s"$timerName latency in seconds.")
     .register()
 
