@@ -3,7 +3,9 @@ package com.ubirch.avatar.backend.prometheus
 import com.ubirch.avatar.config.Config
 import io.prometheus.client.{Counter, Histogram}
 
-class ReqMetrics(counterName: String) {
+class ReqMetrics(metricName: String) {
+
+  private val prefix = Config.enviroment
 
   private val enabled = Config.prometheusEnabled
 
@@ -12,16 +14,16 @@ class ReqMetrics(counterName: String) {
   def inc(): Unit = if (enabled) requests.inc()
 
   private val requests: Counter = Counter.build()
-    .name(s"requests_${counterName}_total")
-    .help(s"Total requests: $counterName")
+    .name(s"${prefix}_requests_${metricName}_total")
+    .help(s"Total requests: $metricName")
     //.labelNames("device_update_total")
     .register()
 
   def incError(): Unit = if (enabled) requestsErrors.inc()
 
   private val requestsErrors: Counter = Counter.build()
-    .name(s"requests_${counterName}_failed_total")
-    .help(s"Total failed requests: $counterName")
+    .name(s"${prefix}_requests_${metricName}_failed_total")
+    .help(s"Total failed requests: $metricName")
     //.labelNames("device_update_failed_total")
     .register()
 
@@ -41,8 +43,7 @@ class ReqMetrics(counterName: String) {
 
   private val requestLatency = Histogram
     .build()
-    .name(s"${counterName}_latency_seconds")
-    .help(s"$counterName latency in seconds.")
+    .name(s"${prefix}_${metricName}_latency_seconds")
+    .help(s"$metricName latency in seconds.")
     .register()
-
 }
