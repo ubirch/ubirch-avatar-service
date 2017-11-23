@@ -10,7 +10,6 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature"),
   organization := "com.ubirch.avatar",
-
   homepage := Some(url("http://ubirch.com")),
   scmInfo := Some(ScmInfo(
     url("https://github.com/ubirch/ubirch-avatar-service"),
@@ -23,6 +22,8 @@ lazy val commonSettings = Seq(
     Resolver.sonatypeRepo("snapshots")
   )
 )
+
+
 
 /*
  * MODULES
@@ -334,7 +335,8 @@ lazy val prometheus = Seq(
   "io.prometheus" % "simpleclient_hotspot" % "0.1.0",
   "io.prometheus" % "simpleclient_httpserver" % "0.1.0",
   "io.prometheus" % "simpleclient_pushgateway" % "0.1.0"
-  //,"com.workday" %% "prometheus-akka" % "0.8.1"
+  , "com.workday" %% "prometheus-akka" % "0.8.1"
+  , "org.aspectj" % "aspectjweaver" % "1.8.10"
 )
 
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
