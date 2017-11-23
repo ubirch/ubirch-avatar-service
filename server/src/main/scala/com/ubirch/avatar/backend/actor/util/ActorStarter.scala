@@ -29,9 +29,8 @@ object ActorStarter extends StrictLogging {
       ActorNames.MSG_VALIDATOR
     )
 
-    val t = system.actorOf(new RoundRobinPool(
-      Config.akkaNumberOfBackendWorkers).props(
-      Props[TransformerConsumerActor]),
+    val t = system.actorOf(
+      Props[TransformerConsumerActor],
       ActorNames.TRANSFORMER_CONSUMER)
   }
 

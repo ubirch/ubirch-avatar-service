@@ -228,7 +228,7 @@ object Config extends ConfigBase {
     queueOwnerId = awsQueueOwnerId,
     accessKey = awsAccessKey,
     secretAccessKey = awsSecretAccessKey,
-    concurrentConsumers = 2
+    concurrentConsumers = 10
   )
 
   def sqsFullConfig(queue: String): SqsConfig = SqsConfig(
