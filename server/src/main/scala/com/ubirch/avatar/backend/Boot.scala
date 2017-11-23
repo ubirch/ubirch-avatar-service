@@ -13,7 +13,6 @@ import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
-import com.ubirch.transformer.TransformerManager
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.elasticsearch.client.transport.TransportClient
@@ -51,11 +50,11 @@ object Boot extends App
   ActorStarter.init(system)
 
   import io.prometheus.client.hotspot.DefaultExports
+  // start default prometheus JVM collectors
 
-  // start defualt prometheus JVM collectors
-  DefaultExports.initialize()
+  //DefaultExports.initialize()
 
-  //private val udpReceiverActor = system.actorOf(Props(new UDPReceiverActor))
+  DeviceTypeManager.init()
 
   //  val camel = CamelExtension(system)
   //  val camelContext = camel.context
@@ -63,8 +62,6 @@ object Boot extends App
 
   val bindingFuture = start()
 
-  TransformerManager.init(system)
-  DeviceTypeManager.init()
 
   stop()
 

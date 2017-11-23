@@ -84,6 +84,8 @@ object Config extends ConfigBase {
 
   def akkaNumberOfFrontendWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_FRONTEND_WORKERS)
 
+  def akkaNumberOfBackendWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_BACKEND_WORKERS)
+
   /*
    * Elasticsearch
    ************************************************************************************************/

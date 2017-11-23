@@ -9,6 +9,7 @@ import com.ubirch.avatar.backend.actor.DeviceApiActor
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.transformer.actor.TransformerConsumerActor
 import com.ubirch.util.mongo.connection.MongoUtil
 
 object ActorStarter extends StrictLogging {
@@ -23,8 +24,16 @@ object ActorStarter extends StrictLogging {
 
     val m = system.actorOf(
       new RoundRobinPool(
-        Config.akkaNumberOfFrontendWorkers).props(Props(new MessageValidatorActor())),
+        Config.akkaNumberOfFrontendWorkers).props(
+        Props(new MessageValidatorActor())),
       ActorNames.MSG_VALIDATOR
     )
+
+    val t = system.actorOf(new RoundRobinPool(
+      Config.akkaNumberOfBackendWorkers).props(
+      Props[TransformerConsumerActor]),
+      ActorNames.TRANSFORMER_CONSUMER)
   }
+
+  //private val udpReceiverActor = system.actorOf(Props(new UDPReceiverActor))
 }
