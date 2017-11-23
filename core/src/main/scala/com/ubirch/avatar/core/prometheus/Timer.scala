@@ -5,7 +5,7 @@ import io.prometheus.client.{Counter, Histogram}
 
 class Timer(timerName: String) {
 
-  private val prefix = Config.enviroment
+  private val prefix = Config.enviroment.replace("-", "_").trim
 
   private val enabled = Config.prometheusEnabled
 
