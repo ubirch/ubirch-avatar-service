@@ -6,6 +6,7 @@ import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
+import com.ubirch.avatar.core.prometheus.Timer
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
@@ -42,6 +43,8 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
   private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
   private val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
+
+  private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100)}")
 
   override def receive: Receive = {
 
@@ -112,26 +115,17 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
   }
 
   private def processPayload(device: Device, payload: JValue): Future[Option[DeviceStateUpdate]] = {
-    val requestTimer: Histogram.Timer = MessageProcessorActor.requestLatency.startTimer
+    processStateTimer.start
     AvatarStateManagerREST.setReported(restDevice = device, payload) map {
       case Some(currentAvatarState) =>
         val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
         DeviceStateManager.upsert(state = dsu)
-        requestTimer.observeDuration()
+        processStateTimer.stop
         Some(dsu)
       case None =>
         log.error(s"Could not get current Avatar State for ${device.deviceId}")
-        requestTimer.observeDuration()
+        processStateTimer.stop
         None
     }
   }
-
-}
-
-object MessageProcessorActor {
-  private val requestLatency: Histogram = Histogram
-    .build()
-    .name("akka_processState_seconds")
-    .help("Akka process state latency in seconds.")
-    .register()
 }
