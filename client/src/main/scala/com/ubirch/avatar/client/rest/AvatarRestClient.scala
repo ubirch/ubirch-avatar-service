@@ -102,5 +102,4 @@ object AvatarRestClient extends StrictLogging {
     }
 
   }
-
 }

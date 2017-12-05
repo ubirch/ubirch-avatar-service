@@ -2,8 +2,7 @@ package com.ubirch.avatar.core.msgpack
 
 import java.io.ByteArrayInputStream
 import java.lang.{Long => JavaLong}
-import java.nio.ByteBuffer
-import java.util.{Base64, UUID}
+import java.util.Base64
 
 import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
@@ -12,9 +11,7 @@ import com.ubirch.util.json.Json4sUtil
 import org.apache.commons.codec.binary
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
-import org.json4s.JsonAST
 import org.json4s.JsonAST._
-import org.json4s.JsonDSL._
 import org.msgpack.ScalaMessagePack
 import org.msgpack.`type`.{Value, ValueType}
 import org.msgpack.unpacker.Unpacker
@@ -59,21 +56,31 @@ object MsgPacker extends StrictLogging {
           val timestampStr = timestamp.toDateTimeISO.toString
           val plVal = data.get(plKey)
           plVal.getType match {
+            case ValueType.MAP =>
+              val plMap = plVal.asMapValue()
+              val ma = plMap.keySet().toArray.toList.foldLeft(Map[String, JValue]()) { (m, plKey) =>
+                val mapValue = processScalarValue(plMap.get(plKey))
+                m ++ Map[String, JValue](plKey.toString.replace("\"", "") -> mapValue.get)
+              }
+              List(ma ++ Map[String, JValue]("ts" -> JString(timestampStr)))
             case ValueType.ARRAY =>
               va.getElementArray map { av =>
                 processScalarValue(av)
-              } map (jv => createPaylodObject(timestampStr, jv)) toList
+              } map (jv => createTempPaylodObject(timestampStr, jv.get)) toList
             case _ =>
               processScalarValue(plVal) match {
                 case Some(jv) =>
-                  List(createPaylodObject(timestampStr, jv))
+                  List(createTempPaylodObject(timestampStr, jv))
                 case _ =>
                   List()
               }
           }
-        } toList
+        }
 
-        val payload = JsonAST.JArray(plList)
+        val payload = Json4sUtil.any2jvalue(plList) match {
+          case Some(jv) => jv
+          case None => JNothing
+        }
 
         val error = va.get(5).asIntegerValue().getInt
         val sigData = va.get(6).asRawValue().getByteArray
@@ -114,14 +121,12 @@ object MsgPacker extends StrictLogging {
     data.toSet
   }
 
-  private def createPaylodObject(timestamp: String, jvalue: JValue): JObject = {
+  private def createTempPaylodObject(timestamp: String, jvalue: JValue): JObject = {
     JObject(JField("t", jvalue),
       JField("ts", JString(timestamp)))
   }
 
-  private def processMessage(unpacker: Unpacker): Option[MsgPackMessage]
-
-  = {
+  private def processMessage(unpacker: Unpacker): Option[MsgPackMessage] = {
     var currentId: Int = 0
     var cd: Option[MsgPackMessage] = None
     val itr = unpacker.iterator()
@@ -143,10 +148,14 @@ object MsgPacker extends StrictLogging {
                 )
               )
             case None =>
-              logger.error(s"invalid payload data: ${v.asRawValue().getString}")
+              logger.error(s"invalid payload data: ${
+                v.asRawValue().getString
+              }")
           }
         case _ =>
-          logger.error(s"invalid msgPack data: ${v.getType}")
+          logger.error(s"invalid msgPack data: ${
+            v.getType
+          }")
       }
     }
     cd
@@ -182,7 +191,9 @@ object MsgPacker extends StrictLogging {
                 logger.error(s"invalid payload data")
             }
           case _ =>
-            logger.error(s"invalid msgPack data: ${v.getType}")
+            logger.error(s"invalid msgPack data: ${
+              v.getType
+            }")
         }
       }
     }
