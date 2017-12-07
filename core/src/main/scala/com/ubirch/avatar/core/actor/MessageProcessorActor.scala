@@ -18,9 +18,7 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
-import io.prometheus.client.Histogram
 import org.json4s.JValue
-import sun.plugin.util.UIUtil
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
