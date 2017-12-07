@@ -44,7 +44,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
 
-  private val processStateTimer = new Timer(s"process_state_${UUIDUtil.uuidStr}")
+  private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100000)}")
 
   override def receive: Receive = {
 
