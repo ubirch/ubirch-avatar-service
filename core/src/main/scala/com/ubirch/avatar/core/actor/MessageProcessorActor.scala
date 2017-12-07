@@ -17,8 +17,10 @@ import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+import com.ubirch.util.uuid.UUIDUtil
 import io.prometheus.client.Histogram
 import org.json4s.JValue
+import sun.plugin.util.UIUtil
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
@@ -44,7 +46,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
 
-  private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100)}")
+  private val processStateTimer = new Timer(s"process_state_${UUIDUtil.uuidStr}")
 
   override def receive: Receive = {
 
