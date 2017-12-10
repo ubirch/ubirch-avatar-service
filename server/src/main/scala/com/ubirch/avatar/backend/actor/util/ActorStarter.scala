@@ -8,6 +8,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.actor.DeviceApiActor
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.actor.TransformerConsumerActor
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -32,7 +33,10 @@ object ActorStarter extends StrictLogging {
     val t = system.actorOf(
       Props[TransformerConsumerActor],
       ActorNames.TRANSFORMER_CONSUMER)
+
+    val ur = system.actorOf(
+      Props(new UDPReceiverActor)
+    )
   }
 
-  //private val udpReceiverActor = system.actorOf(Props(new UDPReceiverActor))
 }
