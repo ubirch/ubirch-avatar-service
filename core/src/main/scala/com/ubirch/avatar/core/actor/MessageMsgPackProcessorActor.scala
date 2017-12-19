@@ -83,7 +83,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         log.debug(s"msgPack data. $mpData")
         val ddrs = mpData.payload.children.map { p =>
           DeviceDataRaw(
-            v = MessageVersion.v001,
+            v = MessageVersion.v002,
             fw = mpData.firmwareVersion,
             a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
             s = Some(DeviceCoreUtil.createSimpleSignature(p, mpData.hwDeviceId)),

@@ -1,9 +1,9 @@
 packagedArtifacts in file(".") := Map.empty // disable publishing of root/default project
 
 // see http://www.scala-sbt.org/0.13/docs/Parallel-Execution.html for details
-concurrentRestrictions in Global := Seq(
+concurrentRestrictions in Global := Seq {
   Tags.limit(Tags.Test, 1)
-)
+}
 
 lazy val commonSettings = Seq(
 
@@ -22,8 +22,6 @@ lazy val commonSettings = Seq(
     Resolver.sonatypeRepo("snapshots")
   )
 )
-
-
 
 /*
  * MODULES
@@ -341,7 +339,7 @@ lazy val prometheus = Seq(
 
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
 lazy val ubirchConfig = ubirchUtilG %% "config" % "0.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.4" excludeAll (excludedLoggers: _*)
+lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.3.6" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.3.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.3.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.3" excludeAll (excludedLoggers: _*)
