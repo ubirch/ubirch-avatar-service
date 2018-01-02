@@ -49,9 +49,8 @@ object Boot extends App
 
   ActorStarter.init(system)
 
-  import io.prometheus.client.hotspot.DefaultExports
+  //import io.prometheus.client.hotspot.DefaultExports
   // start default prometheus JVM collectors
-
   //DefaultExports.initialize()
 
   DeviceTypeManager.init()
@@ -61,7 +60,6 @@ object Boot extends App
   //  val registry = camel.context.getComponent("sqs")
 
   val bindingFuture = start()
-
 
   stop()
 
