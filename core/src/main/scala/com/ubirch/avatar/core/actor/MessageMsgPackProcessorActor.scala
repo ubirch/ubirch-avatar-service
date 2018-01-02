@@ -2,9 +2,8 @@ package com.ubirch.avatar.core.actor
 
 import java.io.ByteArrayInputStream
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.http.scaladsl.HttpExt
-import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.ubirch.avatar.config.Config
@@ -14,7 +13,7 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
-import com.ubirch.util.json.MyJsonProtocol
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
@@ -49,16 +48,11 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
         unpacker.getNextType match {
           case ValueType.ARRAY =>
-            processMsgPack(sender, binData) match {
-              case Some(ddrs) =>
-                ddrs.foreach(validatorActor forward _)
-              case None =>
-                val hexVal = Hex.encodeHexString(binData)
-                s ! JsonErrorResponse(errorType = "Validation Error", errorMessage = s"Invalid MsgPack Input Data: $hexVal")
-            }
-          //s ! JsonResponse(message = "simple bulk processing startet")
+            processMsgPack(sender, binData) foreach (ddrs => validatorActor forward ddrs)
+
           case ValueType.INTEGER =>
             processLegacyMsgPack(binData)
+
           case vt: ValueType =>
             log.error(s"invalid messagePack header type: ${vt.name()}")
         }
@@ -74,29 +68,32 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
   }
 
 
-  private def processMsgPack(s: ActorRef, binData: Array[Byte]): Option[List[DeviceDataRaw]] = {
+  private def processMsgPack(s: ActorRef, binData: Array[Byte]): List[DeviceDataRaw] = {
     val hexVal = Hex.encodeHexString(binData)
     log.info(s"got some msgPack data: $hexVal")
 
     MsgPacker.unpackTimeseries(binData) match {
       case Some(mpData) =>
         log.debug(s"msgPack data. $mpData")
-        val ddrs = mpData.payload.children.map { p =>
-          DeviceDataRaw(
-            //v = MessageVersion.v002,
-            v = MessageVersion.v000,
-            fw = mpData.firmwareVersion,
-            a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
-            s = Some(DeviceCoreUtil.createSimpleSignature(p, mpData.hwDeviceId)),
-            mpraw = Some(hexVal),
-            chainedHash = mpData.prevMessageHash,
-            p = p,
-            ts = mpData.created
-          )
-        }
-        Some(ddrs)
+        mpData.payload.children.grouped(50).toList.map { gr =>
+          Json4sUtil.any2jvalue(gr) match {
+            case Some(p) =>
+              Some(DeviceDataRaw(
+                v = MessageVersion.v000,
+                fw = mpData.firmwareVersion,
+                a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
+                s = mpData.signature,
+                mpraw = Some(hexVal),
+                chainedHash = mpData.prevMessageHash,
+                p = p,
+                ts = mpData.created
+              ))
+            case None =>
+              None
+          }
+        }.filter(_.isDefined).map(_.get)
       case None =>
-        None
+        List()
     }
   }
 
