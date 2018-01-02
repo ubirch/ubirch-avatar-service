@@ -127,25 +127,26 @@ object TransformerService
       }
     }
     else if (device.deviceTypeKey == Const.TRACKLESENSOR)
-      drd.p.extractOpt[TrackleSensorPayload] match {
-        case Some(tracklePayload) =>
-          val trackleP = TrackleSensorMeasurement(
-            mid = drd.id,
-            did = device.deviceId,
-            ts = tracklePayload.ts,
-            te = tracklePayload.t.toDouble / 100,
-            er = tracklePayload.er
-          )
-          Json4sUtil.any2jvalue(trackleP) match {
-            case Some(jval) =>
-              (Some(jval), Some(trackleP.ts))
-            case _ =>
-              (Some(drd.p), None)
-          }
-        case _ =>
-          logger.error("invalid trackle payload")
-
-          (Some(drd.p), None)
+      drd.p.children.map { child =>
+        child.extractOpt[TrackleSensorPayload] match {
+          case Some(tracklePayload) =>
+            val trackleP = TrackleSensorMeasurement(
+              mid = drd.id,
+              did = device.deviceId,
+              ts = tracklePayload.ts,
+              te = tracklePayload.t.toDouble / 100,
+              er = tracklePayload.er
+            )
+            Json4sUtil.any2jvalue(trackleP) match {
+              case Some(jval) =>
+                (Some(jval), Some(trackleP.ts))
+              case _ =>
+                (Some(drd.p), None)
+            }
+          case None =>
+            logger.error("invalid trackle payload")
+            (Some(drd.p), None)
+        }
       }
     else {
 
