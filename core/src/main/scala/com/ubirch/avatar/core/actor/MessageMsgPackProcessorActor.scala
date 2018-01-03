@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.actor
 
 import java.io.ByteArrayInputStream
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -12,7 +12,6 @@ import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.crypto.hash.HashUtil
-import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -43,18 +42,21 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 
     case binData: Array[Byte] =>
       val s = sender()
-
       try {
         val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
-        unpacker.getNextType match {
-          case ValueType.ARRAY =>
-            processMsgPack(sender, binData) foreach (ddrs => validatorActor forward ddrs)
-
-          case ValueType.INTEGER =>
-            processLegacyMsgPack(binData)
-
+        (unpacker.getNextType match {
+          case ValueType.ARRAY => processMsgPack(binData)
+          case ValueType.INTEGER => processLegacyMsgPack(binData)
+          case vt: ValueType => vt
+        }) match {
+          case drds: Set[DeviceDataRaw] if drds.nonEmpty =>
+            drds foreach (ddrs => validatorActor forward ddrs)
           case vt: ValueType =>
-            log.error(s"invalid messagePack header type: ${vt.name()}")
+            val em = s"invalid messagePack header type: ${vt.name()}"
+            log.error(em)
+            s ! JsonErrorResponse(errorType = "validation error", errorMessage = em)
+          case _ =>
+            s ! JsonErrorResponse(errorType = "validation error", errorMessage = "invalid bin data")
         }
       }
       catch {
@@ -68,7 +70,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
   }
 
 
-  private def processMsgPack(s: ActorRef, binData: Array[Byte]): List[DeviceDataRaw] = {
+  private def processMsgPack(binData: Array[Byte]): Set[DeviceDataRaw] = {
     val hexVal = Hex.encodeHexString(binData)
     log.info(s"got some msgPack data: $hexVal")
 
@@ -92,32 +94,31 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
             case None =>
               None
           }
-        }.filter(_.isDefined).map(_.get)
+        }.filter(_.isDefined).map(_.get).toSet
       case None =>
-        List()
+        Set()
     }
   }
 
-  private def processLegacyMsgPack(binData: Array[Byte]) = {
+  private def processLegacyMsgPack(binData: Array[Byte]): Set[DeviceDataRaw] = {
 
     val hexVal = Hex.encodeHexString(binData)
     log.info(s"got some legacyMsgPack data: $hexVal")
 
     val cData = MsgPacker.unpackSingleValue(binData)
     log.debug(s"msgPack data. $cData")
-    cData foreach { cd =>
-      val hwDeviceId = cd.deviceId.toString.toLowerCase()
-      val ddr = DeviceDataRaw(
-        v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
-        a = HashUtil.sha512Base64(hwDeviceId.toLowerCase),
-        did = Some(cd.deviceId.toString),
-        mpraw = Some(hexVal),
-        p = cd.payload,
-        //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
-        s = cd.signature
-      )
-      validatorActor forward ddr
+    cData map {
+      cd =>
+        val hwDeviceId = cd.deviceId.toString.toLowerCase()
+        DeviceDataRaw(
+          v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
+          a = HashUtil.sha512Base64(hwDeviceId.toLowerCase),
+          did = Some(cd.deviceId.toString),
+          mpraw = Some(hexVal),
+          p = cd.payload,
+          //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
+          s = cd.signature
+        )
     }
   }
-
 }

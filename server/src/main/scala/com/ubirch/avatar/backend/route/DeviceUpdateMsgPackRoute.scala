@@ -2,6 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
@@ -53,33 +54,32 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
               case Success(resp) =>
                 resp match {
                   case dsu: DeviceStateUpdate =>
-
                     val dsuJson = Json4sUtil.any2jvalue(dsu).get
                     val dsuString = Json4sUtil.jvalue2String(dsuJson)
                     reqMetrics.inc
                     reqMetrics.stop
-                    complete(dsuString)
+                    complete(StatusCodes.Accepted -> dsuString)
                   case jRepsonse: JsonResponse =>
                     reqMetrics.incError
                     reqMetrics.stop
-                    complete(jRepsonse.toJsonString)
+                    complete(StatusCodes.Accepted -> jRepsonse.toJsonString)
                   case jErrorRepsonse: JsonErrorResponse =>
                     reqMetrics.incError
                     reqMetrics.stop
-                    complete(jErrorRepsonse.toJsonString)
+                    complete(StatusCodes.BadRequest -> jErrorRepsonse.toJsonString)
                   case _ =>
                     reqMetrics.inc
                     reqMetrics.stop
-                    complete(s"ERROR 1: invlaid response")
+                    val jer = JsonErrorResponse(errorType = "repsonseerror", errorMessage = "ERROR 1: no result")
+                    complete(StatusCodes.InternalServerError -> jer.toJsonString)
                 }
               case Failure(t) =>
                 reqMetrics.incError
                 reqMetrics.stop
                 logger.error("got no result", t)
-                complete(s"ERROR 2: no result")
+                val jer = JsonErrorResponse(errorType = "internal error", errorMessage = t.getMessage)
+                complete(StatusCodes.InternalServerError -> jer.toJsonString)
             }
-
-
           }
         }
       }
