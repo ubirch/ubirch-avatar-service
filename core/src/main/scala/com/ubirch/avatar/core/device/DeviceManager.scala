@@ -14,6 +14,7 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
 import org.joda.time.{DateTime, DateTimeZone}
+import org.json4s.JValue
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -43,11 +44,17 @@ object DeviceManager
       docType = esType,
       query = groupsTermsQuery(groups),
       size = Some(Config.esLargePageSize)
-    ).map { res =>
+    ).recover[List[JValue]] {
+      case e =>
+        logger.error(s"error fetching device all for groups $groups", e)
+        List()
+    }.map { res =>
       logger.debug(s"all(): result=$res")
-      res.map(_.extract[Device])
+      if (res.nonEmpty)
+        res.map(_.extract[Device])
+      else
+        Seq()
     }
-
   }
 
   /**
@@ -64,10 +71,17 @@ object DeviceManager
       docType = esType,
       query = groupsTermsQuery(groups),
       size = Some(Config.esLargePageSize)
-    ).map { res =>
-      res.map { jv =>
-        DeviceStubManger.toDeviceInfo(device = jv.extract[Device])
-      }
+    ).recover[List[JValue]] {
+      case e =>
+        logger.error(s"error fetching devices allStubs for groups $groups", e)
+        List()
+    }.map { res =>
+      if (res.nonEmpty)
+        res.map { jv =>
+          DeviceStubManger.toDeviceInfo(device = jv.extract[Device])
+        }
+      else
+        Seq()
     }
   }
 
@@ -126,15 +140,17 @@ object DeviceManager
       docIndex = esIndex,
       docType = esType,
       query = Some(query)
-    ).map {
+    ).recover[List[JValue]] {
+      case e =>
+        logger.error(s"error fetching device infoByHwId for $hwDeviceId", e)
+        List()
+    }.map { doc =>
 
-      _.headOption match {
+      doc.headOption match {
         case Some(jval) => jval.extractOpt[Device]
         case None => None
       }
-
     }
-
   }
 
   def infoByHashedHwId(hashedHwDeviceId: String): Future[Option[Device]] = {
@@ -145,13 +161,15 @@ object DeviceManager
       docIndex = esIndex,
       docType = esType,
       query = Some(query)
-    ).map {
-
-      _.headOption match {
+    ).recover[List[JValue]] {
+      case e =>
+        logger.error(s"error fetching device infoByHashedHwId for $hashedHwDeviceId", e)
+        List()
+    }.map { docs =>
+      docs.headOption match {
         case Some(jval) => jval.extractOpt[Device]
         case None => None
       }
-
     }
   }
 
@@ -166,8 +184,12 @@ object DeviceManager
       docIndex = esIndex,
       docType = esType,
       docId = deviceId
-    ).map {
-      case Some(resJval) => Some(resJval.extract[Device])
+    ).recover[Option[JValue]] {
+      case e =>
+        logger.error(s"error fetching device info for $deviceId", e)
+        None
+    }.map {
+      case Some(jval) => jval.extractOpt[Device]
       case None => None
     }
 
