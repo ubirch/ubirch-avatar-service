@@ -86,7 +86,8 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
                 fw = mpData.firmwareVersion,
                 a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
                 s = mpData.signature,
-                mpraw = Some(hexVal),
+                //mpraw = Some(hexVal),
+                mpraw = None,
                 chainedHash = mpData.prevMessageHash,
                 p = p,
                 ts = mpData.created
