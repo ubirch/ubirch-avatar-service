@@ -333,7 +333,7 @@ lazy val prometheus = Seq(
   "io.prometheus" % "simpleclient_hotspot" % "0.1.0",
   "io.prometheus" % "simpleclient_httpserver" % "0.1.0",
   "io.prometheus" % "simpleclient_pushgateway" % "0.1.0"
-  , "com.workday" %% "prometheus-akka" % "0.8.1"
+  , "com.workday" %% "prometheus-akka" % "0.8.2"
   , "org.aspectj" % "aspectjweaver" % "1.8.10"
 )
 
