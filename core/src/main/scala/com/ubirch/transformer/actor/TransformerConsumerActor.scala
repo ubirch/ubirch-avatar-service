@@ -30,7 +30,9 @@ class TransformerConsumerActor
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  val transformerActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerPreprocessorActor]), ActorNames.TRANSFORMER_PRE)
+  val transformerActor: ActorRef = context
+    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
+      .props(Props[TransformerPreprocessorActor]), ActorNames.TRANSFORMER_PRE)
 
   //TODO fix error handling, in case of error the message should be resend later?
   override def receive: Receive = {

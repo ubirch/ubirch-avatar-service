@@ -17,7 +17,10 @@ import scala.concurrent.ExecutionContextExecutor
 /**
   * Created by derMicha on 28/10/16.
   */
-class TransformerPreprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
+class TransformerPreprocessorActor
+  extends Actor
+    with MyJsonProtocol
+    with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
