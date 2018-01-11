@@ -1,12 +1,11 @@
 package com.ubirch.avatar.core.actor
 
-import com.ubirch.avatar.core.check.DeepCheckManager
-import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
-import com.ubirch.util.mongo.connection.MongoUtil
-
 import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
+import com.ubirch.avatar.core.check.DeepCheckManager
+import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.Future
 

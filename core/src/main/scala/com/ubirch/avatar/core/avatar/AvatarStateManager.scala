@@ -1,7 +1,6 @@
 package com.ubirch.avatar.core.avatar
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.{AvatarState, Device}
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
@@ -9,12 +8,10 @@ import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
-
 import org.joda.time.DateTime
 import org.json4s.JValue
 import org.json4s.jackson.JsonMethods._
 import org.json4s.native.Serialization.write
-
 import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros, document}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -198,8 +195,13 @@ object AvatarStateManager extends MongoFormats
 
     mongo.connectivityCheck[AvatarState](collectionName) map { deepCheckRes =>
       DeepCheckResponseUtil.addServicePrefix("avatar-service", deepCheckRes)
+    } recover[DeepCheckResponse] {
+      case e =>
+        logger.error("", e)
+        DeepCheckResponseUtil.addServicePrefix("avatar-service",
+          DeepCheckResponse(status = false, messages = Seq(s"[avatar-service] ${e.getMessage}"))
+        )
     }
-
   }
 
   private def newAvatarStateWithReported(device: Device, reported: Option[String]): AvatarState = {
