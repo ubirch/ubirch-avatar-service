@@ -24,7 +24,9 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  private val processorActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageProcessorActor())), ActorNames.MSG_PROCESSOR)
+  private val processorActor = context
+    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
+      .props(Props(new MessageProcessorActor())), ActorNames.MSG_PROCESSOR)
 
   override def receive: Receive = {
 

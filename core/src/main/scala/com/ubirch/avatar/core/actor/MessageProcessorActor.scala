@@ -9,7 +9,6 @@ import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
 import com.ubirch.avatar.core.prometheus.Timer
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
@@ -17,8 +16,7 @@ import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
-import com.ubirch.util.uuid.UUIDUtil
-import org.json4s.JValue
+import org.json4s.{JValue, MappingException}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
@@ -73,18 +71,17 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       else
         log.debug(s"do not chain data for ${device.deviceId}")
 
-      (drd.v match {
-        case MessageVersion.`v40` =>
+      (
+        try {
           drd.p.extract[Array[JValue]].map { payload =>
             processPayload(device, payload)
           }.toList.reverse.head
-        case MessageVersion.`v003` =>
-          drd.p.extract[Array[JValue]].map { payload =>
-            processPayload(device, payload)
-          }.toList.reverse.head
-        case _ =>
-          processPayload(device, drd.p)
-      }).map {
+        }
+        catch {
+          case e: MappingException =>
+            processPayload(device, drd.p.extract[JValue])
+        }
+        ).map {
         case Some(d) =>
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
