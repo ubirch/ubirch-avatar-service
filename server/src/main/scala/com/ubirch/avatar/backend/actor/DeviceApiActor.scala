@@ -68,7 +68,7 @@ class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) e
   }
 
   private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
-    logger.debug("allStubs")
+    logger.debug("AllStubs")
     queryGroups(session) flatMap { g =>
       logger.debug(s"allStubs groups: $g")
       DeviceManager.allStubs(g)
@@ -184,7 +184,6 @@ class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) e
         logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")
         groups filter (_.id.isDefined) map (_.id.get)
     }
-
   }
 
   private def queryOwnerId(session: AvatarSession): Future[Set[UUID]] = {
