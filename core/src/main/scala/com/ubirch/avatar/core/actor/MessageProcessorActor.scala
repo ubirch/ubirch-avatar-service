@@ -85,12 +85,14 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         case Some(d) =>
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-          DeviceManager.infoByHashedHwId(drd.a).map {
-            case Some(device) =>
-              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-            case None =>
-              log.error("lookup device by hasedHwDeviceId failed")
-          }
+          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+
+        //          DeviceManager.infoByHashedHwId(drd.a).map {
+        //            case Some(device) =>
+        //              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+        //            case None =>
+        //              log.error("lookup device by hasedHwDeviceId failed")
+        //          }
         case None =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
           s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")

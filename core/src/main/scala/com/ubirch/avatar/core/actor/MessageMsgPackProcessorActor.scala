@@ -77,8 +77,8 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     MsgPacker.unpackTimeseries(binData) match {
       case Some(mpData) =>
         log.debug(s"msgPack data. $mpData")
-        //mpData.payload.children.grouped(50).toList.map { gr =>
-        mpData.payload.children.toList.map { gr =>
+        mpData.payload.children.grouped(500).toList.map { gr =>
+          //        mpData.payload.children.toList.map { gr =>
           Json4sUtil.any2jvalue(gr) match {
             case Some(p) =>
               Some(DeviceDataRaw(
@@ -96,6 +96,17 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
               None
           }
         }.filter(_.isDefined).map(_.get).toSet
+      //        Set(DeviceDataRaw(
+      //          v = MessageVersion.v000,
+      //          fw = mpData.firmwareVersion,
+      //          a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
+      //          s = mpData.signature,
+      //          //mpraw = Some(hexVal),
+      //          mpraw = None,
+      //          chainedHash = mpData.prevMessageHash,
+      //          p = mpData.payload,
+      //          ts = mpData.created
+      //        ))
       case None =>
         Set()
     }
