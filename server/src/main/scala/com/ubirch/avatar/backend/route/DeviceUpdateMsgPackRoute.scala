@@ -19,7 +19,6 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
 import com.ubirch.util.mongo.connection.MongoUtil
-import io.prometheus.client.Histogram
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -38,7 +37,9 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val msgPackProcessorActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props(new MessageMsgPackProcessorActor())), ActorNames.MSG_MSGPACK_PROCESSOR)
+  private val msgPackProcessorActor = system
+    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
+      .props(Props(new MessageMsgPackProcessorActor())), ActorNames.MSG_MSGPACK_PROCESSOR)
 
   val reqMetrics = new ReqMetrics(metricName = "device_update_mpack")
 
