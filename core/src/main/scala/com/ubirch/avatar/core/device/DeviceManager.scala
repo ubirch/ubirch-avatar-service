@@ -173,7 +173,7 @@ object DeviceManager
     }
   }
 
-
+  
   // TODO automated tests
   def info(deviceId: UUID): Future[Option[Device]] = info(deviceId.toString)
 

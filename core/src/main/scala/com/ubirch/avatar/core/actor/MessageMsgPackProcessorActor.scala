@@ -77,7 +77,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     MsgPacker.unpackTimeseries(binData) match {
       case Some(mpData) =>
         log.debug(s"msgPack data. $mpData")
-        mpData.payload.children.grouped(500).toList.map { gr =>
+        mpData.payload.children.grouped(1000).toList.map { gr =>
           //        mpData.payload.children.toList.map { gr =>
           Json4sUtil.any2jvalue(gr) match {
             case Some(p) =>
