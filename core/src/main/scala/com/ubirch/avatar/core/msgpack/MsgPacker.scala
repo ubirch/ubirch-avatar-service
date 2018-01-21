@@ -6,6 +6,7 @@ import java.util.Base64
 
 import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.rest.device.{MsgPackMessage, MsgPackMessageV2}
 import com.ubirch.util.json.Json4sUtil
 import org.apache.commons.codec.binary
@@ -20,6 +21,26 @@ import scala.collection.mutable
 import scala.language.postfixOps
 
 object MsgPacker extends StrictLogging {
+
+  def getMsgPackVersion(binData: Array[Byte]): String = {
+    val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
+    val itr = unpacker.iterator()
+
+    unpacker.getNextType() match {
+      case ValueType.ARRAY if itr.hasNext() =>
+        val va = itr.next().asArrayValue()
+        va.get(0).asRawValue().getString match {
+          case Const.MSGP_V40 =>
+            Const.MSGP_V40
+          case Const.MSGP_V401 =>
+            Const.MSGP_V401
+          case _ =>
+            Const.MSGP_VUK
+        }
+      case _ =>
+        throw new Exception("unsupported message pack")
+    }
+  }
 
   def unpackTimeseries(binData: Array[Byte]): Option[MsgPackMessageV2] = {
 

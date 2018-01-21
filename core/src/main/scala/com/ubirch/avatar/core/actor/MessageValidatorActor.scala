@@ -14,7 +14,7 @@ import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
   * Created by derMicha on 28/10/16.
@@ -61,8 +61,8 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       DeviceManager.infoByHashedHwId(drd.a).map {
         case Some(dev) =>
-          if (drd.s.isDefined)
-            (if (drd.k.isEmpty || drd.mpraw.isEmpty) {
+          if (drd.s.isDefined) {
+            val r = if (drd.k.isEmpty || drd.mpraw.isEmpty) {
               DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p)
             }
             else if (drd.k.isEmpty || drd.mpraw.isDefined) {
@@ -72,14 +72,18 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
             else if (drd.k.isDefined)
               DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)
             else
-              false) match {
+              Future(false)
+
+            r map {
               case true =>
                 processorActor forward(s, drd, dev)
-              case false =>
+              case _ =>
                 s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s} (${drd.k.getOrElse("without pubKey")})", "ValidationError")
             }
+          }
           else
             s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError")
+
         case None =>
           s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
       }
