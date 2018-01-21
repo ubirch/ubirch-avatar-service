@@ -65,9 +65,9 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def validateSignedMessage(key: String, signature: String, payload: JValue): Boolean = {
+  def validateSignedMessage(key: String, signature: String, payload: JValue): Future[Boolean] = {
     val payloadString = write(payload)
-    EccUtil.validateSignature(publicKey = key, signature = signature, payload = payloadString)
+    Future(EccUtil.validateSignature(publicKey = key, signature = signature, payload = payloadString))
   }
 
 

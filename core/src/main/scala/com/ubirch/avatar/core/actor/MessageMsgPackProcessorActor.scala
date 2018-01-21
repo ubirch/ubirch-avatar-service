@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import akka.util.Timeout
-import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.config.{Config, Const}
 import com.ubirch.avatar.core.msgpack.MsgPacker
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -74,41 +74,53 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     val hexVal = Hex.encodeHexString(binData)
     log.info(s"got some msgPack data: $hexVal")
 
-    MsgPacker.unpackTimeseries(binData) match {
-      case Some(mpData) =>
-        log.debug(s"msgPack data. $mpData")
-        mpData.payload.children.grouped(1000).toList.map { gr =>
-          //        mpData.payload.children.toList.map { gr =>
-          Json4sUtil.any2jvalue(gr) match {
-            case Some(p) =>
-              Some(DeviceDataRaw(
-                v = MessageVersion.v000,
-                fw = mpData.firmwareVersion,
-                a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
-                s = mpData.signature,
-                //mpraw = Some(hexVal),
-                mpraw = None,
-                chainedHash = mpData.prevMessageHash,
-                p = p,
-                ts = mpData.created
-              ))
-            case None =>
-              None
-          }
-        }.filter(_.isDefined).map(_.get).toSet
-      //        Set(DeviceDataRaw(
-      //          v = MessageVersion.v000,
-      //          fw = mpData.firmwareVersion,
-      //          a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
-      //          s = mpData.signature,
-      //          //mpraw = Some(hexVal),
-      //          mpraw = None,
-      //          chainedHash = mpData.prevMessageHash,
-      //          p = mpData.payload,
-      //          ts = mpData.created
-      //        ))
-      case None =>
-        Set()
+    MsgPacker.getMsgPackVersion(binData) match {
+      case Const.MSGP_V40 =>
+        MsgPacker.unpackTimeseries(binData) match {
+          case Some(mpData) =>
+            log.debug(s"msgPack data. $mpData")
+            mpData.payload.children.grouped(1000).toList.map { gr =>
+              //        mpData.payload.children.toList.map { gr =>
+              Json4sUtil.any2jvalue(gr) match {
+                case Some(p) =>
+                  Some(DeviceDataRaw(
+                    v = MessageVersion.v000,
+                    fw = mpData.firmwareVersion,
+                    a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
+                    s = mpData.signature,
+                    //mpraw = Some(hexVal),
+                    mpraw = None,
+                    chainedHash = mpData.prevMessageHash,
+                    p = p,
+                    ts = mpData.created
+                  ))
+                case None =>
+                  None
+              }
+            }.filter(_.isDefined).map(_.get).toSet
+          case None =>
+            Set()
+        }
+      case Const.MSGP_V401 =>
+        MsgPacker.unpackTimeseries(binData) match {
+          case Some(mpData) =>
+            log.debug(s"msgPack data. $mpData")
+            Set(DeviceDataRaw(
+              v = MessageVersion.v002,
+              fw = mpData.firmwareVersion,
+              a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
+              s = mpData.signature,
+              mpraw = Some(hexVal),
+              chainedHash = mpData.prevMessageHash,
+              p = mpData.payload.children.head,
+              ts = mpData.created
+            ))
+          case None =>
+            Set()
+        }
+      case _ =>
+        throw new Exception("unsupported msgpack version")
+
     }
   }
 

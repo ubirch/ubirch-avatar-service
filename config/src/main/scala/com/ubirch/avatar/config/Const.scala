@@ -58,5 +58,9 @@ object Const {
   final val CONF_INTERVALLMEASSURE = "im"
   final val CONF_THRESHOLD = "th"
 
+  final val MSGP_V40 = "4.0"
+  final val MSGP_V401 = "4.0.1"
+  final val MSGP_VUK = "UNKNOWN VERSION"
+
 
 }
