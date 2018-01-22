@@ -20,22 +20,34 @@ import org.msgpack.unpacker.Unpacker
 import scala.collection.mutable
 import scala.language.postfixOps
 
+case class MsgPackVersion(version: String, firmwareVersion: String)
+
 object MsgPacker extends StrictLogging {
 
-  def getMsgPackVersion(binData: Array[Byte]): String = {
+  def getMsgPackVersion(binData: Array[Byte]): MsgPackVersion = {
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
     val itr = unpacker.iterator()
 
     unpacker.getNextType() match {
       case ValueType.ARRAY if itr.hasNext() =>
         val va = itr.next().asArrayValue()
+        val firmwareVersion = va.get(1).asRawValue().getString
         va.get(0).asRawValue().getString match {
           case Const.MSGP_V40 =>
-            Const.MSGP_V40
+            MsgPackVersion(
+              version = Const.MSGP_V40,
+              firmwareVersion = firmwareVersion
+            )
           case Const.MSGP_V401 =>
-            Const.MSGP_V401
+            MsgPackVersion(
+              version = Const.MSGP_V401,
+              firmwareVersion = firmwareVersion
+            )
           case _ =>
-            Const.MSGP_VUK
+            MsgPackVersion(
+              version = Const.MSGP_VUK,
+              firmwareVersion = firmwareVersion
+            )
         }
       case _ =>
         throw new Exception("unsupported message pack")

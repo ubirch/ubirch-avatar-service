@@ -75,7 +75,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     log.info(s"got some msgPack data: $hexVal")
 
     MsgPacker.getMsgPackVersion(binData) match {
-      case Const.MSGP_V40 =>
+      case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
             log.debug(s"msgPack data. $mpData")
@@ -101,7 +101,31 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           case None =>
             Set()
         }
-      case Const.MSGP_V401 =>
+      case mpv if mpv.version.equals(Const.MSGP_V401) && mpv.firmwareVersion.startsWith("v1.0") =>
+        MsgPacker.unpackTimeseries(binData) match {
+          case Some(mpData) =>
+            log.debug(s"msgPack data. $mpData")
+            mpData.payload.children.toList.map { gr =>
+              Json4sUtil.any2jvalue(gr) match {
+                case Some(p) =>
+                  Some(DeviceDataRaw(
+                    v = MessageVersion.v000,
+                    fw = mpData.firmwareVersion,
+                    a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
+                    s = mpData.signature,
+                    mpraw = Some(hexVal),
+                    chainedHash = mpData.prevMessageHash,
+                    p = p,
+                    ts = mpData.created
+                  ))
+                case None =>
+                  None
+              }
+            }.filter(_.isDefined).map(_.get).toSet
+          case None =>
+            Set()
+        }
+      case mpv if mpv.version.equals(Const.MSGP_V40) =>
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
             log.debug(s"msgPack data. $mpData")
@@ -120,7 +144,6 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         }
       case _ =>
         throw new Exception("unsupported msgpack version")
-
     }
   }
 
