@@ -4,6 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.model.actors.MessageReceiver
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
 import scala.collection.parallel.mutable
 
@@ -17,9 +18,12 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
+    case drd: DeviceDataRaw =>
+
+
     case mr: MessageReceiver =>
       if (connections.keySet.contains(mr.getKey)) {
-        log.debug(s"found actorRef for: ${mr.getKey}")
+        log.debug(s"found MessageReceiver actorRef for: ${mr.getKey}")
         val actorRef = connections(mr.getKey)
         actorRef ! mr.message
       }

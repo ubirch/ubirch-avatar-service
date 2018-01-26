@@ -6,6 +6,13 @@
         </encoder>
     </appender>
 
+
+  <appender name="async" class="net.logstash.logback.appender.LoggingEventAsyncDisruptorAppender">
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender">
+      ...
+    </appender>
+  </appender>
+
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>avatar-service.log</file>
         <append>true</append>
