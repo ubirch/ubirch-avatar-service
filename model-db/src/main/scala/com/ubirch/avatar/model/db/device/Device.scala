@@ -5,7 +5,6 @@ import java.util.UUID
 import com.ubirch.avatar.config.Config
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
-import org.json4s.JsonAST.{JBool, JString}
 
 /**
   * author: cvandrei
@@ -23,7 +22,7 @@ case class Device(deviceId: String,
                   deviceProperties: Option[JValue] = None,
                   subQueues: Option[Set[String]] = None,
                   pubQueues: Option[Set[String]] = Some(Set(Config.awsSqsQueueTransformerOut)),
-                  pubRawQueues: Option[Set[String]] = None,
+                  pubRawQueues: Option[Set[String]] = Some(Set(Config.awsSqsQueueTransformer)),
                   avatarLastUpdated: Option[DateTime] = None,
                   deviceLastUpdated: Option[DateTime] = None,
                   updated: Option[DateTime] = None,

@@ -32,15 +32,13 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private implicit val exContext: ExecutionContextExecutor = context.dispatcher
 
-  private val transformerActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerProducerActor]), ActorNames.TRANSFORMER_PRODUCER)
-
   private val persistenceActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
 
   private val notaryActor: ActorRef = context.actorOf(Props[MessageNotaryActor], ActorNames.NOTARY_SVC)
 
   private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
-  private val outboxManagerActor: ActorRef = context.actorOf(Props[DeviceOutboxManagerActor], ActorNames.DEVICE_OUTBOX_MANAGER)
+  private val outboxManagerActor: ActorRef = context.actorOf(DeviceOutboxManagerActor.props(), ActorNames.DEVICE_OUTBOX_MANAGER)
 
   private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100000)}")
 
@@ -91,12 +89,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
       }
 
-      Json4sUtil.any2jvalue(drd) match {
-        case Some(drdJson) =>
-          transformerActor ! Json4sUtil.jvalue2String(drdJson)
-        case None =>
-          log.error(s"could not create json for message: ${drd.id}")
-      }
+      outboxManagerActor ! (device, drd)
 
     case msg: CamelMessage =>
       //@TODO check why we receive here CamelMessages ???
