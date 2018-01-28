@@ -1,9 +1,13 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.model.actors.MessageReceiver
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.transformer.actor.TransformerProducerActor
+import com.ubirch.util.json.Json4sUtil
 
 import scala.collection.parallel.mutable
 
@@ -17,9 +21,32 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
+    case (device: Device, drd: DeviceDataRaw) =>
+      val drdExt = drd.copy(deviceId = Some(device.deviceId))
+      device.pubRawQueues.getOrElse(Set()).foreach { queue =>
+        val taRef = if (connections.keySet.contains(queue)) {
+          log.debug(s"found MessageReceiver actorRef for: $queue")
+          val transformerActor = connections(queue)
+          transformerActor
+        }
+        else {
+          log.debug(s"add new actorRef for: $queue")
+          val transformerActor: ActorRef = context
+            .actorOf(TransformerProducerActor.props(queue))
+          connections.put(queue, transformerActor)
+          transformerActor
+        }
+        Json4sUtil.any2String(drdExt) match {
+          case Some(drdStr) =>
+            taRef ! drdStr
+          case None =>
+            log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
+        }
+      }
+
     case mr: MessageReceiver =>
       if (connections.keySet.contains(mr.getKey)) {
-        log.debug(s"found actorRef for: ${mr.getKey}")
+        log.debug(s"found MessageReceiver actorRef for: ${mr.getKey}")
         val actorRef = connections(mr.getKey)
         actorRef ! mr.message
       }
@@ -41,4 +68,11 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     case _ =>
       log.error("received unknown message")
   }
+
 }
+
+object DeviceOutboxManagerActor {
+  //TODO add Router here !!
+  def props(): Props = Props(new DeviceOutboxManagerActor())
+}
+

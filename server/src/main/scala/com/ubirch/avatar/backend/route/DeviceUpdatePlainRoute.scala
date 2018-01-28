@@ -2,6 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
@@ -14,8 +15,8 @@ import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants.update
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
-import io.prometheus.client.Histogram
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -55,30 +56,36 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                             reqMetrics.inc
                             reqMetrics.stop
                             complete(dsuString)
+                          case jerr: JsonErrorResponse =>
+                            reqMetrics.incError
+                            reqMetrics.stop
+                            logger.error(jerr.errorMessage)
+                            complete(StatusCodes.BadRequest -> jerr.toJsonString)
                           case _ =>
                             reqMetrics.incError
                             reqMetrics.stop
                             logger.error("update device data failed")
-                            complete("NOK: DeviceStateUpdate failed")
+                            complete(StatusCodes.BadRequest -> JsonErrorResponse(errorType = "ValidationError", errorMessage = "update device data failed").toJsonString)
                         }
 
                       case Failure(t) =>
                         reqMetrics.incError
                         reqMetrics.stop
                         logger.error("update device data failed", t)
-                        complete("NOK: internal Server Error")
+                        complete(StatusCodes.InternalServerError -> JsonErrorResponse(errorType = "ServerError", errorMessage = t.getMessage).toJsonString)
                     }
 
                   case None =>
                     reqMetrics.incError
                     reqMetrics.stop
-                    complete("NOK: wrong json")
+                    complete(StatusCodes.BadRequest -> JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json").toJsonString)
+
                 }
 
               case None =>
                 reqMetrics.incError
                 reqMetrics.stop
-                complete("NOK: invalid json input")
+                complete(StatusCodes.BadRequest -> JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json input").toJsonString)
             }
           }
         }
