@@ -46,8 +46,9 @@ object AvatarStateManager extends MongoFormats
     logger.debug(s"query byDeviceId: deviceId=$deviceId")
     val selector = document("deviceId" -> deviceId)
 
-    mongo.collection(collectionName) flatMap {
-      _.find(selector).one[AvatarState]
+    mongo.collection(collectionName) flatMap { d =>
+      mongo.close()
+      d.find(selector).one[AvatarState]
     }
 
   }
@@ -72,7 +73,7 @@ object AvatarStateManager extends MongoFormats
         mongo.collection(collectionName) flatMap { collection =>
 
           collection.insert[AvatarState](avatarState) map { writeResult =>
-
+            mongo.close()
             if (writeResult.ok && writeResult.n == 1) {
               logger.debug(s"created new avatarState: $avatarState")
               Some(avatarState)
@@ -110,7 +111,7 @@ object AvatarStateManager extends MongoFormats
         mongo.collection(collectionName) flatMap {
 
           _.update(selector, avatarState) map { writeResult =>
-
+            mongo.close()
             if (writeResult.ok) {
               logger.info(s"updated avatarState: deviceId=${avatarState.deviceId}")
               Some(avatarState)
