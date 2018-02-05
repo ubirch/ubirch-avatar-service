@@ -41,7 +41,7 @@ class TransformerPreprocessorActor
 
         drd.v match {
 
-          case MessageVersion.`v000` =>
+          case v if Set(MessageVersion.`v000`, MessageVersion.`v001`, MessageVersion.`v002`).contains(v) =>
 
             try {
               drd.p.extract[Array[JValue]].foreach { p =>
@@ -57,12 +57,6 @@ class TransformerPreprocessorActor
                 log.debug(s"extracted payload: ${drd.p}")
                 transformPostActor ! (dt, device, drd)
             }
-
-          case MessageVersion.`v001` =>
-            transformPostActor ! (dt, device, drd)
-
-          case MessageVersion.`v002` =>
-            transformPostActor ! (dt, device, drd)
 
           case MessageVersion.`v003` =>
             drd.p.extract[Array[JValue]].foreach { payload =>

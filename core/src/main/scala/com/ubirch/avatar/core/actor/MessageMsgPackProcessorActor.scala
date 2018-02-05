@@ -81,7 +81,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           case Some(mpData) =>
             log.debug(s"msgPack data. $mpData")
             val refId = UUIDUtil.uuid
-            mpData.payload.children.grouped(3000).toList.map { gr =>
+            mpData.payload.children.grouped(2000).toList.map { gr =>
               Json4sUtil.any2jvalue(gr) match {
                 case Some(p) =>
                   Some(DeviceDataRaw(
