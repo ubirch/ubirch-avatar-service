@@ -12,7 +12,6 @@ import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
-import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -48,6 +47,26 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       log.debug(s"received for deviceId ${device.deviceId} message: $drd")
 
+      //manage new device state
+      val pl = try {
+        drd.p.extract[Array[JValue]].last
+      }
+      catch {
+        case e: MappingException =>
+          drd.p.extract[JValue]
+
+      }
+
+      processPayload(device, pl) map {
+        case Some(d) =>
+          s ! d
+          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+        case None =>
+          log.error(s"current AvatarStateRest not available: ${device.deviceId}")
+          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
+      }
+
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
         log.debug(s"stores data for ${device.deviceId}")
         persistenceActor ! drd
@@ -69,26 +88,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       else
         log.debug(s"do not chain data for ${device.deviceId}")
 
-      (
-        try {
-          drd.p.extract[Array[JValue]].tail.map { payload =>
-            processPayload(device, payload)
-          }.toList.reverse.head
-        }
-        catch {
-          case e: MappingException =>
-            processPayload(device, drd.p.extract[JValue])
-        }
-        ).map {
-        case Some(d) =>
-          s ! d
-          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-        case None =>
-          log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
-      }
-
+      // publish incomming raw data
       outboxManagerActor ! (device, drd)
 
     case msg: CamelMessage =>
