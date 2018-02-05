@@ -71,7 +71,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       (
         try {
-          drd.p.extract[Array[JValue]].map { payload =>
+          drd.p.extract[Array[JValue]].tail.map { payload =>
             processPayload(device, payload)
           }.toList.reverse.head
         }
