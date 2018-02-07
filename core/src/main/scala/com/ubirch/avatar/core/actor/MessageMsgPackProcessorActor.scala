@@ -76,6 +76,8 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     log.info(s"got some msgPack data: $hexVal")
 
     MsgPacker.getMsgPackVersion(binData) match {
+      case mpv if mpv.version.equals(Const.MSGP_V41) =>
+        throw new Exception("unsupported msgpack version")
       case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>

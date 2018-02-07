@@ -28,26 +28,37 @@ object MsgPacker extends StrictLogging {
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
     val itr = unpacker.iterator()
 
-    unpacker.getNextType() match {
-      case ValueType.ARRAY if itr.hasNext() =>
+    unpacker.getNextType match {
+      case ValueType.ARRAY if itr.hasNext =>
         val va = itr.next().asArrayValue()
-        val firmwareVersion = va.get(1).asRawValue().getString
-        va.get(0).asRawValue().getString match {
-          case Const.MSGP_V40 =>
+        va.get(0).getType match {
+          case ValueType.INTEGER =>
+            val version = va.get(0).asIntegerValue().getInt
+            val mainVersion = version >> 4
+            val subVersion = version & 15
             MsgPackVersion(
-              version = Const.MSGP_V40,
-              firmwareVersion = firmwareVersion
-            )
-          case Const.MSGP_V401 =>
-            MsgPackVersion(
-              version = Const.MSGP_V401,
-              firmwareVersion = firmwareVersion
+              version = Const.MSGP_V41,
+              firmwareVersion = "unknown"
             )
           case _ =>
-            MsgPackVersion(
-              version = Const.MSGP_VUK,
-              firmwareVersion = firmwareVersion
-            )
+            val firmwareVersion = va.get(1).asRawValue().getString
+            va.get(0).asRawValue().getString match {
+              case Const.MSGP_V40 =>
+                MsgPackVersion(
+                  version = Const.MSGP_V40,
+                  firmwareVersion = firmwareVersion
+                )
+              case Const.MSGP_V401 =>
+                MsgPackVersion(
+                  version = Const.MSGP_V401,
+                  firmwareVersion = firmwareVersion
+                )
+              case _ =>
+                MsgPackVersion(
+                  version = Const.MSGP_VUK,
+                  firmwareVersion = firmwareVersion
+                )
+            }
         }
       case _ =>
         throw new Exception("unsupported message pack")
