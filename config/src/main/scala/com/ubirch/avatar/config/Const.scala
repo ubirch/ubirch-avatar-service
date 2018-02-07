@@ -60,6 +60,7 @@ object Const {
 
   final val MSGP_V40 = "4.0"
   final val MSGP_V401 = "4.0.1"
+  final val MSGP_V41 = "4.1"
   final val MSGP_VUK = "UNKNOWN VERSION"
 
 
