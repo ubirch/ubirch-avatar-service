@@ -24,7 +24,9 @@ class TransformerPreprocessorActor
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
-  val transformPostActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[TransformerPostprocessorActor]), ActorNames.TRANSFORMER_POST)
+  val transformPostActor: ActorRef = context
+    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
+      .props(Props[TransformerPostprocessorActor]), ActorNames.TRANSFORMER_POST)
 
   override def receive: Receive = {
 

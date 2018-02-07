@@ -15,7 +15,8 @@ import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
-import org.json4s.{JValue, MappingException}
+import org.json4s.JsonAST.JObject
+import org.json4s.{JValue, JsonAST, MappingException}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
@@ -49,7 +50,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       //manage new device state
       val pl = try {
-        drd.p.extract[Array[JValue]].last
+        drd.p.extract[Array[JValue]].foldLeft[JValue](Json4sUtil.string2JValue("{}").get) { (a, b) =>
+          a merge b
+        }
       }
       catch {
         case e: MappingException =>
