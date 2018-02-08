@@ -38,7 +38,8 @@ case class DeviceDataRaw(
                           txHash: Option[String] = None, // related bitcoin transaction hash
                           txHashLink: Option[String] = None, // related chain explorer url
                           txHashLinkHtml: Option[String] = None, // related chain explorer html-link
-                          refId: Option[UUID] = None
+                          refId: Option[UUID] = None,
+                          deviceType: Option[String] = None
                         ) {
   override def hashCode(): Int = id.hashCode()
 

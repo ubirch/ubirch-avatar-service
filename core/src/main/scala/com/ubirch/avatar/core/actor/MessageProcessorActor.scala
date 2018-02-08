@@ -46,17 +46,23 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
     case (s: ActorRef, drd: DeviceDataRaw, device: Device) =>
 
-      log.debug(s"received for deviceId ${device.deviceId} message: $drd")
+      val drdPatched = drd.copy(
+        deviceName = Some(device.deviceName),
+        deviceType = Some(device.deviceTypeKey),
+        deviceId = Some(device.deviceId)
+      )
+
+      log.debug(s"received for deviceId ${device.deviceId} message: $drdPatched")
 
       //manage new device state
       val pl = try {
-        drd.p.extract[Array[JValue]].foldLeft[JValue](Json4sUtil.string2JValue("{}").get) { (a, b) =>
+        drdPatched.p.extract[Array[JValue]].foldLeft[JValue](Json4sUtil.string2JValue("{}").get) { (a, b) =>
           a merge b
         }
       }
       catch {
         case e: MappingException =>
-          drd.p.extract[JValue]
+          drdPatched.p.extract[JValue]
 
       }
 
@@ -72,27 +78,27 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
         log.debug(s"stores data for ${device.deviceId}")
-        persistenceActor ! drd
+        persistenceActor ! drdPatched
       }
       else
         log.debug(s"stores no data for ${device.deviceId}")
 
       if (DeviceCoreUtil.checkNotaryUsage(device)) {
         log.debug(s"use notary service for ${device.deviceId}")
-        notaryActor ! drd
+        notaryActor ! drdPatched
       }
       else
         log.debug(s"do not use notary service for ${device.deviceId}")
 
       if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
         log.debug(s"chain data: ${device.deviceId}")
-        chainActor ! (drd, device)
+        chainActor ! (drdPatched, device)
       }
       else
         log.debug(s"do not chain data for ${device.deviceId}")
 
       // publish incomming raw data
-      outboxManagerActor ! (device, drd)
+      outboxManagerActor ! (device, drdPatched)
 
     case msg: CamelMessage =>
       //@TODO check why we receive here CamelMessages ???
