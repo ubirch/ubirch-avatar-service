@@ -72,6 +72,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 
 
   private def processMsgPack(binData: Array[Byte]): Set[DeviceDataRaw] = {
+
     val hexVal = Hex.encodeHexString(binData)
     log.info(s"got some msgPack data: $hexVal")
 
@@ -92,7 +93,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
                     a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
                     s = mpData.signature,
                     mpraw = Some(hexVal),
-                    //                    mpraw = None,
+                    //mpraw = None,
                     chainedHash = mpData.prevMessageHash,
                     p = p,
                     ts = mpData.created,
@@ -134,13 +135,13 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           case Some(mpData) =>
             log.debug(s"msgPack data. $mpData")
             Set(DeviceDataRaw(
-              v = MessageVersion.v002,
+              v = MessageVersion.v000,
               fw = mpData.firmwareVersion,
               a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
               s = mpData.signature,
               mpraw = Some(hexVal),
               chainedHash = mpData.prevMessageHash,
-              p = mpData.payload.children.head,
+              p = mpData.payload,
               ts = mpData.created
             ))
           case None =>
