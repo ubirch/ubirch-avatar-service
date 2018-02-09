@@ -39,7 +39,8 @@ case class DeviceDataRaw(
                           txHashLink: Option[String] = None, // related chain explorer url
                           txHashLinkHtml: Option[String] = None, // related chain explorer html-link
                           refId: Option[UUID] = None,
-                          deviceType: Option[String] = None
+                          deviceType: Option[String] = None,
+                          tags: Option[Set[String]] = None
                         ) {
   override def hashCode(): Int = id.hashCode()
 

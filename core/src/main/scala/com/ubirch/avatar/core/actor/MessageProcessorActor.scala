@@ -49,7 +49,8 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       val drdPatched = drd.copy(
         deviceName = Some(device.deviceName),
         deviceType = Some(device.deviceTypeKey),
-        deviceId = Some(device.deviceId)
+        deviceId = Some(device.deviceId),
+        tags = Some(device.tags)
       )
 
       log.debug(s"received for deviceId ${device.deviceId} message: $drdPatched")
