@@ -102,7 +102,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
     case msg: CamelMessage =>
       //@TODO check why we receive here CamelMessages ???
-      log.debug(s"received CamelMessage")
+      log.debug(s"received unexpected CamelMessage")
 
     case _ => log.error("received unknown message")
 
