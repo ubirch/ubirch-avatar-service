@@ -164,7 +164,9 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         val hwDeviceId = cd.deviceId.toString.toLowerCase()
         DeviceDataRaw(
           v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
-          a = HashUtil.sha512Base64(hwDeviceId.toLowerCase),
+          //          v = MessageVersion.v000,
+          a = HashUtil.sha512Base64(
+            hwDeviceId.toLowerCase),
           did = Some(cd.deviceId.toString),
           mpraw = Some(hexVal),
           p = cd.payload,

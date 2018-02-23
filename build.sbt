@@ -357,7 +357,7 @@ lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
 lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.6.3" excludeAll (excludedLoggers: _*)
-lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
+lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.2.1" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER

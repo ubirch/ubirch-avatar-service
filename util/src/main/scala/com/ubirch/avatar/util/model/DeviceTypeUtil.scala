@@ -231,6 +231,14 @@ object DeviceTypeUtil {
           Const.CONF_THRESHOLD -> 0
         )
 
+      case Const.TRACKLESENSOR =>
+        Map(
+          Const.CONF_INTERVALL -> (1 * 60 * 1000),
+          Const.CONF_INTERVALLLENGHT -> (30 * 60 * 1000),
+          Const.CONF_MIN -> 35 * 100,
+          Const.CONF_MAX -> 42 * 100
+        )
+
       case Const.AQSENSOR =>
         Map(
           Const.CONF_INTERVALL -> (15 * 60),

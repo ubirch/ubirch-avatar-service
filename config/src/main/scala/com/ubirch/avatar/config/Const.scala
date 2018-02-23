@@ -55,8 +55,11 @@ object Const {
   final val CONF_INFRARED = "ir"
   final val CONF_BLINKING = "bf"
   final val CONF_INTERVALL = "i"
+  final val CONF_INTERVALLLENGHT = "il"
   final val CONF_INTERVALLMEASSURE = "im"
   final val CONF_THRESHOLD = "th"
+  final val CONF_MIN = "min"
+  final val CONF_MAX = "max"
 
   final val MSGP_V40 = "4.0"
   final val MSGP_V401 = "4.0.1"
