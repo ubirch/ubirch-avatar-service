@@ -2,20 +2,19 @@ package com.ubirch.avatar.backend.actor
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model._
-import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.DeviceInfo
-import com.ubirch.avatar.util.server.AvatarSession
-import com.ubirch.user.client.rest.UserServiceClientRest
-import com.ubirch.user.model.rest.Group
-import com.ubirch.util.model.JsonErrorResponse
-
 import akka.actor.Actor
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
+import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.core.device.DeviceManager
+import com.ubirch.avatar.model._
+import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.model.rest.device.{DeviceInfo, DeviceUserClaim}
+import com.ubirch.avatar.util.server.AvatarSession
+import com.ubirch.user.client.rest.UserServiceClientRest
+import com.ubirch.user.model.rest.Group
+import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -36,7 +35,9 @@ case class AllDevicesResult(devices: Seq[Device])
 
 case class AllStubsResult(stubs: Seq[DeviceInfo])
 
-class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) extends Actor with StrictLogging {
+class DeviceApiActor(implicit mongo: MongoUtil,
+                     httpClient: HttpExt,
+                     materializer: Materializer) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
 
@@ -54,6 +55,36 @@ class DeviceApiActor(implicit httpClient: HttpExt, materializer: Materializer) e
     case cd: CreateDevice =>
       val from = sender
       createDevice(cd.session, cd.device) map (from ! _)
+
+    case duc: DeviceUserClaim =>
+      val s = sender
+      DeviceManager.infoByHwId(duc.hwDeviceId).map {
+        case Some(device) =>
+          device.owners.size match {
+            case 0 =>
+              try {
+                val owner = UUID.fromString(duc.userId)
+                DeviceManager.update(device.copy(owners = Set(owner)))
+                s ! JsonResponse(message = s"user ${duc.userId} has claimed device ${device.deviceName} (${duc.hwDeviceId})")
+              }
+              catch {
+                case e: IllegalArgumentException =>
+                  s ! JsonErrorResponse(errorType = "DeviceUserValidation", errorMessage = s"invalid userId ${duc.userId}: ${e.getMessage}")
+                case e: Exception =>
+                  s ! JsonErrorResponse(errorType = "DeviceUserValidation", errorMessage = s"claiming for device ${duc.hwDeviceId} for user ${duc.userId} failed: ${e.getMessage}")
+              }
+            case _ =>
+              s ! JsonErrorResponse(
+                errorType = "DeviceClaimError",
+                errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
+              )
+          }
+        case None =>
+          s ! JsonErrorResponse(
+            errorType = "DeviceClaimError",
+            errorMessage = s"device ${duc.hwDeviceId} does not exist"
+          )
+      }
 
     case _ =>
       logger.error("received unknown message")

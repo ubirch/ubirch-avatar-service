@@ -3,13 +3,12 @@ package com.ubirch.avatar.client.rest
 import java.net.URL
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceInfo}
+import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo}
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.json.Json4sUtil
-
+import com.ubirch.util.model.JsonErrorResponse
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.header.{Header, Headers}
@@ -101,5 +100,35 @@ object AvatarRestClient extends StrictLogging {
 
     }
 
+  }
+
+  /**
+    * this method could be used to claim a device by current user (identified by Auth Token)
+    * the claimed device may not be owned by an other user
+    *
+    * @param hwDeviceId hardware device id as a String
+    * @param authToken  token of the user who will claim a device
+    * @return Boolean value
+    */
+
+  def claimDevice(hwDeviceId: String, authToken: String): Boolean = {
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceClaim}")
+    logger.debug(s"try to call REST endpoint: $url")
+    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+
+    val deviceClaim = DeviceClaim(hwDeviceId = hwDeviceId)
+    val deviceClaimJsonStr = Json4sUtil.any2String(deviceClaim).get
+
+    val body = RequestBody(deviceClaimJsonStr, APPLICATION_JSON)
+
+    httpClient.put(url, body, headers) match {
+      case resp if resp.status == Status.S202_Accepted =>
+        true
+      case resp =>
+        Json4sUtil.string2any[JsonErrorResponse](resp.body.asString) match {
+          case jer =>
+            throw new Exception(jer.errorMessage)
+        }
+    }
   }
 }

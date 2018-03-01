@@ -28,6 +28,7 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
   val deviceDataRaw = new DeviceDataRawRoute {}
   val deviceDataHistory = new DeviceDataHistoryRoute {}
   val deviceType = new DeviceTypeRoute {}
+  val deviceClaim = new DeviceClaimRoute {}
 
   val forbidden = new ForbiddenRoute {}
 
@@ -47,7 +48,8 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
               deviceState.route ~
               deviceDataHistory.route ~
               deviceDataRaw.route ~
-              deviceId.route
+              deviceId.route ~
+              deviceClaim.route
 
           } ~ path(RouteConstants.device) {
             device.route
