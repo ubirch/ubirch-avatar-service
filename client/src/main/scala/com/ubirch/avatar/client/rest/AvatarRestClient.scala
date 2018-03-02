@@ -7,7 +7,7 @@ import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo, DeviceUserClaim}
 import com.ubirch.avatar.util.server.RouteConstants
-import com.ubirch.util.json.Json4sUtil
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
@@ -19,7 +19,9 @@ import uk.co.bigbeeconsultants.http.response.{Response, Status}
   * author: cvandrei
   * since: 2016-11-15
   */
-object AvatarRestClient extends StrictLogging {
+object AvatarRestClient
+  extends StrictLogging
+    with MyJsonProtocol {
 
   private val httpClient = new HttpClient(commonConfig = uk.co.bigbeeconsultants.http.Config(
     connectTimeout = AvatarClientConfig.timeoutConnect,
@@ -123,12 +125,29 @@ object AvatarRestClient extends StrictLogging {
 
     httpClient.put(url, body, headers) match {
       case resp if resp.status == Status.S202_Accepted =>
-        Json4sUtil.any2any[DeviceUserClaim](resp.body.asString)
+
+        val respStr = resp.body.asString
+
+        Json4sUtil.string2JValue(respStr) match {
+          case Some(jval) =>
+
+            jval.extractOpt[DeviceUserClaim] match {
+              case Some(duc) =>
+                duc
+              case None =>
+                throw new Exception(s"got invalid response: $respStr")
+            }
+
+          case None =>
+            throw new Exception(s"got invalid response: $respStr")
+        }
+
       case resp =>
         Json4sUtil.string2any[JsonErrorResponse](resp.body.asString) match {
           case jer =>
             throw new Exception(jer.errorMessage)
         }
     }
+
   }
 }
