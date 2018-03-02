@@ -7,13 +7,12 @@ import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceInfo, DeviceUserClaim}
+import com.ubirch.avatar.model.rest.device.{DeviceInfo, DeviceUserClaim, DeviceUserClaimRequest}
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.user.client.rest.UserServiceClientRest
 import com.ubirch.user.model.rest.Group
-import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -56,36 +55,41 @@ class DeviceApiActor(implicit mongo: MongoUtil,
       val from = sender
       createDevice(cd.session, cd.device) map (from ! _)
 
-    case duc: DeviceUserClaim =>
+    case duc: DeviceUserClaimRequest =>
       val s = sender
       DeviceManager.infoByHwId(duc.hwDeviceId).map {
         case Some(device) =>
           device.owners.size match {
             case 0 =>
-              try {
-                val owner = UUID.fromString(duc.userId)
-                DeviceManager.update(device.copy(owners = Set(owner)))
-                s ! JsonResponse(message = s"user ${duc.userId} has claimed device ${device.deviceName} (${duc.hwDeviceId})")
+              UserServiceClientRest.userGET(providerId = duc.providerId, externalUserId = duc.externalId).map {
+
+                case Some(user) if user.id.isDefined =>
+                  DeviceManager.update(device.copy(owners = Set(user.id.get)))
+                  s ! DeviceUserClaim(
+                    hwDeviceId = duc.hwDeviceId,
+                    deviceId = device.deviceId,
+                    userId = user.id.get
+                  )
+                case None =>
+                  s ! JsonErrorResponse(
+                    errorType = "DeviceClaimError",
+                    errorMessage = s"cloud not claim device ${duc.hwDeviceId} with invalid user ${duc.externalId}"
+                  )
               }
-              catch {
-                case e: IllegalArgumentException =>
-                  s ! JsonErrorResponse(errorType = "DeviceUserValidation", errorMessage = s"invalid userId ${duc.userId}: ${e.getMessage}")
-                case e: Exception =>
-                  s ! JsonErrorResponse(errorType = "DeviceUserValidation", errorMessage = s"claiming for device ${duc.hwDeviceId} for user ${duc.userId} failed: ${e.getMessage}")
-              }
+
             case _ =>
               s ! JsonErrorResponse(
                 errorType = "DeviceClaimError",
                 errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
               )
           }
+
         case None =>
           s ! JsonErrorResponse(
             errorType = "DeviceClaimError",
             errorMessage = s"device ${duc.hwDeviceId} does not exist"
           )
       }
-
     case _ =>
       logger.error("received unknown message")
       sender() ! JsonErrorResponse(errorType = "ServerError", errorMessage = "internal server error")
@@ -98,20 +102,27 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   }
 
-  private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
+  private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]]
+
+  = {
     logger.debug("AllStubs")
-    queryGroups(session) flatMap { g =>
-      logger.debug(s"allStubs groups: $g")
-      DeviceManager.allStubs(g)
+    queryGroups(session) flatMap {
+      g =>
+        logger.debug(s"allStubs groups: $g")
+        DeviceManager.allStubs(g)
     }
   }
 
-  private def createDevice(session: AvatarSession, deviceInput: Device): Future[CreateResult] = {
+  private def createDevice(session: AvatarSession, deviceInput: Device): Future[CreateResult]
+
+  = {
 
     DeviceManager.info(deviceInput.deviceId).flatMap {
 
       case Some(dev) =>
-        logger.error(s"createDevice(): device already exists: ${dev.deviceId}")
+        logger.error(s"createDevice(): device already exists: ${
+          dev.deviceId
+        }")
         Future(
           CreateResult(
             error = Some(
@@ -128,7 +139,11 @@ class DeviceApiActor(implicit mongo: MongoUtil,
         addGroupsAndOwner(session, deviceInput) flatMap {
 
           case None =>
-            logger.error(s"createDevice(): failed to prepare device creation: device.hwDeviceId=${deviceInput.hwDeviceId}, userContext=${session.userContext}")
+            logger.error(s"createDevice(): failed to prepare device creation: device.hwDeviceId=${
+              deviceInput.hwDeviceId
+            }, userContext=${
+              session.userContext
+            }")
             Future(
               CreateResult(
                 error = Some(
@@ -140,13 +155,15 @@ class DeviceApiActor(implicit mongo: MongoUtil,
               )
             )
 
-          case Some(deviceToCreate: db.device.Device) =>
+          case Some(deviceToCreate: Device) =>
 
             logger.debug(s"creating: db.device.Device=$deviceToCreate")
             DeviceManager.create(deviceToCreate).map {
 
               case None =>
-                logger.error(s"createDevice(): failed to create device: ${deviceInput.hwDeviceId}")
+                logger.error(s"createDevice(): failed to create device: ${
+                  deviceInput.hwDeviceId
+                }")
                 CreateResult(
                   error = Some(
                     JsonErrorResponse(
@@ -156,7 +173,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
                   )
                 )
 
-              case Some(deviceCreated: db.device.Device) =>
+              case Some(deviceCreated: Device) =>
                 logger.debug("convert db.device.Device to rest.device.Device")
                 CreateResult(device = Some(deviceCreated))
 
@@ -168,7 +185,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   }
 
-  private def addGroupsAndOwner(session: AvatarSession, device: Device): Future[Option[db.device.Device]] = {
+  private def addGroupsAndOwner(session: AvatarSession, device: Device): Future[Option[Device]] = {
 
     for {
 
@@ -197,9 +214,17 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   }
 
-  private def queryGroups(session: AvatarSession): Future[Set[UUID]] = {
+  private def queryGroups(session: AvatarSession): Future[Set[UUID]]
 
-    logger.debug(s"contextName = ${session.userContext.context} / providerId = ${session.userContext.providerId} / externalUserId = ${session.userContext.userId}")
+  = {
+
+    logger.debug(s"contextName = ${
+      session.userContext.context
+    } / providerId = ${
+      session.userContext.providerId
+    } / externalUserId = ${
+      session.userContext.userId
+    }")
 
     UserServiceClientRest.groups(
       contextName = session.userContext.context,
@@ -212,7 +237,9 @@ class DeviceApiActor(implicit mongo: MongoUtil,
         Set.empty
 
       case Some(groups: Set[Group]) =>
-        logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")
+        logger.debug(s"found groups: groups=$groups, userContext=${
+          session.userContext
+        }")
         groups filter (_.id.isDefined) map (_.id.get)
     }
   }
@@ -229,7 +256,9 @@ class DeviceApiActor(implicit mongo: MongoUtil,
         Set.empty
 
       case Some(user) if user.id.isDefined =>
-        logger.debug(s"queryOwnerId: ${user.id} (session=$session)")
+        logger.debug(s"queryOwnerId: ${
+          user.id
+        } (session=$session)")
         Set(user.id.get)
 
       case Some(user) if user.id.isEmpty =>

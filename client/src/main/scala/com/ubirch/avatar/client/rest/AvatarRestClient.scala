@@ -5,7 +5,7 @@ import java.net.URL
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo}
+import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo, DeviceUserClaim}
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.model.JsonErrorResponse
@@ -111,7 +111,7 @@ object AvatarRestClient extends StrictLogging {
     * @return Boolean value
     */
 
-  def claimDevice(hwDeviceId: String, authToken: String): Boolean = {
+  def claimDevice(hwDeviceId: String, authToken: String): DeviceUserClaim = {
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceClaim}")
     logger.debug(s"try to call REST endpoint: $url")
     val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
@@ -123,7 +123,7 @@ object AvatarRestClient extends StrictLogging {
 
     httpClient.put(url, body, headers) match {
       case resp if resp.status == Status.S202_Accepted =>
-        true
+        Json4sUtil.any2any[DeviceUserClaim](resp.body.asString)
       case resp =>
         Json4sUtil.string2any[JsonErrorResponse](resp.body.asString) match {
           case jer =>

@@ -8,11 +8,11 @@ import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceUserClaim}
+import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceUserClaim, DeviceUserClaimRequest}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
@@ -53,12 +53,12 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
 
             entity(as[DeviceClaim]) { deviceClaim =>
 
-              onComplete(deviceApiActor ? DeviceUserClaim(hwDeviceId = deviceClaim.hwDeviceId, userId = userContext.userId)) {
+              onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, externalId = userContext.userId, providerId = userContext.providerId)) {
 
                 case Success(resp) =>
                   resp match {
-                    case jr: JsonResponse =>
-                      complete(HttpStatus.SC_ACCEPTED -> jr)
+                    case duc: DeviceUserClaim =>
+                      complete(HttpStatus.SC_ACCEPTED -> duc)
                     case jre: JsonErrorResponse =>
                       complete(HttpStatus.SC_BAD_REQUEST -> jre)
                     case _ =>
