@@ -1,8 +1,14 @@
 ## Release History
 
-### Version 0.3.28 (tbd)
+### Version 0.3.29 (2018-03-08)
 
-* tbd
+* update to `com.ubirch.util:config:0.2.0`
+* update to `com.ubirch.util:elasticsearch-client-binary:2.3.5`
+* update to `com.ubirch.util:mongo-utils:0.3.7`
+* update to `com.ubirch.util:mongo-test-utils:0.3.7`
+* update to `com.ubirch.util:oidc-utils:0.4.15`
+* update to `com.ubirch.user:client-rest:0.7.0`
+* update to `com.ubirch.key:client-rest:0.2.2`
 
 ### Version 0.3.27 (2017-10-16)
 
