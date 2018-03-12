@@ -41,6 +41,12 @@ object Const {
   final val TAG_UBB0 = "ubirch#0"
   final val TAG_UBB1 = "ubirch#1"
 
+  final val TAG_TRACKLE = "trackle"
+
+  final val TAG_MED = "medical"
+
+  final val TAG_BLE = "BLE"
+
   final val TAG_BTCD = "btcDemo"
 
   final val BOOL_TRUE = true

@@ -301,6 +301,13 @@ object DeviceTypeUtil {
           Const.TAG_SENSOR
         )
 
+      case Const.TRACKLESENSOR => Set(
+        Const.TAG_SENSOR,
+        Const.TAG_TRACKLE,
+        Const.TAG_MED,
+        Const.TAG_BLE
+      )
+
       case Const.UNKNOWN_DEVICE => Set(
         Const.TAG_SENSOR
       )

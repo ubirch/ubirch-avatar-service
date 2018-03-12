@@ -7,6 +7,8 @@ import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
 import org.json4s._
 
+case class DeviceDataRaws(ddrs: Set[DeviceDataRaw])
+
 /**
   * Payload could contain e, which contains a error message
   *

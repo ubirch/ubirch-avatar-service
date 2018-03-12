@@ -9,7 +9,7 @@ import akka.util.Timeout
 import com.ubirch.avatar.config.{Config, Const}
 import com.ubirch.avatar.core.msgpack.MsgPacker
 import com.ubirch.avatar.model.rest.MessageVersion
-import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceDataRaws}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -50,8 +50,8 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           case ValueType.INTEGER => processLegacyMsgPack(binData)
           case vt: ValueType => vt
         }) match {
-          case drds: Set[DeviceDataRaw] if drds.nonEmpty =>
-            drds foreach (ddrs => validatorActor forward ddrs)
+          case ddrs: DeviceDataRaws if ddrs.ddrs.nonEmpty =>
+            ddrs.ddrs.foreach(ddr => validatorActor forward ddr)
           case vt: ValueType =>
             val em = s"invalid messagePack header type: ${vt.name()}"
             log.error(em)
@@ -71,12 +71,12 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
   }
 
 
-  private def processMsgPack(binData: Array[Byte]): Set[DeviceDataRaw] = {
+  private def processMsgPack(binData: Array[Byte]): DeviceDataRaws = {
 
     val hexVal = Hex.encodeHexString(binData)
     log.info(s"got some msgPack data: $hexVal")
 
-    MsgPacker.getMsgPackVersion(binData) match {
+    val ddrs: Set[DeviceDataRaw] = MsgPacker.getMsgPackVersion(binData) match {
       case mpv if mpv.version.equals(Const.MSGP_V41) =>
         throw new Exception("unsupported msgpack version")
       case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
@@ -150,16 +150,17 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       case _ =>
         throw new Exception("unsupported msgpack version")
     }
+    DeviceDataRaws(ddrs)
   }
 
-  private def processLegacyMsgPack(binData: Array[Byte]): Set[DeviceDataRaw] = {
+  private def processLegacyMsgPack(binData: Array[Byte]): DeviceDataRaws = {
 
     val hexVal = Hex.encodeHexString(binData)
     log.info(s"got some legacyMsgPack data: $hexVal")
 
     val cData = MsgPacker.unpackSingleValue(binData)
     log.debug(s"msgPack data. $cData")
-    cData map {
+    val ddrs = cData map {
       cd =>
         val hwDeviceId = cd.deviceId.toString.toLowerCase()
         DeviceDataRaw(
@@ -174,5 +175,6 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           s = cd.signature
         )
     }
+    DeviceDataRaws(ddrs)
   }
 }
