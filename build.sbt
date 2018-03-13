@@ -254,12 +254,12 @@ lazy val depTestBase = Seq(
 lazy val akkaV = "2.5.11"
 lazy val akkaHttpV = "10.1.0"
 lazy val json4sV = "3.5.2"
-lazy val awsSdkV = "1.11.93"
-lazy val camelV = "2.18.1"
+lazy val awsSdkV = "1.11.293"
+lazy val camelV = "2.20.2"
 lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
 lazy val logbackV = "1.2.3"
-lazy val logbackESV = "1.5"
+lazy val logstashEncV = "5.0"
 lazy val slf4jV = "1.7.25"
 lazy val log4jV = "2.9.1"
 lazy val scalaLogV = "3.7.2"
@@ -284,10 +284,9 @@ lazy val scalaLogging = Seq(
   "org.slf4j" % "jul-to-slf4j" % slf4jV,
   "ch.qos.logback" % "logback-core" % logbackV,
   "ch.qos.logback" % "logback-classic" % logbackV,
-  "net.logstash.logback" % "logstash-logback-encoder" % "4.11",
+  "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
-  "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV,
-  "com.internetitem" % "logback-elasticsearch-appender" % logbackESV
+  "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
 )
 
 lazy val akkaCamel = Seq(
