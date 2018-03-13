@@ -2,7 +2,8 @@
 
 ### Version 0.3.30 (tbd)
 
-* tbd
+* added `AvatarRestClient.deviceGET()`
+* added `AvatarRestClient.deviceIdPUT()`
 
 ### Version 0.3.29 (2018-03-08)
 
