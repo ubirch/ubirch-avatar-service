@@ -69,7 +69,7 @@ class MsgPackTrackleTest extends FeatureSpec
     m.isDefined shouldBe true
     m.get.hwDeviceId shouldBe uid
 
-    var plvs = m.get.payload.children.toArray
+    var plvs = m.get.payloadJson.children.toArray
     (1 to 4) map { i =>
       tempVals.size >= i shouldBe true
       plvs.size >= i shouldBe true
@@ -77,7 +77,7 @@ class MsgPackTrackleTest extends FeatureSpec
       tempVals(i - 1) shouldBe (plvs(i - 1) \ "t").extract[Int]
     }
 
-    m.get.payload.children.foreach { p =>
+    m.get.payloadJson.children.foreach { p =>
       (p \ "t").extractOpt[Int].isDefined shouldBe true
       tempVals.contains((p \ "t").extract[Int]) shouldBe true
       (p \ "ts").extractOpt[String].isDefined shouldBe true

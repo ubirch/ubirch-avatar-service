@@ -32,7 +32,8 @@ case class DeviceDataRaw(
                           ts: DateTime = DateTime.now(),
                           k: Option[String] = None,
                           s: Option[String] = None,
-                          mpraw: Option[String] = None, //raw msgpack as hex string
+                          mpraw: Option[String] = None, //raw msgpack message as hex string
+                          mppay: Option[String] = None, //raw msgpack payload as hex string
                           p: JValue,
                           deviceId: Option[String] = None,
                           deviceName: Option[String] = None,

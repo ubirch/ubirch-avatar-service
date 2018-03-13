@@ -17,10 +17,10 @@ class MsgPackCalliopeTest extends FeatureSpec
   with StrictLogging
   with MyJsonProtocol {
 
-  private val validHexData = "cebc9ab239ac7b2274657374223a3132337dcebc9ab239b47b2274657374223a2276616c756520313233227d"
+  private val validHexData = "01ce194e8f56d94d7250bd00430479c39326d8ce9f67cb7ab1e0f40fb81495c26498902db100eed5cdc62afe981a82e1eeb2f8ca4f999a9e16a979d5d4682da833b9a42193b9340d7b226c69676874223a3131317d"
   private val validBinData = Hex.decodeHex(validHexData.toCharArray)
 
-  val did1 = "bc9AB239"
+  val did1 = "194e8f56"
 
 
   feature("MsgPack") {
@@ -29,19 +29,19 @@ class MsgPackCalliopeTest extends FeatureSpec
 
       val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(validBinData))
 
-      val deviceId = unpacker.iterator().next().asIntegerValue().intValue()
-      val deviceIdHex = Hex.encodeHexString(Ints.toByteArray(deviceId))
+      val marker = unpacker.iterator().next().asIntegerValue().intValue()
 
-      deviceIdHex shouldBe did1.toLowerCase
+      marker shouldBe 1
     }
 
     scenario("unpack calliope data") {
-      val cData = MsgPacker.unpackSingleValue(validBinData)
-      cData.size shouldBe 2
+      val mpMsgs = MsgPacker.unpackSingleValue(validBinData)
+      mpMsgs.size shouldBe 1
 
-      cData.head.deviceId shouldBe did1.toLowerCase
-      val data = (cData.head.payload \ "test").extract[String]
-      data shouldBe "value 123"
+      mpMsgs.head.deviceId shouldBe did1.toLowerCase
+      val data = (mpMsgs.head.payloadJson \ "light").extractOpt[Int]
+      data.isDefined shouldBe true
+      data.get shouldBe 111
     }
   }
 }

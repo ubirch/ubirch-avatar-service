@@ -135,7 +135,8 @@ object MsgPacker extends StrictLogging {
           messageVersion = messageVersion,
           firmwareVersion = firmwareVersion,
           hwDeviceId = hwDeviceId,
-          payload = payload,
+          payloadJson = payload,
+          payloadBin = sigData,
           prevMessageHash = prevMessageHash,
           errorCode = error,
           signature = Some(signature)
@@ -145,6 +146,12 @@ object MsgPacker extends StrictLogging {
     }
   }
 
+  /**
+    * Calliope MsgPack
+    *
+    * @param binData
+    * @return
+    */
   def unpackSingleValue(binData: Array[Byte]): Set[MsgPackMessage] = {
     val data: mutable.Set[MsgPackMessage] = mutable.Set.empty
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
@@ -188,7 +195,7 @@ object MsgPacker extends StrictLogging {
                 MsgPackMessage(
                   messageType = 1,
                   deviceId = currentIdHex,
-                  payload = p
+                  payloadJson = p
                 )
               )
             case None =>
@@ -220,15 +227,16 @@ object MsgPacker extends StrictLogging {
           case ValueType.RAW =>
             val dat = v.asRawValue().getByteArray
             val sig = dat.slice(0, 64)
-            val pay = dat.slice(64, dat.length)
-            val payStr = new String(pay, "UTF-8")
+            val payBin = dat.slice(64, dat.length)
+            val payStr = new String(payBin, "ASCII")
             Json4sUtil.string2JValue(payStr) match {
-              case Some(p) =>
+              case Some(payJson) =>
                 val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
                 cd = Some(MsgPackMessage(
                   messageType = 1,
                   deviceId = currentIdHex,
-                  payload = p,
+                  payloadJson = payJson,
+                  payloadBin = Some(payBin),
                   signature = Some(Base64.getEncoder.encodeToString(sig))
                 ))
               case None =>

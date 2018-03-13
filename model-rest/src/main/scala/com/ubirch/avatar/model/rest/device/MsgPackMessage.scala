@@ -10,7 +10,8 @@ case class MsgPackMessage(
                            messageId: UUID = UUIDUtil.uuid,
                            messageType: Int,
                            deviceId: String,
-                           payload: JValue,
+                           payloadJson: JValue,
+                           payloadBin: Option[Array[Byte]] = None,
                            created: DateTime = DateTime.now,
                            signature: Option[String] = None
                          )
@@ -21,7 +22,8 @@ case class MsgPackMessageV2(
                              firmwareVersion: String,
                              hwDeviceId: String,
                              prevMessageHash: Option[String] = None,
-                             payload: JValue,
+                             payloadJson: JValue,
+                             payloadBin: Array[Byte],
                              errorCode: Int,
                              created: DateTime = DateTime.now,
                              signature: Option[String] = None

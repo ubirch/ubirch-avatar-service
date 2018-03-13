@@ -84,7 +84,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           case Some(mpData) =>
             log.debug(s"msgPack data. $mpData")
             val refId = UUIDUtil.uuid
-            mpData.payload.children.grouped(2000).toList.map { gr =>
+            mpData.payloadJson.children.grouped(2000).toList.map { gr =>
               Json4sUtil.any2jvalue(gr) match {
                 case Some(p) =>
                   Some(DeviceDataRaw(
@@ -110,7 +110,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
             log.debug(s"msgPack data. $mpData")
-            mpData.payload.children.toList.map { gr =>
+            mpData.payloadJson.children.toList.map { gr =>
               Json4sUtil.any2jvalue(gr) match {
                 case Some(p) =>
                   Some(DeviceDataRaw(
@@ -141,7 +141,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
               s = mpData.signature,
               mpraw = Some(hexVal),
               chainedHash = mpData.prevMessageHash,
-              p = mpData.payload,
+              p = mpData.payloadJson,
               ts = mpData.created
             ))
           case None =>
@@ -155,8 +155,8 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 
   private def processLegacyMsgPack(binData: Array[Byte]): DeviceDataRaws = {
 
-    val hexVal = Hex.encodeHexString(binData)
-    log.info(s"got some legacyMsgPack data: $hexVal")
+    val mpRaw = Hex.encodeHexString(binData)
+    log.info(s"got some legacyMsgPack data: $mpRaw")
 
     val cData = MsgPacker.unpackSingleValue(binData)
     log.debug(s"msgPack data. $cData")
@@ -169,8 +169,9 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           a = HashUtil.sha512Base64(
             hwDeviceId.toLowerCase),
           did = Some(cd.deviceId.toString),
-          mpraw = Some(hexVal),
-          p = cd.payload,
+          mpraw = Some(mpRaw),
+          mppay = Some(Hex.encodeHexString(cd.payloadBin.get)),
+          p = cd.payloadJson,
           //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
           s = cd.signature
         )

@@ -62,23 +62,22 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
       DeviceManager.infoByHashedHwId(drd.a).map {
         case Some(dev) =>
           if (drd.s.isDefined) {
-            (if (drd.k.isEmpty && drd.mpraw.isEmpty) {
+            (if (drd.k.isEmpty && drd.mppay.isEmpty) {
               DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p)
             }
-            else if (drd.k.isEmpty && drd.mpraw.isDefined) {
-              val mp = Hex.decodeHex(drd.mpraw.get.toString.toCharArray)
+            else if (drd.k.isEmpty && drd.mppay.isDefined) {
+              val mp = Hex.decodeHex(drd.mppay.get.toCharArray)
               DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = mp)
             }
-            else if (drd.k.isDefined && drd.mpraw.isEmpty)
+            else if (drd.k.isDefined && drd.mppay.isEmpty)
               DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)
-            else if (drd.k.isDefined && drd.mpraw.isDefined) {
-              val mp = Hex.decodeHex(drd.mpraw.get.toString.toCharArray)
+            else if (drd.k.isDefined && drd.mppay.isDefined) {
+              val mp = Hex.decodeHex(drd.mppay.get.toCharArray)
               DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = mp)
             }
             else
               Future(false)) map {
               case true =>
-                //                processorActor tell((drd, dev), sender = s)
                 replayFilterActor tell((drd, dev), sender = s)
               case _ =>
                 s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s} (${drd.k.getOrElse("without pubKey")})", "ValidationError")
