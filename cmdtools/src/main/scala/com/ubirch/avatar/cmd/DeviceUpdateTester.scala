@@ -63,29 +63,21 @@ object DeviceUpdateTester extends App with MyJsonProtocol {
   val body = RequestBody(contentType = MediaType.APPLICATION_JSON, string = ddrStr)
 
   doPost
+
   Thread.sleep(500)
   doPost
+
+  Thread.sleep(1000)
+  doPost
+
   Thread.sleep(2000)
   doPost
 
-  //  DeviceDataRawManager.loadBySignature("zWH2v0fTYj5rkIOg2hHxqkKEBMSusjN11p0uVR2yTGa4bKL880AXsTOPMWnIp1sPUFonRzLqkfrCzsMKtMoBBA==").onComplete {
+  Thread.sleep(5000)
+  doPost
 
-  //  println("Test1")
-  //  DeviceDataRawManager.history(hashedDeviceId, 0, 10).map {res =>
-  //    println(res.size)
-  //  }
-  //  println("Test2")
-  //  DeviceDataRawManager.loadById(UUID.fromString("b3687b79-3c4b-419f-a740-7043096d4430")).onComplete {
-  //    case Success(f) =>
-  //      f match {
-  //        case Some(d) =>
-  //          println(d.deviceName)
-  //        case None =>
-  //          println("määääähh")
-  //      }
-  //    case Failure(t) =>
-  //      t.printStackTrace()
-  //  }
+  Thread.sleep(10000)
+  doPost
 
   println("Ende")
 
