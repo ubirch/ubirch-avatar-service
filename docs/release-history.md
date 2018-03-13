@@ -1,5 +1,9 @@
 ## Release History
 
+### Version 0.3.31 (tbd)
+
+# tbd
+
 ### Version 0.3.30 (2018-03-13)
 
 * added `AvatarRestClient.deviceGET()`
