@@ -73,6 +73,7 @@
   </appender>
 
   <logger name="com.ubirch" level="DEBUG"/>
+  <logger name="com.ubirch.util.oidc.directive.OidcDirective" level="WARN"/>
   <logger name="org.apache.http" level="WARN"/>
   <logger name="akka.camel.internal" level="INFO"/>
   <logger name="com.amazonaws" level="WARN"/>

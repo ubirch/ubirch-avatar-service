@@ -19,7 +19,8 @@ import scala.util.Random
 
 object DeviceUpdateTester extends App with MyJsonProtocol {
 
-  val avsApiUrl = new URL("http://localhost:8080/api/avatarService/v1/device/update")
+  //  val avsApiUrl = new URL("http://localhost:8080/api/avatarService/v1/device/update")
+  val avsApiUrl = new URL("https://api.ubirch.dev.ubirch.com/api/avatarService/v1/device/update")
 
   val (pubKey, privKey) = EccUtil.generateEccKeyPair
 
