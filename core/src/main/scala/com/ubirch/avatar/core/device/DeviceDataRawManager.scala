@@ -14,6 +14,7 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
 import org.elasticsearch.index.query.QueryBuilders
 import org.joda.time.DateTime
+import org.json4s.JsonAST.JValue
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionException, Future}
@@ -44,9 +45,17 @@ object DeviceDataRawManager
               size: Int = Config.esDefaultPageSize
              ): Future[Seq[DeviceDataRaw]] = {
 
-    require(device.hwDeviceId.nonEmpty, "hwDeviceId may not be empty")
+    history(device.hashedHwDeviceId, from, size)
+  }
 
-    val query = Some(QueryBuilders.termQuery("a", device.hwDeviceId))
+  def history(hashedHwDeviceId: String,
+              from: Int,
+              size: Int
+             ): Future[Seq[DeviceDataRaw]] = {
+
+    require(!hashedHwDeviceId.isEmpty, "hashedHwDeviceId may not be empty")
+
+    val query = Some(QueryBuilders.termQuery("a", hashedHwDeviceId))
     val sort = Some(SortUtil.sortBuilder("ts", asc = false))
 
     ESSimpleStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
@@ -68,9 +77,43 @@ object DeviceDataRawManager
     val query = Some(QueryBuilders.termQuery("id", id.toString))
 
     ESSimpleStorage.getDocs(index, esType, query).map { res =>
-      res.map(_.extract[DeviceDataRaw]).headOption
+      //      res.map(_.extract[DeviceDataRaw]).headOption
+      res.map { doc =>
+        doc.extractOpt[JValue] match {
+          case Some(d) =>
+            d.extractOpt[DeviceDataRaw]
+          case None =>
+            None
+        }
+      }.filter(_.isDefined).map(_.get).headOption
     }
   }
+
+  /**
+    * Query DeviceRawData by signature
+    *
+    * @param signature
+    * @return
+    */
+  def loadBySignature(signature: String): Future[Option[DeviceDataRaw]] = {
+
+    require(signature != null, "signature may not be null")
+
+    val query = Some(QueryBuilders.matchQuery("s", signature))
+    try {
+      ESSimpleStorage.getDocs(index, esType, query).map { res =>
+        res.map { doc =>
+          doc.extract[DeviceDataRaw]
+        }.headOption
+      }
+    }
+    catch {
+      case t: Throwable => t.printStackTrace()
+        Future(None)
+    }
+
+  }
+
 
   /**
     * Store a [[DeviceDataRaw]].
@@ -104,14 +147,16 @@ object DeviceDataRawManager
     * @param vals
     */
   def create(did: String, vals: Map[DateTime, Int], mpraw: Array[Byte]): Option[DeviceDataRaw] = {
+
     case class pval(t: Int, ts: DateTime)
 
-    val p = vals.keySet.map { ts =>
-      pval(t = vals.get(ts).get, ts = ts)
+    val p = vals.keySet.map {
+      ts =>
+        pval(t = vals.get(ts).get, ts = ts)
     }
 
     val ddr = DeviceDataRaw(
-      v = MessageVersion.v40,
+      v = MessageVersion.v003,
       did = Some(did),
       a = HashUtil.sha512Base64(did),
       mpraw = Some(Hex.encodeHexString(mpraw)),

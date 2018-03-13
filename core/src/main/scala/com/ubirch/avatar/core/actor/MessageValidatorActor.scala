@@ -1,10 +1,8 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
-import akka.routing.RoundRobinPool
 import akka.stream.Materializer
-import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -25,8 +23,10 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   private val processorActor = context
-    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
-      .props(Props(new MessageProcessorActor())), ActorNames.MSG_PROCESSOR)
+    .actorOf(MessageProcessorActor.props(), ActorNames.MSG_PROCESSOR)
+
+  private val replayFilterActor = context
+    .actorOf(ReplayFilterActor.props(), ActorNames.REPLAY_FILTER)
 
   override def receive: Receive = {
 
@@ -37,7 +37,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       DeviceCoreUtil.validateSimpleMessage(hwDeviceId = drd.a).map {
         case Some(dev) =>
-          processorActor forward(s, drd, dev)
+          processorActor tell((drd, dev), sender = s)
         case None =>
           s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid hwDeviceId: ${drd.a}")
       }
@@ -49,7 +49,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       DeviceCoreUtil.validateMessage(hashedHwDeviceId = drd.a, authToken = drd.s.getOrElse("nosignature"), payload = drd.p).map {
         case Some(dev) =>
-          processorActor forward(s, drd, dev)
+          processorActor tell((drd, dev), sender = s)
         case None =>
           s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid simple signature: ${drd.a} / ${drd.s}")
       }
@@ -62,21 +62,24 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
       DeviceManager.infoByHashedHwId(drd.a).map {
         case Some(dev) =>
           if (drd.s.isDefined) {
-            val r = if (drd.k.isEmpty || drd.mpraw.isEmpty) {
+            (if (drd.k.isEmpty && drd.mpraw.isEmpty) {
               DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p)
             }
-            else if (drd.k.isEmpty || drd.mpraw.isDefined) {
+            else if (drd.k.isEmpty && drd.mpraw.isDefined) {
               val mp = Hex.decodeHex(drd.mpraw.get.toString.toCharArray)
               DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = mp)
             }
-            else if (drd.k.isDefined)
+            else if (drd.k.isDefined && drd.mpraw.isEmpty)
               DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)
+            else if (drd.k.isDefined && drd.mpraw.isDefined) {
+              val mp = Hex.decodeHex(drd.mpraw.get.toString.toCharArray)
+              DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = mp)
+            }
             else
-              Future(false)
-
-            r map {
+              Future(false)) map {
               case true =>
-                processorActor forward(s, drd, dev)
+                //                processorActor tell((drd, dev), sender = s)
+                replayFilterActor tell((drd, dev), sender = s)
               case _ =>
                 s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s} (${drd.k.getOrElse("without pubKey")})", "ValidationError")
             }
@@ -95,7 +98,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       DeviceManager.infoByHashedHwId(drd.a).map {
         case Some(dev) =>
-          processorActor forward(s, drd, dev)
+          processorActor tell((drd, dev), sender = s)
         case None =>
           s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
       }

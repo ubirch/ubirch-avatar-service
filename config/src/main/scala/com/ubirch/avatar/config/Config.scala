@@ -15,6 +15,10 @@ object Config extends ConfigBase {
 
   def goPipelineRevision: String = config.getString(ConfigKeys.GO_REVISION_GIT)
 
+  def getMessageMaxAge: Long = config.getLong(ConfigKeys.MESSAGEMAXAGE)
+
+  def getMessageSignatureCache: Long = config.getLong(ConfigKeys.MESSAGESIGNATURECACHE)
+
   /*
    * Service
    ****************************************************************/

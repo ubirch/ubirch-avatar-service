@@ -28,6 +28,8 @@ object ActorNames {
 
   final val MSG_PROCESSOR: String = "AVS-message-processor"
 
+  final val REPLAY_FILTER: String = "AVS-replay-filter"
+
   final val MSG_VALIDATOR: String = "AVS-message-validator"
 
   final val MSG_VALIDATOR_PATH: String = s"/user/$MSG_VALIDATOR"

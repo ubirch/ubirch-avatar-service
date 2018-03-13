@@ -23,6 +23,12 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      "id" : {
            |        "type" : "keyword"
            |      },
+           |      "deviceId" : {
+           |        "type" : "keyword"
+           |      },
+           |      "s" : {
+           |        "type" : "keyword"
+           |      },
            |      "ts" : {
            |        "type" : "date",
            |        "format" : "strict_date_time"

@@ -24,6 +24,9 @@ object ConfigKeys {
   final val UDPPORT = s"$prefix.udp.port"
 
   final val ENVIROMENT = s"$prefix.enviroment"
+
+  final val MESSAGEMAXAGE = s"$prefix.messages.maxage"
+  final val MESSAGESIGNATURECACHE = s"$prefix.messages.signaturecache"
   /*
    * Akka related configs
    *********************************************************************************************/

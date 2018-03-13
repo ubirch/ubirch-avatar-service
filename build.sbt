@@ -199,6 +199,7 @@ lazy val depCore = Seq(
   ubirchKeyClientRest,
   ubirchUserClientRest,
   ubirchChainModel,
+  ubirchUtilRedisUtil,
   spireMath,
   msgpackScala,
   scalatest % "test",
@@ -250,8 +251,8 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-lazy val akkaV = "2.4.19"
-lazy val akkaHttpV = "10.0.9"
+lazy val akkaV = "2.5.11"
+lazy val akkaHttpV = "10.1.0"
 lazy val json4sV = "3.5.2"
 lazy val awsSdkV = "1.11.93"
 lazy val camelV = "2.18.1"
@@ -271,6 +272,7 @@ lazy val json4sG = "org.json4s"
 lazy val awsG = "com.amazonaws"
 lazy val ubirchUtilG = "com.ubirch.util"
 lazy val ubirchChainG = "com.ubirch.chain"
+lazy val ubirchUtilGroup = "com.ubirch.util"
 
 lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
 lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaHttpV
@@ -351,6 +353,7 @@ lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.4" excludeAll (e
 lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.8" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.8" excludeAll (excludedLoggers: _*)
 lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchUtilRedisUtil = ubirchUtilGroup %% "redis-util" % "0.3.4"
 
 lazy val ubirchChainModel = ubirchChainG %% "model-rest" % "0.1.4" excludeAll (excludedLoggers: _*)
 

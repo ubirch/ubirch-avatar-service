@@ -15,8 +15,7 @@ import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
-import org.json4s.JsonAST.JObject
-import org.json4s.{JValue, JsonAST, MappingException}
+import org.json4s.{JValue, MappingException}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
@@ -44,7 +43,8 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   override def receive: Receive = {
 
-    case (s: ActorRef, drd: DeviceDataRaw, device: Device) =>
+    case (drd: DeviceDataRaw, device: Device) =>
+      val s = context.sender()
 
       val drdPatched = drd.copy(
         deviceName = Some(device.deviceName),
@@ -123,4 +123,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         None
     }
   }
+}
+
+object MessageProcessorActor {
+  def props()(implicit mongo: MongoUtil): Props = new RoundRobinPool(Config.akkaNumberOfWorkers)
+    .props(Props(new MessageProcessorActor()))
 }
