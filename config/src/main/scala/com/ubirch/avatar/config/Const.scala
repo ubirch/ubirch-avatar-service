@@ -32,6 +32,7 @@ object Const {
   final val STOREDATA = "storesData"
   final val CHAINDATA = "chainData"
   final val CHAINHASHEDDATA = "chainHashedData"
+  final val CHECKREPLAY = "checkReplay"
 
   final val TAG_SENSOR = "sensor"
   final val TAG_ACTOR = "actor"

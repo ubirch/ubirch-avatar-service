@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
+import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -23,10 +24,10 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   private val processorActor = context
-    .actorOf(MessageProcessorActor.props(), ActorNames.MSG_PROCESSOR)
+    .actorSelection(ActorNames.MSG_PROCESSOR)
 
   private val replayFilterActor = context
-    .actorOf(ReplayFilterActor.props(), ActorNames.REPLAY_FILTER)
+    .actorSelection(ActorNames.REPLAY_FILTER)
 
   override def receive: Receive = {
 
@@ -78,7 +79,12 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
             else
               Future(false)) map {
               case true =>
-                replayFilterActor tell((drd, dev), sender = s)
+                if (DeviceManager.checkProperty(dev, Const.CHECKREPLAY)) {
+                  processorActor tell((drd, dev), sender = s)
+                }
+                else {
+                  replayFilterActor tell((drd, dev), sender = s)
+                }
               case _ =>
                 s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s} (${drd.k.getOrElse("without pubKey")})", "ValidationError")
             }

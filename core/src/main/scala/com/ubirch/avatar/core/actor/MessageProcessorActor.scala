@@ -1,7 +1,6 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import akka.camel.CamelMessage
 import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
@@ -101,10 +100,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       // publish incomming raw data
       outboxManagerActor ! (device, drdPatched)
 
-    case msg: CamelMessage =>
-      //@TODO check why we receive here CamelMessages ???
-      log.debug(s"received unexpected CamelMessage")
-
     case _ => log.error("received unknown message")
 
   }
@@ -122,6 +117,10 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         processStateTimer.stop
         None
     }
+  }
+
+  override def unhandled(message: Any): Unit = {
+    log.error(s"received unknown message: $message")
   }
 }
 

@@ -7,7 +7,7 @@ import akka.stream.Materializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.actor.DeviceApiActor
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
+import com.ubirch.avatar.core.actor.{MessageProcessorActor, MessageValidatorActor, ReplayFilterActor}
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.actor.TransformerConsumerActor
@@ -17,26 +17,44 @@ object ActorStarter extends StrictLogging {
 
   def init(system: ActorSystem)(implicit mongoUtil: MongoUtil, httpClient: HttpExt, materializer: Materializer) = {
 
-    val d = system.actorOf(
-      new RoundRobinPool(
-        Config.akkaNumberOfFrontendWorkers).props(Props(new DeviceApiActor())),
-      ActorNames.DEVICE_API
-    )
+    val d =
+      system.actorOf(
+        new RoundRobinPool(
+          Config.akkaNumberOfFrontendWorkers).props(Props(new DeviceApiActor())),
+        ActorNames.DEVICE_API
+      )
 
-    val m = system.actorOf(
-      new RoundRobinPool(
-        Config.akkaNumberOfFrontendWorkers).props(
-        Props(new MessageValidatorActor())),
-      ActorNames.MSG_VALIDATOR
-    )
+    val m =
+      system.actorOf(
+        new RoundRobinPool(
+          Config.akkaNumberOfFrontendWorkers).props(
+          Props(new MessageValidatorActor())),
+        ActorNames.MSG_VALIDATOR
+      )
 
-    val t = system.actorOf(
-      Props[TransformerConsumerActor],
-      ActorNames.TRANSFORMER_CONSUMER)
+    val t =
+      system.actorOf(
+        Props[TransformerConsumerActor],
+        ActorNames.TRANSFORMER_CONSUMER)
 
-    val ur = system.actorOf(
-      Props(new UDPReceiverActor)
-    )
+    val ur =
+      system.actorOf(
+        Props(new UDPReceiverActor)
+      )
+
+    val p =
+      system.actorOf(
+        MessageProcessorActor.props(),
+        ActorNames.MSG_PROCESSOR
+      )
+
+    val r =
+      system.actorOf(
+        ReplayFilterActor.props(),
+        ActorNames.REPLAY_FILTER
+      )
+
+
   }
 
 }

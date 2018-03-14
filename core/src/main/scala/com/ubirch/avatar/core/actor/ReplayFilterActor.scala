@@ -19,7 +19,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
   implicit val disp = context.dispatcher
 
   private val processorActor = context
-    .actorOf(MessageProcessorActor.props(), ActorNames.MSG_PROCESSOR)
+    .actorSelection(ActorNames.MSG_PROCESSOR)
 
   val redis = RedisClientUtil.getRedisClient()
 
@@ -27,6 +27,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
 
     case (drd: DeviceDataRaw, device: Device) =>
       val s = context.sender()
+
       val currenSig = drd.s.get
       val now = DateTime.now
       val dur = Days.daysBetween(drd.ts, now)
@@ -59,6 +60,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
                 processorActor tell((drd, device), sender = s)
             }
         }
+
   }
 
   override def unhandled(message: Any): Unit = super.unhandled(message)

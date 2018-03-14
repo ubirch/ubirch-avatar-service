@@ -106,7 +106,8 @@ object DeviceTypeUtil {
 
       case Const.CALLIOPEMINI =>
         Map(
-          Const.STOREDATA -> Const.BOOL_TRUE
+          Const.STOREDATA -> Const.BOOL_TRUE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.LIGHTSLAMP =>
@@ -114,7 +115,8 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_FALSE,
           Const.CHAINDATA -> Const.BOOL_FALSE,
-          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.LIGHTSSENSOR =>
@@ -122,7 +124,8 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_FALSE,
           Const.CHAINDATA -> Const.BOOL_FALSE,
-          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.ENVIRONMENTSENSOR =>
@@ -130,7 +133,8 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_FALSE,
           Const.CHAINDATA -> Const.BOOL_FALSE,
-          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.AQSENSOR =>
@@ -138,7 +142,8 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_FALSE,
           Const.CHAINDATA -> Const.BOOL_FALSE,
-          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.TRACKLESENSOR =>
@@ -146,7 +151,8 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_FALSE,
           Const.CHAINDATA -> Const.BOOL_FALSE,
-          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.EMOSENSOR =>
@@ -154,7 +160,8 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_FALSE,
           Const.CHAINDATA -> Const.BOOL_FALSE,
-          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.GENERICSENSOR =>
@@ -162,14 +169,16 @@ object DeviceTypeUtil {
           Const.STOREDATA -> Const.BOOL_TRUE,
           Const.BLOCKC -> Const.BOOL_FALSE,
           Const.CHAINDATA -> Const.BOOL_FALSE,
-          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+          Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+          Const.CHECKREPLAY -> Const.BOOL_FALSE
         )
 
       case Const.UNKNOWN_DEVICE => Map(
         Const.STOREDATA -> Const.BOOL_TRUE,
         Const.BLOCKC -> Const.BOOL_FALSE,
         Const.CHAINDATA -> Const.BOOL_FALSE,
-        Const.CHAINHASHEDDATA -> Const.BOOL_FALSE
+        Const.CHAINHASHEDDATA -> Const.BOOL_FALSE,
+        Const.CHECKREPLAY -> Const.BOOL_FALSE
       )
 
       case _ => Map.empty

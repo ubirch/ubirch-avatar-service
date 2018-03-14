@@ -1,7 +1,5 @@
 package com.ubirch.avatar.cmd
 
-import java.util.UUID
-
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
@@ -12,7 +10,6 @@ import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-import org.apache.commons.codec.binary.Hex
 
 import scala.concurrent.Future
 import scala.io.Source
@@ -43,10 +40,9 @@ object ImportProdLogs
 
   val defaultGroup = UUIDUtil.uuid
 
-  UUID.nameUUIDFromBytes(Hex.decodeHex("50E505C1FBC6580A4D3163F7C2A69E20"))
-
   val sep = "\t"
-  val envId = "local_dev"
+  //val envId = "local_dev"
+  val envId = Config.enviroment
 
   val rawQueue = s"$envId-trackle-service-inbox"
 
@@ -77,8 +73,8 @@ object ImportProdLogs
         DeviceManager.infoByHwId(di.hwDeviceId).map {
           case Some(dev) =>
             logger.info(s"device already exist: ${dev.deviceName}")
-          //            DeviceManager.delete(dev)
-          //            logger.info(s"device deleted: ${dev.deviceName}")
+            DeviceManager.delete(dev)
+            logger.info(s"device deleted: ${dev.deviceName}")
           case None =>
             val dev = Device(
               deviceId = UUIDUtil.uuidStr,
@@ -118,7 +114,7 @@ object ImportProdLogs
     DeviceTypeManager.getByKey(deviceType).map {
       case Some(dtype) =>
         dtype.key
-      case None =>
+      case _ =>
         Const.TRACKLESENSOR
     }
   }
