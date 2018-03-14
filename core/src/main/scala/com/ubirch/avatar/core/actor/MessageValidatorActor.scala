@@ -24,10 +24,10 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   private val processorActor = context
-    .actorSelection(ActorNames.MSG_PROCESSOR)
+    .actorSelection(ActorNames.MSG_PROCESSOR_PATH)
 
   private val replayFilterActor = context
-    .actorSelection(ActorNames.REPLAY_FILTER)
+    .actorSelection(ActorNames.REPLAY_FILTER_PATH)
 
   override def receive: Receive = {
 
@@ -79,12 +79,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
             else
               Future(false)) map {
               case true =>
-                if (DeviceManager.checkProperty(dev, Const.CHECKREPLAY)) {
-                  processorActor tell((drd, dev), sender = s)
-                }
-                else {
-                  replayFilterActor tell((drd, dev), sender = s)
-                }
+                replayFilterActor tell((drd, dev), sender = s)
               case _ =>
                 s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s} (${drd.k.getOrElse("without pubKey")})", "ValidationError")
             }

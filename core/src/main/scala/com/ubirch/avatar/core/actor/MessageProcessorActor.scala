@@ -18,6 +18,7 @@ import org.json4s.{JValue, MappingException}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 /**
   * author: derMicha
@@ -66,14 +67,17 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       }
 
-      processPayload(device, pl) map {
-        case Some(d) =>
+      processPayload(device, pl).onComplete {
+        case Success(Some(d)) =>
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-        case None =>
+        case Success(None) =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
           s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
+        case Failure(t) =>
+          log.error(s"current AvatarStateRest not available: ${device.deviceId}")
+          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = t.getMessage)
       }
 
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
@@ -99,9 +103,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       // publish incomming raw data
       outboxManagerActor ! (device, drdPatched)
-
-    case _ => log.error("received unknown message")
-
   }
 
   private def processPayload(device: Device, payload: JValue): Future[Option[DeviceStateUpdate]] = {
