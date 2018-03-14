@@ -1,8 +1,13 @@
 ## Release History
 
-### Version 0.3.30 (tbd)
+### Version 0.3.31 (tbd)
 
-* tbd
+# tbd
+
+### Version 0.3.30 (2018-03-13)
+
+* added `AvatarRestClient.deviceGET()`
+* added `AvatarRestClient.deviceIdPUT()`
 
 ### Version 0.3.29 (2018-03-08)
 
