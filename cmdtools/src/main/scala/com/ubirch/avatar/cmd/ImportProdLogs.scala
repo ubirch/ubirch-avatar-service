@@ -44,7 +44,9 @@ object ImportProdLogs
   //val envId = "local_dev"
   val envId = Config.enviroment
 
-  val rawQueue = s"$envId-trackle-service-inbox"
+  val queue1 = s"$envId-avatar-service-outbox"
+  val rawQueue1 = s"$envId-avatar-service-inbox"
+  val rawQueue2 = s"$envId-trackle-service-inbox"
 
   val deviceTypeOffset = 0
   val deviceTestDatetimeOffset = 1
@@ -84,9 +86,10 @@ object ImportProdLogs
               hwDeviceId = di.hwDeviceId,
               hashedHwDeviceId = HashUtil.sha512Base64(di.hwDeviceId.toLowerCase()),
               deviceName = s"$dtype ${di.hwDeviceId}",
+              pubQueues = Some(Set(queue1)),
               pubRawQueues = Some(Set(
-                Config.awsSqsQueueTransformer,
-                rawQueue
+                rawQueue1,
+                rawQueue2
               )),
               deviceProperties = Some(
                 DeviceTypeUtil.defaultProps(dtype)

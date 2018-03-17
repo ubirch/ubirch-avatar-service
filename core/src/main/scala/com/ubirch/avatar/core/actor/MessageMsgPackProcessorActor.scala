@@ -165,14 +165,12 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         val hwDeviceId = cd.deviceId.toString.toLowerCase()
         DeviceDataRaw(
           v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
-          //          v = MessageVersion.v000,
           a = HashUtil.sha512Base64(
-            hwDeviceId.toLowerCase),
+            hwDeviceId.trim.toLowerCase),
           did = Some(cd.deviceId.toString),
           mpraw = Some(mpRaw),
           mppay = Some(Hex.encodeHexString(cd.payloadBin.get)),
           p = cd.payloadJson,
-          //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
           s = cd.signature
         )
     }

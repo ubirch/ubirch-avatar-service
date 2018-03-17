@@ -2,11 +2,9 @@ package com.ubirch.avatar.backend.actor.util
 
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.HttpExt
-import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.actor.DeviceApiActor
-import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.{MessageProcessorActor, MessageValidatorActor, ReplayFilterActor}
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
@@ -19,22 +17,19 @@ object ActorStarter extends StrictLogging {
 
     val d =
       system.actorOf(
-        new RoundRobinPool(
-          Config.akkaNumberOfFrontendWorkers).props(Props(new DeviceApiActor())),
+        DeviceApiActor.props,
         ActorNames.DEVICE_API
       )
 
     val m =
       system.actorOf(
-        new RoundRobinPool(
-          Config.akkaNumberOfFrontendWorkers).props(
-          Props(new MessageValidatorActor())),
+        MessageValidatorActor.props,
         ActorNames.MSG_VALIDATOR
       )
 
     val t =
       system.actorOf(
-        Props[TransformerConsumerActor],
+        TransformerConsumerActor.props,
         ActorNames.TRANSFORMER_CONSUMER)
 
     val ur =

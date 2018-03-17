@@ -2,10 +2,12 @@ package com.ubirch.avatar.backend.actor
 
 import java.util.UUID
 
-import akka.actor.Actor
+import akka.actor.{Actor, Props}
 import akka.http.scaladsl.HttpExt
+import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceInfo, DeviceUserClaim, DeviceUserClaimRequest}
@@ -269,4 +271,12 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   }
 
+}
+
+object DeviceApiActor {
+  def props()(implicit mongo: MongoUtil,
+              httpClient: HttpExt,
+              materializer: Materializer): Props = new RoundRobinPool(
+    Config.akkaNumberOfFrontendWorkers)
+    .props(Props(new DeviceApiActor()))
 }

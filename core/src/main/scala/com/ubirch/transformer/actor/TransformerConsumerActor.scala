@@ -65,3 +65,7 @@ class TransformerConsumerActor
       log.error("received unknown message")
   }
 }
+
+object TransformerConsumerActor {
+  def props: Props = Props[TransformerConsumerActor]
+}

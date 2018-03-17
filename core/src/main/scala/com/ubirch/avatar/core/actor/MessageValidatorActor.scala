@@ -1,9 +1,10 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.HttpExt
+import akka.routing.RoundRobinPool
 import akka.stream.Materializer
-import com.ubirch.avatar.config.Const
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -114,4 +115,12 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
     JsonErrorResponse(errorType = errType, errorMessage = msg)
   }
 
+}
+
+object MessageValidatorActor {
+  def props()(implicit mongo: MongoUtil,
+              httpClient: HttpExt,
+              materializer: Materializer): Props = new RoundRobinPool(
+    Config.akkaNumberOfFrontendWorkers).props(
+    Props(new MessageValidatorActor()))
 }

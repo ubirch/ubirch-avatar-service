@@ -95,12 +95,12 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
                            (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
 
     try {
-      KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId.toLowerCase) map {
+      KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId.toLowerCase).map {
         case Some(keys) =>
           keys.map { key =>
             val valid = EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
             valid
-          }.head
+          }.count(_ == true) == 1
         case None =>
           logger.error(s"no pubkeys found for deviceId: ${device.deviceId}")
           false
