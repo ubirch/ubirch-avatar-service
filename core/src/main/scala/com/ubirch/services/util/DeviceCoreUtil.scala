@@ -96,6 +96,10 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
 
     try {
       KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId.toLowerCase).map {
+        case Some(keys) if keys.isEmpty =>
+          //throw new Exception(s"device ${device.deviceId} has no aktive keys")
+          logger.error(s"device ${device.deviceId} has no aktive keys")
+          false
         case Some(keys) =>
           keys.map { key =>
             val valid = EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
