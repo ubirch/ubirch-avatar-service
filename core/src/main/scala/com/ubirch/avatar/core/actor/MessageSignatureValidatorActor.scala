@@ -9,7 +9,7 @@ import akka.actor.{Actor, ActorLogging}
   * Created by derMicha on 28/10/16.
   * This Actor checks incomming messages
   */
-class MessageECCValidatorActor extends Actor with ActorLogging {
+class MessageSignatureValidatorActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
     case dm: DeviceDataRaw if (dm.v == MessageVersion.v002) || (dm.v == MessageVersion.v003) =>

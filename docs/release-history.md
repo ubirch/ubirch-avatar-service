@@ -2,7 +2,8 @@
 
 ### Version 0.3.31 (tbd)
 
-# tbd
+* refactored actor instantiating
+* fixed pubKey checking
 
 ### Version 0.3.30 (2018-03-13)
 
