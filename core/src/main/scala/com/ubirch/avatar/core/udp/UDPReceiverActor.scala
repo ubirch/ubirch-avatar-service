@@ -2,13 +2,11 @@ package com.ubirch.avatar.core.udp
 
 import java.net.InetSocketAddress
 
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.{Actor, ActorRef}
 import akka.http.scaladsl.HttpExt
 import akka.io.{IO, Udp}
-import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.core.msgpack.MsgPacker
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
@@ -91,22 +89,28 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
       val dataHex = Hex.encodeHexString(bytes)
       log.debug(s"received from: $remote data: $dataHex")
+      try {
+        val cData = MsgPacker.unpackSingleValue(data.toArray)
+        log.debug(s"calliope data. $cData")
 
-      val cData = MsgPacker.unpackSingleValue(data.toArray)
-      log.debug(s"calliope data. $cData")
-
-      cData.foreach { cd =>
-        val hwDeviceId = cd.deviceId.toString.toLowerCase()
-        val drd = DeviceDataRaw(
-          v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
-          a = HashUtil.sha512Base64(hwDeviceId),
-          did = Some(cd.deviceId.toString),
-          p = cd.payloadJson,
-          //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
-          s = cd.signature
-        )
-        validatorActor ! drd
+        cData.foreach { cd =>
+          val hwDeviceId = cd.deviceId.toString.toLowerCase()
+          val drd = DeviceDataRaw(
+            v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
+            a = HashUtil.sha512Base64(hwDeviceId),
+            did = Some(cd.deviceId.toString),
+            p = cd.payloadJson,
+            //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
+            s = cd.signature
+          )
+          validatorActor ! drd
+        }
       }
+      catch {
+        case e: Exception =>
+          log.error(s"invalid data received ${e.getMessage}")
+      }
+
 
     case Udp.Unbind =>
       log.info("Unbind")
