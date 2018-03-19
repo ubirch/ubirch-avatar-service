@@ -1,4 +1,4 @@
-curl 'http://localhost:9200/_cat/indices?v'
+curl 'http://localhost:9200/_cat/indices?v' | grep ubirch
 
 curl 'localhost:9200/ubirch-avatar-state/_mapping/?pretty' > ubirch-avatar-state.json
 curl 'localhost:9200/ubirch-device-raw-data/_mapping/?pretty' > ubirch-device-raw-mappings.json

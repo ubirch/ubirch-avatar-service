@@ -1,9 +1,12 @@
 ## Release History
 
-### Version 0.3.31 (tbd)
+### Version 0.4.0 (tbd)
 
 * refactored actor instantiating
 * fixed pubKey checking
+* update to `com.ubirch.util:oidc-utils:0.5.2`
+* update to `com.ubirch.util:redis-util:0.3.5`
+* refactored `AvatarRestClient` to accept ubirch tokens, too (previously all tokens were used as if they're OIDC tokens) 
 
 ### Version 0.3.30 (2018-03-13)
 
