@@ -45,6 +45,8 @@ curl 'localhost:9200/ubirch-device-type/devicetype/_search?pretty' -d '{
   }
 }'
 
+curl 'localhost:9200/ubirch-devices/_search?pretty' > ubirch-devices.json
+
 ===============================================================
 
 curl 'localhost:9200/_cat/indices?v'

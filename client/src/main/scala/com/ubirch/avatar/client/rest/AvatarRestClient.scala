@@ -1,6 +1,7 @@
 package com.ubirch.avatar.client.rest
 
 import java.net.URL
+import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
@@ -41,7 +42,7 @@ object AvatarRestClient
   def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
-    logger.debug(s"try to call REST endpoint: $url")
+    logger.debug(s"try to call REST endpoint: POST $url")
 
     httpClient.post(
       url = url,
@@ -54,8 +55,8 @@ object AvatarRestClient
     * Bulk update a device by POSTing raw device data.
     *
     * @param deviceDataRaw raw data to POST
-    * @param oidcToken   OIDC token of the user whose device stubs to list
-    * @param ubirchToken ubirch token of the user whose device stubs to list
+    * @param oidcToken     OIDC token of the user whose device stubs to list
+    * @param ubirchToken   ubirch token of the user whose device stubs to list
     * @return http response
     */
   def deviceBulkPOST(deviceDataRaw: DeviceDataRaw,
@@ -64,7 +65,7 @@ object AvatarRestClient
                     ): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
-    logger.debug(s"try to call REST endpoint: $url")
+    logger.debug(s"try to call REST endpoint: POST $url")
 
     httpClient.post(
       url,
@@ -80,7 +81,7 @@ object AvatarRestClient
                 ): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
-    logger.debug(s"try to call REST endpoint: $url")
+    logger.debug(s"try to call REST endpoint: POST $url")
 
     httpClient.post(
       url = url,
@@ -98,7 +99,7 @@ object AvatarRestClient
   def deviceStubGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[DeviceInfo]] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceStub}")
-    logger.debug(s"try to call REST endpoint: $url")
+    logger.debug(s"try to call REST endpoint: GET $url")
 
     val res = httpClient.get(
       url = url,
@@ -128,7 +129,7 @@ object AvatarRestClient
   def deviceGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[Device]] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
-    logger.debug(s"try to call REST endpoint: $url")
+    logger.debug(s"try to call REST endpoint: GET $url")
 
     val res = httpClient.get(
       url = url,
@@ -162,7 +163,7 @@ object AvatarRestClient
                  ): Option[Device] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceWithId(device.deviceId)}")
-    logger.debug(s"try to call REST endpoint: $url")
+    logger.debug(s"try to call REST endpoint: PUT $url")
 
     val res = httpClient.put(
       url = url,
@@ -180,6 +181,38 @@ object AvatarRestClient
 
       logger.error(s"failed to update device: response=$res")
       None
+
+    }
+
+  }
+
+  /**
+    * @param deviceId    id of device to delete
+    * @param oidcToken   OIDC token of the user whose device to update
+    * @param ubirchToken ubirch token of the user whose device to update
+    * @return true if device has been deleted or did not exist; false otherwise
+    */
+  def deviceIdDELETE(deviceId: UUID,
+                     oidcToken: Option[String],
+                     ubirchToken: Option[String] = None
+                    ): Boolean = {
+
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceWithId(deviceId.toString)}")
+    logger.debug(s"try to call REST endpoint: DELETE $url")
+
+    val res = httpClient.delete(
+      url = url,
+      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
+    )
+
+    if (res.status == Status.S200_OK) {
+
+      true
+
+    } else {
+
+      logger.error(s"failed to update device: response=$res")
+      false
 
     }
 

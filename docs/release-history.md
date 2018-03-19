@@ -2,7 +2,8 @@
 
 ### Version 0.4.1 (tbd)
 
-* tbd
+* added `AvatarRestClient.deviceIdDELETE()`
+* refactored endpoint `DELTET /device/$DEVICE_ID` to be idempotent (deleted device is no longer returned) 
 
 ### Version 0.4.0 (2018-03-19)
 
