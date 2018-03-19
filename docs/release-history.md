@@ -1,6 +1,6 @@
 ## Release History
 
-### Version 0.4.0 (tbd)
+### Version 0.4.0 (2018-03-19)
 
 * refactored actor instantiating
 * fixed pubKey checking
