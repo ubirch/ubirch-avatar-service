@@ -1,5 +1,9 @@
 ## Release History
 
+### Version 0.4.2 (tbd)
+
+# tbd
+
 ### Version 0.4.1 (2018-03-19)
 
 * added `AvatarRestClient.deviceIdDELETE()`
