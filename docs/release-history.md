@@ -1,5 +1,9 @@
 ## Release History
 
+### Version 0.4.1 (tbd)
+
+* tbd
+
 ### Version 0.4.0 (2018-03-19)
 
 * refactored actor instantiating
