@@ -1,10 +1,5 @@
 #! /usr/bin/env python
 
-# Client and server for udp (datagram) echo.
-#
-# Usage: udpecho -s [port]            (to start a server)
-# or:    udpecho -c host [port] <file (client)
-
 import sys
 from socket import *
 import os

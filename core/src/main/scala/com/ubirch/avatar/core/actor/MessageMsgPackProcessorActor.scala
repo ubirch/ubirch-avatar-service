@@ -2,8 +2,9 @@ package com.ubirch.avatar.core.actor
 
 import java.io.ByteArrayInputStream
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.HttpExt
+import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.ubirch.avatar.config.{Config, Const}
@@ -44,10 +45,14 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     case binData: Array[Byte] =>
       val s = sender()
       try {
+
         val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
+
         (unpacker.getNextType match {
-          case ValueType.ARRAY => processMsgPack(binData)
-          case ValueType.INTEGER => processLegacyMsgPack(binData)
+          case ValueType.ARRAY =>
+            processMsgPack(binData)
+          case ValueType.INTEGER =>
+            processLegacyMsgPack(binData)
           case vt: ValueType => vt
         }) match {
           case ddrs: DeviceDataRaws if ddrs.ddrs.nonEmpty =>
@@ -63,7 +68,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       catch {
         case e: Exception =>
           log.error("received invalid data", e)
-          sender ! JsonErrorResponse(errorType = "Invalid Data Error", errorMessage = "Invalid Dataformat")
+          sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"Invalid Dataformat ${e.getMessage}")
       }
     case _ =>
       log.error("received unknown msgPack message ")
@@ -169,11 +174,18 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
             hwDeviceId.trim.toLowerCase),
           did = Some(cd.deviceId.toString),
           mpraw = Some(mpRaw),
-          mppay = Some(Hex.encodeHexString(cd.payloadBin.get)),
+          mppay = if (cd.payloadBin.isDefined) Some(Hex.encodeHexString(cd.payloadBin.get)) else None,
           p = cd.payloadJson,
           s = cd.signature
         )
     }
     DeviceDataRaws(ddrs)
   }
+}
+
+object MessageMsgPackProcessorActor {
+  def props()(implicit mongo: MongoUtil,
+              httpClient: HttpExt,
+              materializer: Materializer): Props = new RoundRobinPool(Config.akkaNumberOfWorkers)
+    .props(Props(new MessageMsgPackProcessorActor()))
 }

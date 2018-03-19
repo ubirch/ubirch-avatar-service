@@ -1,17 +1,15 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directives, Route}
 import akka.pattern.ask
-import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.prometheus.ReqMetrics
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageMsgPackProcessorActor
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
@@ -38,8 +36,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
   private val msgPackProcessorActor = system
-    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
-      .props(Props(new MessageMsgPackProcessorActor())), ActorNames.MSG_MSGPACK_PROCESSOR)
+    .actorSelection(ActorNames.MSG_MSGPACK_PROCESSOR_PATH)
 
   val reqMetrics = new ReqMetrics(metricName = "device_update_mpack")
 

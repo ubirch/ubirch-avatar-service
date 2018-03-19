@@ -36,7 +36,8 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
   import context.{dispatcher, system}
 
-  private val validatorActor = system.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
+  private val msgPackProcessorActor = system
+    .actorSelection(ActorNames.MSG_MSGPACK_PROCESSOR_PATH)
 
   val udpInterface = Config.udpInterface
   val udpPort = Config.udpPort
@@ -57,6 +58,8 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
       context.become(ready(sender()))
       self ! StartTimer
   }
+
+  override def unhandled(message: Any): Unit = {}
 
   @scala.throws[Exception](classOf[Exception])
   override def preStart(): Unit = {
@@ -89,28 +92,8 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
       val dataHex = Hex.encodeHexString(bytes)
       log.debug(s"received from: $remote data: $dataHex")
-      try {
-        val cData = MsgPacker.unpackSingleValue(data.toArray)
-        log.debug(s"calliope data. $cData")
 
-        cData.foreach { cd =>
-          val hwDeviceId = cd.deviceId.toString.toLowerCase()
-          val drd = DeviceDataRaw(
-            v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
-            a = HashUtil.sha512Base64(hwDeviceId),
-            did = Some(cd.deviceId.toString),
-            p = cd.payloadJson,
-            //k = Some(Base64.getEncoder.encodeToString(Hex.decodeHex("80061e8dff92cde5b87116837d9a1b971316371665f71d8133e0ca7ad8f1826a".toCharArray))),
-            s = cd.signature
-          )
-          validatorActor ! drd
-        }
-      }
-      catch {
-        case e: Exception =>
-          log.error(s"invalid data received ${e.getMessage}")
-      }
-
+      msgPackProcessorActor ! bytes
 
     case Udp.Unbind =>
       log.info("Unbind")
