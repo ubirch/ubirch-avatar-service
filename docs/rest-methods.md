@@ -79,7 +79,7 @@ UPDATE device with given id
               "actor","btcDemo"
           ]}'
 
-DELETE device with given id
+DELETE device with given id (idempotent)
 
     curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer token-12345678"
 

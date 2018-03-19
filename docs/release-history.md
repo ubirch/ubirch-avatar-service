@@ -1,9 +1,21 @@
 ## Release History
 
-### Version 0.3.31 (tbd)
+### Version 0.4.2 (tbd)
+
+# tbd
+
+### Version 0.4.1 (2018-03-19)
+
+* added `AvatarRestClient.deviceIdDELETE()`
+* refactored endpoint `DELTET /device/$DEVICE_ID` to be idempotent (deleted device is no longer returned) 
+
+### Version 0.4.0 (2018-03-19)
 
 * refactored actor instantiating
 * fixed pubKey checking
+* update to `com.ubirch.util:oidc-utils:0.5.2`
+* update to `com.ubirch.util:redis-util:0.3.5`
+* refactored `AvatarRestClient` to accept ubirch tokens, too (previously all tokens were used as if they're OIDC tokens) 
 
 ### Version 0.3.30 (2018-03-13)
 

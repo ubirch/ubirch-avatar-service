@@ -1,6 +1,7 @@
 package com.ubirch.avatar.client.rest
 
 import java.net.URL
+import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
@@ -41,11 +42,12 @@ object AvatarRestClient
   def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
-    logger.debug(s"try to call REST endpoint: $url")
-    val msg = Json4sUtil.any2String(deviceDataRaw).get
-    val body = Some(RequestBody(msg, APPLICATION_JSON))
+    logger.debug(s"try to call REST endpoint: POST $url")
 
-    httpClient.post(url, body)
+    httpClient.post(
+      url = url,
+      body = Some(RequestBody(Json4sUtil.any2String(deviceDataRaw).get, APPLICATION_JSON))
+    )
 
   }
 
@@ -53,43 +55,56 @@ object AvatarRestClient
     * Bulk update a device by POSTing raw device data.
     *
     * @param deviceDataRaw raw data to POST
+    * @param oidcToken     OIDC token of the user whose device stubs to list
+    * @param ubirchToken   ubirch token of the user whose device stubs to list
     * @return http response
     */
-  def deviceBulkPOST(authToken: String, deviceDataRaw: DeviceDataRaw): Response = {
+  def deviceBulkPOST(deviceDataRaw: DeviceDataRaw,
+                     oidcToken: Option[String],
+                     ubirchToken: Option[String] = None
+                    ): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
-    logger.debug(s"try to call REST endpoint: $url")
-    val msg = Json4sUtil.any2String(deviceDataRaw).get
-    val body = Some(RequestBody(msg, APPLICATION_JSON))
-    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+    logger.debug(s"try to call REST endpoint: POST $url")
 
-    httpClient.post(url, body, headers)
+    httpClient.post(
+      url,
+      body = Some(RequestBody(Json4sUtil.any2String(deviceDataRaw).get, APPLICATION_JSON)),
+      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
+    )
 
   }
 
-  def devicePOST(authToken: String, device: Device): Response = {
+  def devicePOST(device: Device,
+                 oidcToken: Option[String],
+                 ubirchToken: Option[String] = None
+                ): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
-    logger.debug(s"try to call REST endpoint: $url")
-    val msg = Json4sUtil.any2String(device).get
-    val body = Some(RequestBody(msg, APPLICATION_JSON))
-    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+    logger.debug(s"try to call REST endpoint: POST $url")
 
-    httpClient.post(url, body, headers)
+    httpClient.post(
+      url = url,
+      body = Some(RequestBody(Json4sUtil.any2String(device).get, APPLICATION_JSON)),
+      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
+    )
 
   }
 
   /**
-    * @param authToken token of the user whose device stubs will be listed
+    * @param oidcToken   OIDC token of the user whose device stubs to list
+    * @param ubirchToken ubirch token of the user whose device stubs to list
     * @return None in case of an error; other a sequence (empty if no devices are found)
     */
-  def deviceStubGET(authToken: String): Option[Set[DeviceInfo]] = {
+  def deviceStubGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[DeviceInfo]] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceStub}")
-    logger.debug(s"try to call REST endpoint: $url")
-    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+    logger.debug(s"try to call REST endpoint: GET $url")
 
-    val res = httpClient.get(url, headers)
+    val res = httpClient.get(
+      url = url,
+      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
+    )
 
     if (res.status == Status.S200_OK) {
 
@@ -107,18 +122,18 @@ object AvatarRestClient
   }
 
   /**
-    * @param authToken token of the user whose devices will be listed
+    * @param oidcToken   OIDC token of the user whose device to list
+    * @param ubirchToken ubirch token of the user whose device to list
     * @return None in case of an error; other a sequence (empty if no devices are found)
     */
-  def deviceGET(authToken: String): Option[Set[Device]] = {
+  def deviceGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[Device]] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
-    logger.debug(s"try to call REST endpoint: $url")
-    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+    logger.debug(s"try to call REST endpoint: GET $url")
 
     val res = httpClient.get(
       url = url,
-      requestHeaders = headers
+      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
     )
 
     if (res.status == Status.S200_OK) {
@@ -137,22 +152,23 @@ object AvatarRestClient
   }
 
   /**
-    * @param authToken token of the user whose devices will be updated
-    * @param device    updated device
+    * @param device      updated device
+    * @param oidcToken   OIDC token of the user whose device to update
+    * @param ubirchToken ubirch token of the user whose device to update
     * @return None in case of an error; otherwise the updated device
     */
-  def deviceIdPUT(authToken: String, device: Device): Option[Device] = {
+  def deviceIdPUT(device: Device,
+                  oidcToken: Option[String],
+                  ubirchToken: Option[String] = None
+                 ): Option[Device] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceWithId(device.deviceId)}")
-    logger.debug(s"try to call REST endpoint: $url")
-    val msg = Json4sUtil.any2String(device).get
-    val body = RequestBody(msg, APPLICATION_JSON)
-    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+    logger.debug(s"try to call REST endpoint: PUT $url")
 
     val res = httpClient.put(
       url = url,
-      body = body,
-      requestHeaders = headers
+      body = RequestBody(Json4sUtil.any2String(device).get, APPLICATION_JSON),
+      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
     )
 
     if (res.status == Status.S200_OK) {
@@ -171,18 +187,55 @@ object AvatarRestClient
   }
 
   /**
+    * @param deviceId    id of device to delete
+    * @param oidcToken   OIDC token of the user whose device to update
+    * @param ubirchToken ubirch token of the user whose device to update
+    * @return true if device has been deleted or did not exist; false otherwise
+    */
+  def deviceIdDELETE(deviceId: UUID,
+                     oidcToken: Option[String],
+                     ubirchToken: Option[String] = None
+                    ): Boolean = {
+
+    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceWithId(deviceId.toString)}")
+    logger.debug(s"try to call REST endpoint: DELETE $url")
+
+    val res = httpClient.delete(
+      url = url,
+      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
+    )
+
+    if (res.status == Status.S200_OK) {
+
+      true
+
+    } else {
+
+      logger.error(s"failed to update device: response=$res")
+      false
+
+    }
+
+  }
+
+  /**
     * this method could be used to claim a device by current user (identified by Auth Token)
     * the claimed device may not be owned by an other user
     *
-    * @param hwDeviceId hardware device id as a String
-    * @param authToken  token of the user who will claim a device
+    * @param hwDeviceId  hardware device id as a String
+    * @param oidcToken   OIDC token of the user claiming a device
+    * @param ubirchToken ubirch token of the user claiming a device
     * @return Boolean value
     */
 
-  def claimDevice(hwDeviceId: String, authToken: String): DeviceUserClaim = {
+  def claimDevice(hwDeviceId: String,
+                  oidcToken: Option[String],
+                  ubirchToken: Option[String] = None
+                 ): DeviceUserClaim = {
+
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceClaim}")
     logger.debug(s"try to call REST endpoint: $url")
-    val headers: Headers = new Headers(List(Header(name = "Authorization", value = s"Bearer $authToken")))
+    val headers: Headers = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
 
     val deviceClaim = DeviceClaim(hwDeviceId = hwDeviceId)
     val deviceClaimJsonStr = Json4sUtil.any2String(deviceClaim).get
@@ -216,4 +269,26 @@ object AvatarRestClient
     }
 
   }
+
+  /**
+    * Generates the authorization header depending on which one we have. The OIDC token always has priority.
+    *
+    * @param oidcToken   OIDS token to authorize with
+    * @param ubirchToken ubirch token to authorize with (ignored if OIDC token is defined)
+    * @return list of either OIDC token or ubirch token; exception if none is defined
+    */
+  private def authHeaders(oidcToken: Option[String], ubirchToken: Option[String] = None): Headers = {
+
+    require(oidcToken.isDefined || ubirchToken.isDefined, "OIDC token or ubirch token may be defined")
+
+    if (oidcToken.isDefined) {
+      Headers(List(Header(name = "Authorization", value = s"Bearer ${oidcToken.get}")))
+    } else if (ubirchToken.isDefined) {
+      Headers(List(Header(name = "Authorization", value = ubirchToken.get)))
+    } else {
+      List.empty
+    }
+
+  }
+
 }

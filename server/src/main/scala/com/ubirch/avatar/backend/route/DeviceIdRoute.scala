@@ -4,12 +4,13 @@ import java.util.UUID
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.backend.actor.{CreateDevice, CreateResult}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
@@ -20,6 +21,7 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
+
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.duration._
@@ -165,7 +167,7 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
           )
         )
 
-      case Some(dev) =>
+      case Some(_) =>
 
         DeviceManager.update(device = device).map {
 
@@ -212,18 +214,7 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
 
     val result = DeviceManager.info(deviceId) flatMap {
 
-      case None =>
-
-        Future(
-          DeviceIdResult(
-            error = Some(
-              requestErrorResponse(
-                errorType = "DeleteError",
-                errorMessage = s"delete a non existing device: deviceId=$deviceId"
-              )
-            )
-          )
-        )
+      case None => Future(DeviceIdResult(deviceDeleted = true))
 
       case Some(existingDevice) =>
 
@@ -240,7 +231,7 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
               )
             )
 
-          case Some(deleted) => DeviceIdResult(device = Some(deleted))
+          case Some(_) => DeviceIdResult(deviceDeleted = true)
 
         }
 
@@ -249,13 +240,13 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
     onComplete(result) {
 
       case Failure(t) =>
-        logger.error("delete device failed", t)
+        logger.error("device deletion failed", t)
         complete(serverErrorResponse(errorType = "ServerError", errorMessage = t.getMessage))
 
       case Success(resp) =>
 
-        if (resp.device.isDefined) {
-          complete(resp.device.get)
+        if (resp.deviceDeleted) {
+          complete(StatusCodes.OK)
         } else if (resp.error.isDefined) {
           complete(resp.error.get)
         } else {
@@ -269,5 +260,6 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
 }
 
 case class DeviceIdResult(device: Option[Device] = None,
+                          deviceDeleted: Boolean = false,
                           error: Option[HttpResponse] = None
                          )

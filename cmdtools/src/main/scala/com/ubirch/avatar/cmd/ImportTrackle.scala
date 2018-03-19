@@ -68,18 +68,18 @@ object ImportTrackle extends App
     case None =>
       logger.error("unable to import trackle data if auth token is not configured (see config key 'ubirchAvatarService.cmdTools.userToken'")
 
-    case Some(token) =>
+    case Some(oidcToken) =>
       logger.info(s"start import for $hwDeviceId / $hashedHwDeviceId")
-      importData(token)
-    //      if (createDevice(token, device)) {
-    //        importData(token)
+      importData(oidcToken)
+    //      if (createDevice(device, oidcToken)) {
+    //        importData(oidcToken)
     //      }
 
   }
 
-  private def createDevice(token: String, device: Device): Boolean = {
+  private def createDevice(device: Device, oidcToken: String): Boolean = {
 
-    val deviceCreationResponse = AvatarRestClient.devicePOST(token, device)
+    val deviceCreationResponse = AvatarRestClient.devicePOST(device, oidcToken = Some(oidcToken))
 
     if (deviceCreationResponse.status != Status.S200_OK) {
       logger.error(s"failed to create device: response=$deviceCreationResponse")
@@ -89,7 +89,7 @@ object ImportTrackle extends App
 
   }
 
-  private def importData(token: String): Unit = {
+  private def importData(oidcToken: String): Unit = {
 
     //  private val allDataFiles = s"${googleDriveBasePath}Google Drive/trackle/Tests Sophie/rawdataFiles/testLogData/allDatafiles.txt"
     val allDataFiles = "./data/datafiles.txt"
@@ -113,7 +113,7 @@ object ImportTrackle extends App
 
       if (csvFile.exists() && logFile.exists()) {
 
-        importCsvFile(token, csvFile = csvFile, logFile = logFile)
+        importCsvFile(oidcToken, csvFile = csvFile, logFile = logFile)
 
       } else {
 
@@ -131,7 +131,7 @@ object ImportTrackle extends App
 
   }
 
-  private def importCsvFile(token: String,
+  private def importCsvFile(oidcToken: String,
                             csvFile: File,
                             logFile: File
                            ): Unit = {
@@ -182,7 +182,7 @@ object ImportTrackle extends App
               p = payload
             )
 
-            val ddrBulkResponse = AvatarRestClient.deviceBulkPOST(token, ddr)
+            val ddrBulkResponse = AvatarRestClient.deviceBulkPOST(ddr, oidcToken = Some(oidcToken))
             if (ddrBulkResponse.status == Status.S200_OK) {
               logger.info(s"data created")
             } else {
