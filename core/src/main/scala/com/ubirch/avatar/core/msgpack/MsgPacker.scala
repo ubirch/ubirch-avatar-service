@@ -212,9 +212,7 @@ object MsgPacker extends StrictLogging {
     cd
   }
 
-  private def processSigendMessage(unpacker: Unpacker): Option[MsgPackMessage]
-
-  = {
+  private def processSigendMessage(unpacker: Unpacker): Option[MsgPackMessage] = {
     var currentId: Int = 0
     var cd: Option[MsgPackMessage] = None
     try {

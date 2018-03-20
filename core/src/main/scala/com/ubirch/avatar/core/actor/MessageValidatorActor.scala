@@ -82,7 +82,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
               case true =>
                 replayFilterActor tell((drd, dev), sender = s)
               case _ =>
-                s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s} (${drd.k.getOrElse("without pubKey")})", "ValidationError")
+                s ! logAndCreateErrorResponse(s"invalid ecc signature: ${drd.a} / ${drd.s.getOrElse("no signature")})", "ValidationError")
             }
           }
           else
