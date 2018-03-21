@@ -38,8 +38,13 @@ object Boot extends App
   implicit val httpClient: HttpExt = Http()
 
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
-  createMongoConstraints()
-
+  try {
+    createMongoConstraints()
+  }
+  catch {
+    case e: Exception =>
+      logger.error("mongo startup bug", e)
+  }
   logger.info("ubirchAvatarService started")
 
   implicit val timeout = Timeout(Config.actorTimeout seconds)
