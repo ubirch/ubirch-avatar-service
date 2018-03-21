@@ -1,7 +1,6 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import akka.camel.CamelMessage
 import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
@@ -62,9 +61,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
         }
         log.debug(s"current producer counter: ${connections.size}")
       }
-    case msg: CamelMessage =>
-      //@TODO check why we receive here CamelMessages ???
-      log.debug(s"received CamelMessage")
+
     case _ =>
       log.error("received unknown message")
   }

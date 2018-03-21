@@ -1,5 +1,6 @@
 package com.ubirch.avatar.backend.route
 
+import akka.http.scaladsl.model.StatusCodes.OK
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server._
 import com.ubirch.avatar.config.Config
@@ -16,10 +17,10 @@ trait WelcomeRoute extends MyJsonProtocol {
   val route: Route = {
 
     get {
-      complete {
-        val goInfo = s"${Config.goPipelineName} / ${Config.goPipelineLabel} / ${Config.goPipelineRevision}"
-        JsonResponse(message = s"Welcome to the ubirchAvatarService ( $goInfo )")
-      }
+
+      val goInfo = s"${Config.goPipelineName} / ${Config.goPipelineLabel} / ${Config.goPipelineRevision}"
+      complete(OK -> JsonResponse(message = s"Welcome to the ubirchAvatarService ( $goInfo )"))
+
     }
   }
 }

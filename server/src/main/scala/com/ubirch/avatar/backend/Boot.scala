@@ -45,8 +45,13 @@ object Boot extends App
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
-  createElasticsearchMappings()
-
+  try {
+    createElasticsearchMappings()
+  }
+  catch {
+    case e: Exception =>
+      logger.error("es startup bug", e)
+  }
   ActorStarter.init(system)
 
   //import io.prometheus.client.hotspot.DefaultExports
