@@ -59,9 +59,11 @@ object Boot extends App
   }
   ActorStarter.init(system)
 
-  //import io.prometheus.client.hotspot.DefaultExports
+  // Configure StatisticsHandler
+
+  import io.prometheus.client.hotspot.DefaultExports
   // start default prometheus JVM collectors
-  //DefaultExports.initialize()
+  DefaultExports.initialize()
 
   DeviceTypeManager.init()
 

@@ -331,10 +331,10 @@ lazy val constructr = Seq(
 )
 
 lazy val prometheus = Seq(
-  "io.prometheus" % "simpleclient" % "0.1.0",
-  "io.prometheus" % "simpleclient_hotspot" % "0.1.0",
-  "io.prometheus" % "simpleclient_httpserver" % "0.1.0",
-  "io.prometheus" % "simpleclient_pushgateway" % "0.1.0"
+  "io.prometheus" % "simpleclient" % "0.3.0",
+  "io.prometheus" % "simpleclient_hotspot" % "0.3.0",
+  "io.prometheus" % "simpleclient_httpserver" % "0.3.0",
+  "io.prometheus" % "simpleclient_pushgateway" % "0.3.0"
   , "com.workday" %% "prometheus-akka" % "0.8.5"
   , "org.aspectj" % "aspectjweaver" % "1.8.10"
 )
