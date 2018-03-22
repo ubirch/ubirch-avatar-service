@@ -8,7 +8,7 @@ import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.ubirch.avatar.config.{Config, Const}
-import com.ubirch.avatar.core.msgpack.MsgPacker
+import com.ubirch.avatar.core.msgpack.{MsgPacker, UbMsgPacker}
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceDataRaws}
 import com.ubirch.avatar.util.actor.ActorNames
@@ -84,7 +84,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     val ddrs: Set[DeviceDataRaw] = MsgPacker.getMsgPackVersion(binData) match {
       case mpv if mpv.version.equals(Const.MSGP_V41) =>
         // process ubirch Protocoll
-
+        UbMsgPacker.processUbirchprot(binData)
         throw new Exception("unsupported msgpack version")
       case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
         MsgPacker.unpackTimeseries(binData) match {
