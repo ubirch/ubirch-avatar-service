@@ -83,6 +83,8 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 
     val ddrs: Set[DeviceDataRaw] = MsgPacker.getMsgPackVersion(binData) match {
       case mpv if mpv.version.equals(Const.MSGP_V41) =>
+        // process ubirch Protocoll
+
         throw new Exception("unsupported msgpack version")
       case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
         MsgPacker.unpackTimeseries(binData) match {
