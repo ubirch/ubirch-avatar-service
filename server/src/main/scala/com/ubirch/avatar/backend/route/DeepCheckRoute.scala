@@ -46,7 +46,7 @@ class DeepCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient
           onComplete(deepCheckActor ? DeepCheckRequest()) {
 
             case Failure(t) =>
-              logger.error("failed to run deepCheck (check DeepCheckRoute for bugs!!!)", t)
+              logger.error(s"failed to run deepCheck: ${t.getMessage}", t)
               complete(serverErrorResponse(errorType = "ServerError", errorMessage = "sorry, something went wrong on our end"))
 
             case Success(resp) =>

@@ -4,10 +4,11 @@ import akka.actor.{Actor, ActorLogging}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import com.ubirch.avatar.core.check.DeepCheckManager
-import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
+import com.ubirch.util.deepCheck.model.DeepCheckRequest
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 
-import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 /**
   * author: cvandrei
@@ -23,12 +24,19 @@ class DeepCheckActor(implicit mongo: MongoUtil, httpClient: HttpExt, materialize
 
     case _: DeepCheckRequest =>
       val sender = context.sender()
-      deepCheck() map (sender ! _)
+      DeepCheckManager.connectivityCheck().onComplete {
+        case Success(dcr) =>
+          sender ! dcr
+        case Failure(t) =>
+          sender ! JsonErrorResponse(
+            errorType = "InternalError",
+            errorMessage = t.getMessage
+          )
+      }
 
     case _ => log.error("unknown message")
 
   }
 
-  private def deepCheck(): Future[DeepCheckResponse] = DeepCheckManager.connectivityCheck()
 
 }

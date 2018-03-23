@@ -14,8 +14,8 @@ import time
 # current UDP LB
 UDP_IP = "34.248.246.47"
 
-UDP_PORT = 6060
-# UDP_PORT = 7070
+# UDP_PORT = 6060
+UDP_PORT = 7070
 # UDP_PORT = 9090
 
 # MESSAGE = bytes("Hello, World!", "utf-8")
