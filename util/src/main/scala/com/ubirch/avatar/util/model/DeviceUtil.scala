@@ -1,15 +1,13 @@
 package com.ubirch.avatar.util.model
 
 import java.security._
-import java.util.Base64
+import java.util.{Base64, UUID}
 
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.JsonFormats
-
 import org.json4s._
 import org.json4s.native.Serialization._
-
 import net.i2p.crypto.eddsa.spec.{EdDSANamedCurveTable, EdDSAParameterSpec}
 import net.i2p.crypto.eddsa.{EdDSAEngine, KeyPairGenerator}
 
@@ -20,6 +18,14 @@ import net.i2p.crypto.eddsa.{EdDSAEngine, KeyPairGenerator}
 object DeviceUtil {
 
   implicit val formats: Formats = JsonFormats.default
+
+
+  def hashHwDeviceId(hwDeviceId: UUID): String = hashHwDeviceId(hwDeviceId.toString)
+
+  def hashHwDeviceId(hwDeviceId: String) = {
+    val hwid = hwDeviceId.trim.toLowerCase
+    HashUtil.sha512Base64(hwid)
+  }
 
   def sign(payload: JValue, device: Device): (String, String) = {
 

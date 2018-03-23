@@ -31,6 +31,7 @@ object DeepCheckManager {
 
     // TODO check MQTT connection
     // TODO check SQS connections
+    // TODO check Redis connections
 
     for {
 

@@ -352,7 +352,7 @@ lazy val ubirchUtilRedisUtil = ubirchUtilGroup %% "redis-util" % "0.3.5"
 lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.4" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.8" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.3.8" excludeAll (excludedLoggers: _*)
-lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.1" excludeAll (excludedLoggers: _*)
+lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.2" excludeAll (excludedLoggers: _*)
 
 lazy val ubirchChainModel = ubirchChainG %% "model-rest" % "0.1.4" excludeAll (excludedLoggers: _*)
 
