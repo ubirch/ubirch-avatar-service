@@ -61,9 +61,9 @@ object Boot extends App
 
   // Configure StatisticsHandler
 
-  import io.prometheus.client.hotspot.DefaultExports
-  // start default prometheus JVM collectors
-  DefaultExports.initialize()
+  //  import io.prometheus.client.hotspot.DefaultExports
+  //   start default prometheus JVM collectors
+  //  DefaultExports.initialize()
 
   DeviceTypeManager.init()
 
