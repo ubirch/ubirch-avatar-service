@@ -29,8 +29,11 @@ object DeepCheckManager {
     */
   def connectivityCheck()(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer): Future[DeepCheckResponse] = {
 
+    //@REVIEW
     // TODO check MQTT connection
     // TODO check SQS connections
+    // TODO check Redis connections
+    // TODO check Auth connections
 
     for {
 

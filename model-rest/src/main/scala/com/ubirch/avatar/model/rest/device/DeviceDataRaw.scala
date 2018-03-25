@@ -35,6 +35,8 @@ case class DeviceDataRaw(
                           mpraw: Option[String] = None, //raw msgpack message as hex string
                           mppay: Option[String] = None, //raw msgpack payload as hex string
                           p: JValue,
+                          config: Option[JValue] = None,
+                          meta: Option[JValue] = None,
                           deviceId: Option[String] = None,
                           deviceName: Option[String] = None,
                           chainedHash: Option[String] = None, // MD5 hash of signature

@@ -75,7 +75,7 @@ object ImportProdLogs
         DeviceManager.infoByHwId(di.hwDeviceId).map {
           case Some(dev) =>
             logger.info(s"device already exist: ${dev.deviceName}")
-            DeviceManager.delete(dev)
+            //DeviceManager.delete(dev)
             logger.info(s"device deleted: ${dev.deviceName}")
           case None =>
             val dev = Device(

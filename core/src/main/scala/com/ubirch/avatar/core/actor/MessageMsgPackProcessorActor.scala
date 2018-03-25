@@ -8,7 +8,7 @@ import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.ubirch.avatar.config.{Config, Const}
-import com.ubirch.avatar.core.msgpack.MsgPacker
+import com.ubirch.avatar.core.msgpack.{MsgPacker, UbMsgPacker}
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceDataRaws}
 import com.ubirch.avatar.util.actor.ActorNames
@@ -18,6 +18,7 @@ import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
+import org.joda.time.{DateTime, DateTimeZone}
 import org.msgpack.ScalaMessagePack
 import org.msgpack.`type`.ValueType
 
@@ -67,12 +68,12 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       }
       catch {
         case e: Exception =>
-          log.error("received invalid data", e)
-          sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"Invalid Dataformat ${e.getMessage}")
+          log.error(e, s"received invalid data")
+          sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid dataformat ${e.getMessage}")
       }
     case _ =>
       log.error("received unknown msgPack message ")
-      sender ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "Invalid Input Data")
+      sender ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "invalid input data")
   }
 
 
@@ -83,7 +84,21 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 
     val ddrs: Set[DeviceDataRaw] = MsgPacker.getMsgPackVersion(binData) match {
       case mpv if mpv.version.equals(Const.MSGP_V41) =>
-        throw new Exception("unsupported msgpack version")
+        // process ubirch Protocoll
+        UbMsgPacker.processUbirchprot(binData).map { ubm =>
+          DeviceDataRaw(
+            v = MessageVersion.v003,
+            fw = ubm.firmwareVersion.getOrElse("n.a."),
+            a = ubm.hashedHwDeviceId,
+            s = ubm.signature,
+            mpraw = Some(ubm.rawMessage),
+            mppay = Some(ubm.rawPayload),
+            p = ubm.payloads.data,
+            config = ubm.payloads.config,
+            meta = ubm.payloads.meta,
+            ts = DateTime.now(DateTimeZone.UTC)
+          )
+        }
       case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
@@ -98,7 +113,6 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
                     a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
                     s = mpData.signature,
                     mpraw = Some(hexVal),
-                    //mpraw = None,
                     chainedHash = mpData.prevMessageHash,
                     p = p,
                     ts = mpData.created,
@@ -168,6 +182,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     val ddrs = cData map {
       cd =>
         val hwDeviceId = cd.deviceId.toString.toLowerCase()
+
         DeviceDataRaw(
           v = if (cd.signature.isDefined) MessageVersion.v002 else MessageVersion.v000,
           a = HashUtil.sha512Base64(

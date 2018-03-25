@@ -15,6 +15,7 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.deepCheck.model.{DeepCheckRequest, DeepCheckResponse}
 import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
@@ -47,14 +48,19 @@ class DeepCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient
 
             case Failure(t) =>
               logger.error(s"failed to run deepCheck: ${t.getMessage}", t)
-              complete(serverErrorResponse(errorType = "ServerError", errorMessage = "sorry, something went wrong on our end"))
+              complete(serverErrorResponse(errorType = "ServerError", errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
 
             case Success(resp) =>
               resp match {
 
-                case res: DeepCheckResponse if res.status => complete(StatusCodes.OK -> res)
-                case res: DeepCheckResponse if !res.status => complete(response(responseObject = res, status = StatusCodes.ServiceUnavailable))
-                case _ => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "failed to run deep check"))
+                case res: DeepCheckResponse if res.status =>
+                  complete(StatusCodes.OK -> res)
+                case res: DeepCheckResponse if !res.status =>
+                  complete(response(responseObject = res, status = StatusCodes.ServiceUnavailable))
+                case jre: JsonErrorResponse =>
+                  complete(StatusCodes.InternalServerError -> jre)
+                case _ =>
+                  complete(serverErrorResponse(errorType = "ServerError", errorMessage = "failed to run deep check"))
 
               }
 
