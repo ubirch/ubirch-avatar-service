@@ -2,7 +2,10 @@
 
 ### Version 0.4.2 (tbd)
 
-# tbd
+* update to `com.ubirch.user:client-rest:0.8.3`
+* update to `com.ubirch.util:mongo-utils:0.4.1`
+* update to `com.ubirch.util:mongo-test-utils:0.4.1`
+* update to `com.ubirch.util:oidc-utils:0.5.3`
 
 ### Version 0.4.1 (2018-03-19)
 
