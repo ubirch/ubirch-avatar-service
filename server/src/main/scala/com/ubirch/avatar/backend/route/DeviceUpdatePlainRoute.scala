@@ -56,36 +56,40 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                             reqMetrics.inc
                             reqMetrics.stop
                             complete(dsuString)
-                          case jerr: JsonErrorResponse =>
+                          case jer: JsonErrorResponse =>
                             reqMetrics.incError
                             reqMetrics.stop
-                            logger.error(jerr.errorMessage)
-                            complete(StatusCodes.BadRequest -> jerr.toJsonString)
+                            logger.error(jer.errorMessage)
+                            complete(StatusCodes.BadRequest -> jer.toJsonString)
                           case _ =>
                             reqMetrics.incError
                             reqMetrics.stop
                             logger.error("update device data failed")
-                            complete(StatusCodes.BadRequest -> JsonErrorResponse(errorType = "ValidationError", errorMessage = "update device data failed").toJsonString)
+                            val jer = JsonErrorResponse(errorType = "ValidationError", errorMessage = "update device data failed")
+                            complete(StatusCodes.BadRequest -> jer.toJsonString)
                         }
 
                       case Failure(t) =>
                         reqMetrics.incError
                         reqMetrics.stop
                         logger.error("update device data failed", t)
-                        complete(StatusCodes.InternalServerError -> JsonErrorResponse(errorType = "ServerError", errorMessage = t.getMessage).toJsonString)
+                        val jer = JsonErrorResponse(errorType = "ServerError", errorMessage = t.getMessage)
+                        complete(StatusCodes.InternalServerError -> jer.toJsonString)
                     }
 
                   case None =>
                     reqMetrics.incError
                     reqMetrics.stop
-                    complete(StatusCodes.BadRequest -> JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json").toJsonString)
+                    val jer = JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json")
+                    complete(StatusCodes.BadRequest -> jer.toJsonString)
 
                 }
 
               case None =>
                 reqMetrics.incError
                 reqMetrics.stop
-                complete(StatusCodes.BadRequest -> JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json input").toJsonString)
+                val jer = JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json input")
+                complete(StatusCodes.BadRequest -> jer.toJsonString)
             }
           }
         }

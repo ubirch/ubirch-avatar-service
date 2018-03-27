@@ -17,8 +17,9 @@ import org.json4s._
   * @param v  message type version
   * @param k  public key
   * @param ts timestamp
-  * @param s  hashed auth token or public key
+  * @param s  signature of payload
   * @param p  payload
+  * @param ds signature of las device message
   */
 case class DeviceStateUpdate(
                               id: UUID = UUIDUtil.uuid, // messageId
@@ -26,6 +27,7 @@ case class DeviceStateUpdate(
                               k: String,
                               s: String,
                               p: JValue,
+                              ds: Option[String],
                               ts: DateTime = DateTime.now
                             ) {
   override def hashCode(): Int = id.hashCode()

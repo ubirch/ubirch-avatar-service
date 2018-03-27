@@ -37,7 +37,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
-  private val outboxManagerActor: ActorRef = context.actorOf(DeviceOutboxManagerActor.props(), ActorNames.DEVICE_OUTBOX_MANAGER)
+  private val outboxManagerActor = context.actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
 
   private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100000)}")
 
@@ -67,17 +67,21 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
       }
 
-      processPayload(device, pl).onComplete {
+      processPayload(device, pl, drdPatched.s).onComplete {
         case Success(Some(d)) =>
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
         case Success(None) =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
+          val jer = JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
+          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          s ! jer
         case Failure(t) =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-          s ! JsonErrorResponse(errorType = "AvatarState Error", errorMessage = t.getMessage)
+          val jer = JsonErrorResponse(errorType = "AvatarState Error", errorMessage = t.getMessage)
+          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          s ! jer
       }
 
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
@@ -105,9 +109,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       outboxManagerActor ! (device, drdPatched)
   }
 
-  private def processPayload(device: Device, payload: JValue): Future[Option[DeviceStateUpdate]] = {
+  private def processPayload(device: Device, payload: JValue, signature: Option[String] = None): Future[Option[DeviceStateUpdate]] = {
     processStateTimer.start
-    AvatarStateManagerREST.setReported(restDevice = device, payload) map {
+    AvatarStateManagerREST.setReported(restDevice = device, payload, signature) map {
       case Some(currentAvatarState) =>
         val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
         DeviceStateManager.upsert(state = dsu)

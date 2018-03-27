@@ -1,10 +1,13 @@
 package com.ubirch.avatar.core.msgpack
 
 import java.io.ByteArrayInputStream
+import java.util.Base64
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
 import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
@@ -23,6 +26,7 @@ object UbMsgPacker
     with MyJsonProtocol {
 
   private final val SIGPARTLEN: Int = 67
+
 
   def processUbirchprot(binData: Array[Byte]): Set[UbMessage] = {
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
@@ -236,6 +240,40 @@ object UbMsgPacker
     val json = JObject(res)
     logger.debug(compact(render(json)))
     json
+  }
+
+  def packUbProt(dsu: DeviceStateUpdate): Array[Byte] = {
+    // @TODO have to be changed !!!
+    val (puk, prk) = EccUtil.generateEccKeyPairEncoded
+    val packer = ScalaMessagePack.messagePack.createBufferPacker()
+
+    val subversion = if (dsu.ds.isDefined) 3 else 2
+    val uuid = UUIDUtil.uuid
+    val binUuid = UUIDUtil.toByteArray(uuid)
+
+    packer.write((1 << 5) + subversion)
+    packer.write(binUuid)
+    if (dsu.ds.isDefined) {
+      val binSig = Hex.decodeHex(dsu.ds.get)
+      packer.write(binSig)
+    }
+    packer.write(85)
+    val pl = dsu.p.extract[Map[String, Int]]
+    val plKeys = pl.keySet
+    packer.writeMapBegin(plKeys.size)
+    plKeys.foreach { k =>
+      if (pl.get(k).isDefined) {
+        packer.write(k)
+        packer.write(pl.get(k).get)
+      }
+    }
+    packer.writeMapEnd()
+
+    val payloadBin = packer.toByteArray
+    val signatureB64 = EccUtil.signPayload(privateKey = prk, payload = payloadBin)
+    packer.write(Base64.getDecoder.decode(signatureB64))
+
+    packer.toByteArray
   }
 
 }

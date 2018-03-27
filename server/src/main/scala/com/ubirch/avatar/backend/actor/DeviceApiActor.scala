@@ -228,7 +228,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
       session.userContext.userId
     }")
 
-    UserServiceClientRest.groups(
+    UserServiceClientRest.groupMemberOf(
       contextName = session.userContext.context,
       providerId = session.userContext.providerId,
       externalUserId = session.userContext.userId

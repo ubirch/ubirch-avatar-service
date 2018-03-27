@@ -20,6 +20,7 @@ case class AvatarState(deviceId: String,
                        desired: Option[JValue] = None,
                        reported: Option[JValue] = None,
                        delta: Option[JValue] = None,
+                       currentDeviceSignature: Option[String] = None,
                        // update on device
                        deviceLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)),
                        // update on server side

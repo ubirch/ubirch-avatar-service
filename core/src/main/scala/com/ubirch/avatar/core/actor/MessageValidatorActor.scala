@@ -4,8 +4,9 @@ import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
-import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceManager
+import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
@@ -30,6 +31,9 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   private val replayFilterActor = context
     .actorSelection(ActorNames.REPLAY_FILTER_PATH)
 
+  private val outboxManagerActor = context
+    .actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
+
   override def receive: Receive = {
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v000 =>
@@ -41,7 +45,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
-          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid hwDeviceId: ${drd.a}")
+          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid hwDeviceId: ${drd.a}", deviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v001 =>
@@ -53,7 +57,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
-          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid simple signature: ${drd.a} / ${drd.s}")
+          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid simple signature: ${drd.a} / ${drd.s}", deviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v002 || drd.v == MessageVersion.v003 =>
@@ -82,14 +86,14 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
               case true =>
                 replayFilterActor tell((drd, dev), sender = s)
               case _ =>
-                s ! logAndCreateErrorResponse(s"ecc signature check failed: ${drd.s.getOrElse("no signature")} (hwDeviceId: ${drd.a})", "ValidationError")
+                s ! logAndCreateErrorResponse(s"ecc signature check failed: ${drd.s.getOrElse("no signature")} (hwDeviceId: ${drd.a})", "ValidationError", deviceId = Some(drd.a))
             }
           }
           else
-            s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError")
+            s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError", deviceId = Some(dev.deviceId))
 
         case None =>
-          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
+          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", deviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v40 =>
@@ -101,18 +105,21 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
-          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError")
+          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", Some(drd.a))
       }
 
     case drd: DeviceDataRaw =>
-      sender ! logAndCreateErrorResponse(s"received unknown message version: ${drd.v}", "ValidationError")
+      sender ! logAndCreateErrorResponse(s"received unknown message version: ${drd.v}", "ValidationError", Some(drd.a))
     case _ =>
-      sender ! logAndCreateErrorResponse("received unknown message", "ValidationError")
+      sender ! logAndCreateErrorResponse(msg = "received unknown message", errType = "ValidationError", None)
   }
 
-  private def logAndCreateErrorResponse(msg: String, errType: String): JsonErrorResponse = {
+  private def logAndCreateErrorResponse(msg: String, errType: String, deviceId: Option[String]): JsonErrorResponse = {
     log.error(msg)
-    JsonErrorResponse(errorType = errType, errorMessage = msg)
+    val jer = JsonErrorResponse(errorType = errType, errorMessage = msg)
+    if (deviceId.isDefined)
+      outboxManagerActor ! MessageReceiver(deviceId.get, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+    jer
   }
 
 }
