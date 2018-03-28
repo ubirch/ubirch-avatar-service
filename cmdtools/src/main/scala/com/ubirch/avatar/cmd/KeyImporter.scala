@@ -1,22 +1,26 @@
 package com.ubirch.avatar.cmd
 
-import java.io.{BufferedInputStream, File, FileInputStream}
+import java.io.{File, FileInputStream}
 import java.util.Base64
 
 import com.google.common.io.ByteStreams
 import com.ubirch.crypto.ecc.EccUtil
-import net.i2p.crypto.eddsa.EdDSAPrivateKey
 import org.apache.commons.codec.binary.Hex
 
 object KeyImporter extends App {
 
   val (pu2, pr2) = EccUtil.generateEccKeyPair
 
+  val pu2Hex = Hex.encodeHexString(pu2.getEncoded)
+  val pr2Hex = Hex.encodeHexString(pr2.getEncoded)
+
   val rawPubKeyFilename = "/Volumes/ubirch master keys/trackle/dev-master-ed25519.pub"
   val rawPrivKeyFilename = "/Volumes/ubirch master keys/trackle/dev-master-ed25519.bin"
+  //  val rawPrivKeyFilename = "/Volumes/ubirch master keys/ubirch/20180328_local-backend-ed25519.prk.bin"
 
   val puBytes = ByteStreams.toByteArray(new FileInputStream(new File(rawPubKeyFilename)))
   val prBytes = ByteStreams.toByteArray(new FileInputStream(new File(rawPrivKeyFilename)))
+  //val puBytes = prBytes.takeRight(32)
 
   val puBytesHex = Hex.encodeHexString(puBytes)
   val prBytesHex = Hex.encodeHexString(prBytes)
@@ -37,6 +41,5 @@ object KeyImporter extends App {
   val prBytes2 = pr2.getEncoded
 
   println("done")
-
 
 }

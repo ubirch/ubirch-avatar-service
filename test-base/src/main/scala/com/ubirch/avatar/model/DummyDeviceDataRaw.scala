@@ -5,6 +5,7 @@ import java.util.UUID
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.avatar.util.server.ServerKeys
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
@@ -32,7 +33,7 @@ object DummyDeviceDataRaw {
   : DeviceDataRaw = {
 
     val p = randomPayload(timestamp)
-    val (k, s) = DeviceUtil.sign(p, device)
+    val s = DeviceUtil.sign(p)
 
     DeviceDataRaw(
       id = messageId,
@@ -40,7 +41,7 @@ object DummyDeviceDataRaw {
       fw = "V1.2.3",
       a = HashUtil.sha512Base64(device.hwDeviceId),
       ts = timestamp,
-      k = Some(k),
+      k = Some(ServerKeys.pubKeyEnc),
       s = Some(s),
       p = p
     )

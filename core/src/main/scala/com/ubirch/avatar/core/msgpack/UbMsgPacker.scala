@@ -7,6 +7,7 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
 import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.avatar.util.server.ServerKeys
 import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
@@ -243,8 +244,7 @@ object UbMsgPacker
   }
 
   def packUbProt(dsu: DeviceStateUpdate): Array[Byte] = {
-    // @TODO have to be changed !!!
-    val (puk, prk) = EccUtil.generateEccKeyPairEncoded
+
     val packer = ScalaMessagePack.messagePack.createBufferPacker()
 
     val subversion = if (dsu.ds.isDefined) 3 else 2
@@ -270,7 +270,7 @@ object UbMsgPacker
     packer.writeMapEnd()
 
     val payloadBin = packer.toByteArray
-    val signatureB64 = EccUtil.signPayload(privateKey = prk, payload = payloadBin)
+    val signatureB64 = EccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
     packer.write(Base64.getDecoder.decode(signatureB64))
 
     packer.toByteArray
