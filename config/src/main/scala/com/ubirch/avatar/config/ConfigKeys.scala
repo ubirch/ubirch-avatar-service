@@ -160,4 +160,7 @@ object ConfigKeys {
 
   final val MQTT_PUBLISH_PROCESSED = s"$mqttPrefix.publishProcessed"
 
+  // server key
+  final val SERVER_PUBLICKEY = s"$prefix.publicKey"
+  final val SERVER_PRIVATEKEY = s"$prefix.privateKey"
 }

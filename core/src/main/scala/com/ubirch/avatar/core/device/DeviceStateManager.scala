@@ -5,6 +5,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceStateUpdate}
 import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.avatar.util.server.ServerKeys
 import com.ubirch.util.elasticsearch.client.binary.storage.ESBulkStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
@@ -25,12 +26,13 @@ object DeviceStateManager extends MyJsonProtocol with StrictLogging {
 
     val payload = avatarState.delta.getOrElse(Json4sUtil.string2JValue("{}").get)
 
-    val (k, s) = DeviceUtil.sign(payload, device)
+    val s = DeviceUtil.sign(payload)
 
     DeviceStateUpdate(
       id = UUIDUtil.uuid,
-      k = k,
+      k = ServerKeys.pubKeyEnc,
       s = s,
+      ds = avatarState.currentDeviceSignature,
       p = payload
     )
   }

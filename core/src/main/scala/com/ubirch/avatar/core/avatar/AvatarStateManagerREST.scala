@@ -32,9 +32,9 @@ object AvatarStateManagerREST {
 
   }
 
-  def setReported(restDevice: Device, reported: JValue)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
+  def setReported(restDevice: Device, reported: JValue, signature: Option[String] = None)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
-    AvatarStateManager.setReported(restDevice, reported) map {
+    AvatarStateManager.setReported(restDevice, reported, signature) map {
 
       case None => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
@@ -63,6 +63,7 @@ object AvatarStateManagerREST {
       inSync = Some(dbAvatarState.reported == dbAvatarState.desired),
       desired = desiredJvalue,
       reported = reportedJvalue,
+      currentDeviceSignature = dbAvatarState.currentDeviceSignature,
       deviceLastUpdated = dbAvatarState.deviceLastUpdated,
       avatarLastUpdated = dbAvatarState.avatarLastUpdated
     )

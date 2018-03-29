@@ -341,13 +341,13 @@ lazy val prometheus = Seq(
 
 lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
 lazy val ubirchConfig = ubirchUtilG %% "config" % "0.2.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.2" excludeAll (excludedLoggers: _*)
+lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.5" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.3.6" excludeAll (excludedLoggers: _*)
 lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.3.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchJson = ubirchUtilG %% "json" % "0.4.3" excludeAll (excludedLoggers: _*)
-lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.3.7" excludeAll (excludedLoggers: _*)
+lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
 lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
+lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchUtilRedisUtil = ubirchUtilGroup %% "redis-util" % "0.3.5"
 lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.2.4" excludeAll (excludedLoggers: _*)
 lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.3.8" excludeAll (excludedLoggers: _*)
@@ -359,7 +359,7 @@ lazy val ubirchChainModel = ubirchChainG %% "model-rest" % "0.1.4" excludeAll (e
 lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
-lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.7.0" excludeAll (excludedLoggers: _*)
+lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.8.3" excludeAll (excludedLoggers: _*)
 lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.4.1-SNAPSHOT" excludeAll (excludedLoggers: _*)
 
 /*
