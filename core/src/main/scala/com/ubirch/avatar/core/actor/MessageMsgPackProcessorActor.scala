@@ -87,7 +87,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         // process ubirch Protocoll
         UbMsgPacker.processUbirchprot(binData).map { ubm =>
           DeviceDataRaw(
-            v = MessageVersion.v003,
+            v = MessageVersion.v000,
             fw = ubm.firmwareVersion.getOrElse("n.a."),
             a = ubm.hashedHwDeviceId,
             s = ubm.signature,
