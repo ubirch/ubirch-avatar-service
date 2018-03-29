@@ -139,7 +139,7 @@ object AvatarStateManager extends MongoFormats
 
   }
 
-  def setReported(device: Device, reported: JValue)
+  def setReported(device: Device, reported: JValue, signature: Option[String] = None)
                  (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
     val reportedString = Some(Json4sUtil.jvalue2String(reported))
@@ -204,7 +204,7 @@ object AvatarStateManager extends MongoFormats
     }
   }
 
-  private def newAvatarStateWithReported(device: Device, reported: Option[String]): AvatarState = {
+  private def newAvatarStateWithReported(device: Device, reported: Option[String], signature: Option[String] = None): AvatarState = {
 
     device.deviceConfig match {
 
@@ -212,7 +212,8 @@ object AvatarStateManager extends MongoFormats
 
         AvatarState(
           deviceId = device.deviceId,
-          reported = reported
+          reported = reported,
+          currentDeviceSignature = signature
         )
 
       case Some(deviceConfig: JValue) =>
@@ -220,7 +221,8 @@ object AvatarStateManager extends MongoFormats
         AvatarState(
           deviceId = device.deviceId,
           reported = reported,
-          desired = Some(Json4sUtil.jvalue2String(deviceConfig))
+          desired = Some(Json4sUtil.jvalue2String(deviceConfig)),
+          currentDeviceSignature = signature
         )
 
     }

@@ -1,15 +1,18 @@
 package com.ubirch.avatar.util.model
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
+import com.ubirch.avatar.util.server.ServerKeys
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.MyJsonProtocol
-
 import org.json4s.JValue
 import org.json4s.native.Serialization.read
 import org.scalatest.{FeatureSpec, Matchers}
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 /**
   * Created by derMicha on 18/01/17.
@@ -29,12 +32,13 @@ class DeviceUtilTest extends FeatureSpec
         """[{"t":2630,"p":1014,"h":2783,"a":2587090,"la":"52.481083","lo":"13.3643","ba":100,"lp":1,"e":0,"aq":111,"aqr":121,"ts":"2004-1-1/0:0:32"},{"t":2630,"p":1014,"h":2783,"a":2587090,"la":"52.481083","lo":"13.3643","ba":100,"lp":2,"e":0,"aq":111,"aqr":121,"ts":"2004-01-01 00:00:33"}]"""
       )
 
-      val (k, s) = DeviceUtil.sign(payload, device)
+      val s = DeviceUtil.sign(payload)
+      val k = ServerKeys.pubKeyEnc
 
       logger.info(s"k: $k")
       logger.info(s"s: $s")
 
-      val checkedD = DeviceCoreUtil.validateSignedMessage(k, s, payload)
+      val checkedD = Await.result(DeviceCoreUtil.validateSignedMessage(k, s, payload), 2 seconds)
       checkedD shouldBe true
     }
 
@@ -42,9 +46,10 @@ class DeviceUtilTest extends FeatureSpec
 
       val payload = read[JValue]("")
 
-      val (k, s) = DeviceUtil.sign(payload, device)
+      val s = DeviceUtil.sign(payload)
+      val k = ServerKeys.pubKeyEnc
 
-      val checkedD = DeviceCoreUtil.validateSignedMessage(k, s, payload)
+      val checkedD = Await.result(DeviceCoreUtil.validateSignedMessage(k, s, payload), 2 seconds)
       checkedD shouldBe true
 
     }

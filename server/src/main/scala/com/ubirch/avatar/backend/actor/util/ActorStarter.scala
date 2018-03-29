@@ -5,7 +5,7 @@ import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.backend.actor.DeviceApiActor
-import com.ubirch.avatar.core.actor.{MessageMsgPackProcessorActor, MessageProcessorActor, MessageValidatorActor, ReplayFilterActor}
+import com.ubirch.avatar.core.actor._
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.actor.TransformerConsumerActor
@@ -54,6 +54,11 @@ object ActorStarter extends StrictLogging {
         MessageMsgPackProcessorActor.props(),
         ActorNames.MSG_MSGPACK_PROCESSOR
       )
+
+    val ob = system.actorOf(
+      DeviceOutboxManagerActor.props(),
+      ActorNames.DEVICE_OUTBOX_MANAGER
+    )
   }
 
 }
