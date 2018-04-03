@@ -1,4 +1,4 @@
-package com.ubirch.avatar.util.server
+package com.ubirch.server.util
 
 import java.util.Base64
 
@@ -9,11 +9,12 @@ import com.ubirch.crypto.ecc.EccUtil
 
 object ServerKeys extends StrictLogging {
 
+  private final val KEYLEN: Int = 64
+
   //private final val pubKeyHex: String = Config.serverPublicKey
-  private final val pubKeyHex: String = Config.serverPrivateKey.takeRight(64)
+  private final val pubKeyHex: String = Config.serverPrivateKey.takeRight(KEYLEN)
   logger.debug(s"pubKeyHex: $pubKeyHex")
-  //private final val privKeyHex: String = Config.serverPrivateKey
-  private final val privKeyHex: String = Config.serverPrivateKey
+  private final val privKeyHex: String = Config.serverPrivateKey.take(KEYLEN)
   logger.debug(s"prvKeyHex: $privKeyHex")
 
   private final val pubKeyBin: Array[Byte] = CodecUtil.multiDecoder(pubKeyHex).get

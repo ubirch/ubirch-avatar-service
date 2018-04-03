@@ -7,8 +7,8 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
 import com.ubirch.avatar.util.model.DeviceUtil
-import com.ubirch.avatar.util.server.ServerKeys
 import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex

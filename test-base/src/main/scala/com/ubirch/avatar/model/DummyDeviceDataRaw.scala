@@ -5,8 +5,8 @@ import java.util.UUID
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.model.DeviceUtil
-import com.ubirch.avatar.util.server.ServerKeys
 import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue

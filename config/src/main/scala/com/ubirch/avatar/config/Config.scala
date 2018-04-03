@@ -268,10 +268,8 @@ object Config extends ConfigBase {
   def mqttPublishProcessed: Boolean = config.getBoolean(ConfigKeys.MQTT_PUBLISH_PROCESSED)
 
   /*
-  * Server ECC private keys
+  * Server ECC signing private keys
    */
-  def serverPublicKey: String = config.getString(ConfigKeys.SERVER_PUBLICKEY)
-
-  def serverPrivateKey: String = config.getString(ConfigKeys.SERVER_PRIVATEKEY)
+  def serverPrivateKey: String = config.getString(ConfigKeys.SIGNING_PRIVATE_KEY)
 
 }

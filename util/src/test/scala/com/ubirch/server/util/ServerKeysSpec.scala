@@ -1,4 +1,4 @@
-package com.ubirch.avatar.util.server
+package com.ubirch.server.util
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.crypto.ecc.EccUtil

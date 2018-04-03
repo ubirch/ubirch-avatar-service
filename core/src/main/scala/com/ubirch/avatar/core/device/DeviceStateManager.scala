@@ -5,7 +5,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceStateUpdate}
 import com.ubirch.avatar.util.model.DeviceUtil
-import com.ubirch.avatar.util.server.ServerKeys
+import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.elasticsearch.client.binary.storage.ESBulkStorage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil

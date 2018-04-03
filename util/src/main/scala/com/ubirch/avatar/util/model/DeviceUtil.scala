@@ -3,9 +3,9 @@ package com.ubirch.avatar.util.model
 import java.util.UUID
 
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.util.server.ServerKeys
 import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.json.JsonFormats
 import org.json4s._
 import org.json4s.native.Serialization._
