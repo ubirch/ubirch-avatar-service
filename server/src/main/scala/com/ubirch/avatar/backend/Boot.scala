@@ -13,6 +13,7 @@ import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
+import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.elasticsearch.client.transport.TransportClient
@@ -48,6 +49,9 @@ object Boot extends App
   logger.info("ubirchAvatarService started")
 
   implicit val timeout = Timeout(Config.actorTimeout seconds)
+
+  val publicKey = ServerKeys.pubKeyEnc
+  logger.info(s"publicKey=$publicKey")
 
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
   try {
