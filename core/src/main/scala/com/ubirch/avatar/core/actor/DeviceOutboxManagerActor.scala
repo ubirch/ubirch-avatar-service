@@ -7,6 +7,7 @@ import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
+import org.apache.camel.Message
 
 import scala.collection.parallel.mutable
 
@@ -61,11 +62,14 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
         }
         log.debug(s"current producer counter: ${connections.size}")
       }
-
-    case _ =>
-      log.error("received unknown message")
   }
 
+  override def unhandled(message: Any): Unit = {
+    log.error(s"${message.getClass.toString}")
+    if (message.isInstanceOf[Message]) {
+      log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
+    }
+  }
 }
 
 object DeviceOutboxManagerActor {

@@ -61,41 +61,41 @@ class DeviceApiActor(implicit mongo: MongoUtil,
       val s = sender
       DeviceManager.infoByHwId(duc.hwDeviceId).map {
         case Some(device) =>
-          device.owners.size match {
-            case 0 =>
-              UserServiceClientRest.userGET(providerId = duc.providerId, externalUserId = duc.externalId).map {
-
-                case Some(user) if user.id.isDefined =>
+          UserServiceClientRest.userGET(providerId = duc.providerId, externalUserId = duc.externalId).map {
+            case Some(user) if user.id.isDefined =>
+              if (device.owners.size == 0 || device.owners.contains(user.id.get)) {
+                if (device.owners.size == 0)
                   DeviceManager.update(device.copy(owners = Set(user.id.get)))
-                  s ! DeviceUserClaim(
-                    hwDeviceId = duc.hwDeviceId,
-                    deviceId = device.deviceId,
-                    userId = user.id.get
-                  )
-                case None =>
-                  s ! JsonErrorResponse(
-                    errorType = "DeviceClaimError",
-                    errorMessage = s"cloud not claim device ${duc.hwDeviceId} with invalid user ${duc.externalId}"
-                  )
+                s ! DeviceUserClaim(
+                  hwDeviceId = duc.hwDeviceId,
+                  deviceId = device.deviceId,
+                  userId = user.id.get
+                )
               }
-
-            case _ =>
+              else {
+                s ! JsonErrorResponse(
+                  errorType = "DeviceClaimError",
+                  errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
+                )
+              }
+            case None =>
               s ! JsonErrorResponse(
                 errorType = "DeviceClaimError",
-                errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
+                errorMessage = s"cloud not claim device ${duc.hwDeviceId} with invalid user ${duc.externalId}"
               )
           }
-
         case None =>
           s ! JsonErrorResponse(
             errorType = "DeviceClaimError",
             errorMessage = s"device ${duc.hwDeviceId} does not exist"
           )
       }
-    case _ =>
-      logger.error("received unknown message")
-      sender() ! JsonErrorResponse(errorType = "ServerError", errorMessage = "internal server error")
+  }
 
+  override def unhandled(message: Any): Unit = {
+    context.sender ! JsonErrorResponse(
+      errorType = "InternalError",
+      errorMessage = s"received unknown message: ${message.toString}")
   }
 
   private def allDevices(session: AvatarSession): Future[Seq[Device]] = {
