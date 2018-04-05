@@ -3,7 +3,7 @@ package com.ubirch.avatar.cmd
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.config.Const
+import com.ubirch.avatar.config.{Config, Const}
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.model.DeviceTypeUtil
@@ -41,15 +41,15 @@ object ImportProdLogs
   val defaultGroup = UUIDUtil.uuid
 
   val sep = "\t"
-  val envId = "local_dev"
-  //  val envId = Config.enviroment
 
-  //val queue1 = s"$envId-avatar-service-outbox"
-  val queue1 = "local_dev_ubirch_transformer_outbox"
-  //val rawQueue1 = s"$envId-avatar-service-inbox"
-  val rawQueue1 = "local_dev_ubirch_transformer_inbox"
-  //val rawQueue2 = s"$envId-trackle-service-inbox"
-  val rawQueue2 = "local_dev-trackle-service-inbox"
+  val envId = Config.enviroment
+  val queue1 = s"$envId-avatar-service-outbox"
+  val rawQueue1 = s"$envId-avatar-service-inbox"
+  val rawQueue2 = s"$envId-trackle-service-inbox"
+  //  val envId = "local_dev"
+  //  val rawQueue1 = "local_dev_ubirch_transformer_inbox"
+  //  val queue1 = "local_dev_ubirch_transformer_outbox"
+  //  val rawQueue2 = "local_dev-trackle-service-inbox"
 
   val deviceTypeOffset = 0
   val deviceTestDatetimeOffset = 1

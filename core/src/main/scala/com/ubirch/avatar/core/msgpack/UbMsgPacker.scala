@@ -248,10 +248,16 @@ object UbMsgPacker
     val packer = ScalaMessagePack.messagePack.createBufferPacker()
 
     val subversion = if (dsu.ds.isDefined) 3 else 2
+
     val uuid = UUIDUtil.uuid
     val binUuid = UUIDUtil.toByteArray(uuid)
 
-    packer.write((1 << 5) + subversion)
+    val arraySize = if (dsu.ds.isDefined)
+      6
+    else
+      5
+    packer.writeArrayBegin(arraySize)
+    packer.write((1 << 4) + subversion)
     packer.write(binUuid)
     if (dsu.ds.isDefined) {
       val binSig = Hex.decodeHex(dsu.ds.get)
@@ -272,7 +278,7 @@ object UbMsgPacker
     val payloadBin = packer.toByteArray
     val signatureB64 = EccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
     packer.write(Base64.getDecoder.decode(signatureB64))
-
+    packer.writeArrayEnd(true)
     packer.toByteArray
   }
 
