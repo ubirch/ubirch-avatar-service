@@ -37,11 +37,11 @@ class MessageNotaryActorSpec(implicit system:ActorSystem) extends ElasticsearchS
       rawAfterOpt should be('isDefined)
 
       val rawAfter = rawAfterOpt.get
-      rawAfter.chainedHash should be('isDefined)
+      rawAfter.ps should be('isDefined)
       rawAfter.txHash should be('isDefined)
       rawAfter.txHashLink should be('isDefined)
       rawAfter.txHashLinkHtml should be('isDefined)
-      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None, txHashLinkHtml = None) should be(rawBefore)
+      rawAfter.copy(ps = None, txHash = None, txHashLink = None, txHashLinkHtml = None) should be(rawBefore)
 
     }
 
@@ -63,12 +63,12 @@ class MessageNotaryActorSpec(implicit system:ActorSystem) extends ElasticsearchS
       rawAfterOpt should be('isDefined)
       val rawAfter = rawAfterOpt.get
 
-      rawAfter.chainedHash should be('isDefined)
+      rawAfter.ps should be('isDefined)
       rawAfter.txHash should be('isDefined)
       rawAfter.txHashLink should be('isDefined)
       rawAfter.txHashLinkHtml should be('isDefined)
       rawAfter.txHash should not be rawBefore.txHash
-      rawAfter.copy(chainedHash = None, txHash = None, txHashLink = None, txHashLinkHtml = None) should be(rawBefore.copy(txHash = None))
+      rawAfter.copy(ps = None, txHash = None, txHashLink = None, txHashLinkHtml = None) should be(rawBefore.copy(txHash = None))
 
     }
 

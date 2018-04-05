@@ -38,7 +38,7 @@ class DeviceUtilTest extends FeatureSpec
       logger.info(s"k: $k")
       logger.info(s"s: $s")
 
-      val checkedD = Await.result(DeviceCoreUtil.validateSignedMessage(k, s, payload), 2 seconds)
+      val checkedD = Await.result(DeviceCoreUtil.validateSignedMessageWithKey(k, s, payload), 2 seconds)
       checkedD shouldBe true
     }
 
@@ -49,7 +49,7 @@ class DeviceUtilTest extends FeatureSpec
       val s = DeviceUtil.sign(payload)
       val k = ServerKeys.pubKeyEnc
 
-      val checkedD = Await.result(DeviceCoreUtil.validateSignedMessage(k, s, payload), 2 seconds)
+      val checkedD = Await.result(DeviceCoreUtil.validateSignedMessageWithKey(k, s, payload), 2 seconds)
       checkedD shouldBe true
 
     }

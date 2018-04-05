@@ -27,11 +27,14 @@ case class DeviceDataRaw(
                           id: UUID = UUIDUtil.uuid, // messageId
                           v: String = MessageVersion.v003,
                           fw: String = "n.a.",
+                          umv: Option[Int] = None, // ubirch protocoll main version
+                          usv: Option[Int] = None, // ubirch protocoll sub version
                           a: String,
                           did: Option[String] = None, //deviceHwId
                           ts: DateTime = DateTime.now(),
                           k: Option[String] = None,
                           s: Option[String] = None,
+                          ps: Option[String] = None, // Signature of previous message form this device
                           mpraw: Option[String] = None, //raw msgpack message as hex string
                           mppay: Option[String] = None, //raw msgpack payload as hex string
                           p: JValue,
@@ -39,13 +42,12 @@ case class DeviceDataRaw(
                           meta: Option[JValue] = None,
                           deviceId: Option[String] = None,
                           deviceName: Option[String] = None,
-                          chainedHash: Option[String] = None, // MD5 hash of signature
                           txHash: Option[String] = None, // related bitcoin transaction hash
                           txHashLink: Option[String] = None, // related chain explorer url
                           txHashLinkHtml: Option[String] = None, // related chain explorer html-link
-                          refId: Option[UUID] = None,
                           deviceType: Option[String] = None,
-                          tags: Option[Set[String]] = None
+                          tags: Option[Set[String]] = None,
+                          refId: Option[UUID] = None
                         ) {
   override def hashCode(): Int = id.hashCode()
 

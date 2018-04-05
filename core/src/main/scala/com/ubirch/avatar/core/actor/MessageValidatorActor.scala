@@ -65,21 +65,23 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       log.debug(s"received message version: ${drd.v}")
 
+      val hashedPayload = if (drd.umv.isDefined && drd.umv == 1) true else false
+
       DeviceManager.infoByHashedHwId(drd.a).map {
         case Some(dev) =>
           if (drd.s.isDefined) {
             (if (drd.k.isEmpty && drd.mppay.isEmpty) {
-              DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p)
+              DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = drd.p, hashedPayload = hashedPayload)
             }
             else if (drd.k.isEmpty && drd.mppay.isDefined) {
               val mp = Hex.decodeHex(drd.mppay.get.toCharArray)
-              DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = mp)
+              DeviceCoreUtil.validateSignedMessage(device = dev, signature = drd.s.get, payload = mp, hashedPayload = hashedPayload)
             }
             else if (drd.k.isDefined && drd.mppay.isEmpty)
-              DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = drd.p)
+              DeviceCoreUtil.validateSignedMessageWithKey(key = drd.k.get, signature = drd.s.get, payload = drd.p)
             else if (drd.k.isDefined && drd.mppay.isDefined) {
               val mp = Hex.decodeHex(drd.mppay.get.toCharArray)
-              DeviceCoreUtil.validateSignedMessage(key = drd.k.get, signature = drd.s.get, payload = mp)
+              DeviceCoreUtil.validateSignedMessageWithKey(key = drd.k.get, signature = drd.s.get, payload = mp)
             }
             else
               Future(false)) map {

@@ -89,9 +89,11 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           DeviceDataRaw(
             v = MessageVersion.v000,
             fw = ubm.firmwareVersion.getOrElse("n.a."),
+            umv = Some(ubm.mainVersion),
+            usv = Some(ubm.subVersion),
             a = ubm.hashedHwDeviceId,
             s = ubm.signature,
-            chainedHash = ubm.prevSignature,
+            ps = ubm.prevSignature,
             mpraw = Some(ubm.rawMessage),
             mppay = Some(ubm.rawPayload),
             p = ubm.payloads.data,
@@ -114,7 +116,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
                     a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
                     s = mpData.signature,
                     mpraw = Some(hexVal),
-                    chainedHash = mpData.prevMessageHash,
+                    ps = mpData.prevMessageHash,
                     p = p,
                     ts = mpData.created,
                     refId = Some(refId)
@@ -139,7 +141,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
                     a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
                     s = mpData.signature,
                     mpraw = Some(hexVal),
-                    chainedHash = mpData.prevMessageHash,
+                    ps = mpData.prevMessageHash,
                     p = p,
                     ts = mpData.created
                   ))
@@ -160,7 +162,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
               a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
               s = mpData.signature,
               mpraw = Some(hexVal),
-              chainedHash = mpData.prevMessageHash,
+              ps = mpData.prevMessageHash,
               p = mpData.payloadJson,
               ts = mpData.created
             ))

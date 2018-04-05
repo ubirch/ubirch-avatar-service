@@ -65,35 +65,43 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def validateSignedMessage(key: String, signature: String, payload: JValue): Future[Boolean] = {
-    val payloadString = write(payload)
-    Future(EccUtil.validateSignature(publicKey = key, signature = signature, payload = payloadString))
-  }
+  def validateSignedMessageWithKey(key: String,
+                                   signature: String,
+                                   payload: JValue): Future[Boolean] = {
+    val binPayload = write(payload).getBytes
 
-  def validateSignedMessage(key: String, signature: String, payload: Array[Byte]): Future[Boolean] = {
-    val payloadString = write(payload)
-    Future(EccUtil.validateSignature(publicKey = key, signature = signature, payload = payloadString))
-  }
-
-
-  def validateSignedMessage(device: Device,
-                            signature: String,
-                            payload: JValue
-                           )
-                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
-    val payloadString = write(payload)
-    validateSignedMessage(device = device,
+    validateSignedMessageWithKey(key = key,
       signature = signature,
-      payload = payloadString.getBytes
+      payload = binPayload
     )
   }
 
+  def validateSignedMessageWithKey(key: String,
+                                   signature: String,
+                                   payload: Array[Byte]): Future[Boolean] = {
+
+    Future(EccUtil.validateSignature(publicKey = key, signature = signature, payload = payload))
+  }
+
   def validateSignedMessage(device: Device,
                             signature: String,
-                            payload: Array[Byte]
+                            payload: JValue,
+                            hashedPayload: Boolean
                            )
                            (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
+    val binData = write(payload).getBytes
+    validateSignedMessage(device = device,
+      signature = signature,
+      payload = binData,
+      hashedPayload = hashedPayload)
+  }
 
+  def validateSignedMessage(device: Device,
+                            signature: String,
+                            payload: Array[Byte],
+                            hashedPayload: Boolean
+                           )
+                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
     try {
       KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId.toLowerCase).map {
         case Some(keys) if keys.isEmpty =>
@@ -102,7 +110,10 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
           false
         case Some(keys) =>
           keys.map { key =>
-            val valid = EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+            val valid = if (hashedPayload)
+              EccUtil.validateSignatureSha512(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+            else
+              EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
             valid
           }.count(_ == true) == 1
         case None =>
