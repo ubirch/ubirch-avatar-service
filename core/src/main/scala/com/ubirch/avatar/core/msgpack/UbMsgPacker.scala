@@ -8,6 +8,7 @@ import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
@@ -276,7 +277,8 @@ object UbMsgPacker
     packer.writeMapEnd()
 
     val payloadBin = packer.toByteArray
-    val signatureB64 = EccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
+
+    val signatureB64 = EccUtil.signPayloadSha512(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
     packer.write(Base64.getDecoder.decode(signatureB64))
     packer.writeArrayEnd(true)
     packer.toByteArray
