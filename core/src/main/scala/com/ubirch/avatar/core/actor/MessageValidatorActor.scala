@@ -65,7 +65,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       log.debug(s"received message version: ${drd.v}")
 
-      val hashedPayload = if (drd.umv.isDefined && drd.umv == 1) true else false
+      val hashedPayload = if (drd.umv.isDefined && drd.umv.get == 1) true else false
 
       DeviceManager.infoByHashedHwId(drd.a).map {
         case Some(dev) =>

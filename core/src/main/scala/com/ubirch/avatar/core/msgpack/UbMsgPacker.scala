@@ -8,20 +8,18 @@ import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.ecc.EccUtil
-import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.server.util.ServerKeys
-import com.ubirch.util.json.MyJsonProtocol
+import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
-import org.json4s.jackson.JsonMethods.{compact, render}
+import org.json4s.jackson.JsonMethods._
 import org.msgpack.ScalaMessagePack
 import org.msgpack.`type`.{MapValue, Value, ValueType}
 
 import scala.collection.JavaConversions._
-
 
 object UbMsgPacker
   extends StrictLogging
@@ -180,7 +178,7 @@ object UbMsgPacker
       val cMap = payArr.get(4).asMapValue()
       logger.debug(s"v: $version / w: $wakeups / s: $status")
       UbPayloads(
-        data = parseMeasurementMap(mMap),
+        data = parseT84Measurements(mMap),
         meta = Some(meta),
         config = Some(parseConfigMap(cMap))
       )
@@ -189,6 +187,17 @@ object UbMsgPacker
       throw new Exception("playload size not OK")
   }
 
+  private def parseT84Measurements(mVal: MapValue): JValue = {
+    Json4sUtil.any2jvalue(mVal.keySet.toArray.map { key =>
+      val tsMillis = key.toString.toLong * 1000
+      val ts = new DateTime(tsMillis, DateTimeZone.UTC)
+      val t = mVal.get(key).asIntegerValue().getInt
+      ("t" -> t) ~
+        ("ts" -> ts.toString)
+    }).get
+  }
+
+  //@TODO have to be checked!!!
   private def parseMeasurementMap(mVal: MapValue): JValue = {
     val res = mVal.keySet.toArray.map { key =>
       val curVal = mVal.get(key)
