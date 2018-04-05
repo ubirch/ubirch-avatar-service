@@ -91,6 +91,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
             fw = ubm.firmwareVersion.getOrElse("n.a."),
             a = ubm.hashedHwDeviceId,
             s = ubm.signature,
+            chainedHash = ubm.prevSignature,
             mpraw = Some(ubm.rawMessage),
             mppay = Some(ubm.rawPayload),
             p = ubm.payloads.data,
