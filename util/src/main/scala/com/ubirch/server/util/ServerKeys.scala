@@ -15,7 +15,6 @@ object ServerKeys extends StrictLogging {
   private final val pubKeyHex: String = Config.serverPrivateKey.takeRight(KEYLEN)
   logger.debug(s"pubKeyHex: $pubKeyHex")
   private final val privKeyHex: String = Config.serverPrivateKey.take(KEYLEN)
-  logger.debug(s"prvKeyHex: $privKeyHex")
 
   private final val pubKeyBin: Array[Byte] = CodecUtil.multiDecoder(pubKeyHex).get
   private final val privKeyBin: Array[Byte] = CodecUtil.multiDecoder(privKeyHex).get

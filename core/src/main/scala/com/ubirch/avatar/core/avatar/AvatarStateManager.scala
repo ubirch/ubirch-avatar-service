@@ -147,7 +147,7 @@ object AvatarStateManager extends MongoFormats
 
       case None =>
 
-        val toCreate = newAvatarStateWithReported(device, reportedString)
+        val toCreate = newAvatarStateWithReported(device, reportedString, signature = signature)
         logger.debug(s"setReported() - creating new AvatarState: $toCreate")
         create(toCreate)
 
@@ -155,7 +155,8 @@ object AvatarStateManager extends MongoFormats
 
         val toUpdate = avatarState.copy(
           reported = reportedString,
-          deviceLastUpdated = Some(DateTime.now)
+          deviceLastUpdated = Some(DateTime.now),
+          currentDeviceSignature = signature
         )
         logger.debug(s"setReported() - updating AvatarState: $toUpdate")
         update(toUpdate)
