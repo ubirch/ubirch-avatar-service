@@ -77,6 +77,7 @@
   <logger name="com.ubirch.avatar.core.avatar.AvatarStateManager" level="INFO"/>
   <logger name="com.ubirch.avatar.backend.actor.DeviceApiActor" level="INFO"/>
   <logger name="com.ubirch.user.client.rest.UserServiceClientRest" level="INFO"/>
+  <logger name="com.ubirch.util.mongo.connection.MongoUtil" level="INFO"/>
   <logger name="org.apache.http" level="WARN"/>
   <logger name="akka.camel.internal" level="INFO"/>
   <logger name="com.amazonaws" level="WARN"/>

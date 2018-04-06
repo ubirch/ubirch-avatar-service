@@ -88,9 +88,9 @@ object Boot extends App
 
     implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
-    logger.info(s"start prometheus http server on $pinterface:$pport")
-    import io.prometheus.client.exporter.HTTPServer
-    val server = new HTTPServer(pinterface, pport)
+    //    logger.info(s"start prometheus http server on $pinterface:$pport")
+    //    import io.prometheus.client.exporter.HTTPServer
+    //    val server = new HTTPServer(pinterface, pport)
 
     logger.info(s"start http server on $interface:$port")
 
