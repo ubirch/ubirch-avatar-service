@@ -6,7 +6,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.notary.client.NotaryClient
 import com.roundeights.hasher.Implicits._
-
+import com.ubirch.avatar.model.actors.AnchoredRawData
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
 import scala.language.postfixOps
@@ -19,7 +19,7 @@ import scala.language.postfixOps
 class MessageNotaryActor extends Actor
   with ActorLogging {
 
-  private val persistenceActor = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
+  private val persistenceActor = context.actorOf(MessagePersistenceActor.props, ActorNames.PERSISTENCE_SVC)
 
   override def receive: Receive = {
 
@@ -60,4 +60,8 @@ class MessageNotaryActor extends Actor
 
   }
 
+}
+
+object MessageNotaryActor {
+  def props: Props = Props[MessageNotaryActor]
 }

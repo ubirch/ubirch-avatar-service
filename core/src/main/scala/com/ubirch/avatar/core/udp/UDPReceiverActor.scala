@@ -7,11 +7,8 @@ import akka.http.scaladsl.HttpExt
 import akka.io.{IO, Udp}
 import akka.stream.Materializer
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.msgpack.MsgPacker
-import com.ubirch.avatar.model.rest.MessageVersion
-import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
@@ -59,7 +56,9 @@ class UDPReceiverActor(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
       self ! StartTimer
   }
 
-  override def unhandled(message: Any): Unit = {}
+  override def unhandled(message: Any): Unit = {
+    log.error(s"received unknown message: ${message.toString} (${message.getClass.toGenericString}) from: ${context.sender()}")
+  }
 
   @scala.throws[Exception](classOf[Exception])
   override def preStart(): Unit = {

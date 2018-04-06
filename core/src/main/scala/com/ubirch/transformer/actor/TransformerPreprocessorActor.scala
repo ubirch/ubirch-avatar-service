@@ -25,8 +25,7 @@ class TransformerPreprocessorActor
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   val transformPostActor: ActorRef = context
-    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
-      .props(Props[TransformerPostprocessorActor]), ActorNames.TRANSFORMER_POST)
+    .actorOf(TransformerPostprocessorActor.props, ActorNames.TRANSFORMER_POST)
 
   override def receive: Receive = {
 
@@ -86,4 +85,9 @@ class TransformerPreprocessorActor
     case _ =>
       log.error("received unknown message")
   }
+}
+
+object TransformerPreprocessorActor {
+  def props: Props = new RoundRobinPool(Config.akkaNumberOfBackendWorkers)
+    .props(Props[TransformerPreprocessorActor])
 }

@@ -86,8 +86,6 @@ object Config extends ConfigBase {
     */
   def actorTimeout: Int = config.getInt(ConfigKeys.ACTOR_TIMEOUT)
 
-  def akkaNumberOfWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_WORKERS)
-
   def akkaNumberOfFrontendWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_FRONTEND_WORKERS)
 
   def akkaNumberOfBackendWorkers: Int = config.getInt(ConfigKeys.AKKA_NUMBER_OF_BACKEND_WORKERS)

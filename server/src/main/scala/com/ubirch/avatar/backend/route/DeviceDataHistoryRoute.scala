@@ -2,25 +2,23 @@ package com.ubirch.avatar.backend.route
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import com.ubirch.avatar.backend.actor.{HistoryActor, HistoryAfter, HistoryBefore, HistoryByDate, HistoryByDay, HistorySeq}
-import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.device.DeviceHistoryManager
-import com.ubirch.avatar.model.rest.device.DeviceHistory
-import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.avatar.util.server.RouteConstants._
-import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.rest.akka.directives.CORSDirective
-
-import org.joda.time.DateTime
-
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
+import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.avatar.backend.actor.HistoryActor
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.device.DeviceHistoryManager
+import com.ubirch.avatar.model.actors._
+import com.ubirch.avatar.model.rest.device.DeviceHistory
+import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.avatar.util.server.RouteConstants._
+import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import org.joda.time.DateTime
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -31,14 +29,14 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-30
   */
-class DeviceDataHistoryRoute(implicit system:ActorSystem) extends ResponseUtil
+class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
   with CORSDirective
   with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout = Timeout(Config.actorTimeout seconds)
 
-  private val historyActor = system.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[HistoryActor]), ActorNames.HISTORY)
+  private val historyActor = system.actorOf(HistoryActor.props, ActorNames.HISTORY)
 
   val route: Route = {
 

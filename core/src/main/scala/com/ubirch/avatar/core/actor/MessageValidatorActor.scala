@@ -116,6 +116,11 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
       sender ! logAndCreateErrorResponse(msg = "received unknown message", errType = "ValidationError", None)
   }
 
+  override def unhandled(message: Any): Unit = {
+    log.error(s"received unknown message: ${message.toString} (${message.getClass.toGenericString}) from: ${context.sender()}")
+  }
+
+
   private def logAndCreateErrorResponse(msg: String, errType: String, deviceId: Option[String]): JsonErrorResponse = {
     log.error(msg)
     val jer = JsonErrorResponse(errorType = errType, errorMessage = msg)

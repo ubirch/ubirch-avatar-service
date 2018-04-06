@@ -1,8 +1,12 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.{DeviceDataRawAnchoredManager, DeviceDataRawManager}
+import com.ubirch.avatar.model.actors.AnchoredRawData
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
+import com.ubirch.avatar.util.actor.ActorNames
 
 /**
   * Created by derMicha on 28/10/16.
@@ -25,4 +29,6 @@ class MessagePersistenceActor extends Actor with ActorLogging {
 
 }
 
-case class AnchoredRawData(raw: DeviceDataRaw)
+object MessagePersistenceActor {
+  def props: Props = new RoundRobinPool(Config.akkaNumberOfBackendWorkers).props(Props[MessagePersistenceActor])
+}

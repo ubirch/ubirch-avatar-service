@@ -2,7 +2,6 @@ package com.ubirch.transformer.actor
 
 import akka.actor.{ActorLogging, ActorRef, Props}
 import akka.camel.{CamelMessage, Consumer}
-import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -31,8 +30,7 @@ class TransformerConsumerActor
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   val transformerActor: ActorRef = context
-    .actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers)
-      .props(Props[TransformerPreprocessorActor]), ActorNames.TRANSFORMER_PRE)
+    .actorOf(TransformerPreprocessorActor.props, ActorNames.TRANSFORMER_PRE)
 
   //TODO fix error handling, in case of error the message should be resend later?
   override def receive: Receive = {

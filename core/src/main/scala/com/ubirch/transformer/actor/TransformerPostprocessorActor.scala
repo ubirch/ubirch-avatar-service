@@ -1,6 +1,7 @@
 package com.ubirch.transformer.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceHistoryManager
 import com.ubirch.avatar.model._
@@ -68,7 +69,14 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
         case None =>
           log.error("transformation failed")
       }
-    case _ =>
-      log.error(s"received unknown message from ${context.sender()} ")
   }
+
+  override def unhandled(message: Any): Unit = {
+    log.error(s"received unknown message: ${message.toString} from: ${context.sender()}")
+  }
+}
+
+object TransformerPostprocessorActor {
+  def props: Props = new RoundRobinPool(Config.akkaNumberOfBackendWorkers)
+    .props(Props[TransformerPostprocessorActor])
 }

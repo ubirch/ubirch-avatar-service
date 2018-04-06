@@ -1,14 +1,12 @@
 package com.ubirch.avatar.backend.actor
 
-import java.util.UUID
-
+import akka.actor.{Actor, ActorLogging, Props}
+import akka.routing.RoundRobinPool
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceHistoryManager
+import com.ubirch.avatar.model.actors._
 import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.util.model.JsonErrorResponse
-
-import org.joda.time.DateTime
-
-import akka.actor.{Actor, ActorLogging}
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.util.{Failure, Success}
@@ -84,12 +82,6 @@ class HistoryActor extends Actor
 
 }
 
-case class HistoryByDate(deviceId: UUID, from: DateTime, to: DateTime)
-
-case class HistoryBefore(deviceId: UUID, before: DateTime)
-
-case class HistoryAfter(deviceId: UUID, after: DateTime)
-
-case class HistoryByDay(deviceId: UUID, day: DateTime)
-
-case class HistorySeq(seq: Seq[DeviceHistory])
+object HistoryActor {
+  def props: Props = new RoundRobinPool(Config.akkaNumberOfBackendWorkers).props(Props[HistoryActor])
+}

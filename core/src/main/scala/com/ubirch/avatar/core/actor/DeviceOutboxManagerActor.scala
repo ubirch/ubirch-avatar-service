@@ -1,6 +1,7 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.camel.CamelMessage
 import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
@@ -65,10 +66,14 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
   }
 
   override def unhandled(message: Any): Unit = {
-    log.error(s"${message.getClass.toString}")
     if (message.isInstanceOf[Message]) {
-      log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
+      //log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
     }
+    else if (message.isInstanceOf[CamelMessage]) {
+      //log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
+    }
+    else
+      log.error(s"${message.getClass.toString}")
   }
 }
 

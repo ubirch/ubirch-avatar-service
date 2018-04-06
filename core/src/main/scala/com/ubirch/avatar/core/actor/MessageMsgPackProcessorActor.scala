@@ -204,6 +204,6 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 object MessageMsgPackProcessorActor {
   def props()(implicit mongo: MongoUtil,
               httpClient: HttpExt,
-              materializer: Materializer): Props = new RoundRobinPool(Config.akkaNumberOfWorkers)
+              materializer: Materializer): Props = new RoundRobinPool(Config.akkaNumberOfBackendWorkers)
     .props(Props(new MessageMsgPackProcessorActor()))
 }

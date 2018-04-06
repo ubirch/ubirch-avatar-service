@@ -31,9 +31,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private implicit val exContext: ExecutionContextExecutor = context.dispatcher
 
-  private val persistenceActor: ActorRef = context.actorOf(new RoundRobinPool(Config.akkaNumberOfWorkers).props(Props[MessagePersistenceActor]), ActorNames.PERSISTENCE_SVC)
+  private val persistenceActor: ActorRef = context.actorOf(MessagePersistenceActor.props, ActorNames.PERSISTENCE_SVC)
 
-  private val notaryActor: ActorRef = context.actorOf(Props[MessageNotaryActor], ActorNames.NOTARY_SVC)
+  private val notaryActor: ActorRef = context.actorOf(MessageNotaryActor.props, ActorNames.NOTARY_SVC)
 
   private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
@@ -130,6 +130,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 }
 
 object MessageProcessorActor {
-  def props()(implicit mongo: MongoUtil): Props = new RoundRobinPool(Config.akkaNumberOfWorkers)
+  def props()(implicit mongo: MongoUtil): Props = new RoundRobinPool(Config.akkaNumberOfFrontendWorkers)
     .props(Props(new MessageProcessorActor()))
 }
