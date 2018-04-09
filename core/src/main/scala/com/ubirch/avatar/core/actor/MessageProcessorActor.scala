@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.routing.RoundRobinPool
-import com.ubirch.avatar.config.{Config, Const}
+import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
 import com.ubirch.avatar.core.prometheus.Timer
@@ -10,6 +10,7 @@ import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
+import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -71,19 +72,16 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         case Success(Some(d)) =>
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-        //@TODO just a hot fix
-        //outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
         case Success(None) =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
           val jer = JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
-          //@TODO just a hot fix
-          //outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
           s ! jer
         case Failure(t) =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
           val jer = JsonErrorResponse(errorType = "AvatarState Error", errorMessage = t.getMessage)
-          //@TODO just a hot fix
-          //outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
           s ! jer
       }
 

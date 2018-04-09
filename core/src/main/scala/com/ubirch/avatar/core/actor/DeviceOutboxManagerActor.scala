@@ -3,10 +3,10 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.config.ConfigKeys
-import com.ubirch.avatar.model.actors.MessageReceiver
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.transformer.actor.TransformerProducerActor
+import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.Json4sUtil
 import org.apache.camel.Message
 
@@ -25,6 +25,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     case (device: Device, drd: DeviceDataRaw) =>
       val drdExt = drd.copy(deviceId = Some(device.deviceId))
       device.pubRawQueues.getOrElse(Set()).foreach { queue =>
+
         val taRef = if (connections.keySet.contains(queue)) {
           log.debug(s"found MessageReceiver actorRef for: $queue")
           val transformerActor = connections(queue)
@@ -37,6 +38,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
           connections.put(queue, transformerActor)
           transformerActor
         }
+
         Json4sUtil.any2String(drdExt) match {
           case Some(drdStr) =>
             taRef ! drdStr
