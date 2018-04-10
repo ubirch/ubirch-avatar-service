@@ -19,7 +19,21 @@ Import Production Log
     1. KeyService
     1. avatarService
 
-1. use this script: *com.ubirch.avatar.cmd.ImportProdLogs*
+1. use this script: *com.ubirch.avatar.cmd.ImportProdLogs* 
+
+    1. parameter: -Dconfig.resource=application-admin.conf
+    1. env vars (all envs): 
+    
+        1. AWS_ACCESS_KEY_ID=***********************
+        1. AWS_SECRET_ACCESS_KEY=***********************
+    
+    1. env vars (trackle-dev):
+    
+        1. ES_HOST=970da16b74ddc9259ef1440d77f907f9.eu-west-1.aws.found.io
+        1. ES_CLUSTER_NAME=970da16b74ddc9259ef1440d77f907f9
+        1. ES_PORT=9343
+        1. ELASTIC_IO_PASSWORD=***********************
+        1. ELASTIC_IO_USER=elastic
 
 ## configure behavior
 

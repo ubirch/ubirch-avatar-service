@@ -38,7 +38,7 @@ object ImportProdLogs
 
   val basePath = conf.getString("importProdLogs.basePath")
 
-  val prodLogs = conf.getList("importProdLogs.prodLogs").asScala.toSet
+  val prodLogs = conf.getStringList("importProdLogs.prodLogs").asScala.toSet
 
   val defaultGroup = UUIDUtil.uuid
 
