@@ -2,8 +2,9 @@ package com.ubirch.avatar.cmd
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.config.{Config, Const}
+import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.model.DeviceTypeUtil
@@ -11,12 +12,15 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 
+import scala.collection.JavaConverters._
 import scala.concurrent.Future
 import scala.io.Source
 
 object ImportProdLogs
   extends App
     with StrictLogging {
+
+  val conf = ConfigFactory.load()
 
   implicit val system = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -32,24 +36,20 @@ object ImportProdLogs
                          tester: String
                        )
 
-  val basePath = "/Volumes/GoogleDrive/My Drive/trackle/Dokumentation/TD Dokumente/Elsa/TD-In Bearbeitung/Produktvalidierung/Software Tests/TestProduktionslogs4TestCases"
+  val basePath = conf.getString("importProdLogs.basePath")
 
-  val prodLogs = Set[String](
-    "20180308-production-log.tsv"
-  )
+  val prodLogs = conf.getList("importProdLogs.prodLogs").asScala.toSet
 
   val defaultGroup = UUIDUtil.uuid
 
+  val deleteExistingDevices = conf.getBoolean("importProdLogs.deleteExistingDevices")
+
   val sep = "\t"
 
-  val envId = Config.enviroment
-  val queue1 = s"$envId-avatar-service-outbox"
-  val rawQueue1 = s"$envId-avatar-service-inbox"
-  val rawQueue2 = s"$envId-trackle-service-inbox"
-  //  val envId = "local_dev"
-  //  val rawQueue1 = "local_dev_ubirch_transformer_inbox"
-  //  val queue1 = "local_dev_ubirch_transformer_outbox"
-  //  val rawQueue2 = "local_dev-trackle-service-inbox"
+  val envId = conf.getString("importProdLogs.envId")
+  val rawQueue1 = conf.getString("importProdLogs.rawQueue1")
+  val queue1 = conf.getString("importProdLogs.queue1")
+  val rawQueue2 = conf.getString("importProdLogs.rawQueue2")
 
   val deviceTypeOffset = 0
   val deviceTestDatetimeOffset = 1
@@ -78,8 +78,10 @@ object ImportProdLogs
         DeviceManager.infoByHwId(di.hwDeviceId).map {
           case Some(dev) =>
             logger.info(s"device already exist: ${dev.deviceName}")
-          //DeviceManager.delete(dev)
-          //logger.info(s"device deleted: ${dev.deviceName}")
+            if (deleteExistingDevices) {
+              DeviceManager.delete(dev)
+              logger.info(s"device deleted: ${dev.deviceName}")
+            }
           case None =>
             val dev = Device(
               deviceId = UUIDUtil.uuidStr,
