@@ -270,8 +270,15 @@ object UbMsgPacker
     packer.write((1 << 4) + subversion)
     packer.write(binUuid)
     if (dsu.ds.isDefined) {
-      val binSig = Hex.decodeHex(dsu.ds.get)
-      packer.write(binSig)
+      try {
+
+        val binSig = Hex.decodeHex(dsu.ds.get)
+        packer.write(binSig)
+      }
+      catch {
+        case e: Exception =>
+          logger.error(s"invalid signature: ${dsu.ds.get}")
+      }
     }
     packer.write(85)
     val pl = dsu.p.extract[Map[String, Int]]
