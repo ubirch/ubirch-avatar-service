@@ -1,11 +1,12 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.ubirch.avatar.config.{Config, Const}
+import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.redis.RedisClientUtil
@@ -21,6 +22,9 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
   private val processorActor = context
     .actorSelection(ActorNames.MSG_PROCESSOR_PATH)
 
+  private val outboxManagerActor = context
+    .actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
+
   val redis = RedisClientUtil.getRedisClient()
 
   override def receive: Receive = {
@@ -32,30 +36,40 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
         val currenSig = drd.s.get
         val now = DateTime.now
         val dur = Days.daysBetween(drd.ts, now)
-        if (dur.getDays > Config.getMessageMaxAge)
-          s ! JsonErrorResponse(
+        if (dur.getDays > Config.getMessageMaxAge) {
+          val jer = JsonErrorResponse(
             errorType = "ValidationError",
             errorMessage = "received message from the past error"
           )
-        else if (drd.s.isEmpty)
-          s ! JsonErrorResponse(
+          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          s ! jer
+        }
+        else if (drd.s.isEmpty) {
+          val jer = JsonErrorResponse(
             errorType = "ValidationError",
             errorMessage = "received message without a signature"
           )
+          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          s ! jer
+        }
         else
           redis.get(currenSig) map {
             case Some(v) =>
-              s ! JsonErrorResponse(
+              val jer = JsonErrorResponse(
                 errorType = "ValidationError",
                 errorMessage = "replay attack detected"
               )
+              outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+              s ! jer
             case None =>
               DeviceDataRawManager.loadBySignature(drd.s.get).map {
                 case Some(d) =>
-                  s ! JsonErrorResponse(
+                  val jer = JsonErrorResponse(
                     errorType = "ValidationError",
                     errorMessage = "delayed replay attack detected"
                   )
+                  outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+                  s ! jer
                 case None =>
                   redis.set(currenSig, drd.ts.toString, exSeconds = Some(Config.getMessageSignatureCache))
                   processorActor tell((drd, device), sender = s)

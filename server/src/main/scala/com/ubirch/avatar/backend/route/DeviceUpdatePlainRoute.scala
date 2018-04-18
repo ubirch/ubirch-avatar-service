@@ -55,7 +55,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                             val dsuString = Json4sUtil.jvalue2String(dsuJson)
                             reqMetrics.inc
                             reqMetrics.stop
-                            complete(dsuString)
+                            complete(StatusCodes.Accepted -> dsuString)
                           case jer: JsonErrorResponse =>
                             reqMetrics.incError
                             reqMetrics.stop

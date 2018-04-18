@@ -45,7 +45,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
-          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid hwDeviceId: ${drd.a}", deviceId = Some(drd.a))
+          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid hwDeviceId: ${drd.a}", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v001 =>
@@ -57,7 +57,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
-          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid simple signature: ${drd.a} / ${drd.s}", deviceId = Some(drd.a))
+          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid simple signature: ${drd.a} / ${drd.s}", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v002 || drd.v == MessageVersion.v003 =>
@@ -88,14 +88,14 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
               case true =>
                 replayFilterActor tell((drd, dev), sender = s)
               case _ =>
-                s ! logAndCreateErrorResponse(s"ecc signature check failed: ${drd.s.getOrElse("no signature")} (hwDeviceId: ${drd.a})", "ValidationError", deviceId = Some(drd.a))
+                s ! logAndCreateErrorResponse(s"ecc signature check failed: ${drd.s.getOrElse("no signature")} (hwDeviceId: ${drd.a})", "ValidationError", deviceId = Some(dev.deviceId), hashedHwDeviceId = Some(drd.a))
             }
           }
           else
-            s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError", deviceId = Some(dev.deviceId))
+            s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError", deviceId = Some(dev.deviceId), hashedHwDeviceId = Some(dev.hashedHwDeviceId))
 
         case None =>
-          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", deviceId = Some(drd.a))
+          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v40 =>
@@ -107,13 +107,13 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
-          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", Some(drd.a))
+          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw =>
-      sender ! logAndCreateErrorResponse(s"received unknown message version: ${drd.v}", "ValidationError", Some(drd.a))
+      sender ! logAndCreateErrorResponse(s"received unknown message version: ${drd.v}", "ValidationError", deviceId = None, hashedHwDeviceId = Some(drd.a))
     case _ =>
-      sender ! logAndCreateErrorResponse(msg = "received unknown message", errType = "ValidationError", None)
+      sender ! logAndCreateErrorResponse(msg = "received unknown message", errType = "ValidationError", deviceId = None, hashedHwDeviceId = None)
   }
 
   override def unhandled(message: Any): Unit = {
@@ -121,7 +121,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   }
 
 
-  private def logAndCreateErrorResponse(msg: String, errType: String, deviceId: Option[String]): JsonErrorResponse = {
+  private def logAndCreateErrorResponse(msg: String, errType: String, deviceId: Option[String], hashedHwDeviceId: Option[String]): JsonErrorResponse = {
     log.error(msg)
     val jer = JsonErrorResponse(errorType = errType, errorMessage = msg)
     if (deviceId.isDefined)
