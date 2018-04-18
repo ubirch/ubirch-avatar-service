@@ -39,7 +39,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
         if (dur.getDays > Config.getMessageMaxAge) {
           val jer = JsonErrorResponse(
             errorType = "ValidationError",
-            errorMessage = "received message from the past error"
+            errorMessage = s"received message from the past error for device ${device.deviceId}"
           )
           outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
           s ! jer
@@ -47,7 +47,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
         else if (drd.s.isEmpty) {
           val jer = JsonErrorResponse(
             errorType = "ValidationError",
-            errorMessage = "received message without a signature"
+            errorMessage = s"received message without a signature for device ${device.deviceId}"
           )
           outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
           s ! jer
@@ -57,7 +57,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
             case Some(v) =>
               val jer = JsonErrorResponse(
                 errorType = "ValidationError",
-                errorMessage = "replay attack detected"
+                errorMessage = s"replay attack detected for device ${device.deviceId}"
               )
               outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
               s ! jer
@@ -66,7 +66,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
                 case Some(d) =>
                   val jer = JsonErrorResponse(
                     errorType = "ValidationError",
-                    errorMessage = "delayed replay attack detected"
+                    errorMessage = s"delayed replay attack detected for device ${device.deviceId}"
                   )
                   outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
                   s ! jer
