@@ -108,8 +108,8 @@ object UbMsgPacker
         logger.debug("format v3")
 
         val rawPrevHash = va.get(2).asRawValue().getByteArray
-        val prevHash = Hex.encodeHexString(rawPrevHash)
-        logger.debug(s"prevHash $prevHash")
+        val prevSignature = Base64.getEncoder.encodeToString(rawPrevHash)
+        logger.debug(s"prevHash $prevSignature")
 
         val messageType = va.get(3).asIntegerValue().getInt
         logger.debug(s"messageType $messageType")
@@ -135,7 +135,7 @@ object UbMsgPacker
           hwDeviceId = uuid,
           hashedHwDeviceId = DeviceUtil.hashHwDeviceId(uuid),
           firmwareVersion = fw,
-          prevSignature = Some(prevHash),
+          prevSignature = Some(prevSignature),
           msgType = messageType,
           payloads = payloads,
           signature = Some(signature),
@@ -272,7 +272,8 @@ object UbMsgPacker
     if (dsu.ds.isDefined) {
       try {
 
-        val binSig = Hex.decodeHex(dsu.ds.get)
+        //val binSig = Hex.decodeHex(dsu.ds.get)
+        val binSig = Base64.getDecoder.decode(dsu.ds.get)
         packer.write(binSig)
       }
       catch {
