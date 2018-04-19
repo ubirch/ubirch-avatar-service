@@ -10,5 +10,5 @@ case class MessageReceiver(
                             topic: String,
                             message: String,
                             target: String) {
-  def getKey = s"$target -> $topic"
+  def getKey = s"${target}__${topic}"
 }
