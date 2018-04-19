@@ -3,11 +3,10 @@ package com.ubirch.transformer.actor
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
-import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.model.MessageReceiver
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 
 /**
@@ -40,7 +39,7 @@ class TransformerOutboxManagerActor extends Actor with ActorLogging {
       }
   }
 
-
+  //@TODO refactor
   private def getInternProducer(mr: MessageReceiver): Future[ActorRef] = {
 
     val curRefBase = s"$TRACTOR_BASE${mr.topic}"
@@ -60,6 +59,7 @@ class TransformerOutboxManagerActor extends Actor with ActorLogging {
     }
   }
 
+  //@TODO refactor
   private def getExternProducer(mr: MessageReceiver): Future[ActorRef] = {
 
     val curRefBase = s"$DMACTOR_BASE${mr.topic}"

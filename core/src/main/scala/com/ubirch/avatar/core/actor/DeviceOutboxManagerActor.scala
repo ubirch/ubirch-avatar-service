@@ -64,7 +64,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
       log.error(s"${message.getClass.toString}")
   }
 
-
+  //@TODO refactor
   private def getSqsProducer(queue: String): Future[ActorRef] = {
 
     val curRefBase = s"$TRACTOR_BASE${queue}"
@@ -84,6 +84,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     }
   }
 
+  //@TODO refactor
   private def getMqttProducer(mr: MessageReceiver): Future[ActorRef] = {
 
     val curRefBase = s"$DOMACTOR_BASE${mr.getKey}"
