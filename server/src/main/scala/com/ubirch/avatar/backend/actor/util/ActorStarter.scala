@@ -59,6 +59,11 @@ object ActorStarter extends StrictLogging {
       DeviceOutboxManagerActor.props(),
       ActorNames.DEVICE_OUTBOX_MANAGER
     )
+
+    //    val din = system.actorOf(
+    //      MqttDeviceConsumerActor.props,
+    //      ActorNames.DEVICE_INBOX
+    //    )
   }
 
 }

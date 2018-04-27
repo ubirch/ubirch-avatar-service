@@ -2,13 +2,9 @@ package com.ubirch.transformer.actor
 
 import akka.actor.{ActorLogging, Props}
 import akka.camel.{CamelMessage, Consumer}
-import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
-import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -91,4 +87,8 @@ class MqttDeviceConsumerActor()
       val sender = context.sender()
       log.error(s"received from ${sender.getClass.toString} unknown message")
   }
+}
+
+object MqttDeviceConsumerActor {
+  def props: Props = Props[MqttDeviceConsumerActor]
 }
