@@ -280,6 +280,7 @@ lazy val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
   "org.slf4j" % "log4j-over-slf4j" % slf4jV,
   "org.slf4j" % "jul-to-slf4j" % slf4jV,
+  "org.apache.logging.log4j" % "log4j-to-slf4j" % "2.11.0",
   "ch.qos.logback" % "logback-core" % logbackV,
   "ch.qos.logback" % "logback-classic" % logbackV,
   "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,

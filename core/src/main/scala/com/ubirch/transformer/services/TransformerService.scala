@@ -19,7 +19,7 @@ import scala.concurrent.ExecutionContext
   * Created by derMicha on 29/11/16.
   */
 
-case class GeoLocation(longitude: Double, latitude: Double)
+case class LocationSnippet(location: GeoLocation)
 
 object TransformerService
   extends StrictLogging
@@ -48,8 +48,7 @@ object TransformerService
             presure = envRawP.p.toDouble / 100.0,
             humidity = envRawP.h.toDouble / 100.0,
             batteryLevel = envRawP.ba,
-            latitude = if (envRawP.la.isDefined) Some(envRawP.la.get.toDouble) else None,
-            longitude = if (envRawP.lo.isDefined) Some(envRawP.lo.get.toDouble) else None,
+            location = if (envRawP.la.isDefined && envRawP.lo.isDefined) Some(GeoLocation(envRawP.la.get.toDouble, envRawP.la.get.toDouble)) else None,
             altitude = if (envRawP.a.isDefined) Some(envRawP.a.get / 100.0) else None,
             loops = if (envRawP.lp.isDefined) Some(envRawP.lp.get) else None,
             errorCode = if (envRawP.e.isDefined) Some(envRawP.e.getOrElse(0)) else None,
@@ -77,8 +76,7 @@ object TransformerService
             presure = aqRawP.p.toDouble / 100.0,
             humidity = aqRawP.h.toDouble / 100.0,
             batteryLevel = aqRawP.ba,
-            latitude = if (aqRawP.la.isDefined) Some(aqRawP.la.get.toDouble) else None,
-            longitude = if (aqRawP.lo.isDefined) Some(aqRawP.lo.get.toDouble) else None,
+            location = if (aqRawP.la.isDefined && aqRawP.lo.isDefined) Some(GeoLocation(aqRawP.la.get.toDouble, aqRawP.la.get.toDouble)) else None,
             altitude = if (aqRawP.a.isDefined) Some(aqRawP.a.get / 100.0) else None,
             loops = if (aqRawP.lp.isDefined) Some(aqRawP.lp.get) else None,
             errorCode = if (aqRawP.e.isDefined) Some(aqRawP.e.getOrElse(0)) else None,
@@ -156,10 +154,10 @@ object TransformerService
       try {
         val pay = if (la.isDefined && lo.isDefined) {
           logger.debug("found lo/la")
-          val geo = GeoLocation(
-            longitude = nf.parse(lo.get).doubleValue(),
-            latitude = nf.parse(la.get).doubleValue()
-          )
+          val geo = LocationSnippet(location = GeoLocation(
+            lat = nf.parse(lo.get).doubleValue(),
+            lon = nf.parse(la.get).doubleValue()
+          ))
           drd.p merge Json4sUtil.any2jvalue(geo).get
         }
         else

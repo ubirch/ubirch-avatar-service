@@ -38,16 +38,16 @@
   <logger name="reactivemongo.core" level="INFO"/>
   <logger name="com.ubirch.util.oidc.directive.OidcDirective" level="INFO"/>
 
-  <!--<logger name="akka.actor" level="WARN"/>-->
-  <!--<logger name="akka.event" level="WARN"/>-->
-  <!--<logger name="reactivemongo-akka.actor" level="WARN"/>-->
-  <!--<logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>-->
-  <!--<logger name="org.apache.camel" level="WARN"/>-->
+  <logger name="akka.actor" level="WARN"/>
+  <logger name="akka.event" level="WARN"/>
+  <logger name="reactivemongo-akka.actor" level="WARN"/>
+  <logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>
+  <logger name="org.apache.camel" level="WARN"/>
 
   <root level="WARN">
-    <!--<appender-ref ref="JSONSTDOUT"/>-->
+    <!-- <appender-ref ref="JSONSTDOUT"/> -->
     <appender-ref ref="STDOUT"/>
-    <appender-ref ref="FILE"/>
+    <!-- <appender-ref ref="FILE"/> -->
   </root>
 
 </configuration>

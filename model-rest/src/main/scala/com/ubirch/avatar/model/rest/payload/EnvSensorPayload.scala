@@ -7,13 +7,14 @@ import org.joda.time.DateTime
   */
 
 
+case class GeoLocation(lat: Double, lon: Double)
+
 case class EnvSensorPayload(
                              temperature: Double,
                              presure: Double,
                              humidity: Double,
                              batteryLevel: Option[Int],
-                             latitude: Option[Double],
-                             longitude: Option[Double],
+                             location: Option[GeoLocation],
                              loops: Option[Long],
                              altitude: Option[Double],
                              errorCode: Option[Int],
@@ -27,8 +28,7 @@ final case class AqSensorPayload(
                                   presure: Double,
                                   humidity: Double,
                                   batteryLevel: Option[Int],
-                                  latitude: Option[Double],
-                                  longitude: Option[Double],
+                                  location: Option[GeoLocation],
                                   loops: Option[Long],
                                   altitude: Option[Double],
                                   errorCode: Option[Int],
