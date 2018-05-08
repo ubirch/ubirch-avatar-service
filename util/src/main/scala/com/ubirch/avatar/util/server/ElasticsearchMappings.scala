@@ -65,6 +65,9 @@ trait ElasticsearchMappings extends ElasticsearchMappingsBase {
            |      "timestamp" : {
            |        "type" : "date",
            |        "format" : "strict_date_time"
+           |      },
+           |      "deviceMessage.location" : {
+           |        "type" : "geo_point"
            |      }
            |    }
            |  }
