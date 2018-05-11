@@ -272,8 +272,8 @@ object UbMsgPacker
     if (dsu.ds.isDefined) {
       try {
 
-        //val binSig = Hex.decodeHex(dsu.ds.get)
-        val binSig = Base64.getDecoder.decode(dsu.ds.get)
+        val binSig = Hex.decodeHex(dsu.ds.get)
+        //        val binSig = Base64.getDecoder.decode(dsu.ds.get)
         packer.write(binSig)
       }
       catch {
