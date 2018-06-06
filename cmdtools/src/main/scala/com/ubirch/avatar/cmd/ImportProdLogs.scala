@@ -59,63 +59,69 @@ object ImportProdLogs
   val orderNrOffset = 11
   val testerOffset = 12
 
-  prodLogs.foreach { fn =>
-    val deviceRows = Source.fromFile(s"$basePath/$fn").getLines().toList.tail
-    deviceRows.foreach { row =>
-      val rowData = row.split(sep)
+  try {
 
-      val di = DeviceInfo(
-        deviceType = rowData(deviceTypeOffset).toString,
-        testTimestamp = rowData(deviceTestDatetimeOffset).toString,
-        testResult = !rowData(testResultOffset).toString.toLowerCase.contains("failed"),
-        hwDeviceId = rowData(hwDeviceIdOffset).toString,
-        firmwareVersion = rowData(firmwareVersionOffset).toString,
-        orderNr = rowData(orderNrOffset).toString,
-        tester = rowData(testerOffset).toString
-      )
-      logger.info(s"deviceInfo: ${di.deviceType} / ${di.testResult} / ${di.hwDeviceId}")
-      getDeviceTypeKey(di.deviceType).map { dtype =>
-        DeviceManager.infoByHwId(di.hwDeviceId).map {
-          case Some(dev) =>
-            logger.info(s"device already exist: ${dev.deviceName}")
-            if (deleteExistingDevices) {
-              DeviceManager.delete(dev)
-              logger.info(s"device deleted: ${dev.deviceName}")
-            }
-          case None =>
-            val dev = Device(
-              deviceId = UUIDUtil.uuidStr,
-              owners = Set.empty,
-              groups = Set(defaultGroup),
-              deviceTypeKey = dtype,
-              hwDeviceId = di.hwDeviceId,
-              hashedHwDeviceId = HashUtil.sha512Base64(di.hwDeviceId.toLowerCase()),
-              deviceName = s"$dtype ${di.hwDeviceId}",
-              pubQueues = Some(Set(queue1)),
-              pubRawQueues = Some(Set(
-                rawQueue1,
-                rawQueue2
-              )),
-              deviceProperties = Some(
-                DeviceTypeUtil.defaultProps(dtype)
-                  merge
-                  Json4sUtil.any2jvalue(Map[String, Any](
-                    "testedFirmwareVersion" -> s"${di.firmwareVersion}",
-                    "tester" -> s"${di.tester}",
-                    "testerResult" -> di.testResult,
-                    "orderNr" -> s"${di.orderNr}"
-                  )).get
-              ),
-              deviceConfig = Some(
-                DeviceTypeUtil.defaultConf(dtype)
-              ),
-              tags = DeviceTypeUtil.defaultTags(dtype)
-            )
-            DeviceManager.create(device = dev)
-            logger.info(s"device: $dev")
+    prodLogs.foreach { fn =>
+      val deviceRows = Source.fromFile(s"$basePath/$fn").getLines().toList.tail
+      deviceRows.foreach { row =>
+        val rowData = row.split(sep)
+
+        val di = DeviceInfo(
+          deviceType = rowData(deviceTypeOffset).toString,
+          testTimestamp = rowData(deviceTestDatetimeOffset).toString,
+          testResult = !rowData(testResultOffset).toString.toLowerCase.contains("failed"),
+          hwDeviceId = rowData(hwDeviceIdOffset).toString,
+          firmwareVersion = rowData(firmwareVersionOffset).toString,
+          orderNr = rowData(orderNrOffset).toString,
+          tester = rowData(testerOffset).toString
+        )
+        logger.info(s"deviceInfo: ${di.deviceType} / ${di.testResult} / ${di.hwDeviceId}")
+        getDeviceTypeKey(di.deviceType).map { dtype =>
+          DeviceManager.infoByHwId(di.hwDeviceId).map {
+            case Some(dev) =>
+              logger.info(s"device already exist: ${dev.deviceName}")
+              if (deleteExistingDevices) {
+                DeviceManager.delete(dev)
+                logger.info(s"device deleted: ${dev.deviceName}")
+              }
+            case None =>
+              val dev = Device(
+                deviceId = UUIDUtil.uuidStr,
+                owners = Set.empty,
+                groups = Set(defaultGroup),
+                deviceTypeKey = dtype,
+                hwDeviceId = di.hwDeviceId,
+                hashedHwDeviceId = HashUtil.sha512Base64(di.hwDeviceId.toLowerCase()),
+                deviceName = s"$dtype ${di.hwDeviceId}",
+                pubQueues = Some(Set(queue1)),
+                pubRawQueues = Some(Set(
+                  rawQueue1,
+                  rawQueue2
+                )),
+                deviceProperties = Some(
+                  DeviceTypeUtil.defaultProps(dtype)
+                    merge
+                    Json4sUtil.any2jvalue(Map[String, Any](
+                      "testedFirmwareVersion" -> s"${di.firmwareVersion}",
+                      "tester" -> s"${di.tester}",
+                      "testerResult" -> di.testResult,
+                      "orderNr" -> s"${di.orderNr}"
+                    )).get
+                ),
+                deviceConfig = Some(
+                  DeviceTypeUtil.defaultConf(dtype)
+                ),
+                tags = DeviceTypeUtil.defaultTags(dtype)
+              )
+              DeviceManager.create(device = dev)
+              logger.info(s"device: $dev")
+          }
         }
       }
     }
+
+  } finally {
+    shutdown(3000 + prodLogs.size * 100)
   }
 
   private def getDeviceTypeKey(deviceType: String): Future[String] = {
@@ -125,6 +131,12 @@ object ImportProdLogs
       case _ =>
         Const.TRACKLESENSOR
     }
+  }
+
+  private def shutdown(sleep: Int): Unit = {
+    Thread.sleep(sleep)
+    system.terminate()
+    Thread.sleep(500)
   }
 
 }
