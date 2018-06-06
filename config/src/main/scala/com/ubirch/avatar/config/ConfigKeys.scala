@@ -162,4 +162,5 @@ object ConfigKeys {
 
   // server ecc signing private key
   final val SIGNING_PRIVATE_KEY = "crypto.ecc.signingPrivateKey"
+
 }

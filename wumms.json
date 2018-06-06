@@ -1,11 +1,9 @@
-[
-  {
-    "t": 2
+{
+  'a': 'zMg5ZPSYA5ojybS8KY4eVSrNQlpdVCfDDBon7NGFLQgEp+Z2890ozec2KDTy/Y98a0OChaEyCvc5624AlI4XXw==',
+  'p': {
+    'cpu': 31.2,
+    'ts': 1527690010906
   },
-  {
-    "t": 3
-  },
-  {
-    "t": 7
-  }
-]
+  's': 'WS1+AMBx1xQvJEmWTevpg2ew4INHzq0341wiwcwFKUZl1RmJnvVOtJAPjLVW1o12tpasFQeVDakS2A4TYpeJDA==',
+  'v': '0.0.2'
+}

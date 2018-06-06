@@ -155,8 +155,8 @@ object TransformerService
         val pay = if (la.isDefined && lo.isDefined) {
           logger.debug("found lo/la")
           val geo = LocationSnippet(location = GeoLocation(
-            lat = nf.parse(lo.get).doubleValue(),
-            lon = nf.parse(la.get).doubleValue()
+            lat = nf.parse(la.get).doubleValue(),
+            lon = nf.parse(lo.get).doubleValue()
           ))
           drd.p merge Json4sUtil.any2jvalue(geo).get
         }
