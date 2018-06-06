@@ -21,7 +21,7 @@ Import Production Log
 
 1. use this script: *com.ubirch.avatar.cmd.ImportProdLogs* 
 
-    1. parameter: -Dconfig.resource=application-admin.conf
+    1. parameter: -Dconfig.resource=application-import-local.conf
     1. env vars (all envs): 
     
         1. AWS_ACCESS_KEY_ID=***********************
