@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream
 import com.google.common.primitives.{Ints, Longs}
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.core.device.DeviceDataRawManager
+import com.ubirch.core.protocol.msgpack.MsgPacker
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex

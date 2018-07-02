@@ -3,6 +3,7 @@ package com.ubirch.avatar.core.msgpack
 import java.io.ByteArrayInputStream
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.ubirch.core.protocol.msgpack.MsgPacker
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
 import org.json4s.JValue

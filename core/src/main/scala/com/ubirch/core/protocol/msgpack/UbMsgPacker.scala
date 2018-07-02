@@ -1,4 +1,4 @@
-package com.ubirch.avatar.core.msgpack
+package com.ubirch.core.protocol.msgpack
 
 import java.io.ByteArrayInputStream
 import java.util.Base64
@@ -6,12 +6,13 @@ import java.util.Base64
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
-import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
+import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
@@ -65,7 +66,7 @@ object UbMsgPacker
           mainVersion = mainVersion,
           subVersion = subVersion,
           hwDeviceId = uuid,
-          hashedHwDeviceId = DeviceUtil.hashHwDeviceId(uuid),
+          hashedHwDeviceId = HashUtil.sha512Base64(uuid.toString),
           firmwareVersion = (payloads.data \ "version").extractOpt[String],
           prevSignature = None,
           msgType = messageType,
@@ -87,14 +88,14 @@ object UbMsgPacker
         val payloadJson = processPayload(messageType, payload)
 
         val rawSignature = va.get(4).asRawValue().getByteArray
-        val signature = Hex.encodeHexString(rawSignature)
+        val signature = new String(Base64.getEncoder.encode(rawSignature), "UTF-8")
         logger.debug(s"signture $signature")
         Some(UbMessage(
           version = version,
           mainVersion = mainVersion,
           subVersion = subVersion,
           hwDeviceId = uuid,
-          hashedHwDeviceId = DeviceUtil.hashHwDeviceId(uuid),
+          hashedHwDeviceId = HashUtil.sha512Base64(uuid.toString),
           firmwareVersion = (payloadJson.data \ "version").extractOpt[String],
           prevSignature = None,
           msgType = messageType,
@@ -120,7 +121,7 @@ object UbMsgPacker
         val payloads = processPayload(messageType, payload)
 
         val rawSignature = va.get(5).asRawValue().getByteArray
-        val signature = Hex.encodeHexString(rawSignature)
+        val signature = new String(Base64.getEncoder.encode(rawSignature), "UTF-8")
         logger.debug(s"signture $signature")
 
         val fw = if (payloads.meta.isDefined)
@@ -133,7 +134,7 @@ object UbMsgPacker
           mainVersion = mainVersion,
           subVersion = subVersion,
           hwDeviceId = uuid,
-          hashedHwDeviceId = DeviceUtil.hashHwDeviceId(uuid),
+          hashedHwDeviceId = HashUtil.sha512Base64(uuid.toString),
           firmwareVersion = fw,
           prevSignature = Some(prevSignature),
           msgType = messageType,
@@ -151,15 +152,25 @@ object UbMsgPacker
 
   private def processPayload(messageType: Int, payload: Value): UbPayloads = {
     messageType match {
-      case 83 =>
+      case 0x01 =>
+        processKeyRegistrationPayload(payload)
+      case 0x53 =>
         throw new Exception("not implemented ubirch protocol T85")
-      case 84 =>
+      case 0x54 =>
         processT84Payload(payload)
-      case 85 =>
+      case 0x55 =>
         throw new Exception("not implemented ubirch protocol T85")
       case n: Int =>
         throw new Exception(s"unsupported msg type $n")
     }
+  }
+
+  private def processKeyRegistrationPayload(payload: Value): UbPayloads = {
+    UbPayloads(
+      data = parseKeyRegMap(payload.asMapValue()),
+      meta = None,
+      config = None
+    )
   }
 
   private def processT84Payload(payload: Value): UbPayloads = {
@@ -207,25 +218,67 @@ object UbMsgPacker
         case ValueType.INTEGER =>
           val curValVal = curVal.asIntegerValue().getLong
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JLong(curValVal)))
+          Some(ts.toString -> JLong(curValVal))
         case ValueType.RAW =>
           val curValVal = curVal.asRawValue().getString
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JString(curValVal)))
+          Some(ts.toString -> JString(curValVal))
         case ValueType.BOOLEAN =>
           val curValVal = curVal.asBooleanValue().getBoolean
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JBool(curValVal)))
+          Some(ts.toString -> JBool(curValVal))
         case ValueType.FLOAT =>
           val curValVal = curVal.asFloatValue().getDouble
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JDouble(curValVal)))
+          Some(ts.toString -> JDouble(curValVal))
         case _ =>
           logger.debug("unsupported measurement type")
           None
       }
     }.filter(_.isDefined).map(_.get).toList
     val json = JObject(res)
+    logger.debug(compact(render(json)))
+    json
+  }
+
+  private def parseKeyRegMap(mVal: MapValue): JValue = {
+    val dateTimeFormat = ISODateTimeFormat.dateTime().withZoneUTC()
+    val res = mVal.keySet.toArray.map { key =>
+      val keyStr = String.valueOf(key).replace("\"", "")
+      val curVal = mVal.get(key)
+      curVal.getType match {
+        case ValueType.INTEGER if keyStr == "validNotBefore" || keyStr == "validNotAfter" || keyStr == "created" =>
+           val curValVal = dateTimeFormat.print(curVal.asIntegerValue().getLong * 1000)
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JString(curValVal))
+        case ValueType.INTEGER =>
+          val curValVal = curVal.asIntegerValue().getLong
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JLong(curValVal))
+        case ValueType.RAW if keyStr == "pubKey" || keyStr == "pubKeyId" =>
+          val curValVal = new String(Base64.getEncoder.encode(curVal.asRawValue().getByteArray))
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JString(curValVal))
+        case ValueType.RAW if keyStr == "hwDeviceId" =>
+          val curValVal = UUIDUtil.fromByteArray(curVal.asRawValue().getByteArray).toString
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JString(curValVal))
+        case ValueType.RAW =>
+          val curValVal = curVal.asRawValue().getString
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JString(curValVal))
+        case _ =>
+          logger.debug("unsupported config type")
+          None
+      }
+    }.filter(_.isDefined).map(_.get).toList
+    val tmp = JObject(res)
+    val json = if(tmp \ "pubKeyId" == JNothing) {
+      JObject(("pubKeyId", tmp \ "pubKey") :: res)
+    } else {
+      tmp
+    }
+
     logger.debug(compact(render(json)))
     json
   }
@@ -237,12 +290,12 @@ object UbMsgPacker
       curVal.getType match {
         case ValueType.INTEGER =>
           val curValVal = curVal.asIntegerValue().getLong
-          logger.debug(s"k: ${keyStr} ($key) -> v: $curValVal")
-          Some((keyStr -> JLong(curValVal)))
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JLong(curValVal))
         case ValueType.RAW =>
           val curValVal = curVal.asRawValue().getString
           logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
-          Some((keyStr -> JString(curValVal)))
+          Some(keyStr -> JString(curValVal))
         case _ =>
           logger.debug("unsupported config type")
           None

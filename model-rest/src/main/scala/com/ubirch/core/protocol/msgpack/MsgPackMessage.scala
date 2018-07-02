@@ -1,4 +1,4 @@
-package com.ubirch.avatar.model.rest.device
+package com.ubirch.core.protocol.msgpack
 
 import java.util.UUID
 

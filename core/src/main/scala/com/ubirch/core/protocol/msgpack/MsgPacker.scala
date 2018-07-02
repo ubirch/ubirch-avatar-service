@@ -1,4 +1,4 @@
-package com.ubirch.avatar.core.msgpack
+package com.ubirch.core.protocol.msgpack
 
 import java.io.ByteArrayInputStream
 import java.lang.{Long => JavaLong}
@@ -6,8 +6,6 @@ import java.util.Base64
 
 import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.model.rest.device.{MsgPackMessage, MsgPackMessageV2}
 import com.ubirch.util.json.Json4sUtil
 import org.apache.commons.codec.binary
 import org.apache.commons.codec.binary.Hex
@@ -23,6 +21,11 @@ import scala.language.postfixOps
 case class MsgPackVersion(version: String, firmwareVersion: String)
 
 object MsgPacker extends StrictLogging {
+  final val MSGP_V40 = "4.0"
+  final val MSGP_V401 = "4.0.1"
+  final val MSGP_V41 = "4.1"
+  final val MSGP_VUK = "UNKNOWN VERSION"
+
 
   def getMsgPackVersion(binData: Array[Byte]): MsgPackVersion = {
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
@@ -37,25 +40,25 @@ object MsgPacker extends StrictLogging {
             val mainVersion = version >> 4
             val subVersion = version & 15
             MsgPackVersion(
-              version = Const.MSGP_V41,
+              version = MSGP_V41,
               firmwareVersion = "unknown"
             )
           case _ =>
             val firmwareVersion = va.get(1).asRawValue().getString
             va.get(0).asRawValue().getString match {
-              case Const.MSGP_V40 =>
+              case MSGP_V40 =>
                 MsgPackVersion(
-                  version = Const.MSGP_V40,
+                  version = MSGP_V40,
                   firmwareVersion = firmwareVersion
                 )
-              case Const.MSGP_V401 =>
+              case MSGP_V401 =>
                 MsgPackVersion(
-                  version = Const.MSGP_V401,
+                  version = MSGP_V401,
                   firmwareVersion = firmwareVersion
                 )
               case _ =>
                 MsgPackVersion(
-                  version = Const.MSGP_VUK,
+                  version = MSGP_VUK,
                   firmwareVersion = firmwareVersion
                 )
             }
