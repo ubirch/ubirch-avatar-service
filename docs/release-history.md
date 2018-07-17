@@ -1,6 +1,6 @@
 ## Release History
 
-### Version 0.4.2 (tbd)
+### Version 0.4.2 (2018-07-17)
 
 * update to `com.ubirch.user:client-rest:0.8.3`
 * update to `com.ubirch.util:mongo-utils:0.4.1`
