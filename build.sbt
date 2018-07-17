@@ -1,11 +1,11 @@
 // see http://www.scala-sbt.org/0.13/docs/Parallel-Execution.html for details
-concurrentRestrictions in Global := Seq {
+concurrentRestrictions in Global := Seq(
   Tags.limit(Tags.Test, 1)
-}
+)
 
 lazy val commonSettings = Seq(
 
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.11.12",
   scalacOptions ++= Seq("-feature"),
   organization := "com.ubirch.avatar",
   homepage := Some(url("http://ubirch.com")),
@@ -252,7 +252,7 @@ lazy val depTestBase = Seq(
 lazy val akkaV = "2.5.11"
 lazy val akkaHttpV = "10.1.0"
 lazy val json4sV = "3.5.2"
-lazy val awsSdkV = "1.11.293"
+lazy val awsSdkV = "1.11.368"
 lazy val camelV = "2.20.2"
 lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
@@ -359,7 +359,7 @@ lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.2" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
 lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.8.5" excludeAll (excludedLoggers: _*)
-lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.4.1-SNAPSHOT" excludeAll (excludedLoggers: _*)
+lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.5.0" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
