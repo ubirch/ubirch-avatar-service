@@ -6,6 +6,8 @@
 * update to `com.ubirch.util:mongo-utils:0.4.1`
 * update to `com.ubirch.util:mongo-test-utils:0.4.1`
 * update to `com.ubirch.util:oidc-utils:0.5.3`
+* update to `com.ubirch.util:elasticsearch-client-binary:2.4.1` (upgrade to from Elasticsearch 5.6.8 to 5.6.10)
+* update to `com.ubirch.util:elasticsearch-util:2.4.1` (upgrade to from Elasticsearch 5.6.8 to 5.6.10)
 
 ### Version 0.4.1 (2018-03-19)
 
