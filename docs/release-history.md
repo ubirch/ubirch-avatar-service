@@ -1,5 +1,9 @@
 ## Release History
 
+### Version 0.4.3 (tbd)
+
+* tbd
+
 ### Version 0.4.2 (2018-07-17)
 
 * update to `com.ubirch.user:client-rest:0.8.3`
