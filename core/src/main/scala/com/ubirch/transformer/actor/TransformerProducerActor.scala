@@ -3,7 +3,6 @@ package com.ubirch.transformer.actor
 import akka.actor.{Actor, Props}
 import akka.camel.Producer
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.DeviceStateUpdateActor
 import com.ubirch.util.camel.CamelActorUtil
 
 /**
@@ -19,6 +18,8 @@ class TransformerProducerActor(queue: String)
   val secretKey = Config.awsSecretAccessKey
 
   override def endpointUri: String = sqsEndpointConsumer(Config.sqsConfig(queue))
+
+  //+ "&messageGroupIdStrategy=useExchangeId" +"&MessageDeduplicationIdStrategy=useExchangeId"
 
   override def oneway: Boolean = true
 

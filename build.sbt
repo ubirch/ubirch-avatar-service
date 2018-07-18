@@ -165,13 +165,6 @@ lazy val util = project
 
 lazy val depServer = Seq(
 
-  //akka
-  akkaG %% "akka-actor" % akkaV,
-  akkaG %% "akka-slf4j" % akkaV,
-  akkaG %% "akka-http" % akkaHttpV,
-  akkaG %% "akka-camel" % akkaV,
-  akkaG %% "akka-cluster" % akkaV,
-
   //testing
   scalatest % "test",
 
@@ -180,7 +173,7 @@ lazy val depServer = Seq(
   ubirchResponse,
   ubirchOidcUtils
 
-) ++ prometheus ++ constructr ++ scalaLogging
+) ++ akka ++ akkaCamel ++ prometheus ++ constructr ++ scalaLogging
 
 lazy val depConfig = Seq(
   ubirchCamelUtils,
@@ -202,7 +195,7 @@ lazy val depCore = Seq(
   msgpackScala,
   scalatest % "test",
   akkaTestkit % "test"
-) ++ prometheus ++ akkaCamel ++ scalaLogging
+) ++ akka ++ prometheus ++ akkaCamel ++ scalaLogging
 
 lazy val depClient = Seq(
   beeClient
@@ -250,10 +243,10 @@ lazy val depTestBase = Seq(
 
 // VERSIONS
 lazy val akkaV = "2.5.11"
-lazy val akkaHttpV = "10.1.0"
+lazy val akkaHttpV = "10.1.3"
 lazy val json4sV = "3.5.2"
 lazy val awsSdkV = "1.11.368"
-lazy val camelV = "2.20.2"
+lazy val camelV = "2.22.0"
 lazy val scalaTestV = "3.0.1"
 lazy val spireV = "0.13.0"
 lazy val logbackV = "1.2.3"
@@ -286,6 +279,14 @@ lazy val scalaLogging = Seq(
   "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,
   "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
+)
+
+lazy val akka = Seq(
+  akkaG %% "akka-actor" % akkaV,
+  akkaG %% "akka-stream" % akkaV,
+  akkaG %% "akka-slf4j" % akkaV,
+  akkaG %% "akka-http" % akkaHttpV,
+  akkaG %% "akka-cluster" % akkaV
 )
 
 lazy val akkaCamel = Seq(

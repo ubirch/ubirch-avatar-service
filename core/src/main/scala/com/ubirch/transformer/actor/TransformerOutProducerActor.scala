@@ -21,6 +21,8 @@ class TransformerOutProducerActor(sqsQueueName: String)
 
   override def endpointUri: String = sqsEndpointConsumer(Config.sqsConfig(sqsQueueName))
 
+  //+ "&messageGroupIdStrategy=useExchangeId" +"&messageDeduplicationIdStrategy=useExchangeId"
+
   override def oneway: Boolean = true
 }
 

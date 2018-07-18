@@ -16,6 +16,8 @@ class MessageChainProducerActor(sqsQueueName: String)
 
   override def endpointUri: String = sqsEndpointConsumer(Config.sqsConfig(sqsQueueName))
 
+  //+ "&messageGroupIdStrategy=useExchangeId&MessageDeduplicationIdStrategy=useExchangeId"
+
   override def oneway: Boolean = true
 }
 
