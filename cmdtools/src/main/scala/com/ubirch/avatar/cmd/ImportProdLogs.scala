@@ -32,6 +32,7 @@ object ImportProdLogs
                          testTimestamp: String,
                          testResult: Boolean,
                          hwDeviceId: String,
+                         tempSensorId: String,
                          firmwareVersion: String,
                          orderNr: String,
                          tester: String
@@ -45,8 +46,6 @@ object ImportProdLogs
 
   val deleteExistingDevices = conf.getBoolean("importProdLogs.deleteExistingDevices")
 
-  val sep = "\t"
-
   val envId = conf.getString("importProdLogs.envId")
   val rawQueue1 = conf.getString("importProdLogs.rawQueue1")
   val queue1 = conf.getString("importProdLogs.queue1")
@@ -56,6 +55,8 @@ object ImportProdLogs
   val deviceTestDatetimeOffset = 1
   val testResultOffset = 5
   val hwDeviceIdOffset = 7
+  val hwDeviceIdUUIDOffset = 130
+  val tempSensorIdOffset = 8
   val firmwareVersionOffset = 9
   val orderNrOffset = 11
   val testerOffset = 12
@@ -65,13 +66,25 @@ object ImportProdLogs
     prodLogs.foreach { fn =>
       val deviceRows = Source.fromFile(s"$basePath/$fn").getLines().toList.tail
       deviceRows.foreach { row =>
+        val sep = if (fn.endsWith(".tsv")) "\t" else ","
         val rowData = row.split(sep)
+
+        val hwDeviceId = if (rowData.size >= hwDeviceIdUUIDOffset + 1)
+          rowData(hwDeviceIdUUIDOffset).toString
+        else {
+          val rawHwDid = rowData(hwDeviceIdOffset).toString
+          if (rawHwDid.length == 32 && !rawHwDid.contains("-"))
+            s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
+          else
+            rawHwDid
+        }.toLowerCase
 
         val di = DeviceInfo(
           deviceType = rowData(deviceTypeOffset).toString,
           testTimestamp = rowData(deviceTestDatetimeOffset).toString,
           testResult = !rowData(testResultOffset).toString.toLowerCase.contains("failed"),
-          hwDeviceId = rowData(hwDeviceIdOffset).toString,
+          hwDeviceId = hwDeviceId,
+          tempSensorId = rowData(tempSensorIdOffset).toString,
           firmwareVersion = rowData(firmwareVersionOffset).toString,
           orderNr = rowData(orderNrOffset).toString,
           tester = rowData(testerOffset).toString
@@ -108,7 +121,8 @@ object ImportProdLogs
                           "testedFirmwareVersion" -> s"${di.firmwareVersion}",
                           "tester" -> s"${di.tester}",
                           "testerResult" -> di.testResult,
-                          "orderNr" -> s"${di.orderNr}"
+                          "orderNr" -> s"${di.orderNr}",
+                          "tempSensorId" -> s"${di.tempSensorId}"
                         )).get
                     ),
                     deviceConfig = Some(
