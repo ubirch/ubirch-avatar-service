@@ -56,6 +56,7 @@ object ImportProdLogs
   val deviceTestDatetimeOffset = 1
   val testResultOffset = 5
   val hwDeviceIdOffset = 7
+  val hwDeviceIdUUIDOffset = 13
   val tempSensorIdOffset = 8
   val firmwareVersionOffset = 9
   val orderNrOffset = 11
@@ -73,12 +74,16 @@ object ImportProdLogs
       deviceRows.foreach { row =>
         val sep = if (fn.endsWith(".tsv")) "\t" else ","
         val rowData = row.split(sep)
-        val rawHwDid = rowData(hwDeviceIdOffset).toLowerCase
-        val hwDeviceId = if (rawHwDid.length == 32 && isValidHex(rawHwDid))
-          s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
-        else
-          rawHwDid
 
+        val hwDeviceId = if (rowData.size >= hwDeviceIdUUIDOffset + 1)
+          rowData(hwDeviceIdUUIDOffset).toLowerCase
+        else {
+          val rawHwDid = rowData(hwDeviceIdOffset).toLowerCase
+          if (rawHwDid.length == 32 && isValidHex(rawHwDid))
+            s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
+          else
+            rawHwDid
+        }
 
         val di = DeviceInfo(
           deviceType = rowData(deviceTypeOffset).toString,
