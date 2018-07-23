@@ -45,6 +45,7 @@ object ImportProdLogs
   val defaultGroups = conf.getStringList("importProdLogs.devcieAdminGroup").asScala.toSet[String].map(us => UUIDUtil.fromString(us))
 
   val deleteExistingDevices = conf.getBoolean("importProdLogs.deleteExistingDevices")
+  val createMissingDevices = conf.getBoolean("importProdLogs.createMissingDevices")
 
   val envId = conf.getString("importProdLogs.envId")
   val rawQueue1 = conf.getString("importProdLogs.rawQueue1")
@@ -55,11 +56,15 @@ object ImportProdLogs
   val deviceTestDatetimeOffset = 1
   val testResultOffset = 5
   val hwDeviceIdOffset = 7
-  val hwDeviceIdUUIDOffset = 130
   val tempSensorIdOffset = 8
   val firmwareVersionOffset = 9
   val orderNrOffset = 11
   val testerOffset = 12
+
+  def isValidHex(value: String): Boolean = {
+    val hexChars = "1234567890abcdef"
+    value.toLowerCase.forall(c => hexChars.contains(c))
+  }
 
   try {
 
@@ -68,16 +73,12 @@ object ImportProdLogs
       deviceRows.foreach { row =>
         val sep = if (fn.endsWith(".tsv")) "\t" else ","
         val rowData = row.split(sep)
+        val rawHwDid = rowData(hwDeviceIdOffset).toLowerCase
+        val hwDeviceId = if (rawHwDid.length == 32 && isValidHex(rawHwDid))
+          s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
+        else
+          rawHwDid
 
-        val hwDeviceId = if (rowData.size >= hwDeviceIdUUIDOffset + 1)
-          rowData(hwDeviceIdUUIDOffset).toString
-        else {
-          val rawHwDid = rowData(hwDeviceIdOffset).toString
-          if (rawHwDid.length == 32 && !rawHwDid.contains("-"))
-            s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
-          else
-            rawHwDid
-        }.toLowerCase
 
         val di = DeviceInfo(
           deviceType = rowData(deviceTypeOffset).toString,
@@ -95,54 +96,57 @@ object ImportProdLogs
             case Success(devOpt) =>
               devOpt match {
                 case Some(dev) =>
-                  logger.info(s"device already exist: ${dev.deviceName}")
+                  logger.info(s"device already exist: ${dev.hwDeviceId}")
                   if (deleteExistingDevices) {
                     DeviceManager.delete(dev)
-                    logger.info(s"device deleted: ${dev.deviceName}")
+                    logger.info(s"device deleted: ${dev.hwDeviceId}")
                   }
                 case None =>
-                  val dev = Device(
-                    deviceId = UUIDUtil.uuidStr,
-                    owners = Set.empty,
-                    groups = defaultGroups,
-                    deviceTypeKey = dtype,
-                    hwDeviceId = di.hwDeviceId,
-                    hashedHwDeviceId = HashUtil.sha512Base64(di.hwDeviceId.toLowerCase()),
-                    deviceName = s"$dtype ${di.hwDeviceId}",
-                    pubQueues = Some(Set(queue1)),
-                    pubRawQueues = Some(Set(
-                      rawQueue1,
-                      rawQueue2
-                    )),
-                    deviceProperties = Some(
-                      DeviceTypeUtil.defaultProps(dtype)
-                        merge
-                        Json4sUtil.any2jvalue(Map[String, Any](
-                          "testedFirmwareVersion" -> s"${di.firmwareVersion}",
-                          "tester" -> s"${di.tester}",
-                          "testerResult" -> di.testResult,
-                          "orderNr" -> s"${di.orderNr}",
-                          "tempSensorId" -> s"${di.tempSensorId}"
-                        )).get
-                    ),
-                    deviceConfig = Some(
-                      DeviceTypeUtil.defaultConf(dtype)
-                    ),
-                    tags = DeviceTypeUtil.defaultTags(dtype)
-                  )
-                  DeviceManager.create(device = dev).onComplete {
-                    case Success(dev) =>
-                      dev match {
-                        case None =>
-                          logger.error("could not create device")
-                        case Some(d) =>
-                          logger.info(s"device: $d")
-                      }
-                    case Failure(t) =>
-                      logger.error(s"failed: ${t.getMessage}")
+                  if (createMissingDevices) {
+                    val dev = Device(
+                      deviceId = UUIDUtil.uuidStr,
+                      owners = Set.empty,
+                      groups = defaultGroups,
+                      deviceTypeKey = dtype,
+                      hwDeviceId = di.hwDeviceId,
+                      hashedHwDeviceId = HashUtil.sha512Base64(di.hwDeviceId.toLowerCase()),
+                      deviceName = s"$dtype ${di.hwDeviceId}",
+                      pubQueues = Some(Set(queue1)),
+                      pubRawQueues = Some(Set(
+                        rawQueue1,
+                        rawQueue2
+                      )),
+                      deviceProperties = Some(
+                        DeviceTypeUtil.defaultProps(dtype)
+                          merge
+                          Json4sUtil.any2jvalue(Map[String, Any](
+                            "testedFirmwareVersion" -> s"${di.firmwareVersion}",
+                            "tester" -> s"${di.tester}",
+                            "testerResult" -> di.testResult,
+                            "orderNr" -> s"${di.orderNr}",
+                            "tempSensorId" -> s"${di.tempSensorId}"
+                          )).get
+                      ),
+                      deviceConfig = Some(
+                        DeviceTypeUtil.defaultConf(dtype)
+                      ),
+                      tags = DeviceTypeUtil.defaultTags(dtype)
+                    )
+                    DeviceManager.create(device = dev).onComplete {
+                      case Success(dev) =>
+                        dev match {
+                          case None =>
+                            logger.error("could not create device")
+                          case Some(d) =>
+                            logger.info(s"device: $d")
+                        }
+                      case Failure(t) =>
+                        logger.error(s"failed: ${t.getMessage}")
 
+                    }
                   }
-
+                  else
+                    logger.debug(s"device not created: ${di.hwDeviceId}")
               }
             case Failure(t) =>
               logger.error(s"fetch device failed: ${t.getMessage}")
@@ -150,9 +154,6 @@ object ImportProdLogs
         }
       }
     }
-
-  } finally {
-    shutdown(3000 + prodLogs.size * 100)
   }
 
   private def getDeviceTypeKey(deviceType: String): Future[String] = {
