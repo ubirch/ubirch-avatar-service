@@ -1,8 +1,18 @@
 ## Release History
 
-### Version 0.4.3 (tbd)
+### Version 0.5.0 (tbd)
 
-* tbd
+* update to sbt from `0.13.17` to `1.1.6`
+* update to plugin `com.eed3si9n:sbt-assembly:0.14.7`
+* update to plugin `net.vonbuchholtz:sbt-dependency-check:0.2.7`
+* update to plugin `se.marcuslonnberg:sbt-docker:1.5.0`
+* update to plugin `org.scoverage:sbt-scoverage:1.5.1`
+* disabled plugin `com.zavakid.sbt:sbt-one-log` as it's not yet available for sbt `1.1.x`
+* update to plugin `com.typesafe.sbt:sbt-twirl:1.3.15`
+
+### Version 0.4.3 (not released)
+
+* list of changes has never been documented here
 
 ### Version 0.4.2 (2018-07-17)
 

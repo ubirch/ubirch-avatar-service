@@ -3,7 +3,7 @@ concurrentRestrictions in Global := Seq(
   Tags.limit(Tags.Test, 1)
 )
 
-lazy val commonSettings = Seq(
+val commonSettings = Seq(
 
   scalaVersion := "2.11.12",
   scalacOptions ++= Seq("-feature"),
@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.4.3-SNAPSHOT",
+  version := "0.5.0-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -26,7 +26,10 @@ lazy val commonSettings = Seq(
  ********************************************************/
 
 lazy val avatarService = (project in file("."))
-  .settings(commonSettings ++ Seq(packagedArtifacts := Map.empty): _*)
+  .settings(
+    commonSettings ++ Seq(packagedArtifacts := Map.empty),
+    skip in publish := true
+  )
   .aggregate(
     aws,
     client,
@@ -42,9 +45,17 @@ lazy val avatarService = (project in file("."))
   )
 
 lazy val server = project
-  .settings(commonSettings: _*)
-  .settings(mergeStrategy: _*)
-  .dependsOn(util, core, config, testBase % "test", testTools % "test")
+  .settings(
+    commonSettings,
+    mergeStrategy
+  )
+  .dependsOn(
+    config,
+    core,
+    util,
+    testBase % "test",
+    testTools % "test"
+  )
   .enablePlugins(DockerPlugin)
   .settings(
     description := "REST interface and Akka HTTP specific code",
@@ -62,14 +73,14 @@ lazy val server = project
   )
 
 lazy val cmdtools = project
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(core, client, util, testBase)
   .settings(
     description := "command line tools"
   )
 
 lazy val client = project
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(config, modelRest, util)
   .settings(
     description := "REST client for the avatarService",
@@ -80,7 +91,7 @@ lazy val client = project
   )
 
 lazy val core = project
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(config, aws, modelDb, modelRest, util, testBase % "test")
   .settings(
     description := "business logic",
@@ -93,7 +104,7 @@ lazy val core = project
   )
 
 lazy val aws = project
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(config, modelRest, util, testBase % "test")
   .settings(
     description := "aws related stuff",
@@ -101,14 +112,14 @@ lazy val aws = project
   )
 
 lazy val config = project
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .settings(
     description := "config code",
     libraryDependencies ++= depConfig
   )
 
 lazy val modelDb = (project in file("model-db"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(config)
   .settings(
     name := "model-db",
@@ -117,7 +128,7 @@ lazy val modelDb = (project in file("model-db"))
   )
 
 lazy val modelRest = (project in file("model-rest"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(config)
   .settings(
     name := "model-rest",
@@ -126,7 +137,7 @@ lazy val modelRest = (project in file("model-rest"))
   )
 
 lazy val testBase = (project in file("test-base"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(modelDb, modelRest, config, util)
   .settings(
     name := "test-base",
@@ -139,7 +150,7 @@ lazy val testBase = (project in file("test-base"))
   )
 
 lazy val testTools = (project in file("test-tools"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(core)
   .settings(
     name := "test-tools",
@@ -147,7 +158,7 @@ lazy val testTools = (project in file("test-tools"))
   )
 
 lazy val util = project
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .dependsOn(config, modelDb, modelRest)
   .settings(
     description := "ubirch-avatar-service specific utils",
