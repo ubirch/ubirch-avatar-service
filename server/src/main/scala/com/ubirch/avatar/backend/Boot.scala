@@ -8,6 +8,7 @@ import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.backend.actor.util.ActorStarter
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
@@ -16,9 +17,10 @@ import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 import com.ubirch.util.mongo.connection.MongoUtil
+
 import org.elasticsearch.client.transport.TransportClient
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
@@ -32,15 +34,15 @@ object Boot extends App
   with MongoConstraints
   with StrictLogging {
 
-  implicit val system = ActorSystem("AvatarService")
+  implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   implicit val httpClient: HttpExt = Http()
 
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
   try {
-    createMongoConstraints()
+    prepareMongoConstraints()
   }
   catch {
     case e: Exception =>
@@ -48,7 +50,7 @@ object Boot extends App
   }
   logger.info("ubirchAvatarService started")
 
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   val publicKey = ServerKeys.pubKeyEnc
   logger.info(s"publicKey=$publicKey")

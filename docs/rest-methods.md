@@ -12,7 +12,7 @@ If server is healthy response is:
 
 ### Deep Check / Server Health
 
-    curl localhost:8092/api/avatarService/v1/deepCheck
+    curl localhost:8080/api/avatarService/v1/deepCheck
 
 If healthy the response is:
 
