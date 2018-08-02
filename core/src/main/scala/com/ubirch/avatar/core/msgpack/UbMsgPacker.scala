@@ -152,13 +152,25 @@ object UbMsgPacker
   private def processPayload(messageType: Int, payload: Value): UbPayloads = {
     messageType match {
       case 83 =>
-        throw new Exception("not implemented ubirch protocol T85")
+        processT83Payload(payload.asMapValue())
       case 84 =>
         processT84Payload(payload)
       case 85 =>
         throw new Exception("not implemented ubirch protocol T85")
       case n: Int =>
         throw new Exception(s"unsupported msg type $n")
+    }
+  }
+
+  private def processT83Payload(payload: Value): UbPayloads = {
+    if(payload.isMapValue) {
+      UbPayloads(
+        data = parseMap(payload.asMapValue()),
+        meta = None,
+        config = None
+      )
+    } else {
+      throw new Exception("payload not correct, expected map")
     }
   }
 
@@ -184,7 +196,7 @@ object UbMsgPacker
       )
     }
     else
-      throw new Exception("playload size not OK")
+      throw new Exception("payload size not OK")
   }
 
   private def parseT84Measurements(mVal: MapValue): JValue = {
@@ -230,6 +242,37 @@ object UbMsgPacker
     json
   }
 
+  private def parseMap(mVal: MapValue): JValue = {
+    val res = mVal.keySet.toArray.map { key =>
+      val keyStr = String.valueOf(key).replace("\"", "")
+      val curVal = mVal.get(key)
+      curVal.getType match {
+        case ValueType.INTEGER =>
+          val curValVal = curVal.asIntegerValue().getLong
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JLong(curValVal))
+        case ValueType.RAW =>
+          val curValVal = curVal.asRawValue().getString
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JString(curValVal))
+        case ValueType.BOOLEAN =>
+          val curValVal = curVal.asBooleanValue().getBoolean
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JBool(curValVal))
+        case ValueType.FLOAT =>
+          val curValVal = curVal.asFloatValue().getDouble
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JDouble(curValVal))
+        case _ =>
+          logger.debug("unsupported type")
+          None
+      }
+    }.filter(_.isDefined).map(_.get).toList
+    val json = JObject(res)
+    logger.debug(compact(render(json)))
+    json
+  }
+
   private def parseConfigMap(mVal: MapValue): JValue = {
     val res = mVal.keySet.toArray.map { key =>
       val keyStr = String.valueOf(key).replace("\"", "")
@@ -237,12 +280,12 @@ object UbMsgPacker
       curVal.getType match {
         case ValueType.INTEGER =>
           val curValVal = curVal.asIntegerValue().getLong
-          logger.debug(s"k: ${keyStr} ($key) -> v: $curValVal")
-          Some((keyStr -> JLong(curValVal)))
+          logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
+          Some(keyStr -> JLong(curValVal))
         case ValueType.RAW =>
           val curValVal = curVal.asRawValue().getString
           logger.debug(s"k: $keyStr ($key) -> v: $curValVal")
-          Some((keyStr -> JString(curValVal)))
+          Some(keyStr -> JString(curValVal))
         case _ =>
           logger.debug("unsupported config type")
           None
