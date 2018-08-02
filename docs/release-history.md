@@ -14,9 +14,9 @@
 * update to `com.ubirch.util:elasticsearch-client-binary:2.5.0`
 * update to `com.ubirch.util:elasticsearch-util:2.5.0`
 * update to `com.ubirch.util:json:0.5.0`
-* update to `com.ubirch.util:mongo-utils:0.5.0`
-* update to `com.ubirch.util:mongo-test-utils:0.5.0`
-* update to `com.ubirch.util:oidc-utils:0.7.0`
+* update to `com.ubirch.util:mongo-utils:0.8.0`
+* update to `com.ubirch.util:mongo-test-utils:0.8.0`
+* update to `com.ubirch.util:oidc-utils:0.7.1`
 * update to `com.ubirch.util:redis-util:0.5.0`
 * update to `com.ubirch.util:response-util:0.4.0`
 * update to `com.ubirch.util:rest-akka-http:0.4.0`
@@ -24,7 +24,7 @@
 * update to `com.ubirch.util:uuid:0.1.3`
 * update to `com.ubirch.chain:model-rest:0.2.0`
 * update to `com.ubirch.notary:client:0.3.3`
-* update to `com.ubirch.user:client-rest:0.10.1`
+* update to `com.ubirch.user:client-rest:0.11.0`
 * update to `com.ubirch.key:client-rest:0.7.0`
 
 ### Version 0.4.3 (not released)
