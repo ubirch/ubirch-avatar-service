@@ -97,7 +97,6 @@ lazy val core = project
     description := "business logic",
     libraryDependencies ++= depCore,
     resolvers ++= Seq(
-      resolverRoundEights,
       resolverEclipse,
       resolverElasticsearch
     )
@@ -144,8 +143,7 @@ lazy val testBase = (project in file("test-base"))
     description := "test tools",
     libraryDependencies ++= depTestBase,
     resolvers ++= Seq(
-      resolverBeeClient,
-      resolverRoundEights
+      resolverBeeClient
     )
   )
 
@@ -165,7 +163,6 @@ lazy val util = project
     libraryDependencies ++= depUtil,
     resolvers ++= Seq(
       resolverBeeClient,
-      resolverRoundEights,
       resolverElasticsearch
     )
   )
@@ -379,7 +376,6 @@ lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.7.0" exclu
 
 lazy val resolverSeebergerJson = Resolver.bintrayRepo("hseeberger", "maven")
 lazy val resolverBeeClient = Resolver.bintrayRepo("rick-beton", "maven")
-lazy val resolverRoundEights = "RoundEights" at "http://maven.spikemark.net/roundeights"
 lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/repositories/paho-releases"
 lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
 lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
