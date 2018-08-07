@@ -87,7 +87,8 @@ object UbMsgPacker
         val payloadJson = processPayload(messageType, payload)
 
         val rawSignature = va.get(4).asRawValue().getByteArray
-        val signature = Hex.encodeHexString(rawSignature)
+        //val signature = Hex.encodeHexString(rawSignature)
+        val signature = Base64.getEncoder.encodeToString(rawSignature)
         logger.debug(s"signture $signature")
         Some(UbMessage(
           version = version,
@@ -120,7 +121,8 @@ object UbMsgPacker
         val payloads = processPayload(messageType, payload)
 
         val rawSignature = va.get(5).asRawValue().getByteArray
-        val signature = Hex.encodeHexString(rawSignature)
+        //val signature = Hex.encodeHexString(rawSignature)
+        val signature = Base64.getEncoder.encodeToString(rawSignature)
         logger.debug(s"signture $signature")
 
         val fw = if (payloads.meta.isDefined)
@@ -219,19 +221,19 @@ object UbMsgPacker
         case ValueType.INTEGER =>
           val curValVal = curVal.asIntegerValue().getLong
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JLong(curValVal)))
+          Some(ts.toString -> JLong(curValVal))
         case ValueType.RAW =>
           val curValVal = curVal.asRawValue().getString
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JString(curValVal)))
+          Some(ts.toString -> JString(curValVal))
         case ValueType.BOOLEAN =>
           val curValVal = curVal.asBooleanValue().getBoolean
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JBool(curValVal)))
+          Some(ts.toString -> JBool(curValVal))
         case ValueType.FLOAT =>
           val curValVal = curVal.asFloatValue().getDouble
           logger.debug(s"k: $ts ($key) -> v: $curValVal")
-          Some((ts.toString -> JDouble(curValVal)))
+          Some(ts.toString -> JDouble(curValVal))
         case _ =>
           logger.debug("unsupported measurement type")
           None

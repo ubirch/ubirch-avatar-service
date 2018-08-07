@@ -52,12 +52,11 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
       case Some(device) =>
         logger.debug(s"found device with primaryKey: $hashedHwDeviceId")
         val currentAuthToken = createSimpleSignature(payload, device)
-        currentAuthToken == authToken match {
-          case true =>
-            Some(device)
-          case _ =>
-            logger.error(s"playload for device with primaryKey=$hashedHwDeviceId has invalid authToken (currentAuthToken: $currentAuthToken != authToken: $authToken ")
-            None
+        if (currentAuthToken == authToken) {
+          Some(device)
+        } else {
+          logger.error(s"playload for device with primaryKey=$hashedHwDeviceId has invalid authToken (currentAuthToken: $currentAuthToken != authToken: $authToken ")
+          None
         }
       case None =>
         logger.error(s"device with hashedHwDeviceId=$hashedHwDeviceId not found")
@@ -111,9 +110,19 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
         case Some(keys) =>
           keys.map { key =>
             val valid = if (hashedPayload)
-              EccUtil.validateSignatureSha512(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+              try {
+                EccUtil.validateSignatureSha512(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+              }
+              catch {
+                case e: Exception => false
+              }
             else
-              EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+              try {
+                EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+              }
+              catch {
+                case e: Exception => false
+              }
             valid
           }.count(_ == true) == 1
         case None =>
