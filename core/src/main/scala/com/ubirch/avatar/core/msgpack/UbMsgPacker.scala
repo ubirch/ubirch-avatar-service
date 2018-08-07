@@ -333,7 +333,7 @@ object UbMsgPacker
     plKeys.foreach { k =>
       if (pl.get(k).isDefined) {
         packer.write(k)
-        packer.write(pl.get(k).get)
+        packer.write(pl(k))
       }
     }
     packer.writeMapEnd()
