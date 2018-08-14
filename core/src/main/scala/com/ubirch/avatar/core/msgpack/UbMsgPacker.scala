@@ -165,7 +165,7 @@ object UbMsgPacker
   }
 
   private def processT83Payload(payload: Value): UbPayloads = {
-    if(payload.isMapValue) {
+    if (payload.isMapValue) {
       UbPayloads(
         data = parseMap(payload.asMapValue()),
         meta = None,
@@ -185,8 +185,8 @@ object UbMsgPacker
       val status = payArr.get(2).asIntegerValue().getLong
 
       val meta = ("version" -> version) ~
-        ("wakeups" -> wakeups) ~
-        ("status" -> status)
+                 ("wakeups" -> wakeups) ~
+                 ("status" -> status)
 
       val mMap = payArr.get(3).asMapValue()
       val cMap = payArr.get(4).asMapValue()
@@ -207,7 +207,7 @@ object UbMsgPacker
       val ts = new DateTime(tsMillis, DateTimeZone.UTC)
       val t = mVal.get(key).asIntegerValue().getInt
       ("t" -> t) ~
-        ("ts" -> ts.toString)
+      ("ts" -> ts.toString)
     }).get
   }
 
@@ -316,9 +316,8 @@ object UbMsgPacker
     packer.write(binUuid)
     if (dsu.ds.isDefined) {
       try {
-
-        val binSig = Hex.decodeHex(dsu.ds.get)
-        //        val binSig = Base64.getDecoder.decode(dsu.ds.get)
+        //        val binSig = Hex.decodeHex(dsu.ds.get)
+        val binSig = Base64.getDecoder.decode(dsu.ds.get)
         packer.write(binSig)
       }
       catch {
