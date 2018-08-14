@@ -63,8 +63,8 @@ class DeviceApiActor(implicit mongo: MongoUtil,
         case Some(device) =>
           UserServiceClientRest.userGET(providerId = duc.providerId, externalUserId = duc.externalId).map {
             case Some(user) if user.id.isDefined =>
-              if (device.owners.size == 0 || device.owners.contains(user.id.get)) {
-                if (device.owners.size == 0)
+              if (device.owners.isEmpty || device.owners.contains(user.id.get)) {
+                if (device.owners.isEmpty)
                   DeviceManager.update(device.copy(owners = Set(user.id.get)))
                 s ! DeviceUserClaim(
                   hwDeviceId = duc.hwDeviceId,
@@ -115,16 +115,12 @@ class DeviceApiActor(implicit mongo: MongoUtil,
     }
   }
 
-  private def createDevice(session: AvatarSession, deviceInput: Device): Future[CreateResult]
-
-  = {
+  private def createDevice(session: AvatarSession, deviceInput: Device): Future[CreateResult] = {
 
     DeviceManager.info(deviceInput.deviceId).flatMap {
 
       case Some(dev) =>
-        logger.error(s"createDevice(): device already exists: ${
-          dev.deviceId
-        }")
+        logger.error(s"createDevice(): device already exists: ${dev.deviceId}")
         Future(
           CreateResult(
             error = Some(
@@ -141,11 +137,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
         addGroupsAndOwner(session, deviceInput) flatMap {
 
           case None =>
-            logger.error(s"createDevice(): failed to prepare device creation: device.hwDeviceId=${
-              deviceInput.hwDeviceId
-            }, userContext=${
-              session.userContext
-            }")
+            logger.error(s"createDevice(): failed to prepare device creation: device.hwDeviceId=${deviceInput.hwDeviceId}, userContext=${session.userContext}")
             Future(
               CreateResult(
                 error = Some(
@@ -205,7 +197,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
         Some(
           device.copy(
-            groups = groupIds,
+            groups = groupIds ++ device.groups,
             owners = ownerId
           )
         )
@@ -216,17 +208,9 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   }
 
-  private def queryGroups(session: AvatarSession): Future[Set[UUID]]
+  private def queryGroups(session: AvatarSession): Future[Set[UUID]] = {
 
-  = {
-
-    logger.debug(s"contextName = ${
-      session.userContext.context
-    } / providerId = ${
-      session.userContext.providerId
-    } / externalUserId = ${
-      session.userContext.userId
-    }")
+    logger.debug(s"contextName = ${session.userContext.context} / providerId = ${session.userContext.providerId} / externalUserId = ${session.userContext.userId}")
 
     UserServiceClientRest.groupMemberOf(
       contextName = session.userContext.context,
