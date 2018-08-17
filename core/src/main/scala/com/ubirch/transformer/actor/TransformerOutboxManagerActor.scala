@@ -80,19 +80,6 @@ class TransformerOutboxManagerActor extends Actor with ActorLogging {
   }
 
   override def unhandled(message: Any): Unit = {
-    //    message match {
-    //      case Failure(t) =>
-    //        log.error(t, message = s"received unknown message: ${m.getBody} from: ${context.sender()}")
-    //    }
-    //    if (message.isInstanceOf[Message]) {
-    //      //val m = message.asInstanceOf[Message]
-    //      //log.error(s"received unknown message: ${m.getBody} from: ${context.sender()}")
-    //    }
-    //    else if (message.isInstanceOf[CamelMessage]) {
-    //      //val m = message.asInstanceOf[CamelMessage]
-    //      //log.error(s"received unknown message: ${m.toString()} from: ${context.sender()}")
-    //    }
-    //    //else
-    //    //log.error(s"received unknown message: ${message.toString} (${message.getClass.toGenericString}) from: ${context.sender()}")
+
   }
 }

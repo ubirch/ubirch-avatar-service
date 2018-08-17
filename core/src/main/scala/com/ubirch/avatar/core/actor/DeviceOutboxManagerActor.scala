@@ -4,7 +4,6 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
-import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.Json4sUtil
