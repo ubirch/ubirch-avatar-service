@@ -37,7 +37,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
     with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
@@ -53,7 +53,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
 
             entity(as[DeviceClaim]) { deviceClaim =>
 
-              onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, externalId = userContext.userId, providerId = userContext.providerId)) {
+              onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, externalId = userContext.externalUserId, providerId = userContext.providerId)) {
 
                 case Success(resp) =>
                   resp match {
@@ -62,7 +62,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
                     case jre: JsonErrorResponse =>
                       complete(HttpStatus.SC_BAD_REQUEST -> jre)
                     case _ =>
-                      complete(HttpStatus.SC_INTERNAL_SERVER_ERROR -> requestErrorResponse(errorType = "DeviceClaimError", errorMessage = s"could not claim device ${deviceClaim.hwDeviceId} for user ${userContext.userId}"))
+                      complete(HttpStatus.SC_INTERNAL_SERVER_ERROR -> requestErrorResponse(errorType = "DeviceClaimError", errorMessage = s"could not claim device ${deviceClaim.hwDeviceId} for user ${userContext.externalUserId}"))
                   }
 
                 case Failure(t) =>

@@ -210,12 +210,12 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   private def queryGroups(session: AvatarSession): Future[Set[UUID]] = {
 
-    logger.debug(s"contextName = ${session.userContext.context} / providerId = ${session.userContext.providerId} / externalUserId = ${session.userContext.userId}")
+    logger.debug(s"contextName = ${session.userContext.context} / providerId = ${session.userContext.providerId} / externalUserId = ${session.userContext.externalUserId}")
 
     UserServiceClientRest.groupMemberOf(
       contextName = session.userContext.context,
       providerId = session.userContext.providerId,
-      externalUserId = session.userContext.userId
+      externalUserId = session.userContext.externalUserId
     ) map {
 
       case None =>
@@ -234,7 +234,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
     UserServiceClientRest.userGET(
       providerId = session.userContext.providerId,
-      externalUserId = session.userContext.userId
+      externalUserId = session.userContext.externalUserId
     ) map {
 
       case None =>
