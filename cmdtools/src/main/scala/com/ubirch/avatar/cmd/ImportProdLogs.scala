@@ -13,7 +13,7 @@ import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 
 import scala.collection.JavaConverters._
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.io.Source
 import scala.util.{Failure, Success}
 
@@ -23,9 +23,9 @@ object ImportProdLogs
 
   val conf = ConfigFactory.load()
 
-  implicit val system = ActorSystem("AvatarService")
+  implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   case class DeviceInfo(
                          deviceType: String,
@@ -86,14 +86,14 @@ object ImportProdLogs
         }
 
         val di = DeviceInfo(
-          deviceType = rowData(deviceTypeOffset).toString,
-          testTimestamp = rowData(deviceTestDatetimeOffset).toString,
-          testResult = !rowData(testResultOffset).toString.toLowerCase.contains("failed"),
+          deviceType = rowData(deviceTypeOffset),
+          testTimestamp = rowData(deviceTestDatetimeOffset),
+          testResult = !rowData(testResultOffset).toLowerCase.contains("failed"),
           hwDeviceId = hwDeviceId,
-          tempSensorId = rowData(tempSensorIdOffset).toString,
-          firmwareVersion = rowData(firmwareVersionOffset).toString,
-          orderNr = rowData(orderNrOffset).toString,
-          tester = rowData(testerOffset).toString
+          tempSensorId = rowData(tempSensorIdOffset),
+          firmwareVersion = rowData(firmwareVersionOffset),
+          orderNr = rowData(orderNrOffset),
+          tester = rowData(testerOffset)
         )
         logger.info(s"deviceInfo: ${di.deviceType} / ${di.testResult} / ${di.hwDeviceId}")
         getDeviceTypeKey(di.deviceType).map { dtype =>
@@ -138,8 +138,8 @@ object ImportProdLogs
                       tags = DeviceTypeUtil.defaultTags(dtype)
                     )
                     DeviceManager.create(device = dev).onComplete {
-                      case Success(dev) =>
-                        dev match {
+                      case Success(newDev) =>
+                        newDev match {
                           case None =>
                             logger.error("could not create device")
                           case Some(d) =>
@@ -159,6 +159,10 @@ object ImportProdLogs
         }
       }
     }
+  }
+  catch {
+    case e: Exception =>
+      logger.error("something kapuuuth:", e)
   }
 
   private def getDeviceTypeKey(deviceType: String): Future[String] = {
