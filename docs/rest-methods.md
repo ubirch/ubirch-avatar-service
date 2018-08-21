@@ -29,18 +29,22 @@ If not healthy the status is `false` and the `messages` array not empty:
 
 returns an array of all devices the authenticated user has connected
 
-    curl -XGET localhost:8080/api/avatarService/v1/device -H "Authorization: Bearer token-12345678"
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XGET localhost:8080/api/avatarService/v1/device -H "Authorization: Bearer $TOKEN"
 
-to list devices as short info objects use stub endpoint
+to list device short infos use the stub endpoint
 
-    curl -XGET localhost:8080/api/avatarService/v1/device/stub -H "Authorization: Bearer token-12345678"
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XGET localhost:8080/api/avatarService/v1/device/stub -H "Authorization: Bearer $TOKEN"
 
 
 #### CREATE device
 
 creates a new device
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device -H "Content-Type: application/json" -H "Authorization: Bearer token-12345678" -d '{
+    // TODO input format has changed and needs an update
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XPOST localhost:8080/api/avatarService/v1/device -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{
         "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
         "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
         "deviceName":"new device",
@@ -56,15 +60,37 @@ creates a new device
         ]}'
 
 
-#### READ, EDIT, DELETE device with ID
+#### CREATE, READ, UPDATE, DELETE device with ID
 
 READ device with given id
 
-    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer token-12345678"
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer $TOKEN"
+
+CREATE device with given id
+
+    // TODO input format has changed and needs an update
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{
+          "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+          "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
+          "deviceName":"new device",
+          "deviceTypeKey":"lightsLamp",
+          "deviceProperties":{},
+          "deviceConfig":{
+              "i":900,
+              "bf":0
+          },
+          "tags":[
+              "ubirch#0",
+              "actor","btcDemo"
+          ]}'
 
 UPDATE device with given id
 
-    curl -XPUT localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer token-12345678" -H "Content-Type: application/json" -d '{
+    // TODO input format has changed and needs an update
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XPUT localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{
           "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
           "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
           "deviceName":"new device",
@@ -81,13 +107,25 @@ UPDATE device with given id
 
 DELETE device with given id (idempotent)
 
-    curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer token-12345678"
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XDELETE localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer $TOKEN"
 
 #### Device State
 
 get state of device with given id
 
-    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID>/state -H "Authorization: Bearer $TOKEN"
+
+to list a particular device's short info use the stub endpoint
+
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XGET localhost:8080/api/avatarService/v1/device/stub/<DEVICE_ID> -H "Authorization: Bearer $TOKEN"
+
+#### Device Claim
+
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XPUT localhost:8080/api/avatarService/v1/device/claim -H "Authorization: Bearer $TOKEN"
 
 ### Device Data
 
@@ -95,6 +133,7 @@ get state of device with given id
 
 Raw data comes directly from devices and is not yet human readable.
 
+    // TODO input format has changed and needs an update
     curl -XPOST localhost:8080/api/avatarService/v1/device/data/raw -H "Content-Type: application/json" -d '{
       "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
       "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
@@ -114,6 +153,7 @@ Raw data comes directly from devices and is not yet human readable.
 
 TODO: add description
 
+    // TODO input format has changed and needs an update
     curl -XPOST localhost:8080/api/avatarService/v1/device/update -H "Content-Type: application/json" -d '{
         "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
         "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
@@ -133,7 +173,8 @@ TODO: add description
 
 TODO: add description
 
-    curl -XPOST localhost:8080/api/avatarService/v1/device/bulk -H "Content-Type: application/json" -d '{
+    // TODO input format has changed and needs an update
+    curl -XPOST localhost:8080/api/avatarService/v1/device/update/bulk -H "Content-Type: application/json" -d '{
         "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
         "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
         "deviceType": "lightsLamp",
@@ -147,6 +188,14 @@ TODO: add description
           "bar": "ubirch-sensor-data"
         }
     }'
+
+#### MessagePack
+
+Update a device just as with `/device/update` but with MessagePack as input format. With the boolean parameter `js` we
+can tell the server if we want it to return JSON or MessagePack.
+
+    // TODO add valid MessagePack payload
+    curl -XPOST localhost:8080/api/avatarService/v1/device/update/mpack?js=true -d ''
 
 #### History (From-To)
 
@@ -193,10 +242,12 @@ Devices have types and this set of methods allows us to manage them.
 
 #### Query all available device types
 
-    curl -XGET localhost:8080/api/avatarService/v1/device/deviceType
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XGET localhost:8080/api/avatarService/v1/device/deviceType -H "Authorization: Bearer $TOKEN"
 
 #### Create device type
 
+    // TODO input format has changed and needs an update
     curl -XPOST localhost:8080/api/avatarService/v1/device/deviceType -H "Content-Type: application/json" -d '{
         "key": "trackle",
         "name": {
@@ -307,5 +358,6 @@ Devices have types and this set of methods allows us to manage them.
 
 #### Create default device types but only if no other types exist in the database:
 
-    curl -XGET localhost:8080/api/avatarService/v1/device/deviceType/init
+    # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
+    curl -XGET localhost:8080/api/avatarService/v1/device/deviceType/init -H "Authorization: Bearer $TOKEN"
     
