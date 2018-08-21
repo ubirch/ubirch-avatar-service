@@ -42,68 +42,118 @@ to list device short infos use the stub endpoint
 
 creates a new device
 
-    // TODO input format has changed and needs an update
     # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
     curl -XPOST localhost:8080/api/avatarService/v1/device -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{
-        "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
-        "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
-        "deviceName":"new device",
-        "deviceTypeKey":"lightsLamp",
-        "deviceProperties":{},
-        "deviceConfig":{
+        "deviceId": "5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+        "owners": [
+            "fb5886c2-7ebd-45c0-b5a5-fc100d7ae966"
+        ],
+        "groups": [
+            "913e26f2-d0ac-4735-9535-df12265aca8b"
+        ],
+        "deviceTypeKey": "lightsLamp",
+        "deviceName": "new device",
+        "hwDeviceId": "07a1d44f-4c1f-4863-8a39-1440e94476f6",
+        "hashedHwDeviceId": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==", // base64(sha512(hwDeviceId))
+        "tags": [
+            "ubirch#0",
+            "actor","btcDemo"
+        ],
+        "deviceConfig": { // optional
             "i":900,
             "bf":0
         },
-        "tags":[
-            "ubirch#0",
-            "actor","btcDemo"
-        ]}'
+        "deviceProperties": {}, // optional
+        "subQueues": ["mySubQueue1", "mySubQueue2"] // optional
+        "pubQueues": ["myPubQueue1", "myPubQueue2"] // optional
+        "pubRawQueues": ["myPubRawQueue1", "myPubRawQueue2"] // optional
+        "avatarLastUpdated": "2018-08-21T15:56:246.512Z", // optional
+        "deviceLastUpdated": "2018-08-21T15:56:246.512Z", // optional
+        "updated": "2018-08-21T15:56:246.512Z", // optional
+        "created": "2018-08-21T15:54:46.271Z"
+    }'
 
 
 #### CREATE, READ, UPDATE, DELETE device with ID
 
 READ device with given id
 
+    /api/avatarService/v1/device/<DEVICE_ID> // uri path format
+    
     # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
-    curl -XGET localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer $TOKEN"
+    curl -XGET localhost:8080/api/avatarService/v1/device/5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf -H "Authorization: Bearer $TOKEN"
 
 CREATE device with given id
 
-    // TODO input format has changed and needs an update
+*Note* the deviceId in the uri path is being ignored.
+
+    /api/avatarService/v1/device/<DEVICE_ID> // uri path format
+
     # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
-    curl -XPOST localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{
-          "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
-          "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
-          "deviceName":"new device",
-          "deviceTypeKey":"lightsLamp",
-          "deviceProperties":{},
-          "deviceConfig":{
-              "i":900,
-              "bf":0
-          },
-          "tags":[
-              "ubirch#0",
-              "actor","btcDemo"
-          ]}'
+    curl -XPOST localhost:8080/api/avatarService/v1/device/5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{
+        "deviceId": "5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+        "owners": [
+            "fb5886c2-7ebd-45c0-b5a5-fc100d7ae966"
+        ],
+        "groups": [
+            "913e26f2-d0ac-4735-9535-df12265aca8b"
+        ],
+        "deviceTypeKey": "lightsLamp",
+        "deviceName": "new device",
+        "hwDeviceId": "07a1d44f-4c1f-4863-8a39-1440e94476f6",
+        "hashedHwDeviceId": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==", // base64(sha512(hwDeviceId))
+        "tags": [
+            "ubirch#0",
+            "actor","btcDemo"
+        ],
+        "deviceConfig": { // optional
+            "i":900,
+            "bf":0
+        },
+        "deviceProperties": {}, // optional
+        "subQueues": ["mySubQueue1", "mySubQueue2"] // optional
+        "pubQueues": ["myPubQueue1", "myPubQueue2"] // optional
+        "pubRawQueues": ["myPubRawQueue1", "myPubRawQueue2"] // optional
+        "avatarLastUpdated": "2018-08-21T15:56:246.512Z", // optional
+        "deviceLastUpdated": "2018-08-21T15:56:246.512Z", // optional
+        "updated": "2018-08-21T15:56:246.512Z", // optional
+        "created": "2018-08-21T15:54:46.271Z"
+    }'
 
 UPDATE device with given id
 
-    // TODO input format has changed and needs an update
+    /api/avatarService/v1/device/<DEVICE_ID> // uri path format
+
     # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
-    curl -XPUT localhost:8080/api/avatarService/v1/device/<DEVICE_ID> -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{
-          "deviceId":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
-          "hwDeviceId":"hdkljhdklghdfkjlghsdfkljghdfskl",
-          "deviceName":"new device",
-          "deviceTypeKey":"lightsLamp",
-          "deviceProperties":{},
-          "deviceConfig":{
-              "i":900,
-              "bf":0
-          },
-          "tags":[
-              "ubirch#0",
-              "actor","btcDemo"
-          ]}'
+    curl -XPUT localhost:8080/api/avatarService/v1/device/5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{
+        "deviceId": "5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+        "owners": [
+            "fb5886c2-7ebd-45c0-b5a5-fc100d7ae966"
+        ],
+        "groups": [
+            "913e26f2-d0ac-4735-9535-df12265aca8b"
+        ],
+        "deviceTypeKey": "lightsLamp",
+        "deviceName": "new device",
+        "hwDeviceId": "07a1d44f-4c1f-4863-8a39-1440e94476f6",
+        "hashedHwDeviceId": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==", // base64(sha512(hwDeviceId))
+        "tags": [
+            "ubirch#0",
+            "actor","btcDemo"
+        ],
+        "deviceConfig": { // optional
+            "i":900,
+            "bf":0
+        },
+        "deviceProperties": {}, // optional
+        "subQueues": ["mySubQueue1", "mySubQueue2"] // optional
+        "pubQueues": ["myPubQueue1", "myPubQueue2"] // optional
+        "pubRawQueues": ["myPubRawQueue1", "myPubRawQueue2"] // optional
+        "avatarLastUpdated": "2018-08-21T15:56:246.512Z", // optional
+        "deviceLastUpdated": "2018-08-21T15:56:246.512Z", // optional
+        "updated": "2018-08-21T15:56:246.512Z", // optional
+        "created": "2018-08-21T15:54:46.271Z"
+      }'
 
 DELETE device with given id (idempotent)
 
@@ -247,7 +297,6 @@ Devices have types and this set of methods allows us to manage them.
 
 #### Create device type
 
-    // TODO input format has changed and needs an update
     curl -XPOST localhost:8080/api/avatarService/v1/device/deviceType -H "Content-Type: application/json" -d '{
         "key": "trackle",
         "name": {
@@ -255,18 +304,20 @@ Devices have types and this set of methods allows us to manage them.
           "en": "Trackle"
         },
         "icon": "trackle",
+        "displayKeys": [],
+        "transformerQueue": "transformer_queue_to_send_to_for_data_tranformation", // optional
         "defaults": {
-          "properties": {},
-          "config": {
-            "i": 60
-          },
-          "tags": [
-            "ubirch#1",
-            "actor",
-            "trackle"
-          ]
-        }
-      }'
+          "properties": {}, // any valid json
+          "config": { // any valid json
+          "i": 60
+        },
+        "tags": [
+          "ubirch#1",
+          "actor",
+          "trackle"
+        ]
+      }
+    }'
 
 ##### Response (Success)
 
@@ -280,7 +331,7 @@ Devices have types and this set of methods allows us to manage them.
     Content-Type: application/json
     Content-Length: 158
 
-    {"key":"trackle","name":{"de":"Trackle","en":"Trackle"},"icon":"trackle","defaults":{"properties":{},"config":{"i":60},"tags":["ubirch#1","actor","trackle"]}}
+    {"key": "trackle", "name": {"de": "Trackle", "en": "Trackle"}, "icon": "trackle", "displayKeys": [], "transformerQueue": "transformer_queue_to_send_to_for_data_tranformation", "defaults": {"properties": {}, "config": {"i": 60}, "tags": ["ubirch#1", "actor", "trackle"]}}
 
 ##### Response (Error)
 
@@ -310,18 +361,20 @@ Devices have types and this set of methods allows us to manage them.
           "en": "Trackle"
         },
         "icon": "trackle",
+        "displayKeys": [],
+        "transformerQueue": "transformer_queue_to_send_to_for_data_tranformation", // optional
         "defaults": {
-          "properties": {},
-          "config": {
-            "i": 120
-          },
-          "tags": [
-            "ubirch#0",
-            "actor",
-            "trackle"
-          ]
-        }
-      }'
+          "properties": {}, // any valid json
+          "config": { // any valid json
+          "i": 120
+        },
+        "tags": [
+          "ubirch#1",
+          "actor",
+          "trackle"
+        ]
+      }
+    }'
 
 ##### Response (Success)
 
@@ -335,7 +388,7 @@ Devices have types and this set of methods allows us to manage them.
     Content-Type: application/json
     Content-Length: 159
 
-    {"key":"trackle","name":{"de":"Trackle","en":"Trackle"},"icon":"trackle","defaults":{"properties":{},"config":{"i":120},"tags":["ubirch#0","actor","trackle"]}}
+    {"key": "trackle", "name": {"de": "Trackle", "en": "Trackle"}, "icon": "trackle", "displayKeys": [], "transformerQueue": "transformer_queue_to_send_to_for_data_tranformation", "defaults": {"properties": {}, "config": {"i": 120}, "tags": ["ubirch#1", "actor", "trackle"]}}
 
 ##### Response (Error)
 
