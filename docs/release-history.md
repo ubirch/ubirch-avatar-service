@@ -30,6 +30,7 @@
 * update to `com.ubirch.notary:client:0.3.3`
 * update to `com.ubirch.user:client-rest:0.12.2`
 * update to `com.ubirch.key:client-rest:0.8.1`
+* updated endpoint documentation in `rest-methods.md`
 
 ### Version 0.4.3 (not released)
 
