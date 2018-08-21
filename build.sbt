@@ -250,34 +250,32 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-lazy val akkaV = "2.5.11"
-lazy val akkaHttpV = "10.1.3"
-lazy val json4sV = "3.5.2" // TODO update to 3.6.0
-lazy val awsSdkV = "1.11.368"
-lazy val camelV = "2.22.0"
-lazy val scalaTestV = "3.0.1"
-lazy val spireV = "0.13.0"
-lazy val logbackV = "1.2.3"
-lazy val logstashEncV = "5.0"
-lazy val slf4jV = "1.7.25"
-lazy val log4jV = "2.9.1"
-lazy val scalaLogV = "3.7.2"
-lazy val scalaLogSLF4JV = "2.1.2"
+val akkaV = "2.5.11"
+val akkaHttpV = "10.1.3"
+val json4sV = "3.6.0"
+val awsSdkV = "1.11.368"
+val camelV = "2.22.0"
+val scalaTestV = "3.0.5"
+val spireV = "0.13.0"
+val logbackV = "1.2.3"
+val logstashEncV = "5.0"
+val slf4jV = "1.7.25"
+val log4jV = "2.9.1"
+val scalaLogV = "3.7.2"
+val scalaLogSLF4JV = "2.1.2"
 
 // GROUP NAMES
-lazy val akkaG = "com.typesafe.akka"
-lazy val logbackG = "ch.qos.logback"
-lazy val json4sG = "org.json4s"
-lazy val awsG = "com.amazonaws"
-lazy val ubirchUtilG = "com.ubirch.util"
-lazy val ubirchChainG = "com.ubirch.chain"
-lazy val ubirchUtilGroup = "com.ubirch.util"
+val akkaG = "com.typesafe.akka"
+val logbackG = "ch.qos.logback"
+val json4sG = "org.json4s"
+val awsG = "com.amazonaws"
+val ubirchUtilG = "com.ubirch.util"
 
-lazy val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
-lazy val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaHttpV
-lazy val akkaTestkit = akkaG %% "akka-testkit" % akkaV
+val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
+val akkaHttpTestkit = akkaG %% "akka-http-testkit" % akkaHttpV
+val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
-lazy val scalaLogging = Seq(
+val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
   "org.slf4j" % "log4j-over-slf4j" % slf4jV,
   "org.slf4j" % "jul-to-slf4j" % slf4jV,
@@ -289,7 +287,7 @@ lazy val scalaLogging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
 )
 
-lazy val akka = Seq(
+val akka = Seq(
   akkaG %% "akka-actor" % akkaV,
   akkaG %% "akka-stream" % akkaV,
   akkaG %% "akka-slf4j" % akkaV,
@@ -297,7 +295,7 @@ lazy val akka = Seq(
   akkaG %% "akka-cluster" % akkaV
 )
 
-lazy val akkaCamel = Seq(
+val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
   "org.apache.camel" % "camel-aws" % camelV,
   "org.apache.camel" % "camel-paho" % camelV,
@@ -305,40 +303,40 @@ lazy val akkaCamel = Seq(
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
-lazy val joda = Seq(jodaTime, jodaConvert)
-lazy val jodaTime = "joda-time" % "joda-time" % "2.9.4"
-lazy val jodaConvert = "org.joda" % "joda-convert" % "1.8.1"
+val jodaTime = "joda-time" % "joda-time" % "2.10"
+val jodaConvert = "org.joda" % "joda-convert" % "2.1.1"
+val joda = Seq(jodaTime, jodaConvert)
 
-lazy val json4s = Seq(json4sNative, json4sExt, json4sJackson)
-lazy val json4sNative = json4sG %% "json4s-native" % json4sV
-lazy val json4sExt = json4sG %% "json4s-ext" % json4sV
-lazy val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
+val json4sNative = json4sG %% "json4s-native" % json4sV
+val json4sExt = json4sG %% "json4s-ext" % json4sV
+val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
+val json4s = Seq(json4sNative, json4sExt, json4sJackson)
 
-lazy val spireMath = "org.spire-math" %% "spire" % spireV
+val spireMath = "org.spire-math" %% "spire" % spireV
 
 // list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
-lazy val awsSqsSdk = Seq(
+val awsSqsSdk = Seq(
   awsG % "aws-java-sdk-sqs" % awsSdkV
 )
 
-lazy val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
+val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
-lazy val msgpack4s = "org.velvia" %% "msgpack4s" % "0.6.0"
-lazy val msgpackScala = "org.msgpack" %% "msgpack-scala" % "0.6.11"
+val msgpack4s = "org.velvia" %% "msgpack4s" % "0.6.0"
+val msgpackScala = "org.msgpack" %% "msgpack-scala" % "0.6.11"
 
-lazy val excludedLoggers = Seq(
+val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
   ExclusionRule(organization = "org.apache.logging")
 )
 
-lazy val constructr = Seq(
+val constructr = Seq(
   "de.heikoseeberger" %% "constructr" % "0.18.0",
   "de.heikoseeberger" %% "constructr-coordination-etcd" % "0.18.0"
 )
 
-lazy val prometheus = Seq(
+val prometheus = Seq(
   "io.prometheus" % "simpleclient" % "0.3.0",
   "io.prometheus" % "simpleclient_hotspot" % "0.3.0",
   "io.prometheus" % "simpleclient_httpserver" % "0.3.0",
@@ -347,28 +345,28 @@ lazy val prometheus = Seq(
   , "org.aspectj" % "aspectjweaver" % "1.8.10"
 )
 
-lazy val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchConfig = ubirchUtilG %% "config" % "0.2.1" excludeAll (excludedLoggers: _*)
-lazy val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.9" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.5.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.5.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchJson = ubirchUtilG %% "json" % "0.5.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.7.3.4" excludeAll (excludedLoggers: _*)
-lazy val ubirchUtilRedisUtil = ubirchUtilGroup %% "redis-util" % "0.5.0"
-lazy val ubirchResponse = ubirchUtilG %% "response-util" % "0.4.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.4.0" excludeAll (excludedLoggers: _*)
-lazy val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.3" excludeAll (excludedLoggers: _*)
+val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
+val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
+val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.5.1" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.5.1" excludeAll (excludedLoggers: _*)
+val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
+val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
+val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
+val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.7.4" excludeAll (excludedLoggers: _*)
+val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.0"
+val ubirchResponse = ubirchUtilG %% "response-util" % "0.4.0" excludeAll (excludedLoggers: _*)
+val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
+val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.4.0" excludeAll (excludedLoggers: _*)
+val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.3" excludeAll (excludedLoggers: _*)
 
-lazy val ubirchChainModel = ubirchChainG %% "model-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
+val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
 
-lazy val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
+val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
-lazy val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.12.2" excludeAll (excludedLoggers: _*)
-lazy val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.7.0" excludeAll (excludedLoggers: _*)
+val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "0.12.2" excludeAll (excludedLoggers: _*)
+val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.8.1" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
