@@ -181,62 +181,78 @@ to list a particular device's short info use the stub endpoint
 
 #### Raw
 
-Raw data comes directly from devices and is not yet human readable.
+Raw data comes directly from devices in a machine readable format. The server will relay it to a transformer which will
+then typically convert it into something more human readable.
 
-    // TODO input format has changed and needs an update
+There's a lot more fields compared to what's been used in the example below. For more details please refer to the
+scaladoc of the `DeviceDataRaw` object.
+
     curl -XPOST localhost:8080/api/avatarService/v1/device/data/raw -H "Content-Type: application/json" -d '{
-      "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
-      "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
-      "deviceType": "lightsLamp",
-      "timestamp": "2016-06-30T11:39:51Z",
-      "deviceTags": [
-        "ubirch#0",
-        "actor"
-      ],
-      "deviceMessage": {
-        "foo": 23,
-        "bar": "ubirch-sensor-data"
-      }
+        "id": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "v": "0.0.3",
+        "a": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==",
+        "ts": "2016-06-30T11:39:51Z",
+        "p": {
+            "foo": 23,
+            "bar": "ubirch-sensor-data"
+        },
+        "config": {
+            "i":1900,
+            "bf":0
+        },
+        "deviceType": "lightsLamp",
+        "tags": [
+            "ubirch#0",
+            "actor"
+        ]
     }'
 
 #### Update
 
 TODO: add description
 
-    // TODO input format has changed and needs an update
     curl -XPOST localhost:8080/api/avatarService/v1/device/update -H "Content-Type: application/json" -d '{
-        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
-        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "id": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "v": "0.0.3",
+        "a": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==",
+        "ts": "2016-06-30T11:39:51Z",
+        "p": {
+            "foo": 23,
+            "bar": "ubirch-sensor-data"
+        },
+        "config": {
+            "i":1900,
+            "bf":0
+        },
         "deviceType": "lightsLamp",
-        "timestamp": "2016-06-30T11:39:51Z",
-        "deviceTags": [
-          "ubirch#0",
-          "actor"
-        ],
-        "deviceMessage": {
-          "foo": 23,
-          "bar": "ubirch-sensor-data"
-        }
+        "tags": [
+            "ubirch#0",
+            "actor"
+        ]
     }'
 
 #### Bulk
 
 TODO: add description
 
-    // TODO input format has changed and needs an update
     curl -XPOST localhost:8080/api/avatarService/v1/device/update/bulk -H "Content-Type: application/json" -d '{
-        "deviceId": "57a7892e-e707-4256-81e4-2e579213e6b8",
-        "messageId": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "id": "8aa3d0ec-9ec8-4785-93e9-6fd1705dace6",
+        "v": "0.0.3",
+        "a": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==",
+        "ts": "2016-06-30T11:39:51Z",
+        "p": {
+            "foo": 23,
+            "bar": "ubirch-sensor-data"
+        },
+        "config": {
+            "i":1900,
+            "bf":0
+        },
         "deviceType": "lightsLamp",
-        "timestamp": "2016-06-30T11:39:51Z",
-        "deviceTags": [
-          "ubirch#0",
-          "actor"
-        ],
-        "deviceMessage": {
-          "foo": 23,
-          "bar": "ubirch-sensor-data"
-        }
+        "tags": [
+            "ubirch#0",
+            "actor"
+        ]
     }'
 
 #### MessagePack
