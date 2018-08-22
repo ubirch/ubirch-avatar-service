@@ -64,9 +64,9 @@ creates a new device
             "bf":0
         },
         "deviceProperties": {}, // optional
-        "subQueues": ["mySubQueue1", "mySubQueue2"] // optional
-        "pubQueues": ["myPubQueue1", "myPubQueue2"] // optional
-        "pubRawQueues": ["myPubRawQueue1", "myPubRawQueue2"] // optional
+        "subQueues": ["mySubQueue1", "mySubQueue2"], // optional
+        "pubQueues": ["myPubQueue1", "myPubQueue2"], // optional
+        "pubRawQueues": ["myPubRawQueue1", "myPubRawQueue2"], // optional
         "avatarLastUpdated": "2018-08-21T15:56:246.512Z", // optional
         "deviceLastUpdated": "2018-08-21T15:56:246.512Z", // optional
         "updated": "2018-08-21T15:56:246.512Z", // optional
@@ -175,7 +175,9 @@ to list a particular device's short info use the stub endpoint
 #### Device Claim
 
     # to make the call with a ubirch token use `-H "Authorization: $TOKEN"` instead
-    curl -XPUT localhost:8080/api/avatarService/v1/device/claim -H "Authorization: Bearer $TOKEN"
+    curl -XPUT localhost:8080/api/avatarService/v1/device/claim -H "Authorization: Bearer $TOKEN" -d '{
+        "hwDeviceId": "07a1d44f-4c1f-4863-8a39-1440e94476f6"
+    }'
 
 ### Device Data
 
@@ -193,8 +195,15 @@ scaladoc of the `DeviceDataRaw` object.
         "a": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==",
         "ts": "2016-06-30T11:39:51Z",
         "p": {
-            "foo": 23,
-            "bar": "ubirch-sensor-data"
+            "t": 28.58,
+            "p": 1013.04,
+            "h": 32.52,
+            "a": 1.75,
+            "la": "52.478680",
+            "lo": "13.369360",
+            "ba": 100,
+            "lp": 0,
+            "e": 0
         },
         "config": {
             "i":1900,
@@ -217,8 +226,15 @@ TODO: add description
         "a": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==",
         "ts": "2016-06-30T11:39:51Z",
         "p": {
-            "foo": 23,
-            "bar": "ubirch-sensor-data"
+            "t": 28.58,
+            "p": 1013.04,
+            "h": 32.52,
+            "a": 1.75,
+            "la": "52.478680",
+            "lo": "13.369360",
+            "ba": 100,
+            "lp": 0,
+            "e": 0
         },
         "config": {
             "i":1900,
@@ -241,8 +257,15 @@ TODO: add description
         "a": "nNeA0pqvk2jFw+sGFpTUBzAT5Jpk54Pi1QffnL5mtR3U8Zs6iyPRT5AxTPxtIgwEDTr65i3H84jphnpLBLVwtg==",
         "ts": "2016-06-30T11:39:51Z",
         "p": {
-            "foo": 23,
-            "bar": "ubirch-sensor-data"
+            "t": 28.58,
+            "p": 1013.04,
+            "h": 32.52,
+            "a": 1.75,
+            "la": "52.478680",
+            "lo": "13.369360",
+            "ba": 100,
+            "lp": 0,
+            "e": 0
         },
         "config": {
             "i":1900,

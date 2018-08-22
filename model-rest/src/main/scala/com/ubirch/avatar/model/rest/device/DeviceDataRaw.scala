@@ -42,19 +42,19 @@ case class DeviceDataRaws(ddrs: Set[DeviceDataRaw])
   * @param refId          (optional) // TODO add description
   */
 case class DeviceDataRaw(
-                          id: UUID = UUIDUtil.uuid, // messageId
+                          id: UUID = UUIDUtil.uuid,
                           v: String = MessageVersion.v003,
                           fw: String = "n.a.",
-                          umv: Option[Int] = None, // ubirch protocol main version
-                          usv: Option[Int] = None, // ubirch protocol sub version
+                          umv: Option[Int] = None,
+                          usv: Option[Int] = None,
                           a: String,
-                          did: Option[String] = None, //deviceHwId
+                          did: Option[String] = None,
                           ts: DateTime = DateTime.now(),
                           k: Option[String] = None,
                           s: Option[String] = None,
-                          ps: Option[String] = None, // Signature of previous message form this device
-                          mpraw: Option[String] = None, //raw msgpack message as hex string
-                          mppay: Option[String] = None, //raw msgpack payload as hex string
+                          ps: Option[String] = None,
+                          mpraw: Option[String] = None,
+                          mppay: Option[String] = None,
                           p: JValue,
                           config: Option[JValue] = None,
                           meta: Option[JValue] = None,
