@@ -9,14 +9,18 @@
 * update to plugin `org.scoverage:sbt-scoverage:1.5.1`
 * disabled plugin `com.zavakid.sbt:sbt-one-log` as it's not yet available for sbt `1.1.x`
 * update to plugin `com.typesafe.sbt:sbt-twirl:1.3.15`
-* update to `com.ubirch.util:config:0.2.1`
-* update to `com.ubirch.util:crypto:0.4.9`
-* update to `com.ubirch.util:elasticsearch-client-binary:2.5.0`
-* update to `com.ubirch.util:elasticsearch-util:2.5.0`
-* update to `com.ubirch.util:json:0.5.0`
+* update to `org.json4s:json4s-*:3.6.0`
+* update to `org.scalatest:scalatest:3.0.5`
+* update to `joda-time:joda-time:2.10`
+* update to `org.joda:joda-convert:2.1.1`
+* update to `com.ubirch.util:config:0.2.3   `
+* update to `com.ubirch.util:crypto:0.4.11`
+* update to `com.ubirch.util:elasticsearch-client-binary:2.5.1`
+* update to `com.ubirch.util:elasticsearch-util:2.5.1`
+* update to `com.ubirch.util:json:0.5.1`
 * update to `com.ubirch.util:mongo-utils:0.8.0`
 * update to `com.ubirch.util:mongo-test-utils:0.8.0`
-* update to `com.ubirch.util:oidc-utils:0.7.1`
+* update to `com.ubirch.util:oidc-utils:0.7.4`
 * update to `com.ubirch.util:redis-util:0.5.0`
 * update to `com.ubirch.util:response-util:0.4.0`
 * update to `com.ubirch.util:rest-akka-http:0.4.0`
@@ -24,8 +28,9 @@
 * update to `com.ubirch.util:uuid:0.1.3`
 * update to `com.ubirch.chain:model-rest:0.2.0`
 * update to `com.ubirch.notary:client:0.3.3`
-* update to `com.ubirch.user:client-rest:0.11.0`
-* update to `com.ubirch.key:client-rest:0.7.0`
+* update to `com.ubirch.user:client-rest:0.12.2`
+* update to `com.ubirch.key:client-rest:0.8.1`
+* updated endpoint documentation in `rest-methods.md`
 
 ### Version 0.4.3 (not released)
 
