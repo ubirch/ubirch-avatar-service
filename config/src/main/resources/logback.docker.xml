@@ -79,6 +79,7 @@
   <logger name="com.ubirch.user.client.rest.UserServiceClientRest" level="INFO"/>
   <logger name="com.ubirch.util.mongo.connection.MongoUtil" level="INFO"/>
   <logger name="org.apache.http" level="WARN"/>
+  <logger name="org.apache.camel.component.mqtt" level="ERROR"/>
   <logger name="akka.camel.internal" level="INFO"/>
   <logger name="com.amazonaws" level="WARN"/>
   <logger name="reactivemongo.core" level="WARN"/>

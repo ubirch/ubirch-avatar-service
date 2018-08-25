@@ -32,7 +32,14 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
   override def receive: Receive = {
 
     case (device: Device, drd: DeviceDataRaw) =>
-      val drdExt = drd.copy(deviceId = Some(device.deviceId))
+      val drdExt = if (drd.mppay.isDefined && drd.mppay.get.length > 50000) {
+        drd.copy(
+          deviceId = Some(device.deviceId),
+          mppay = None
+        )
+      }
+      else
+        drd.copy(deviceId = Some(device.deviceId))
       device.pubRawQueues.getOrElse(Set()).foreach { queue =>
 
         getSqsProducer(queue).map { taRef =>
@@ -53,21 +60,20 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
   }
 
   override def unhandled(message: Any): Unit = {
-    if (message.isInstanceOf[Message]) {
+    message match {
+      case _: Message =>
       //log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
-    }
-    else if (message.isInstanceOf[CamelMessage]) {
+      case _: CamelMessage =>
       //log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
+      case _ => log.error(s"${message.getClass.toString}")
     }
-    else
-      log.error(s"${message.getClass.toString}")
   }
 
   //@TODO refactor
   private def getSqsProducer(queue: String): Future[ActorRef] = {
 
-    val curRefBase = s"$TRACTOR_BASE${queue}"
-    val curRefBasePath = s"$TRACTOR_BASE_PATH${queue}"
+    val curRefBase = s"$TRACTOR_BASE$queue"
+    val curRefBasePath = s"$TRACTOR_BASE_PATH$queue"
 
     val aref = context.system.actorSelection(curRefBasePath)
     val fs: FiniteDuration = 100 millis

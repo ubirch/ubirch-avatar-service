@@ -10,7 +10,7 @@ import com.ubirch.util.uuid.UUIDUtil
   */
 class DeviceMessageProcessedActor(deviceUuid: String)
   extends Actor
-    with Producer
+    with (Producer)
     with ActorLogging {
 
   val mqttUser: String = Config.mqttUser

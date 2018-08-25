@@ -3,14 +3,13 @@ package com.ubirch.avatar.core.actor
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.camel.Producer
 import com.ubirch.avatar.config.Config
-import com.ubirch.util.uuid.UUIDUtil
 
 /**
   * Created by derMicha on 24/02/17.
   */
 class DeviceStateUpdateActor(deviceUuid: String)
   extends Actor
-    with Producer
+    with (Producer)
     with ActorLogging {
 
   val mqttUser: String = Config.mqttUser
@@ -21,12 +20,11 @@ class DeviceStateUpdateActor(deviceUuid: String)
 
   val mqttDeviceOutTopic: String = s"${Config.mqttTopicDevicesBase}/$deviceUuid/${Config.mqttTopicDevicesOut}"
 
-  val clientId: String = s"avs_${UUIDUtil.uuidStr}"
+  //val clientId: String = s"avs_${UUIDUtil.uuidStr}"
 
   override def endpointUri: String = s"mqtt:" +
-    s"DeviceStateUpdateActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
-
-  //    s"DeviceStateUpdateActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&userName=$mqttUser&password=$mqttPassword"
+    //  s"DeviceStateUpdateActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
+    s"DeviceStateUpdateActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&userName=$mqttUser&password=$mqttPassword"
 }
 
 object DeviceStateUpdateActor {
