@@ -1,0 +1,15 @@
+curl 'http://localhost:9200/_cat/indices?v' | grep ubirch
+
+curl 'localhost:9200/ubirch-device-state/_mapping/?pretty' > ubirch-device-state-mappings.json
+curl 'localhost:9200/ubirch-device-raw-data/_mapping/?pretty' > ubirch-device-raw-data-mappings.json
+curl 'localhost:9200/ubirch-device-history/_mapping/?pretty' > ubirch-device-history-mappings.json
+curl 'localhost:9200/ubirch-device-raw-data-anchored/_mapping/?pretty' > ubirch-device-raw-data-anchored-mappings.json
+curl 'localhost:9200/ubirch-devices/_mapping/?pretty' > ubirch-devices-mappings.json
+curl 'localhost:9200/ubirch-device-type/_mapping/?pretty' > ubirch-device-type-mappings.json
+
+curl -XDELETE http://localhost:9200/ubirch-device-state
+curl -XDELETE http://localhost:9200/ubirch-device-raw-data
+curl -XDELETE http://localhost:9200/ubirch-device-history
+curl -XDELETE http://localhost:9200/ubirch-device-raw-data-anchored
+curl -XDELETE http://localhost:9200/ubirch-devices
+curl -XDELETE http://localhost:9200/ubirch-device-type
