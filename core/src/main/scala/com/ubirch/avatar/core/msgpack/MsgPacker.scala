@@ -4,11 +4,12 @@ import java.io.ByteArrayInputStream
 import java.lang.{Long => JavaLong}
 import java.util.Base64
 
-import com.google.common.primitives.Ints
 import com.typesafe.scalalogging.slf4j.StrictLogging
+
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.rest.device.{MsgPackMessage, MsgPackMessageV2}
 import com.ubirch.util.json.Json4sUtil
+
 import org.apache.commons.codec.binary
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
@@ -190,7 +191,7 @@ object MsgPacker extends StrictLogging {
           val payStr = v.asRawValue().getString
           Json4sUtil.string2JValue(payStr) match {
             case Some(p) =>
-              val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
+              val currentIdHex = Hex.encodeHexString(com.google.common.primitives.Ints.toByteArray(currentId))
               cd = Some(
                 MsgPackMessage(
                   messageType = 1,
@@ -229,7 +230,7 @@ object MsgPacker extends StrictLogging {
             val payStr = new String(payBin, "ASCII")
             Json4sUtil.string2JValue(payStr) match {
               case Some(payJson) =>
-                val currentIdHex = Hex.encodeHexString(Ints.toByteArray(currentId))
+                val currentIdHex = Hex.encodeHexString(com.google.common.primitives.Ints.toByteArray(currentId))
                 cd = Some(MsgPackMessage(
                   messageType = 1,
                   deviceId = currentIdHex,

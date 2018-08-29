@@ -201,6 +201,7 @@ lazy val depCore = Seq(
   ubirchUtilRedisUtil,
   spireMath,
   msgpackScala,
+  guava,
   scalatest % "test",
   akkaTestkit % "test"
 ) ++ akka ++ prometheus ++ akkaCamel ++ scalaLogging
@@ -323,6 +324,7 @@ val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 val msgpack4s = "org.velvia" %% "msgpack4s" % "0.6.0"
 val msgpackScala = "org.msgpack" %% "msgpack-scala" % "0.6.11"
+val guava = "com.google.guava" % "guava" % "26.0-jre"
 
 val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
