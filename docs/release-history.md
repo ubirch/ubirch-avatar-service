@@ -1,6 +1,11 @@
 ## Release History
 
-### Version 0.5.0 (tbd)
+### Version 0.6.0 (tbd)
+
+* update to `com.ubirch.util:elasticsearch-client-binary:3.0.0` (compatible with Elasticsearch 6.4.0)
+* update to `com.ubirch.util:elasticsearch-util:3.0.0`
+
+### Version 0.5.0 (not released)
 
 * update to sbt from `0.13.17` to `1.1.6`
 * update to plugin `com.eed3si9n:sbt-assembly:0.14.7`

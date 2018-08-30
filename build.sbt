@@ -13,7 +13,7 @@ val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.5.0-SNAPSHOT",
+  version := "0.6.0-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -350,8 +350,8 @@ val prometheus = Seq(
 val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
 val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "2.5.1" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "2.5.1" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.0.0" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.0.0" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
