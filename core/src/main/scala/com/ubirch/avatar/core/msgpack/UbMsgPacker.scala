@@ -153,6 +153,8 @@ object UbMsgPacker
 
   private def processPayload(messageType: Int, payload: Value): UbPayloads = {
     messageType match {
+      case 0x00 =>
+        processGenericMessage(payload);
       case 83 =>
         processT83Payload(payload.asMapValue())
       case 84 =>
@@ -161,6 +163,14 @@ object UbMsgPacker
         throw new Exception("not implemented ubirch protocol T85")
       case n: Int =>
         throw new Exception(s"unsupported msg type $n")
+    }
+  }
+
+  private def processGenericMessage(payload: Value): UbPayloads = {
+    payload.getType match {
+      case ValueType.RAW => UbPayloads(Base64.getEncoder.encodeToString(payload.asRawValue().getByteArray))
+      case t: ValueType =>
+        throw new Exception(s"unsupported message content: ${t.toString}")
     }
   }
 
