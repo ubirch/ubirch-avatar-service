@@ -168,7 +168,7 @@ object UbMsgPacker
 
   private def processGenericMessage(payload: Value): UbPayloads = {
     payload.getType match {
-      case ValueType.RAW => UbPayloads(Base64.getEncoder.encodeToString(payload.asRawValue().getByteArray))
+      case ValueType.RAW => UbPayloads("hash" -> Base64.getEncoder.encodeToString(payload.asRawValue().getByteArray))
       case t: ValueType =>
         throw new Exception(s"unsupported message content: ${t.toString}")
     }
