@@ -92,8 +92,8 @@ object DeviceDataRawManager
   /**
     * Query DeviceRawData by signature
     *
-    * @param signature
-    * @return
+    * @param signature the signature to search for
+    * @return the device data raw message
     */
   def loadBySignature(signature: String): Future[Option[DeviceDataRaw]] = {
 
@@ -109,6 +109,31 @@ object DeviceDataRawManager
     }
     catch {
       case t: Throwable => t.printStackTrace()
+        Future(None)
+    }
+
+  }
+
+  /**
+    * Query DeviceRawData by p.hash (if available)
+    *
+    * @param valueHash the hash of the value (p.hash)
+    * @return the device data raw message
+    */
+  def loadByValueHash(valueHash: String): Future[Option[DeviceDataRaw]] = {
+
+    require(valueHash != null, "value hash may not be null")
+
+    val query = Some(QueryBuilders.matchQuery("p.hash", valueHash))
+    try {
+      ESSimpleStorage.getDocs(index, esType, query).map { res =>
+        res.map { doc =>
+          doc.extract[DeviceDataRaw]
+        }.find(ddr => (ddr.p \\ "hash").extract[String] == valueHash)
+      }
+    } catch {
+      case t: Throwable =>
+        t.printStackTrace()
         Future(None)
     }
 
@@ -143,8 +168,8 @@ object DeviceDataRawManager
   /**
     * evil dirty hack, works just for trackle
     *
-    * @param did
-    * @param vals
+    * @param did  device id
+    * @param vals the values
     */
   def create(did: String, vals: Map[DateTime, Int], mpraw: Array[Byte]): Option[DeviceDataRaw] = {
 
@@ -152,7 +177,7 @@ object DeviceDataRawManager
 
     val p = vals.keySet.map {
       ts =>
-        pval(t = vals.get(ts).get, ts = ts)
+        pval(t = vals(ts), ts = ts)
     }
 
     val ddr = DeviceDataRaw(

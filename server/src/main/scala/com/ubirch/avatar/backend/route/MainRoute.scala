@@ -14,23 +14,24 @@ import com.ubirch.util.mongo.connection.MongoUtil
   */
 class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer) {
 
-  val welcome = new WelcomeRoute {}
-  val deepCheck = new DeepCheckRoute {}
+  val welcome: WelcomeRoute = new WelcomeRoute {}
+  val deepCheck: DeepCheckRoute = new DeepCheckRoute {}
 
-  val device = new DeviceRoute {}
-  val deviceUpdatePlain = new DeviceUpdatePlainRoute {}
-  val deviceUpdateBulk = new DeviceUpdateBulkRoute {}
-  val deviceUpdateMsgPack = new DeviceUpdateMsgPackRoute {}
-  val deviceId = new DeviceIdRoute {}
-  val deviceStub = new DeviceStubRoute {}
-  val deviceStubId = new DeviceStubIdRoute {}
-  val deviceState = new DeviceStateRoute {}
-  val deviceDataRaw = new DeviceDataRawRoute {}
-  val deviceDataHistory = new DeviceDataHistoryRoute {}
-  val deviceType = new DeviceTypeRoute {}
-  val deviceClaim = new DeviceClaimRoute {}
+  val device: DeviceRoute = new DeviceRoute {}
+  val deviceUpdatePlain: DeviceUpdatePlainRoute = new DeviceUpdatePlainRoute {}
+  val deviceUpdateBulk: DeviceUpdateBulkRoute = new DeviceUpdateBulkRoute {}
+  val deviceUpdateMsgPack: DeviceUpdateMsgPackRoute = new DeviceUpdateMsgPackRoute {}
+  val deviceId: DeviceIdRoute = new DeviceIdRoute {}
+  val deviceStub: DeviceStubRoute = new DeviceStubRoute {}
+  val deviceStubId: DeviceStubIdRoute = new DeviceStubIdRoute {}
+  val deviceState: DeviceStateRoute = new DeviceStateRoute {}
+  val deviceDataRaw: DeviceDataRawRoute = new DeviceDataRawRoute {}
+  val deviceDataHistory: DeviceDataHistoryRoute = new DeviceDataHistoryRoute {}
+  val deviceVerify: DeviceVerifyRoute = new DeviceVerifyRoute {}
+  val deviceType: DeviceTypeRoute = new DeviceTypeRoute {}
+  val deviceClaim: DeviceClaimRoute = new DeviceClaimRoute {}
 
-  val forbidden = new ForbiddenRoute {}
+  val forbidden: ForbiddenRoute = new ForbiddenRoute {}
 
   val myRoute: Route = {
 
@@ -42,6 +43,7 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
             deviceUpdateBulk.route ~
               deviceUpdateMsgPack.route ~
               deviceUpdatePlain.route ~
+              deviceVerify.route ~
               deviceType.route ~
               deviceStubId.route ~
               deviceStub.route ~

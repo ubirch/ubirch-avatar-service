@@ -30,6 +30,7 @@ object RouteConstants {
   val mpacks = "mpacks"
   val data = "data"
   val raw = "raw"
+  val verify = "verify"
   val deviceType = "deviceType"
   val init = "init"
 
@@ -55,6 +56,7 @@ object RouteConstants {
   val pathDeviceDataRaw: String = s"$pathDevice/$data/$raw"
   def pathDeviceDataHistory(id: String): String = s"${pathDeviceWithId(id)}/$data/$history"
   val pathDeviceUpdate: String = s"$pathDevice/$update"
+  val pathDeviceVerify: String = s"$pathDevice/$verify"
   def pathDeviceHistoryFrom(id: String, from: Int): String = s"${pathDeviceDataHistory(id)}/$from"
   def pathDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${pathDeviceDataHistory(id)}/$from/$size"
 
