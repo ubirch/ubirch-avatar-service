@@ -8,13 +8,14 @@ package com.ubirch.avatar.backend.route
 import java.util.Base64
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceDataRawManager
+import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
@@ -32,7 +33,7 @@ import scala.util.{Failure, Success}
 /**
   * Verify a data hash and return relevant trust information.
   */
-class DeviceVerifyRoute(implicit system    : ActorSystem) extends ResponseUtil
+class DeviceVerifyRoute(implicit system: ActorSystem) extends ResponseUtil
   with CORSDirective
   with StrictLogging {
 
@@ -50,8 +51,22 @@ class DeviceVerifyRoute(implicit system    : ActorSystem) extends ResponseUtil
               onComplete(validatorActor ? deviceDataRaw) {
                 case Success(resp) if deviceDataRaw.mpraw.isDefined =>
                   resp match {
-                    case dm: DeviceStateUpdate =>
-                      complete("seal" -> Base64.getEncoder.encodeToString(Hex.decodeHex(deviceDataRaw.mpraw.get)))
+                    case dm: DeviceStateUpdate if deviceDataRaw.ps.isDefined =>
+                      onComplete(DeviceDataRawManager.loadBySignature(deviceDataRaw.ps.get)) {
+                        case Success(Some(prev)) =>
+                          complete(DeviceVerifyResult(
+                            Base64.getEncoder.encodeToString(Hex.decodeHex(deviceDataRaw.mpraw.get)),
+                            prev.mpraw.map(raw => Base64.getEncoder.encodeToString(Hex.decodeHex(raw))),
+                            deviceDataRaw.txHash.map(AnchorResult(_, deviceDataRaw.txHashLink))
+                          ))
+                        case _ =>
+                          logger.error(s"expected previous message: ${deviceDataRaw.ps}")
+                          complete(DeviceVerifyResult(
+                            Base64.getEncoder.encodeToString(Hex.decodeHex(deviceDataRaw.mpraw.get)),
+                            None,
+                            deviceDataRaw.txHash.map(AnchorResult(_, deviceDataRaw.txHashLink))
+                          ))
+                      }
                     case jer: JsonErrorResponse =>
                       logger.error(jer.errorMessage)
                       complete(StatusCodes.BadRequest -> jer)
@@ -65,9 +80,11 @@ class DeviceVerifyRoute(implicit system    : ActorSystem) extends ResponseUtil
                   complete(StatusCodes.InternalServerError ->
                            JsonErrorResponse(errorType = "internal error", errorMessage = e.getMessage))
               }
-            case Success(None) =>
+            case Success(None)
+            =>
               complete(StatusCodes.NotFound)
-            case Failure(e) =>
+            case Failure(e)
+            =>
               logger.error("unable to load device history data", e)
               complete(StatusCodes.InternalServerError ->
                        JsonErrorResponse(errorType = "internal error", errorMessage = e.getMessage))
@@ -77,4 +94,10 @@ class DeviceVerifyRoute(implicit system    : ActorSystem) extends ResponseUtil
       }
     }
   }
+
 }
+
+case class AnchorResult(hash: String, url: Option[String])
+case class DeviceVerifyResult(seal: String,
+                              chain: Option[String],
+                              anchor: Option[AnchorResult])
