@@ -7,7 +7,7 @@ import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
 import com.ubirch.avatar.core.prometheus.Timer
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.model.MessageReceiver
@@ -75,14 +75,16 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
         case Success(None) =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-          val jer = JsonErrorResponse(errorType = "AvatarState Error", errorMessage = s"Could not get current Avatar State Rest for ${device.deviceId}")
-          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
-          s ! jer
+          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId=device.deviceId, inSync=Some(false), currentDeviceSignature=drdPatched.s))
+          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+          s ! d
         case Failure(t) =>
-          log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-          val jer = JsonErrorResponse(errorType = "AvatarState Error", errorMessage = t.getMessage)
-          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
-          s ! jer
+          log.error(t, s"current AvatarStateRest not available: ${device.deviceId}")
+          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId=device.deviceId, inSync=Some(false), currentDeviceSignature=drdPatched.s))
+          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+          s ! d
       }
 
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
@@ -112,16 +114,12 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private def processPayload(device: Device, payload: JValue, signature: Option[String] = None): Future[Option[DeviceStateUpdate]] = {
     processStateTimer.start
-    AvatarStateManagerREST.setReported(restDevice = device, payload, signature) map {
+    AvatarStateManagerREST.setReported(restDevice = device, payload, signature) collect {
       case Some(currentAvatarState) =>
         val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
         DeviceStateManager.upsert(state = dsu)
         processStateTimer.stop
         Some(dsu)
-      case None =>
-        log.error(s"Could not get current Avatar State for ${device.deviceId}")
-        processStateTimer.stop
-        None
     }
   }
 

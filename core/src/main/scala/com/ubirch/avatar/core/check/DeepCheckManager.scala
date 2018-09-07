@@ -27,7 +27,7 @@ object DeepCheckManager {
     *
     * @return deep check response with _status:OK_ if ok; otherwise with _status:NOK_
     */
-  def connectivityCheck()(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer): Future[DeepCheckResponse] = {
+  def connectivityCheck()(implicit _system: ActorSystem, httpClient: HttpExt, materializer: Materializer): Future[DeepCheckResponse] = {
 
     //@REVIEW
     // TODO check MQTT connection
@@ -45,7 +45,7 @@ object DeepCheckManager {
       )
 
       esDeepCheckWithPrefix = DeepCheckResponseUtil.addServicePrefix("avatar-service", esDeepCheck)
-      mongoConnectivity <- AvatarStateManager.connectivityCheck()
+//      mongoConnectivity <- AvatarStateManager.connectivityCheck()
       redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service")
 
       // other services
@@ -57,7 +57,7 @@ object DeepCheckManager {
       DeepCheckResponseUtil.merge(
         Seq(
           esDeepCheckWithPrefix,
-          mongoConnectivity,
+//          mongoConnectivity,
           redisConnectivity,
           keyDeepCheck,
           userDeepCheck

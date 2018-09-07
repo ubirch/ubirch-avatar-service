@@ -35,7 +35,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
     with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val msgPackProcessorActor = system
     .actorSelection(ActorNames.MSG_MSGPACK_PROCESSOR_PATH)
@@ -54,7 +54,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
                 case Success(resp) =>
                   resp match {
                     case dsu: DeviceStateUpdate =>
-                      reqMetrics.inc
+                      reqMetrics.inc()
                       reqMetrics.stop
                       if (js)
                         complete(StatusCodes.Accepted -> Json4sUtil.any2String(dsu))
@@ -64,21 +64,21 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
                         complete(StatusCodes.Accepted -> ubPack)
                       }
                     case jr: JsonResponse =>
-                      reqMetrics.incError
+                      reqMetrics.incError()
                       reqMetrics.stop
                       complete(StatusCodes.Accepted -> jr.toJsonString)
                     case jer: JsonErrorResponse =>
-                      reqMetrics.incError
+                      reqMetrics.incError()
                       reqMetrics.stop
                       complete(StatusCodes.BadRequest -> jer.toJsonString)
                     case _ =>
-                      reqMetrics.inc
+                      reqMetrics.inc()
                       reqMetrics.stop
-                      val jer = JsonErrorResponse(errorType = "repsonseerror", errorMessage = "ERROR 1: no result")
+                      val jer = JsonErrorResponse(errorType = "response error", errorMessage = "ERROR 1: no result")
                       complete(StatusCodes.InternalServerError -> jer.toJsonString)
                   }
                 case Failure(t) =>
-                  reqMetrics.incError
+                  reqMetrics.incError()
                   reqMetrics.stop
                   logger.error("got no result", t)
                   val jer = JsonErrorResponse(errorType = "internal error", errorMessage = t.getMessage)
