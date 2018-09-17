@@ -13,7 +13,7 @@ function init() {
   if [ -z ${DEPENDENCY_LABEL} ]; then
     SBT_CONTAINER_VERSION="latest"
   else
-    SBT_CONTAINER_VERSION="v${DEPENDENCY_LABEL}"
+    SBT_CONTAINER_VERSION="vOpenJDK_${DEPENDENCY_LABEL}"
   fi
 
   if [ -f Dockerfile.input  ]; then
