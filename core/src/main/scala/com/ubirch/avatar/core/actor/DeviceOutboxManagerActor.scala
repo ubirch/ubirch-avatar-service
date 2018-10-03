@@ -35,7 +35,8 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
       val drdExt = if (drd.mppay.isDefined && drd.mppay.get.length > 50000) {
         drd.copy(
           deviceId = Some(device.deviceId),
-          mppay = None
+          mppay = None,
+          mpraw = None
         )
       }
       else
