@@ -55,6 +55,7 @@ case class DeviceDataRaw(
                           ps: Option[String] = None,
                           mpraw: Option[String] = None,
                           mppay: Option[String] = None,
+                          mppayhash: Option[String] = None,
                           p: JValue,
                           config: Option[JValue] = None,
                           meta: Option[JValue] = None,

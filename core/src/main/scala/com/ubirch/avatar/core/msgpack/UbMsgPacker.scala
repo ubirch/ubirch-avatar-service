@@ -8,6 +8,7 @@ import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
@@ -73,7 +74,8 @@ object UbMsgPacker
           payloads = payloads,
           signature = None,
           rawPayload = Hex.encodeHexString(payload.asRawValue().getByteArray),
-          rawMessage = Hex.encodeHexString(binData)
+          rawMessage = Hex.encodeHexString(binData),
+          payloadHash = HashUtil.sha512Hex(payload.asRawValue().getByteArray)
         ))
 
       case 2 =>
@@ -103,7 +105,8 @@ object UbMsgPacker
           payloads = payloadJson,
           signature = Some(signature),
           rawPayload = Hex.encodeHexString(binData.take(binData.length - SIGPARTLEN)),
-          rawMessage = Hex.encodeHexString(binData)
+          rawMessage = Hex.encodeHexString(binData),
+          payloadHash = HashUtil.sha512Hex(payload.asRawValue().getByteArray)
         ))
 
       case 3 =>
@@ -143,7 +146,8 @@ object UbMsgPacker
           payloads = payloads,
           signature = Some(signature),
           rawPayload = Hex.encodeHexString(binData.take(binData.length - SIGPARTLEN)),
-          rawMessage = Hex.encodeHexString(binData)
+          rawMessage = Hex.encodeHexString(binData),
+          payloadHash = HashUtil.sha512Hex(payload.asRawValue().getByteArray)
         ))
 
       case _ =>
