@@ -13,11 +13,12 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
+import org.json4s.JsonAST
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
 import org.msgpack.ScalaMessagePack
-import org.msgpack.`type`.{MapValue, Value, ValueType}
+import org.msgpack.`type`.{ArrayValue, MapValue, Value, ValueType}
 
 import scala.collection.JavaConversions._
 
@@ -155,6 +156,8 @@ object UbMsgPacker
     messageType match {
       case 0x00 =>
         processGenericMessage(payload);
+      case 50 =>
+        processT50Payload(payload.asArrayValue())
       case 83 =>
         processT83Payload(payload.asMapValue())
       case 84 =>
@@ -171,6 +174,30 @@ object UbMsgPacker
       case ValueType.RAW => UbPayloads("hash" -> Base64.getEncoder.encodeToString(payload.asRawValue().getByteArray))
       case t: ValueType =>
         throw new Exception(s"unsupported message content: ${t.toString}")
+    }
+  }
+
+  private def processT50Payload(payload: Value): UbPayloads = {
+    if (payload.isArrayValue) {
+      val payLoads = payload.asArrayValue()
+      if (payLoads.size() > 0) {
+        val data = if (payLoads.get(0).isArrayValue)
+        //@todo missing implementation
+          throw new NotImplementedError("array of value array's is still missing")
+        else
+          parseSimpleArray(payload.asArrayValue())
+
+        UbPayloads(
+          data,
+          meta = None,
+          config = None
+        )
+      }
+
+      else
+        throw new Exception("payload not correct, expected map")
+    } else {
+      throw new Exception("payload not correct, expected map")
     }
   }
 
@@ -195,8 +222,8 @@ object UbMsgPacker
       val status = payArr.get(2).asIntegerValue().getLong
 
       val meta = ("version" -> version) ~
-                 ("wakeups" -> wakeups) ~
-                 ("status" -> status)
+        ("wakeups" -> wakeups) ~
+        ("status" -> status)
 
       val mMap = payArr.get(3).asMapValue()
       val cMap = payArr.get(4).asMapValue()
@@ -217,7 +244,7 @@ object UbMsgPacker
       val ts = new DateTime(tsMillis, DateTimeZone.UTC)
       val t = mVal.get(key).asIntegerValue().getInt
       ("t" -> t) ~
-      ("ts" -> ts.toString)
+        ("ts" -> ts.toString)
     }).get
   }
 
@@ -253,6 +280,37 @@ object UbMsgPacker
     logger.debug(compact(render(json)))
     json
   }
+
+  private def parseSimpleArray(aVal: ArrayValue): JValue = {
+    val keys: Seq[String] = Seq("ts") ++ ('a' to 'z').map(_.toString).take(aVal.getElementArray.length)
+
+    val zipped = aVal.getElementArray.zip(keys).foldLeft(Map[String, Value]()) { (a, b) =>
+      a + (b._2 -> b._1)
+    }
+
+    val dataMap: Map[String, Option[Any]] = zipped.map { tpl =>
+      val key = tpl._1
+      val av = tpl._2
+      val value: Option[Any] = av.getType match {
+        case ValueType.BOOLEAN =>
+          Some(av.asBooleanValue().getBoolean)
+        case ValueType.INTEGER =>
+          if ("ts".equals(key)) {
+            val ts = new DateTime(av.asIntegerValue().getLong / 1000, DateTimeZone.UTC)
+            Some(ts.toDateTimeISO.toString)
+          }
+          else
+            Some(BigDecimal(av.asIntegerValue().getBigInteger))
+        case ValueType.FLOAT =>
+          Some(av.asFloatValue().asFloatValue().getDouble)
+        case _ => None
+      }
+      key -> value
+    }
+    val cleanData = dataMap.filter(m => m._2.isDefined).map(m => m._1 -> m._2.get)
+    Json4sUtil.any2jvalue(cleanData).get
+  }
+
 
   private def parseMap(mVal: MapValue): JValue = {
     val res = mVal.keySet.toArray.map { key =>
