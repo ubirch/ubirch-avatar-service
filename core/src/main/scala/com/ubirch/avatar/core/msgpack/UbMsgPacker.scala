@@ -147,7 +147,7 @@ object UbMsgPacker
           signature = Some(signature),
           rawPayload = Hex.encodeHexString(binData.take(binData.length - SIGPARTLEN)),
           rawMessage = Hex.encodeHexString(binData),
-          payloadHash = HashUtil.sha512Hex(payload.asRawValue().getByteArray)
+          payloadHash = HashUtil.sha512Hex(binData.take(binData.length - SIGPARTLEN))
         ))
 
       case _ =>
