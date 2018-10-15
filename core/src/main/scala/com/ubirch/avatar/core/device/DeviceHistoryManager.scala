@@ -3,13 +3,11 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.{DeviceHistory, DeviceHistoryLegacy}
 import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
 import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
 import org.elasticsearch.index.query.QueryBuilders
 import org.joda.time.DateTime
 
@@ -192,14 +190,21 @@ object DeviceHistoryManager extends MyJsonProtocol
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-
-        val id = data.messageId.toString
-        ESBulkStorage.storeDocBulk(
-          docIndex = index,
-          docType = esType,
-          docId = id,
-          doc = doc
-        ).map(_.extractOpt[DeviceHistory])
+        try {
+          logger.debug(s"store data: $data")
+          val id = data.messageId.toString
+          ESBulkStorage.storeDocBulk(
+            docIndex = index,
+            docType = esType,
+            docId = id,
+            doc = doc
+          ).map(_.extractOpt[DeviceHistory])
+        }
+        catch {
+          case e: Exception =>
+            logger.error(s"store data failed for device ${data.deviceId}: ${e.getMessage}", e)
+            Future(None)
+        }
       case None =>
         logger.debug(s"failed storing device histoy for device: ${data.deviceId}")
         Future(None)
