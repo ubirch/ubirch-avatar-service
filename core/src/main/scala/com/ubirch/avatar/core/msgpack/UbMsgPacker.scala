@@ -14,7 +14,6 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
-import org.json4s.JsonAST
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
@@ -186,8 +185,7 @@ object UbMsgPacker
       val payLoads = payload.asArrayValue()
       if (payLoads.size() > 0) {
         val data = if (payLoads.get(0).isArrayValue)
-        //@todo missing implementation
-          throw new NotImplementedError("array of value array's is still missing")
+          parseArray(payload.asArrayValue())
         else
           parseSimpleArray(payload.asArrayValue())
 
@@ -285,6 +283,12 @@ object UbMsgPacker
     json
   }
 
+  private def parseArray(aVal: ArrayValue): JValue = {
+    val allPayloads = aVal.getElementArray.toList.map(av => parseSimpleArray(av.asArrayValue()))
+    //Json4sUtil.any2jvalue(allPayloads)
+    allPayloads.head
+  }
+
   private def parseSimpleArray(aVal: ArrayValue): JValue = {
     val keys: Seq[String] = Seq("ts") ++ ('a' to 'z').map(_.toString).take(aVal.getElementArray.length)
 
@@ -299,8 +303,9 @@ object UbMsgPacker
         case ValueType.BOOLEAN =>
           Some(av.asBooleanValue().getBoolean)
         case ValueType.INTEGER =>
-          if ("ts".equals(key)) {
-            val ts = new DateTime(av.asIntegerValue().getLong / 1000, DateTimeZone.UTC)
+          if ("ts".equals(key.trim.toLowerCase)) {
+            val tsInt: Long = av.asIntegerValue().getLong / 1000L
+            val ts = new DateTime(tsInt, DateTimeZone.UTC)
             Some(ts.toDateTimeISO.toString)
           }
           else
