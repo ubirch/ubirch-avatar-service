@@ -1,142 +1,394 @@
-{
-  "id": "79165301-175e-4506-9897-5ec9a1548cf8",
-  "v": "0.0.0",
-  "fw": "n.a.",
-  "a": "Z9pnnOFayS1syb8dFSCx1ST3N9uGDLQIjPAWUFpA7Qf9pgD4W/QibZPGRzjXuxZMUV2YmVkzNk7zzfBhTwJEsw==",
-  "ts": "2018-08-14T21:42:41.459Z",
-  "p": [
-    {
-      "t": 3691,
-      "ts": "2018-08-11T02:18:30.000Z"
+[
+  {
+    "messageId": "d5176d32-4e71-4782-8edc-079e35cbcdfa",
+    "deviceDataRawId": "eee0a3e2-deb2-40ab-a5b9-843c28553972",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "Q5Tlmt6CURGA1S6rmjmXtMFPm81iWEln0GxLBAb7u0koOf743HqinjwI5dOxKIz+vxaPQCWPfmcJ9H47euK3iQ=="
     },
-    {
-      "t": 3734,
-      "ts": "2018-08-11T02:28:30.000Z"
+    "deviceDataRaw": {
+      "id": "eee0a3e2-deb2-40ab-a5b9-843c28553972",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:47:28.161Z",
+      "s": "7mQZFVIdfbyRSkNiTC65ClzZPRoGyviVT3LNnUH2AI0qTIZe3CEFvOjg3HRuV4pUHcF8HDrnsvYJ3LyHn5X4CQ==",
+      "ps": "thVImZ1h8KWnRSXTnVVAhAoPGuQGGHM1JhqVrftM2RTtSUPCsdMwecYKWqWfEZlkXqJ/cGUoRym/OeeqHGsbAA==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040b61548999d61f0a5a74525d39d5540840a0f1ae406187335261a95adfb4cd914ed4943c2b1d33079c60a5aa59f1199645ea27f7065284729bf39e7aa1c6b1b0000da00404394e59ade82511180d52eab9a3997b4c14f9bcd62584967d06c4b0406fbbb492839fef8dc7aa29e3c08e5d3b1288cfebf168f40258f7e6709f47e3b7ae2b789da0040ee641915521d7dbc914a43624c2eb90a5cd93d1a06caf8954f72cd9d41f6008d2a4c865edc2105bce8e0dc746e578a541dc17c1c3ae7b2f609dcbc879f95f809",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040b61548999d61f0a5a74525d39d5540840a0f1ae406187335261a95adfb4cd914ed4943c2b1d33079c60a5aa59f1199645ea27f7065284729bf39e7aa1c6b1b0000da00404394e59ade82511180d52eab9a3997b4c14f9bcd62584967d06c4b0406fbbb492839fef8dc7aa29e3c08e5d3b1288cfebf168f40258f7e6709f47e3b7ae2b789",
+      "mppayhash": "454b001fed9a5440350aeaf29946dcfb5458379c0de4ecccf5f7e79ed193fabda8c89dda83ef430e6519663a0c088953cc43a5a5c1af8b679eca716eb34196c3",
+      "p": {
+        "hash": "Q5Tlmt6CURGA1S6rmjmXtMFPm81iWEln0GxLBAb7u0koOf743HqinjwI5dOxKIz+vxaPQCWPfmcJ9H47euK3iQ=="
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3751,
-      "ts": "2018-08-11T02:38:30.000Z"
+    "timestamp": "2018-10-15T12:47:28.161Z"
+  },
+  {
+    "messageId": "88aae569-b922-4855-90cd-fb040a87e1f3",
+    "deviceDataRawId": "eee0a3e2-deb2-40ab-a5b9-843c28553972",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "Q5Tlmt6CURGA1S6rmjmXtMFPm81iWEln0GxLBAb7u0koOf743HqinjwI5dOxKIz+vxaPQCWPfmcJ9H47euK3iQ=="
     },
-    {
-      "t": 3675,
-      "ts": "2018-08-11T02:48:30.000Z"
+    "deviceDataRaw": {
+      "id": "eee0a3e2-deb2-40ab-a5b9-843c28553972",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:47:28.161Z",
+      "s": "7mQZFVIdfbyRSkNiTC65ClzZPRoGyviVT3LNnUH2AI0qTIZe3CEFvOjg3HRuV4pUHcF8HDrnsvYJ3LyHn5X4CQ==",
+      "ps": "thVImZ1h8KWnRSXTnVVAhAoPGuQGGHM1JhqVrftM2RTtSUPCsdMwecYKWqWfEZlkXqJ/cGUoRym/OeeqHGsbAA==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040b61548999d61f0a5a74525d39d5540840a0f1ae406187335261a95adfb4cd914ed4943c2b1d33079c60a5aa59f1199645ea27f7065284729bf39e7aa1c6b1b0000da00404394e59ade82511180d52eab9a3997b4c14f9bcd62584967d06c4b0406fbbb492839fef8dc7aa29e3c08e5d3b1288cfebf168f40258f7e6709f47e3b7ae2b789da0040ee641915521d7dbc914a43624c2eb90a5cd93d1a06caf8954f72cd9d41f6008d2a4c865edc2105bce8e0dc746e578a541dc17c1c3ae7b2f609dcbc879f95f809",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040b61548999d61f0a5a74525d39d5540840a0f1ae406187335261a95adfb4cd914ed4943c2b1d33079c60a5aa59f1199645ea27f7065284729bf39e7aa1c6b1b0000da00404394e59ade82511180d52eab9a3997b4c14f9bcd62584967d06c4b0406fbbb492839fef8dc7aa29e3c08e5d3b1288cfebf168f40258f7e6709f47e3b7ae2b789",
+      "mppayhash": "454b001fed9a5440350aeaf29946dcfb5458379c0de4ecccf5f7e79ed193fabda8c89dda83ef430e6519663a0c088953cc43a5a5c1af8b679eca716eb34196c3",
+      "p": {
+        "hash": "Q5Tlmt6CURGA1S6rmjmXtMFPm81iWEln0GxLBAb7u0koOf743HqinjwI5dOxKIz+vxaPQCWPfmcJ9H47euK3iQ=="
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3714,
-      "ts": "2018-08-11T02:58:30.000Z"
+    "timestamp": "2018-10-15T12:47:28.161Z"
+  },
+  {
+    "messageId": "925991df-5617-46ba-85c2-af1dfa5c99a0",
+    "deviceDataRawId": "a2c2d648-9d80-4cbb-ae43-60b45cb7b105",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "c29tZSBvdGhlciBieXRlcw=="
     },
-    {
-      "t": 3680,
-      "ts": "2018-08-11T03:08:30.000Z"
+    "deviceDataRaw": {
+      "id": "a2c2d648-9d80-4cbb-ae43-60b45cb7b105",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 2,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:47:27.951Z",
+      "s": "dFHuHW8gtDpIf257LoX4HL4+g6U67WeBhQ3xV6LZWMCG5jaNdpzWr4crjeLK2nS3nphRUsVRZLHLPIkVgO+7Dg==",
+      "mpraw": "9512b07d3f4f3896eb4ba79325536457aa59d700b0736f6d65206f74686572206279746573da00407451ee1d6f20b43a487f6e7b2e85f81cbe3e83a53aed6781850df157a2d958c086e6368d769cd6af872b8de2cada74b79e985152c55164b1cb3c891580efbb0e",
+      "mppay": "9512b07d3f4f3896eb4ba79325536457aa59d700b0736f6d65206f74686572206279746573",
+      "mppayhash": "8c74c0beda8b1da50d4c0d946da801ad616e290311d1d471db36753f0e4b3bc0ce2fa6987e7f3dab892ee3ff930f6af61a18972f894eb2f06d322f1f1d33121a",
+      "p": {
+        "hash": "c29tZSBvdGhlciBieXRlcw=="
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3683,
-      "ts": "2018-08-11T03:18:30.000Z"
+    "timestamp": "2018-10-15T12:47:27.951Z"
+  },
+  {
+    "messageId": "a090c30f-90fa-4d1e-a672-26774db5efac",
+    "deviceDataRawId": "9aebdb91-4cbd-44ed-b8fc-d1f33867dd81",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "anVzdCBzb21lIGJ5dGVz"
     },
-    {
-      "t": 3737,
-      "ts": "2018-08-11T03:28:30.000Z"
+    "deviceDataRaw": {
+      "id": "9aebdb91-4cbd-44ed-b8fc-d1f33867dd81",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:47:27.736Z",
+      "s": "thVImZ1h8KWnRSXTnVVAhAoPGuQGGHM1JhqVrftM2RTtSUPCsdMwecYKWqWfEZlkXqJ/cGUoRym/OeeqHGsbAA==",
+      "ps": "2m5f9txiI1J4dELO2Pc+Qjr2hx5uKFiawEPeJj9UqvXTCenL9XmdCtJsqrw6luiFtmMxxj1kurVJQ3QmgMbmDQ==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040da6e5ff6dc622352787442ced8f73e423af6871e6e28589ac043de263f54aaf5d309e9cbf5799d0ad26caabc3a96e885b66331c63d64bab54943742680c6e60d00af6a75737420736f6d65206279746573da0040b61548999d61f0a5a74525d39d5540840a0f1ae406187335261a95adfb4cd914ed4943c2b1d33079c60a5aa59f1199645ea27f7065284729bf39e7aa1c6b1b00",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040da6e5ff6dc622352787442ced8f73e423af6871e6e28589ac043de263f54aaf5d309e9cbf5799d0ad26caabc3a96e885b66331c63d64bab54943742680c6e60d00af6a75737420736f6d65206279746573",
+      "mppayhash": "1b8d861e974c8a1c1b3393452e75deb338eea62bc84de12125f3fef7d5a161af240f2a450684aed7726f3ab64e6f43f7ec44eb44b51a54b7c69fcf11d0bea1d2",
+      "p": {
+        "hash": "anVzdCBzb21lIGJ5dGVz"
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3690,
-      "ts": "2018-08-11T03:38:30.000Z"
+    "timestamp": "2018-10-15T12:47:27.736Z"
+  },
+  {
+    "messageId": "bc39da75-a527-4c55-8f54-a990d1cbec37",
+    "deviceDataRawId": "9b73f879-7846-4d5b-99e2-de0193e25d38",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "message": "Hello World!",
+      "foo": 42
     },
-    {
-      "t": 3727,
-      "ts": "2018-08-11T03:48:30.000Z"
+    "deviceDataRaw": {
+      "id": "9b73f879-7846-4d5b-99e2-de0193e25d38",
+      "v": "0.0.2",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:47:27.056Z",
+      "s": "2m5f9txiI1J4dELO2Pc+Qjr2hx5uKFiawEPeJj9UqvXTCenL9XmdCtJsqrw6luiFtmMxxj1kurVJQ3QmgMbmDQ==",
+      "ps": "1aTJqDkGHWxGhbvhHf4gG0W7N2IZ6YjxbNAd8by5OscfbWxPgEe+OzZtQldDOjKas3YqUcQ9t+Ht4C0/Q25RBg==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040d5a4c9a839061d6c4685bbe11dfe201b45bb376219e988f16cd01df1bcb93ac71f6d6c4f8047be3b366d4257433a329ab3762a51c43db7e1ede02d3f436e51065382a76d657373616765ac48656c6c6f20576f726c6421a3666f6f2ada0040da6e5ff6dc622352787442ced8f73e423af6871e6e28589ac043de263f54aaf5d309e9cbf5799d0ad26caabc3a96e885b66331c63d64bab54943742680c6e60d",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040d5a4c9a839061d6c4685bbe11dfe201b45bb376219e988f16cd01df1bcb93ac71f6d6c4f8047be3b366d4257433a329ab3762a51c43db7e1ede02d3f436e51065382a76d657373616765ac48656c6c6f20576f726c6421a3666f6f2a",
+      "mppayhash": "ececea5df34fe5ced3ba360b8fc63d6897617fcd3c7e1bf7ec3b986e6c0a28ea21c90f5fee170511a18569166215b29ed8cfe7a55e862672bb73ee8a041c2836",
+      "p": {
+        "message": "Hello World!",
+        "foo": 42
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3685,
-      "ts": "2018-08-11T03:58:30.000Z"
+    "timestamp": "2018-10-15T12:47:27.056Z"
+  },
+  {
+    "messageId": "43730ac4-e303-4062-98d3-a7ddd61a9c10",
+    "deviceDataRawId": "ff835cb3-a650-4890-b551-39eccd974828",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "MgTEoZh0La8G7KfbB08kNuoxqR+ap0mP0Fs6U0mjVvvJX2Et353k1boLfLii0b5FYn3F//D6UFrvjNMWaTbnwA=="
     },
-    {
-      "t": 3711,
-      "ts": "2018-08-11T04:08:30.000Z"
+    "deviceDataRaw": {
+      "id": "ff835cb3-a650-4890-b551-39eccd974828",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:40:38.257Z",
+      "s": "fatXO6qMp997xJ6sqIPsCQ521fERI9iDOS3MKin4DcrdYLIfTA/fkgjhZwLCHw5I5wRIwvT8oUYc9JWfbsngAQ==",
+      "ps": "H0WPHRJkFFrrbrk8QEPs+T88HlCe+FRGTlCsYe/5C+S8xEVXuiGMe8pIsKeXlgVsG+SgfehLMIBali1mPasdAg==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da00401f458f1d1264145aeb6eb93c4043ecf93f3c1e509ef854464e50ac61eff90be4bcc44557ba218c7bca48b0a79796056c1be4a07de84b30805a962d663dab1d0200da00403204c4a198742daf06eca7db074f2436ea31a91f9aa7498fd05b3a5349a356fbc95f612ddf9de4d5ba0b7cb8a2d1be45627dc5fff0fa505aef8cd3166936e7c0da00407dab573baa8ca7df7bc49eaca883ec090e76d5f11123d883392dcc2a29f80dcadd60b21f4c0fdf9208e16702c21f0e48e70448c2f4fca1461cf4959f6ec9e001",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da00401f458f1d1264145aeb6eb93c4043ecf93f3c1e509ef854464e50ac61eff90be4bcc44557ba218c7bca48b0a79796056c1be4a07de84b30805a962d663dab1d0200da00403204c4a198742daf06eca7db074f2436ea31a91f9aa7498fd05b3a5349a356fbc95f612ddf9de4d5ba0b7cb8a2d1be45627dc5fff0fa505aef8cd3166936e7c0",
+      "mppayhash": "6f8c19b21b6564f9e5105a59a2771aa9ae440b7eee58ee76ce2b9d86bd0ed33a5ad2bce5fd1270d2e6e116da0f04cb859c4459df5edcaf457bfa409135e8790b",
+      "p": {
+        "hash": "MgTEoZh0La8G7KfbB08kNuoxqR+ap0mP0Fs6U0mjVvvJX2Et353k1boLfLii0b5FYn3F//D6UFrvjNMWaTbnwA=="
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3683,
-      "ts": "2018-08-11T04:18:30.000Z"
+    "timestamp": "2018-10-15T12:40:38.257Z"
+  },
+  {
+    "messageId": "5eebdad3-aa09-414a-bba8-75d3896301fd",
+    "deviceDataRawId": "ff835cb3-a650-4890-b551-39eccd974828",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "MgTEoZh0La8G7KfbB08kNuoxqR+ap0mP0Fs6U0mjVvvJX2Et353k1boLfLii0b5FYn3F//D6UFrvjNMWaTbnwA=="
     },
-    {
-      "t": 3700,
-      "ts": "2018-08-11T04:28:30.000Z"
+    "deviceDataRaw": {
+      "id": "ff835cb3-a650-4890-b551-39eccd974828",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:40:38.257Z",
+      "s": "fatXO6qMp997xJ6sqIPsCQ521fERI9iDOS3MKin4DcrdYLIfTA/fkgjhZwLCHw5I5wRIwvT8oUYc9JWfbsngAQ==",
+      "ps": "H0WPHRJkFFrrbrk8QEPs+T88HlCe+FRGTlCsYe/5C+S8xEVXuiGMe8pIsKeXlgVsG+SgfehLMIBali1mPasdAg==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da00401f458f1d1264145aeb6eb93c4043ecf93f3c1e509ef854464e50ac61eff90be4bcc44557ba218c7bca48b0a79796056c1be4a07de84b30805a962d663dab1d0200da00403204c4a198742daf06eca7db074f2436ea31a91f9aa7498fd05b3a5349a356fbc95f612ddf9de4d5ba0b7cb8a2d1be45627dc5fff0fa505aef8cd3166936e7c0da00407dab573baa8ca7df7bc49eaca883ec090e76d5f11123d883392dcc2a29f80dcadd60b21f4c0fdf9208e16702c21f0e48e70448c2f4fca1461cf4959f6ec9e001",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da00401f458f1d1264145aeb6eb93c4043ecf93f3c1e509ef854464e50ac61eff90be4bcc44557ba218c7bca48b0a79796056c1be4a07de84b30805a962d663dab1d0200da00403204c4a198742daf06eca7db074f2436ea31a91f9aa7498fd05b3a5349a356fbc95f612ddf9de4d5ba0b7cb8a2d1be45627dc5fff0fa505aef8cd3166936e7c0",
+      "mppayhash": "6f8c19b21b6564f9e5105a59a2771aa9ae440b7eee58ee76ce2b9d86bd0ed33a5ad2bce5fd1270d2e6e116da0f04cb859c4459df5edcaf457bfa409135e8790b",
+      "p": {
+        "hash": "MgTEoZh0La8G7KfbB08kNuoxqR+ap0mP0Fs6U0mjVvvJX2Et353k1boLfLii0b5FYn3F//D6UFrvjNMWaTbnwA=="
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3700,
-      "ts": "2018-08-11T04:38:30.000Z"
+    "timestamp": "2018-10-15T12:40:38.257Z"
+  },
+  {
+    "messageId": "458fc6cb-4dd0-4dd7-ad69-4153198f87e4",
+    "deviceDataRawId": "517b18fe-7210-4368-8f4a-697a0c99a1be",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "c29tZSBvdGhlciBieXRlcw=="
     },
-    {
-      "t": 3665,
-      "ts": "2018-08-11T04:48:30.000Z"
+    "deviceDataRaw": {
+      "id": "517b18fe-7210-4368-8f4a-697a0c99a1be",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 2,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:40:38.041Z",
+      "s": "dFHuHW8gtDpIf257LoX4HL4+g6U67WeBhQ3xV6LZWMCG5jaNdpzWr4crjeLK2nS3nphRUsVRZLHLPIkVgO+7Dg==",
+      "mpraw": "9512b07d3f4f3896eb4ba79325536457aa59d700b0736f6d65206f74686572206279746573da00407451ee1d6f20b43a487f6e7b2e85f81cbe3e83a53aed6781850df157a2d958c086e6368d769cd6af872b8de2cada74b79e985152c55164b1cb3c891580efbb0e",
+      "mppay": "9512b07d3f4f3896eb4ba79325536457aa59d700b0736f6d65206f74686572206279746573",
+      "mppayhash": "8c74c0beda8b1da50d4c0d946da801ad616e290311d1d471db36753f0e4b3bc0ce2fa6987e7f3dab892ee3ff930f6af61a18972f894eb2f06d322f1f1d33121a",
+      "p": {
+        "hash": "c29tZSBvdGhlciBieXRlcw=="
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3754,
-      "ts": "2018-08-11T04:58:30.000Z"
+    "timestamp": "2018-10-15T12:40:38.041Z"
+  },
+  {
+    "messageId": "1ac72936-6697-4b6b-9eb0-3537efb21d28",
+    "deviceDataRawId": "e6cd9cfd-5731-46f4-bddb-530dd5db6d26",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "hash": "anVzdCBzb21lIGJ5dGVz"
     },
-    {
-      "t": 3753,
-      "ts": "2018-08-11T05:08:30.000Z"
+    "deviceDataRaw": {
+      "id": "e6cd9cfd-5731-46f4-bddb-530dd5db6d26",
+      "v": "0.0.0",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:40:37.671Z",
+      "s": "H0WPHRJkFFrrbrk8QEPs+T88HlCe+FRGTlCsYe/5C+S8xEVXuiGMe8pIsKeXlgVsG+SgfehLMIBali1mPasdAg==",
+      "ps": "Eyn/nCQZQBd/3g1AG1zgpsITbCgzv+2Qi3hNHERtMSkXXGRyh+IMZZ6VOQMEy4mjGG2SxCwX67Yhta6Y1Z9pDQ==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da00401329ff9c241940177fde0d401b5ce0a6c2136c2833bfed908b784d1c446d3129175c647287e20c659e95390304cb89a3186d92c42c17ebb621b5ae98d59f690d00af6a75737420736f6d65206279746573da00401f458f1d1264145aeb6eb93c4043ecf93f3c1e509ef854464e50ac61eff90be4bcc44557ba218c7bca48b0a79796056c1be4a07de84b30805a962d663dab1d02",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da00401329ff9c241940177fde0d401b5ce0a6c2136c2833bfed908b784d1c446d3129175c647287e20c659e95390304cb89a3186d92c42c17ebb621b5ae98d59f690d00af6a75737420736f6d65206279746573",
+      "mppayhash": "e3039759ff2cf4d4e250f278d014a9c9b60aff475b70a2cd08c39dba7a5a451669d32d18c3d724689a8411e3ad47115e6b7bc7bd942e4d23f7ba54f9210357d8",
+      "p": {
+        "hash": "anVzdCBzb21lIGJ5dGVz"
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3672,
-      "ts": "2018-08-11T05:18:30.000Z"
+    "timestamp": "2018-10-15T12:40:37.671Z"
+  },
+  {
+    "messageId": "b233f0c7-7706-4fff-9097-1b4543ae606b",
+    "deviceDataRawId": "55613360-ac63-4151-86db-f8286833749f",
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "unknownDeviceType",
+    "deviceTags": [
+      "milestone-demo",
+      "python-client"
+    ],
+    "deviceMessage": {
+      "message": "Hello World!",
+      "foo": 42
     },
-    {
-      "t": 3685,
-      "ts": "2018-08-11T05:28:30.000Z"
+    "deviceDataRaw": {
+      "id": "55613360-ac63-4151-86db-f8286833749f",
+      "v": "0.0.2",
+      "fw": "n.a.",
+      "umv": 1,
+      "usv": 3,
+      "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+      "ts": "2018-10-15T12:40:37.173Z",
+      "s": "Eyn/nCQZQBd/3g1AG1zgpsITbCgzv+2Qi3hNHERtMSkXXGRyh+IMZZ6VOQMEy4mjGG2SxCwX67Yhta6Y1Z9pDQ==",
+      "ps": "4rnNIlD7bcsiEjp07J7nHVX2LSzEyCzV7an22dgy9yCgE37oCIyQQJ2pDNpRsY3HbOKCoxFWxCuj93LChwHyAA==",
+      "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040e2b9cd2250fb6dcb22123a74ec9ee71d55f62d2cc4c82cd5eda9f6d9d832f720a0137ee8088c90409da90cda51b18dc76ce282a31156c42ba3f772c28701f2005382a76d657373616765ac48656c6c6f20576f726c6421a3666f6f2ada00401329ff9c241940177fde0d401b5ce0a6c2136c2833bfed908b784d1c446d3129175c647287e20c659e95390304cb89a3186d92c42c17ebb621b5ae98d59f690d",
+      "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040e2b9cd2250fb6dcb22123a74ec9ee71d55f62d2cc4c82cd5eda9f6d9d832f720a0137ee8088c90409da90cda51b18dc76ce282a31156c42ba3f772c28701f2005382a76d657373616765ac48656c6c6f20576f726c6421a3666f6f2a",
+      "mppayhash": "cabbee15d654be1d1b6349bc10ef3eb1b9966bf948e66e0c84e0cb0ac23362a35deefb23fb80a28b633d45d92835c9dfabca72f7d0bf2d8f7d6b3a78d84f0d05",
+      "p": {
+        "message": "Hello World!",
+        "foo": 42
+      },
+      "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+      "deviceName": "Demo Device",
+      "deviceType": "unknownDeviceType",
+      "tags": [
+        "milestone-demo",
+        "python-client"
+      ]
     },
-    {
-      "t": 3700,
-      "ts": "2018-08-11T05:38:30.000Z"
-    },
-    {
-      "t": 3753,
-      "ts": "2018-08-11T05:48:30.000Z"
-    },
-    {
-      "t": 3696,
-      "ts": "2018-08-11T05:58:30.000Z"
-    },
-    {
-      "t": 3714,
-      "ts": "2018-08-11T06:08:30.000Z"
-    },
-    {
-      "t": 3693,
-      "ts": "2018-08-11T06:18:30.000Z"
-    },
-    {
-      "t": 3680,
-      "ts": "2018-08-11T06:28:30.000Z"
-    },
-    {
-      "t": 3693,
-      "ts": "2018-08-11T06:38:30.000Z"
-    },
-    {
-      "t": 3690,
-      "ts": "2018-08-11T06:48:30.000Z"
-    },
-    {
-      "t": 3750,
-      "ts": "2018-08-11T06:58:30.000Z"
-    },
-    {
-      "t": 3697,
-      "ts": "2018-08-11T07:08:30.000Z"
-    },
-    {
-      "t": 3715,
-      "ts": "2018-08-11T07:18:30.000Z"
-    }
-  ],
-  "deviceId": "54678448-85df-48ed-b20b-2cd43ca27862",
-  "deviceName": "trackleSensor device-test-user-trackle-055",
-  "deviceType": "trackleSensor",
-  "tags": [
-    "sensor",
-    "trackle",
-    "medical",
-    "BLE"
-  ]
-}
+    "timestamp": "2018-10-15T12:40:37.173Z"
+  }
+]

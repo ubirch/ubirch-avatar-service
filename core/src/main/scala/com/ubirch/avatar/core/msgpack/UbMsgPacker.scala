@@ -285,8 +285,7 @@ object UbMsgPacker
 
   private def parseArray(aVal: ArrayValue): JValue = {
     val allPayloads = aVal.getElementArray.toList.map(av => parseSimpleArray(av.asArrayValue()))
-    //Json4sUtil.any2jvalue(allPayloads)
-    allPayloads.head
+    Json4sUtil.any2jvalue(allPayloads)
   }
 
   private def parseSimpleArray(aVal: ArrayValue): JValue = {
