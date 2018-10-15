@@ -10,7 +10,7 @@ import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceHistory, Device
 import com.ubirch.avatar.model.rest.payload._
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JsonAST.JValue
 
 import scala.concurrent.ExecutionContext
@@ -148,9 +148,18 @@ object TransformerService
         }
       else {
         logger.debug(s"start parsing data for device: ${drd.deviceId}")
-        val ts = (drd.p \ "ts").extractOpt[DateTime]
+        val tsDT = (drd.p \ "ts").extractOpt[DateTime]
+        val tsLong = (drd.p \ "ts").extractOpt[Long]
+        val ts = if (tsDT.isDefined)
+          tsDT
+        else if (tsLong.isDefined)
+          Some(new DateTime(tsLong.get, DateTimeZone.UTC))
+        else
+          None
+
         val la = (drd.p \ "la").extractOpt[String]
         val lo = (drd.p \ "lo").extractOpt[String]
+
         logger.debug(s"found ts $ts for device: ${drd.deviceId}")
 
         try {
