@@ -200,7 +200,9 @@ object DeviceHistoryManager extends MyJsonProtocol
           docId = id,
           doc = doc
         ).map(_.extractOpt[DeviceHistory])
-      case None => Future(None)
+      case None =>
+        logger.debug(s"failed storing device histoy for device: ${data.deviceId}")
+        Future(None)
     }
   }
 
