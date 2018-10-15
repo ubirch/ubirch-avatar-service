@@ -193,7 +193,8 @@ object DeviceHistoryManager extends MyJsonProtocol
         try {
 
           val id = data.messageId.toString
-          logger.debug(s"store data ($index / $esType / $id): $doc")
+          logger.debug(s"store data ( /$index/$esType/$id ): $doc")
+          logger.debug(s"jsonDoc: ${Json4sUtil.jvalue2String(doc)}")
           ESBulkStorage.storeDocBulk(
             docIndex = index,
             docType = esType,
