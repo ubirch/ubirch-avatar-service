@@ -290,7 +290,7 @@ object UbMsgPacker
   }
 
   private def parseSimpleArray(aVal: ArrayValue): JValue = {
-    val keys: Seq[String] = Seq("ts") ++ ('a' to 'z').map(_.toString).take(aVal.getElementArray.length)
+    val keys: Seq[String] = Seq("ts") ++ ('a' to 'z').map(_.toString).map(k => s"value${k.toUpperCase}").take(aVal.getElementArray.length)
 
     val zipped = aVal.getElementArray.zip(keys).foldLeft(Map[String, Value]()) { (a, b) =>
       a + (b._2 -> b._1)
