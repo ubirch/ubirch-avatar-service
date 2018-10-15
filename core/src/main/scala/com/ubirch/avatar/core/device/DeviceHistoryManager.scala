@@ -191,14 +191,18 @@ object DeviceHistoryManager extends MyJsonProtocol
 
       case Some(doc) =>
         try {
-          logger.debug(s"store data: $data")
+
           val id = data.messageId.toString
+          logger.debug(s"store data ($index / $esType / $id): $doc")
           ESBulkStorage.storeDocBulk(
             docIndex = index,
             docType = esType,
             docId = id,
             doc = doc
-          ).map(_.extractOpt[DeviceHistory])
+          ).map { d =>
+            logger.debug(s"stored doc for device ${data.deviceId}: $d")
+            d.extractOpt[DeviceHistory]
+          }
         }
         catch {
           case e: Exception =>
