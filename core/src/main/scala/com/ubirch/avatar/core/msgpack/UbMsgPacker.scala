@@ -303,7 +303,11 @@ object UbMsgPacker
           Some(av.asBooleanValue().getBoolean)
         case ValueType.INTEGER =>
           if ("ts".equals(key.trim.toLowerCase)) {
-            val tsInt: Long = av.asIntegerValue().getLong / 1000L
+            val tsInt: Long = if (av.isIntegerValue)
+              av.asIntegerValue().getLong / 1000L
+            else
+              av.asFloatValue().asFloatValue().getDouble.toLong / 1000L
+
             //            val ts = new DateTime(tsInt, DateTimeZone.UTC)
             //            Some(ts.toDateTimeISO.toString)
             Some(tsInt)

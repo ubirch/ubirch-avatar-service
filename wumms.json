@@ -1,6 +1,6 @@
 {
-  "messageId": "0ce0ea4e-c831-445d-beed-88be4e8c44ec",
-  "deviceDataRawId": "d9741fdd-4c6d-4b96-995a-dc093e6a0db8",
+  "messageId": "7e39ce0e-88d1-444e-9fe1-07a5f1344b33",
+  "deviceDataRawId": "350aac8d-3483-48ac-b678-36d828ff1d38",
   "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
   "deviceName": "Demo Device",
   "deviceType": "genericSensor",
@@ -9,31 +9,31 @@
     "python-client"
   ],
   "deviceMessage": {
-    "ts": "2018-10-15T14:46:59.177Z",
+    "ts": 1.539612343790901E15,
     "valueA": 7,
     "valueB": 666
   },
   "deviceDataRaw": {
-    "id": "d9741fdd-4c6d-4b96-995a-dc093e6a0db8",
+    "id": "350aac8d-3483-48ac-b678-36d828ff1d38",
     "v": "0.0.0",
     "fw": "n.a.",
     "umv": 1,
     "usv": 3,
     "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
-    "ts": "2018-10-15T20:38:14.518Z",
-    "s": "yxwIxKZdlVOYwNse3i92e7jkqd108xfzuaxeUPV7H3JvL1vyru8rqtqQh/wFj0VxTb2MJiu0aP3viRbQW2B3DQ==",
-    "ps": "hE4cvfIA/5I4LhxERGE77qJS81GfS18OvV3BeLIzldQKswM40X3UJHFTYmSoZDy98ryEJHKdTBGK7XmicFrMAw==",
-    "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040844e1cbdf200ff92382e1c4444613beea252f3519f4b5f0ebd5dc178b23395d40ab30338d17dd42471536264a8643cbdf2bc8424729d4c118aed79a2705acc03329293cf00057845825411992acd053993cf00057845826353d907cd029ada0040cb1c08c4a65d955398c0db1ede2f767bb8e4a9dd74f317f3b9ac5e50f57b1f726f2f5bf2aeef2baada9087fc058f45714dbd8c262bb468fdef8916d05b60770d",
-    "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040844e1cbdf200ff92382e1c4444613beea252f3519f4b5f0ebd5dc178b23395d40ab30338d17dd42471536264a8643cbdf2bc8424729d4c118aed79a2705acc03329293cf00057845825411992acd053993cf00057845826353d907cd029a",
-    "mppayhash": "7c67f9d538dad3f1ed5b07943eb3c092adff7e01390ae0be25f556e80aa34c5b6823072f80f57f4a10550fc26e593dbbe8bbf1801b0c56e0155695e20264ef97",
+    "ts": "2018-10-15T21:45:56.915Z",
+    "s": "F6Ek0PcfRsp4ELKS/YdDKrssRxCZT0P7FU8fAQwLD/8SWGfMiQwuMTkSb3AJdN+oaMpW3fflN6UgXoD59UBfDw==",
+    "ps": "SRMy28iDQWo/YaNbUcpXeDJYqkFXV2kLfGaBMBVfZ7wtB1w3vHPVa9xYkwWCHNPNwaSZ2grxVIBadw6zHnH+Bg==",
+    "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040491332dbc883416a3f61a35b51ca57783258aa415757690b7c668130155f67bc2d075c37bc73d56bdc589305821cd3cdc1a499da0af154805a770eb31e71fe06329293cf00057844eec8aaf52acd053993cb4315e113bb5fb4d407cd029ada004017a124d0f71f46ca7810b292fd87432abb2c4710994f43fb154f1f010c0b0fff125867cc890c2e3139126f700974dfa868ca56ddf7e537a5205e80f9f5405f0f",
+    "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040491332dbc883416a3f61a35b51ca57783258aa415757690b7c668130155f67bc2d075c37bc73d56bdc589305821cd3cdc1a499da0af154805a770eb31e71fe06329293cf00057844eec8aaf52acd053993cb4315e113bb5fb4d407cd029a",
+    "mppayhash": "9c82b233ad4a35ff4405434022f5791de7bcf0d0cce0636ae268eac53f3dea539bdc77502a9532deafc4c2cc508df26396e986fbeed802456e90f433a54fd065",
     "p": [
       {
-        "ts": "2018-10-15T14:46:58.177Z",
+        "ts": 1539612342790,
         "valueA": 42,
         "valueB": 1337
       },
       {
-        "ts": "2018-10-15T14:46:59.177Z",
+        "ts": 1.539612343790901E15,
         "valueA": 7,
         "valueB": 666
       }
@@ -46,5 +46,5 @@
       "python-client"
     ]
   },
-  "timestamp": "2018-10-15T14:46:59.177Z"
+  "timestamp": "50758-05-17T07:29:50.901Z"
 }
