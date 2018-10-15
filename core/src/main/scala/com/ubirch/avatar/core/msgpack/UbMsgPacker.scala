@@ -304,8 +304,9 @@ object UbMsgPacker
         case ValueType.INTEGER =>
           if ("ts".equals(key.trim.toLowerCase)) {
             val tsInt: Long = av.asIntegerValue().getLong / 1000L
-            val ts = new DateTime(tsInt, DateTimeZone.UTC)
-            Some(ts.toDateTimeISO.toString)
+            //            val ts = new DateTime(tsInt, DateTimeZone.UTC)
+            //            Some(ts.toDateTimeISO.toString)
+            Some(tsInt)
           }
           else
             Some(BigDecimal(av.asIntegerValue().getBigInteger))
