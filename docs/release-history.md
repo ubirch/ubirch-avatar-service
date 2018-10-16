@@ -2,12 +2,15 @@
 
 ### Version 0.6.0 (tbd)
 
-* update to `com.ubirch.util:elasticsearch-client-binary:3.0.0` (compatible with Elasticsearch 6.4.0)
-* update to `com.ubirch.util:elasticsearch-util:3.0.0`
-* update to `com.ubirch.util:oidc-utils:0.8.2`
-* update to `com.ubirch.util:redis-util:0.5.1`
-* update to `com.ubirch.user:client-rest:1.0.0`
-* update to `com.ubirch.key:client-rest:0.11.0`
+* update to `com.ubirch.util:elasticsearch-client-binary:3.0.1`
+* update to `com.ubirch.util:elasticsearch-util:3.0.1`
+* update to `com.ubirch.util:mongo-utils:0.8.4`
+* update to `com.ubirch.util:mongo-test-utils:0.8.4`
+* update to `com.ubirch.util:oidc-utils:0.8.3`
+* update to `com.ubirch.util:redis-util:0.5.2`
+* update to `com.ubirch.util:response-util:0.4.1`
+* update to `com.ubirch.user:client-rest:1.0.1`
+* update to `com.ubirch.key:client-rest:0.11.1`
 
 ### Version 0.5.0 (not released)
 
