@@ -163,7 +163,7 @@ object TransformerService
         logger.debug(s"found ts $ts for device: ${drd.deviceId}")
 
         try {
-          val geoPay = if (la.isDefined && lo.isDefined) {
+          val patchedPay = if (la.isDefined && lo.isDefined) {
             logger.debug("found lo/la")
             val geo = LocationSnippet(location = GeoLocation(
               lat = nf.parse(la.get).doubleValue(),
@@ -174,7 +174,7 @@ object TransformerService
           else
             drd.p
 
-          (Some(geoPay), ts)
+          (Some(patchedPay), ts)
         }
         catch {
           case e: Exception =>
