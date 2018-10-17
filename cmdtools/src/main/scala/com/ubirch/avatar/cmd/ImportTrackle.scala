@@ -182,7 +182,7 @@ object ImportTrackle extends App
               p = payload
             )
 
-            val ddrBulkResponse = AvatarRestClient.deviceBulkPOST(ddr, oidcToken = Some(oidcToken))
+            val ddrBulkResponse = AvatarRestClient.deviceUpdateBulkPOST(ddr, oidcToken = Some(oidcToken))
             if (ddrBulkResponse.status == Status.S200_OK) {
               logger.info(s"data created")
             } else {

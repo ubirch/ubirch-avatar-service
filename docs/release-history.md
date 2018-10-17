@@ -10,7 +10,8 @@
 * update to `com.ubirch.util:redis-util:0.5.2`
 * update to `com.ubirch.util:response-util:0.4.1`
 * update to `com.ubirch.user:client-rest:1.0.1`
-* update to `com.ubirch.key:client-rest:0.11.1`
+* update to `com.ubirch.key:client-rest:0.11.1
+* introduced Akka HTTP based rest client with new module `client-rest`
 
 ### Version 0.5.0 (not released)
 

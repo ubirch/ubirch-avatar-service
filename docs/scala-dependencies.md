@@ -7,9 +7,36 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "aws" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "aws" % "0.6.0-SNAPSHOT"
 )
 ```
+
+### `client-rest`
+
+```scala
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("snapshots")
+)
+libraryDependencies ++= Seq(
+  "com.ubirch.avatar" %% "client-rest" % "0.6.0-SNAPSHOT"
+)
+```
+
+#### Configuration
+   
+| Config Item                             | Mandatory  | Description            |
+|:----------------------------------------|:-----------|:-----------------------|
+| ubirchTemplateService.client.rest.host  | yes        | template-service host  |
+
+#### Usage
+
+See `com.ubirch.template.client.rest.TemplateServiceClientRestSpec` for an example usage.
+
+The REST client class is `TemplateServiceClientRest` and the host it connects to needs to be configured:
+
+    ubirchTemplateService.client.rest.host = "http://localhost:8118"
+
+It depends on a `akka-http` client. Please refer to the setup of `TemplateServiceClientRestSpec` for further details.
 
 ### `client`
 
@@ -19,7 +46,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "client" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "client" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -42,7 +69,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "cmdtools" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "cmdtools" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -53,7 +80,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "config" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "config" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -64,7 +91,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "core" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "core" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -75,7 +102,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-db" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-db" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -86,7 +113,7 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "model-rest" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "model-rest" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -99,7 +126,7 @@ resolvers ++= Seq(
   "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "server" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "server" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -112,7 +139,7 @@ resolvers ++= Seq(
   Resolver.bintrayRepo("rick-beton", "maven") // BeeClient
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "test-base" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "test-base" % "0.6.0-SNAPSHOT"
 )
 ```
 
@@ -123,6 +150,6 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots")
 )
 libraryDependencies ++= Seq(
-  "com.ubirch.avatar" %% "util" % "0.4.2-SNAPSHOT"
+  "com.ubirch.avatar" %% "util" % "0.6.0-SNAPSHOT"
 )
 ```

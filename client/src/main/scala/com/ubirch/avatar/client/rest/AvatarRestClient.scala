@@ -59,10 +59,10 @@ object AvatarRestClient
     * @param ubirchToken   ubirch token of the user whose device stubs to list
     * @return http response
     */
-  def deviceBulkPOST(deviceDataRaw: DeviceDataRaw,
-                     oidcToken: Option[String],
-                     ubirchToken: Option[String] = None
-                    ): Response = {
+  def deviceUpdateBulkPOST(deviceDataRaw: DeviceDataRaw,
+                           oidcToken: Option[String],
+                           ubirchToken: Option[String] = None
+                          ): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceBulk}")
     logger.debug(s"try to call REST endpoint: POST $url")
@@ -211,7 +211,7 @@ object AvatarRestClient
 
     } else {
 
-      logger.error(s"failed to update device: response=$res")
+      logger.error(s"failed to delete device: response=$res")
       false
 
     }
@@ -228,10 +228,10 @@ object AvatarRestClient
     * @return Boolean value
     */
 
-  def claimDevice(hwDeviceId: String,
-                  oidcToken: Option[String],
-                  ubirchToken: Option[String] = None
-                 ): DeviceUserClaim = {
+  def claimDevicePUT(hwDeviceId: String,
+                     oidcToken: Option[String],
+                     ubirchToken: Option[String] = None
+                    ): DeviceUserClaim = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceClaim}")
     logger.debug(s"try to call REST endpoint: $url")
