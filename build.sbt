@@ -350,14 +350,14 @@ val prometheus = Seq(
 val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
 val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.0.0" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.0.0" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.0.1" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.0.1" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
-val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
-val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
-val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.2" excludeAll (excludedLoggers: _*)
-val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.1"
-val ubirchResponse = ubirchUtilG %% "response-util" % "0.4.0" excludeAll (excludedLoggers: _*)
+val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.4" excludeAll (excludedLoggers: _*)
+val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.4" excludeAll (excludedLoggers: _*)
+val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
+val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.2"
+val ubirchResponse = ubirchUtilG %% "response-util" % "0.4.1" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.3" excludeAll (excludedLoggers: _*)
@@ -367,8 +367,8 @@ val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (
 val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
-val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.0" excludeAll (excludedLoggers: _*)
-val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.0" excludeAll (excludedLoggers: _*)
+val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.1" excludeAll (excludedLoggers: _*)
+val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.1" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
