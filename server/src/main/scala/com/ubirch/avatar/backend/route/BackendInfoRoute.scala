@@ -30,7 +30,7 @@ class BackendInfoRoute extends Directives
           val goInfo = s"${Config.goPipelineName} / ${Config.goPipelineLabel} / ${Config.goPipelineRevision}"
           val pubKey = BackendPubKey(
             publicKeyHex = ServerKeys.pubKeyHex,
-            publicKeyBase64 = ServerKeys.privKeyB64
+            publicKeyBase64 = ServerKeys.pubKeyB64
           )
           complete(OK -> pubKey)
         }
