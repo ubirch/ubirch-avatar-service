@@ -7,9 +7,11 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 class BackendInfoRoute extends Directives
+  with CORSDirective
   with ResponseUtil
   with StrictLogging {
 
@@ -22,15 +24,16 @@ class BackendInfoRoute extends Directives
   val route: Route = {
 
     path(RouteConstants.backendinfo / RouteConstants.pubkey) {
+      respondWithCORS {
+        get {
 
-      get {
-
-        val goInfo = s"${Config.goPipelineName} / ${Config.goPipelineLabel} / ${Config.goPipelineRevision}"
-        val pubKey = BackendPubKey(
-          publicKeyHex = ServerKeys.pubKeyHex,
-          publicKeyBase64 = ServerKeys.privKeyB64
-        )
-        complete(OK -> pubKey)
+          val goInfo = s"${Config.goPipelineName} / ${Config.goPipelineLabel} / ${Config.goPipelineRevision}"
+          val pubKey = BackendPubKey(
+            publicKeyHex = ServerKeys.pubKeyHex,
+            publicKeyBase64 = ServerKeys.privKeyB64
+          )
+          complete(OK -> pubKey)
+        }
       }
     }
   }
