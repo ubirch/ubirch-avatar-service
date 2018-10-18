@@ -88,6 +88,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
   def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw)
                       (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, DeviceStateUpdate]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     Json4sUtil.any2String(deviceDataRaw) match {
 
@@ -138,6 +139,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
                           )
                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, JsonResponse]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     Json4sUtil.any2String(deviceDataRaw) match {
 
@@ -189,6 +191,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
                 )
                 (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Device]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -247,6 +250,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
                    )
                    (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[DeviceInfo]]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -293,6 +297,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
                )
                (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[Device]]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -341,6 +346,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
                  )
                  (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Device]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -401,6 +407,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
                     )
                     (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Boolean]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -448,6 +455,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
                     )
                     (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, DeviceUserClaim]] = {
 
+    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 

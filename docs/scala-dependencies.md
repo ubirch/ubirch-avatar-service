@@ -24,19 +24,19 @@ libraryDependencies ++= Seq(
 
 #### Configuration
    
-| Config Item                             | Mandatory  | Description            |
-|:----------------------------------------|:-----------|:-----------------------|
-| ubirchTemplateService.client.rest.host  | yes        | template-service host  |
+| Config Item                           | Mandatory  | Description          |
+|:--------------------------------------|:-----------|:---------------------|
+| ubirchAvatarService.client.rest.host  | yes        | avatar-service host  |
 
 #### Usage
 
-See `com.ubirch.template.client.rest.TemplateServiceClientRestSpec` for an example usage.
+See `com.ubirch.avatar.client.rest.TemplateServiceClientRestSpec` for an example usage.
 
-The REST client class is `TemplateServiceClientRest` and the host it connects to needs to be configured:
+The REST client class is `AvatarSvcClientRest` and the host it connects to needs to be configured:
 
-    ubirchTemplateService.client.rest.host = "http://localhost:8118"
+    ubirchAvatarService.client.rest.host = "http://localhost:8080"
 
-It depends on a `akka-http` client. Please refer to the setup of `TemplateServiceClientRestSpec` for further details.
+It depends on a `akka-http` client. Please refer to the setup of `AvatarSvcClientRestSpec` for further details.
 
 ### `client`
 
