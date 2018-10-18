@@ -41,7 +41,7 @@ object DummyDeviceDataRaw {
       fw = "V1.2.3",
       a = HashUtil.sha512Base64(device.hwDeviceId),
       ts = timestamp,
-      k = Some(ServerKeys.pubKeyEnc),
+      k = Some(ServerKeys.pubKeyB64),
       s = Some(s),
       p = p
     )

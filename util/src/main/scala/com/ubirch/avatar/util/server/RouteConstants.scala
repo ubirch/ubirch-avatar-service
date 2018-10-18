@@ -33,6 +33,8 @@ object RouteConstants {
   val verify = "verify"
   val deviceType = "deviceType"
   val init = "init"
+  val backendinfo = "backendinfo"
+  val pubkey = "pubkey"
 
   val pathPrefix = s"/$apiPrefix/$serviceName/$currentVersion"
 

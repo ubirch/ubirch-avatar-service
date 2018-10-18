@@ -21,19 +21,19 @@ object DeviceUtil {
 
   def hashHwDeviceId(hwDeviceId: UUID): String = hashHwDeviceId(hwDeviceId.toString)
 
-  def hashHwDeviceId(hwDeviceId: String) = {
+  def hashHwDeviceId(hwDeviceId: String): String = {
     val hwid = hwDeviceId.trim.toLowerCase
     HashUtil.sha512Base64(hwid)
   }
 
   /**
     *
-    * @param payload
-    * @return
+    * @param payload as JValue
+    * @return signed payloaded
     */
   def sign(payload: JValue): String = {
     val payloadStr = write(payload)
-    EccUtil.signPayload(ServerKeys.privKeyEnc, payloadStr)
+    EccUtil.signPayload(ServerKeys.privKeyB64, payloadStr)
   }
 
   def deviceWithDefaults(device: Device): Device = {
