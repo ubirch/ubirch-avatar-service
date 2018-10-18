@@ -9,6 +9,7 @@ import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo, DeviceStateUpdate, DeviceUserClaim}
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
+import com.ubirch.util.http.auth.AuthUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
 
@@ -88,7 +89,6 @@ object AvatarSvcClientRest extends MyJsonProtocol
   def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw)
                       (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, DeviceStateUpdate]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     Json4sUtil.any2String(deviceDataRaw) match {
 
@@ -128,25 +128,18 @@ object AvatarSvcClientRest extends MyJsonProtocol
 
   /**
     * @param deviceDataRaw device data to post
-    * @param oidcToken     OpenID Connect token to use for authorization
-    * @param ubirchToken   ubirch token to use for authorization (ignored if oidcToken is set)
     * @param httpClient    http connection
     * @param materializer  Akka materializer required by http connection
     */
-  def deviceUpdateBulkPOST(deviceDataRaw: DeviceDataRaw,
-                           oidcToken: Option[String],
-                           ubirchToken: Option[String] = None
-                          )
+  def deviceUpdateBulkPOST(deviceDataRaw: DeviceDataRaw)
                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, JsonResponse]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     Json4sUtil.any2String(deviceDataRaw) match {
 
       case Some(deviceDataRawString) =>
 
         val url = AvatarClientRestConfig.urlDeviceUpdateBulk
-        // TODO set auth header
         val req = HttpRequest(
           method = HttpMethods.POST,
           uri = url,
@@ -191,7 +184,6 @@ object AvatarSvcClientRest extends MyJsonProtocol
                 )
                 (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Device]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -205,10 +197,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
         case Some(deviceString) =>
 
           val url = AvatarClientRestConfig.urlDevice
-          // TODO set auth header
           val req = HttpRequest(
             method = HttpMethods.POST,
             uri = url,
+            headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken),
             entity = HttpEntity.Strict(ContentTypes.`application/json`, data = ByteString(deviceString))
           )
           httpClient.singleRequest(req) flatMap {
@@ -218,6 +210,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
               entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
                 Right(read[Device](body.utf8String))
               }
+
+            case HttpResponse(StatusCodes.Forbidden, _, _, _) =>
+
+              Future(Left(JsonErrorResponse(errorType = "InvalidToken", errorMessage = "login token is not valid")))
 
             case res@HttpResponse(code, _, entity, _) =>
 
@@ -250,7 +246,6 @@ object AvatarSvcClientRest extends MyJsonProtocol
                    )
                    (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[DeviceInfo]]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -260,10 +255,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
     } else {
 
       val url = AvatarClientRestConfig.urlDeviceStub
-      // TODO set auth header
       val req = HttpRequest(
         method = HttpMethods.GET,
-        uri = url
+        uri = url,
+        headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
       )
       httpClient.singleRequest(req) flatMap {
 
@@ -272,6 +267,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
           entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
             Right(read[Set[DeviceInfo]](body.utf8String))
           }
+
+        case HttpResponse(StatusCodes.Forbidden, _, _, _) =>
+
+          Future(Left(JsonErrorResponse(errorType = "InvalidToken", errorMessage = "login token is not valid")))
 
         case res@HttpResponse(code, _, entity, _) =>
 
@@ -297,7 +296,6 @@ object AvatarSvcClientRest extends MyJsonProtocol
                )
                (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[Device]]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -307,10 +305,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
     } else {
 
       val url = AvatarClientRestConfig.urlDevice
-      // TODO set auth header
       val req = HttpRequest(
         method = HttpMethods.GET,
-        uri = url
+        uri = url,
+        headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
       )
       httpClient.singleRequest(req) flatMap {
 
@@ -319,6 +317,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
           entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
             Right(read[Set[Device]](body.utf8String))
           }
+
+        case HttpResponse(StatusCodes.Forbidden, _, _, _) =>
+
+          Future(Left(JsonErrorResponse(errorType = "InvalidToken", errorMessage = "login token is not valid")))
 
         case res@HttpResponse(code, _, entity, _) =>
 
@@ -346,7 +348,6 @@ object AvatarSvcClientRest extends MyJsonProtocol
                  )
                  (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Device]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -360,10 +361,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
         case Some(deviceString) =>
 
           val url = AvatarClientRestConfig.urlDeviceWithId(device.deviceId)
-          // TODO set auth header
           val req = HttpRequest(
             method = HttpMethods.PUT,
             uri = url,
+            headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken),
             entity = HttpEntity.Strict(ContentTypes.`application/json`, data = ByteString(deviceString))
           )
           httpClient.singleRequest(req) flatMap {
@@ -373,6 +374,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
               entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
                 Right(read[Device](body.utf8String))
               }
+
+            case HttpResponse(StatusCodes.Forbidden, _, _, _) =>
+
+              Future(Left(JsonErrorResponse(errorType = "InvalidToken", errorMessage = "login token is not valid")))
 
             case res@HttpResponse(code, _, entity, _) =>
 
@@ -407,7 +412,6 @@ object AvatarSvcClientRest extends MyJsonProtocol
                     )
                     (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Boolean]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -417,10 +421,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
     } else {
 
       val url = AvatarClientRestConfig.urlDeviceWithId(deviceId.toString)
-      // TODO set auth header
       val req = HttpRequest(
         method = HttpMethods.DELETE,
-        uri = url
+        uri = url,
+        headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
       )
       httpClient.singleRequest(req) flatMap {
 
@@ -428,6 +432,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
 
           res.discardEntityBytes()
           Future(Right(true))
+
+        case HttpResponse(StatusCodes.Forbidden, _, _, _) =>
+
+          Future(Left(JsonErrorResponse(errorType = "InvalidToken", errorMessage = "login token is not valid")))
 
         case res@HttpResponse(code, _, entity, _) =>
 
@@ -443,7 +451,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
   }
 
   /**
-    * @param hwDeviceId device to claim
+    * @param hwDeviceId   device to claim
     * @param oidcToken    OpenID Connect token to use for authorization
     * @param ubirchToken  ubirch token to use for authorization (ignored if oidcToken is set)
     * @param httpClient   http connection
@@ -455,7 +463,6 @@ object AvatarSvcClientRest extends MyJsonProtocol
                     )
                     (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, DeviceUserClaim]] = {
 
-    // TODO UP-297: automated tests
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
@@ -470,10 +477,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
         case Some(deviceClaimString) =>
 
           val url = AvatarClientRestConfig.urlDeviceClaim
-          // TODO set auth header
           val req = HttpRequest(
             method = HttpMethods.PUT,
             uri = url,
+            headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken),
             entity = HttpEntity.Strict(ContentTypes.`application/json`, data = ByteString(deviceClaimString))
           )
           httpClient.singleRequest(req) flatMap {
@@ -483,6 +490,10 @@ object AvatarSvcClientRest extends MyJsonProtocol
               entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
                 Right(read[DeviceUserClaim](body.utf8String))
               }
+
+            case HttpResponse(StatusCodes.Forbidden, _, _, _) =>
+
+              Future(Left(JsonErrorResponse(errorType = "InvalidToken", errorMessage = "login token is not valid")))
 
             case res@HttpResponse(code, _, entity, _) =>
 

@@ -39,6 +39,7 @@ object AvatarRestClient
     * @param deviceDataRaw raw data to POST
     * @return http response
     */
+  @deprecated("migrate to `AvatarSvcClientRest.deviceUpdatePOST()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def deviceUpdatePOST(deviceDataRaw: DeviceDataRaw): Response = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceUpdate}")
@@ -59,6 +60,7 @@ object AvatarRestClient
     * @param ubirchToken   ubirch token of the user whose device stubs to list
     * @return http response
     */
+  @deprecated("migrate to `AvatarSvcClientRest.deviceUpdateBulkPOST()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def deviceUpdateBulkPOST(deviceDataRaw: DeviceDataRaw,
                            oidcToken: Option[String],
                            ubirchToken: Option[String] = None
@@ -75,6 +77,7 @@ object AvatarRestClient
 
   }
 
+  @deprecated("migrate to `AvatarSvcClientRest.devicePOST()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def devicePOST(device: Device,
                  oidcToken: Option[String],
                  ubirchToken: Option[String] = None
@@ -96,6 +99,7 @@ object AvatarRestClient
     * @param ubirchToken ubirch token of the user whose device stubs to list
     * @return None in case of an error; other a sequence (empty if no devices are found)
     */
+  @deprecated("migrate to `AvatarSvcClientRest.deviceStubGET()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def deviceStubGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[DeviceInfo]] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDeviceStub}")
@@ -126,6 +130,7 @@ object AvatarRestClient
     * @param ubirchToken ubirch token of the user whose device to list
     * @return None in case of an error; other a sequence (empty if no devices are found)
     */
+  @deprecated("migrate to `AvatarSvcClientRest.deviceGET()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def deviceGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[Device]] = {
 
     val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
@@ -157,6 +162,7 @@ object AvatarRestClient
     * @param ubirchToken ubirch token of the user whose device to update
     * @return None in case of an error; otherwise the updated device
     */
+  @deprecated("migrate to `AvatarSvcClientRest.deviceIdPUT()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def deviceIdPUT(device: Device,
                   oidcToken: Option[String],
                   ubirchToken: Option[String] = None
@@ -192,6 +198,7 @@ object AvatarRestClient
     * @param ubirchToken ubirch token of the user whose device to update
     * @return true if device has been deleted or did not exist; false otherwise
     */
+  @deprecated("migrate to `AvatarSvcClientRest.deviceIdDELETE()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def deviceIdDELETE(deviceId: UUID,
                      oidcToken: Option[String],
                      ubirchToken: Option[String] = None
@@ -227,7 +234,7 @@ object AvatarRestClient
     * @param ubirchToken ubirch token of the user claiming a device
     * @return Boolean value
     */
-
+  @deprecated("migrate to `AvatarSvcClientRest.claimDevicePUT()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
   def claimDevicePUT(hwDeviceId: String,
                      oidcToken: Option[String],
                      ubirchToken: Option[String] = None

@@ -93,7 +93,7 @@ lazy val client = project
 
 lazy val clientRest = (project in file("client-rest"))
   .settings(commonSettings)
-  .dependsOn(config, modelRest, util)
+  .dependsOn(config, modelRest, util, testBase % "test")
   .settings(
     description := "REST client for the avatarService",
     libraryDependencies ++= depClientRest
@@ -381,7 +381,7 @@ val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.4" excludeAll (ex
 val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.4" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
 val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.2"
-val ubirchResponse = ubirchUtilG %% "response-util" % "0.4.1" excludeAll (excludedLoggers: _*)
+val ubirchResponse = ubirchUtilG %% "response-util" % "0.5.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.3" excludeAll (excludedLoggers: _*)
@@ -391,8 +391,8 @@ val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (
 val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
-val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.1" excludeAll (excludedLoggers: _*)
-val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.1" excludeAll (excludedLoggers: _*)
+val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.2" excludeAll (excludedLoggers: _*)
+val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.2" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
