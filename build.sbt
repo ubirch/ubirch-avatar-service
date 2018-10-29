@@ -33,6 +33,7 @@ lazy val avatarService = (project in file("."))
   .aggregate(
     aws,
     client,
+    clientRest,
     cmdtools,
     config,
     core,
@@ -74,7 +75,7 @@ lazy val server = project
 
 lazy val cmdtools = project
   .settings(commonSettings)
-  .dependsOn(core, client, util, testBase)
+  .dependsOn(core, client, clientRest, util, testBase)
   .settings(
     description := "command line tools"
   )
@@ -88,6 +89,14 @@ lazy val client = project
     resolvers ++= Seq(
       resolverBeeClient
     )
+  )
+
+lazy val clientRest = (project in file("client-rest"))
+  .settings(commonSettings)
+  .dependsOn(config, modelRest, util, testBase % "test")
+  .settings(
+    description := "REST client for the avatarService",
+    libraryDependencies ++= depClientRest
   )
 
 lazy val core = project
@@ -210,6 +219,15 @@ lazy val depClient = Seq(
   beeClient
 ) ++ scalaLogging
 
+lazy val depClientRest = Seq(
+  akkaHttp,
+  akkaStream,
+  akkaSlf4j,
+  ubirchResponse,
+  ubirchDeepCheckModel,
+  scalatest % "test"
+) ++ scalaLogging
+
 lazy val depAws = Seq(
   ubirchJson,
   ubirchUUID % "test",
@@ -288,12 +306,17 @@ val scalaLogging = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
 )
 
+val akkaActor = akkaG %% "akka-actor" % akkaV
+val akkaStream = akkaG %% "akka-stream" % akkaV
+val akkaSlf4j = akkaG %% "akka-slf4j" % akkaV
+val akkaHttp = akkaG %% "akka-http" % akkaHttpV
+val akkaCluster = akkaG %% "akka-cluster" % akkaV
 val akka = Seq(
-  akkaG %% "akka-actor" % akkaV,
-  akkaG %% "akka-stream" % akkaV,
-  akkaG %% "akka-slf4j" % akkaV,
-  akkaG %% "akka-http" % akkaHttpV,
-  akkaG %% "akka-cluster" % akkaV
+  akkaActor,
+  akkaStream,
+  akkaSlf4j,
+  akkaHttp,
+  akkaCluster
 )
 
 val akkaCamel = Seq(
@@ -350,6 +373,7 @@ val prometheus = Seq(
 val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
 val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
+val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.3.1" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.0.1" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.0.1" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
@@ -357,7 +381,7 @@ val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.4" excludeAll (ex
 val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.4" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
 val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.2"
-val ubirchResponse = ubirchUtilG %% "response-util" % "0.4.1" excludeAll (excludedLoggers: _*)
+val ubirchResponse = ubirchUtilG %% "response-util" % "0.5.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.3" excludeAll (excludedLoggers: _*)
@@ -367,8 +391,8 @@ val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (
 val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
   excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
   )
-val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.1" excludeAll (excludedLoggers: _*)
-val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.1" excludeAll (excludedLoggers: _*)
+val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.2" excludeAll (excludedLoggers: _*)
+val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.2" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER

@@ -62,6 +62,9 @@ object TestKeyService
 
       series foreach { dataRaw =>
         AvatarRestClient.deviceUpdatePOST(dataRaw)
+        // TODO migrate to AvatarSvcClientRest
+        // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
+        //AvatarSvcClientRest.deviceUpdatePOST(dataRaw)
         Thread.sleep(500)
       }
 

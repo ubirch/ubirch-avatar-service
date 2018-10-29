@@ -80,6 +80,9 @@ object ImportTrackle extends App
   private def createDevice(device: Device, oidcToken: String): Boolean = {
 
     val deviceCreationResponse = AvatarRestClient.devicePOST(device, oidcToken = Some(oidcToken))
+    // TODO migrate to AvatarSvcClientRest
+    // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
+    //val deviceCreationResponse = AvatarSvcClientRest.devicePOST(device, oidcToken = Some(oidcToken))
 
     if (deviceCreationResponse.status != Status.S200_OK) {
       logger.error(s"failed to create device: response=$deviceCreationResponse")
@@ -182,7 +185,10 @@ object ImportTrackle extends App
               p = payload
             )
 
-            val ddrBulkResponse = AvatarRestClient.deviceBulkPOST(ddr, oidcToken = Some(oidcToken))
+            val ddrBulkResponse = AvatarRestClient.deviceUpdateBulkPOST(ddr, oidcToken = Some(oidcToken))
+            // TODO migrate to AvatarSvcClientRest
+            // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
+            //val ddrBulkResponse = AvatarSvcClientRest.deviceUpdateBulkPOST(ddr)
             if (ddrBulkResponse.status == Status.S200_OK) {
               logger.info(s"data created")
             } else {
