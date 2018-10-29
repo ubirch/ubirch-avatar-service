@@ -1,22 +1,20 @@
 package com.ubirch.avatar.client.rest
 
 import java.net.URL
-import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 
 import com.ubirch.avatar.client.rest.config.AvatarClientConfig
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo, DeviceUserClaim}
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.model.JsonErrorResponse
 
 import uk.co.bigbeeconsultants.http.HttpClient
 import uk.co.bigbeeconsultants.http.header.MediaType._
 import uk.co.bigbeeconsultants.http.header.{Header, Headers}
 import uk.co.bigbeeconsultants.http.request.RequestBody
-import uk.co.bigbeeconsultants.http.response.{Response, Status}
+import uk.co.bigbeeconsultants.http.response.Response
 
 /**
   * author: cvandrei
@@ -91,189 +89,6 @@ object AvatarRestClient
       body = Some(RequestBody(Json4sUtil.any2String(device).get, APPLICATION_JSON)),
       requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
     )
-
-  }
-
-  /**
-    * @param oidcToken   OIDC token of the user whose device stubs to list
-    * @param ubirchToken ubirch token of the user whose device stubs to list
-    * @return None in case of an error; other a sequence (empty if no devices are found)
-    */
-  @deprecated("migrate to `AvatarSvcClientRest.deviceStubGET()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
-  def deviceStubGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[DeviceInfo]] = {
-
-    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceStub}")
-    logger.debug(s"try to call REST endpoint: GET $url")
-
-    val res = httpClient.get(
-      url = url,
-      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
-    )
-
-    if (res.status == Status.S200_OK) {
-
-      val jsonString = res.body.asString
-      val deviceInfos = Json4sUtil.string2any[Set[DeviceInfo]](jsonString)
-      Some(deviceInfos)
-
-    } else {
-
-      logger.error(s"failed to query device stubs: response=$res")
-      None
-
-    }
-
-  }
-
-  /**
-    * @param oidcToken   OIDC token of the user whose device to list
-    * @param ubirchToken ubirch token of the user whose device to list
-    * @return None in case of an error; other a sequence (empty if no devices are found)
-    */
-  @deprecated("migrate to `AvatarSvcClientRest.deviceGET()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
-  def deviceGET(oidcToken: Option[String], ubirchToken: Option[String] = None): Option[Set[Device]] = {
-
-    val url = new URL(s"$baseUrl${RouteConstants.pathDevice}")
-    logger.debug(s"try to call REST endpoint: GET $url")
-
-    val res = httpClient.get(
-      url = url,
-      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
-    )
-
-    if (res.status == Status.S200_OK) {
-
-      val jsonString = res.body.asString
-      val deviceInfos = Json4sUtil.string2any[Set[Device]](jsonString)
-      Some(deviceInfos)
-
-    } else {
-
-      logger.error(s"failed to query devices: response=$res")
-      None
-
-    }
-
-  }
-
-  /**
-    * @param device      updated device
-    * @param oidcToken   OIDC token of the user whose device to update
-    * @param ubirchToken ubirch token of the user whose device to update
-    * @return None in case of an error; otherwise the updated device
-    */
-  @deprecated("migrate to `AvatarSvcClientRest.deviceIdPUT()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
-  def deviceIdPUT(device: Device,
-                  oidcToken: Option[String],
-                  ubirchToken: Option[String] = None
-                 ): Option[Device] = {
-
-    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceWithId(device.deviceId)}")
-    logger.debug(s"try to call REST endpoint: PUT $url")
-
-    val res = httpClient.put(
-      url = url,
-      body = RequestBody(Json4sUtil.any2String(device).get, APPLICATION_JSON),
-      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
-    )
-
-    if (res.status == Status.S200_OK) {
-
-      val jsonString = res.body.asString
-      val deviceInfos = Json4sUtil.string2any[Device](jsonString)
-      Some(deviceInfos)
-
-    } else {
-
-      logger.error(s"failed to update device: response=$res")
-      None
-
-    }
-
-  }
-
-  /**
-    * @param deviceId    id of device to delete
-    * @param oidcToken   OIDC token of the user whose device to update
-    * @param ubirchToken ubirch token of the user whose device to update
-    * @return true if device has been deleted or did not exist; false otherwise
-    */
-  @deprecated("migrate to `AvatarSvcClientRest.deviceIdDELETE()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
-  def deviceIdDELETE(deviceId: UUID,
-                     oidcToken: Option[String],
-                     ubirchToken: Option[String] = None
-                    ): Boolean = {
-
-    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceWithId(deviceId.toString)}")
-    logger.debug(s"try to call REST endpoint: DELETE $url")
-
-    val res = httpClient.delete(
-      url = url,
-      requestHeaders = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
-    )
-
-    if (res.status == Status.S200_OK) {
-
-      true
-
-    } else {
-
-      logger.error(s"failed to delete device: response=$res")
-      false
-
-    }
-
-  }
-
-  /**
-    * this method could be used to claim a device by current user (identified by Auth Token)
-    * the claimed device may not be owned by an other user
-    *
-    * @param hwDeviceId  hardware device id as a String
-    * @param oidcToken   OIDC token of the user claiming a device
-    * @param ubirchToken ubirch token of the user claiming a device
-    * @return Boolean value
-    */
-  @deprecated("migrate to `AvatarSvcClientRest.claimDevicePUT()` instead since this method will be deleted rather sooner than later", "0.6.0-SNAPSHOT")
-  def claimDevicePUT(hwDeviceId: String,
-                     oidcToken: Option[String],
-                     ubirchToken: Option[String] = None
-                    ): DeviceUserClaim = {
-
-    val url = new URL(s"$baseUrl${RouteConstants.pathDeviceClaim}")
-    logger.debug(s"try to call REST endpoint: $url")
-    val headers: Headers = authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
-
-    val deviceClaim = DeviceClaim(hwDeviceId = hwDeviceId)
-    val deviceClaimJsonStr = Json4sUtil.any2String(deviceClaim).get
-
-    val body = RequestBody(deviceClaimJsonStr, APPLICATION_JSON)
-
-    httpClient.put(url, body, headers) match {
-      case resp if resp.status == Status.S202_Accepted =>
-
-        val respStr = resp.body.asString
-
-        Json4sUtil.string2JValue(respStr) match {
-          case Some(jval) =>
-
-            jval.extractOpt[DeviceUserClaim] match {
-              case Some(duc) =>
-                duc
-              case None =>
-                throw new Exception(s"got invalid response: $respStr")
-            }
-
-          case None =>
-            throw new Exception(s"got invalid response: $respStr")
-        }
-
-      case resp =>
-        Json4sUtil.string2any[JsonErrorResponse](resp.body.asString) match {
-          case jer =>
-            throw new Exception(jer.errorMessage)
-        }
-    }
 
   }
 

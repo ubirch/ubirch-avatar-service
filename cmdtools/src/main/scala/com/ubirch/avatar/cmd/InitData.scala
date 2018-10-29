@@ -77,6 +77,9 @@ object InitData
         logger.debug("-----------------------------------------------------------------------------------------")
         try {
           val resp = AvatarRestClient.deviceUpdatePOST(dataRaw)
+          // TODO migrate to AvatarSvcClientRest
+          // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
+          //val resp = AvatarSvcClientRest.deviceUpdatePOST(dataRaw)
           logger.debug(s"response: ${resp.body.asString}")
         }
         catch {
