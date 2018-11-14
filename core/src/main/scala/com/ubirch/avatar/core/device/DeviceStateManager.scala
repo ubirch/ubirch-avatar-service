@@ -30,7 +30,7 @@ object DeviceStateManager extends MyJsonProtocol with StrictLogging {
 
     DeviceStateUpdate(
       id = UUIDUtil.uuid,
-      k = ServerKeys.pubKeyEnc,
+      k = ServerKeys.pubKeyB64,
       s = s,
       ds = avatarState.currentDeviceSignature,
       p = payload

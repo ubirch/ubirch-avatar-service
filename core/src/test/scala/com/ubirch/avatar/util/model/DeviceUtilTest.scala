@@ -33,7 +33,7 @@ class DeviceUtilTest extends FeatureSpec
       )
 
       val s = DeviceUtil.sign(payload)
-      val k = ServerKeys.pubKeyEnc
+      val k = ServerKeys.pubKeyB64
 
       logger.info(s"k: $k")
       logger.info(s"s: $s")
@@ -47,7 +47,7 @@ class DeviceUtilTest extends FeatureSpec
       val payload = read[JValue]("")
 
       val s = DeviceUtil.sign(payload)
-      val k = ServerKeys.pubKeyEnc
+      val k = ServerKeys.pubKeyB64
 
       val checkedD = Await.result(DeviceCoreUtil.validateSignedMessageWithKey(k, s, payload), 2 seconds)
       checkedD shouldBe true

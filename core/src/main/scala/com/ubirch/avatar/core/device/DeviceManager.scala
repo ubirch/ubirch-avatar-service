@@ -63,13 +63,13 @@ object DeviceManager
     * @param groups select device stubs only if they're in any of these groups
     * @return devices; empty if none found
     */
-  def allStubs(groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
+  def allStubs(userId: UUID, groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
 
     // TODO automated tests
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
       docType = esType,
-      query = groupsTermsQuery(groups),
+      query = groupsUserTermsQuery(userId, groups),
       size = Some(Config.esLargePageSize)
     ).recover[List[JValue]] {
       case e =>
@@ -203,6 +203,16 @@ object DeviceManager
       case None => None
     }
 
+  }
+
+  private def groupsUserTermsQuery(userId: UUID, groups: Set[UUID]): Option[QueryBuilder] = {
+    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
+    val userIdAsString: String = userId.toString
+    Some(QueryBuilders.boolQuery()
+      .should(QueryBuilders.termsQuery("groups", groupsAsString: _*))
+      .should(QueryBuilders.termsQuery("owners", userIdAsString))
+      .minimumShouldMatch(1)
+    )
   }
 
   private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {

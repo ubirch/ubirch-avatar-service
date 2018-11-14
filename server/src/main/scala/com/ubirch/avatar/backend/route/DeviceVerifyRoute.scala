@@ -82,10 +82,12 @@ class DeviceVerifyRoute(implicit system: ActorSystem) extends ResponseUtil
               }
             case Success(None)
             =>
-              complete(StatusCodes.NotFound)
+              complete(StatusCodes.NotFound,
+                JsonErrorResponse(errorType = "validation error", errorMessage = s"unknown hash: $valueHash")
+              )
             case Failure(e)
             =>
-              logger.error("unable to load device history data", e)
+              logger.error("unable to load device raw data", e)
               complete(StatusCodes.InternalServerError ->
                        JsonErrorResponse(errorType = "internal error", errorMessage = e.getMessage))
           }

@@ -11,10 +11,10 @@ object ServerKeys extends StrictLogging {
 
   private final val KEYLEN: Int = 64
 
-  private final val pubKeyHex: String = Config.serverPrivateKey.takeRight(KEYLEN)
+  final val pubKeyHex: String = Config.serverPrivateKey.takeRight(KEYLEN)
   logger.debug(s"pubKeyHex: $pubKeyHex")
 
-  private final val privKeyHex: String = Config.serverPrivateKey.take(KEYLEN)
+  final val privKeyHex: String = Config.serverPrivateKey.take(KEYLEN)
 
   private final val pubKeyBin: Array[Byte] = CodecUtil.multiDecoder(pubKeyHex).get
   private final val privKeyBin: Array[Byte] = CodecUtil.multiDecoder(privKeyHex).get
@@ -23,8 +23,8 @@ object ServerKeys extends StrictLogging {
 
   final val privateKey = EccUtil.decodePrivateKey(privKeyBin)
 
-  final val pubKeyEnc: String = Base64.getEncoder.encodeToString(pubKeyBin)
+  final val pubKeyB64: String = Base64.getEncoder.encodeToString(pubKeyBin)
 
-  final val privKeyEnc: String = Base64.getEncoder.encodeToString(privKeyBin)
+  final val privKeyB64: String = Base64.getEncoder.encodeToString(privKeyBin)
 
 }

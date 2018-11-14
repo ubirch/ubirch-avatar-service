@@ -37,7 +37,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
     with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val validatorActor = context.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
 
@@ -96,6 +96,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
             ps = ubm.prevSignature,
             mpraw = Some(ubm.rawMessage),
             mppay = Some(ubm.rawPayload),
+            mppayhash = Some(ubm.payloadHash),
             p = ubm.payloads.data,
             config = ubm.payloads.config,
             meta = ubm.payloads.meta,
@@ -132,7 +133,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
             log.debug(s"msgPack data. $mpData")
-            mpData.payloadJson.children.toList.map { gr =>
+            mpData.payloadJson.children.map { gr =>
               Json4sUtil.any2jvalue(gr) match {
                 case Some(p) =>
                   Some(DeviceDataRaw(

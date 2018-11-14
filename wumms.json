@@ -1,142 +1,50 @@
 {
-  "id": "79165301-175e-4506-9897-5ec9a1548cf8",
-  "v": "0.0.0",
-  "fw": "n.a.",
-  "a": "Z9pnnOFayS1syb8dFSCx1ST3N9uGDLQIjPAWUFpA7Qf9pgD4W/QibZPGRzjXuxZMUV2YmVkzNk7zzfBhTwJEsw==",
-  "ts": "2018-08-14T21:42:41.459Z",
-  "p": [
-    {
-      "t": 3691,
-      "ts": "2018-08-11T02:18:30.000Z"
-    },
-    {
-      "t": 3734,
-      "ts": "2018-08-11T02:28:30.000Z"
-    },
-    {
-      "t": 3751,
-      "ts": "2018-08-11T02:38:30.000Z"
-    },
-    {
-      "t": 3675,
-      "ts": "2018-08-11T02:48:30.000Z"
-    },
-    {
-      "t": 3714,
-      "ts": "2018-08-11T02:58:30.000Z"
-    },
-    {
-      "t": 3680,
-      "ts": "2018-08-11T03:08:30.000Z"
-    },
-    {
-      "t": 3683,
-      "ts": "2018-08-11T03:18:30.000Z"
-    },
-    {
-      "t": 3737,
-      "ts": "2018-08-11T03:28:30.000Z"
-    },
-    {
-      "t": 3690,
-      "ts": "2018-08-11T03:38:30.000Z"
-    },
-    {
-      "t": 3727,
-      "ts": "2018-08-11T03:48:30.000Z"
-    },
-    {
-      "t": 3685,
-      "ts": "2018-08-11T03:58:30.000Z"
-    },
-    {
-      "t": 3711,
-      "ts": "2018-08-11T04:08:30.000Z"
-    },
-    {
-      "t": 3683,
-      "ts": "2018-08-11T04:18:30.000Z"
-    },
-    {
-      "t": 3700,
-      "ts": "2018-08-11T04:28:30.000Z"
-    },
-    {
-      "t": 3700,
-      "ts": "2018-08-11T04:38:30.000Z"
-    },
-    {
-      "t": 3665,
-      "ts": "2018-08-11T04:48:30.000Z"
-    },
-    {
-      "t": 3754,
-      "ts": "2018-08-11T04:58:30.000Z"
-    },
-    {
-      "t": 3753,
-      "ts": "2018-08-11T05:08:30.000Z"
-    },
-    {
-      "t": 3672,
-      "ts": "2018-08-11T05:18:30.000Z"
-    },
-    {
-      "t": 3685,
-      "ts": "2018-08-11T05:28:30.000Z"
-    },
-    {
-      "t": 3700,
-      "ts": "2018-08-11T05:38:30.000Z"
-    },
-    {
-      "t": 3753,
-      "ts": "2018-08-11T05:48:30.000Z"
-    },
-    {
-      "t": 3696,
-      "ts": "2018-08-11T05:58:30.000Z"
-    },
-    {
-      "t": 3714,
-      "ts": "2018-08-11T06:08:30.000Z"
-    },
-    {
-      "t": 3693,
-      "ts": "2018-08-11T06:18:30.000Z"
-    },
-    {
-      "t": 3680,
-      "ts": "2018-08-11T06:28:30.000Z"
-    },
-    {
-      "t": 3693,
-      "ts": "2018-08-11T06:38:30.000Z"
-    },
-    {
-      "t": 3690,
-      "ts": "2018-08-11T06:48:30.000Z"
-    },
-    {
-      "t": 3750,
-      "ts": "2018-08-11T06:58:30.000Z"
-    },
-    {
-      "t": 3697,
-      "ts": "2018-08-11T07:08:30.000Z"
-    },
-    {
-      "t": 3715,
-      "ts": "2018-08-11T07:18:30.000Z"
-    }
+  "messageId": "7e39ce0e-88d1-444e-9fe1-07a5f1344b33",
+  "deviceDataRawId": "350aac8d-3483-48ac-b678-36d828ff1d38",
+  "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+  "deviceName": "Demo Device",
+  "deviceType": "genericSensor",
+  "deviceTags": [
+    "milestone-demo",
+    "python-client"
   ],
-  "deviceId": "54678448-85df-48ed-b20b-2cd43ca27862",
-  "deviceName": "trackleSensor device-test-user-trackle-055",
-  "deviceType": "trackleSensor",
-  "tags": [
-    "sensor",
-    "trackle",
-    "medical",
-    "BLE"
-  ]
+  "deviceMessage": {
+    "ts": 1.539612343790901E15,
+    "valueA": 7,
+    "valueB": 666
+  },
+  "deviceDataRaw": {
+    "id": "350aac8d-3483-48ac-b678-36d828ff1d38",
+    "v": "0.0.0",
+    "fw": "n.a.",
+    "umv": 1,
+    "usv": 3,
+    "a": "R/3Wdh3g1LhB8rBkP1B11U73AD9AUy9tC/beFaYd1YE17OTbq/gORi3DIyehHcWKnEik34lIcDJLH6EW2/U7dQ==",
+    "ts": "2018-10-15T21:45:56.915Z",
+    "s": "F6Ek0PcfRsp4ELKS/YdDKrssRxCZT0P7FU8fAQwLD/8SWGfMiQwuMTkSb3AJdN+oaMpW3fflN6UgXoD59UBfDw==",
+    "ps": "SRMy28iDQWo/YaNbUcpXeDJYqkFXV2kLfGaBMBVfZ7wtB1w3vHPVa9xYkwWCHNPNwaSZ2grxVIBadw6zHnH+Bg==",
+    "mpraw": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040491332dbc883416a3f61a35b51ca57783258aa415757690b7c668130155f67bc2d075c37bc73d56bdc589305821cd3cdc1a499da0af154805a770eb31e71fe06329293cf00057844eec8aaf52acd053993cb4315e113bb5fb4d407cd029ada004017a124d0f71f46ca7810b292fd87432abb2c4710994f43fb154f1f010c0b0fff125867cc890c2e3139126f700974dfa868ca56ddf7e537a5205e80f9f5405f0f",
+    "mppay": "9613b07d3f4f3896eb4ba79325536457aa59d7da0040491332dbc883416a3f61a35b51ca57783258aa415757690b7c668130155f67bc2d075c37bc73d56bdc589305821cd3cdc1a499da0af154805a770eb31e71fe06329293cf00057844eec8aaf52acd053993cb4315e113bb5fb4d407cd029a",
+    "mppayhash": "9c82b233ad4a35ff4405434022f5791de7bcf0d0cce0636ae268eac53f3dea539bdc77502a9532deafc4c2cc508df26396e986fbeed802456e90f433a54fd065",
+    "p": [
+      {
+        "ts": 1539612342790,
+        "valueA": 42,
+        "valueB": 1337
+      },
+      {
+        "ts": 1.539612343790901E15,
+        "valueA": 7,
+        "valueB": 666
+      }
+    ],
+    "deviceId": "7d3f4f38-96eb-4ba7-9325-536457aa59d7",
+    "deviceName": "Demo Device",
+    "deviceType": "genericSensor",
+    "tags": [
+      "milestone-demo",
+      "python-client"
+    ]
+  },
+  "timestamp": "50758-05-17T07:29:50.901Z"
 }

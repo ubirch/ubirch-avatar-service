@@ -108,10 +108,12 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   = {
     logger.debug("AllStubs")
-    queryGroups(session) flatMap {
-      g =>
+    queryOwnerId(session) flatMap { u =>
+      queryGroups(session) flatMap { g =>
         logger.debug(s"allStubs groups: $g")
-        DeviceManager.allStubs(g)
+        val res = DeviceManager.allStubs(userId = u.head, groups = g)
+        res
+      }
     }
   }
 

@@ -12,6 +12,7 @@ import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
+import scala.concurrent.ExecutionContextExecutor
 import scala.language.postfixOps
 
 /**
@@ -19,7 +20,7 @@ import scala.language.postfixOps
   */
 class TransformerPostprocessorActor extends Actor with MyJsonProtocol with ActorLogging {
 
-  private implicit val executionContext = context.dispatcher
+  private implicit val executionContext: ExecutionContextExecutor = context.dispatcher
 
   val outboxManagerActor: ActorRef = context.actorOf(Props[TransformerOutboxManagerActor], ActorNames.TRANSFORMER_OUTBOX_MANAGER)
 
@@ -38,7 +39,9 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
         sdrd = sdrd
       ) match {
         case Some(ddp) =>
+          log.debug(s"try to store data for device: ${ddp.deviceId} after transforming")
           DeviceHistoryManager.store(ddp)
+          log.debug(s"stored data for device: ${ddp.deviceId} after transforming")
 
           Json4sUtil.any2jvalue(ddp) match {
             case Some(jval) =>

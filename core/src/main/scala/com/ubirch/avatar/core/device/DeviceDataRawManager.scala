@@ -124,12 +124,28 @@ object DeviceDataRawManager
 
     require(valueHash != null, "value hash may not be null")
 
-    val query = Some(QueryBuilders.matchQuery("p.hash", valueHash))
+    val query = Some(
+      QueryBuilders.boolQuery()
+        .should(QueryBuilders.matchQuery("p.hash", valueHash))
+        .should(QueryBuilders.matchQuery("mppayhash", valueHash))
+        .minimumShouldMatch(1)
+    )
+
     try {
       ESSimpleStorage.getDocs(index, esType, query).map { res =>
         res.map { doc =>
-          doc.extract[DeviceDataRaw]
-        }.find(ddr => (ddr.p \\ "hash").extract[String] == valueHash)
+          val ddr = doc.extractOpt[DeviceDataRaw]
+          if (ddr.isDefined) {
+            val hash1 = ddr.get.mppayhash
+            val hash2 = (ddr.get.p \\ "hash").extractOpt[String]
+            if (hash1.isDefined || hash2.isDefined)
+              ddr
+            else
+              None
+          }
+          else
+            None
+        }.filter(_.isDefined).map(_.get).headOption
       }
     } catch {
       case t: Throwable =>

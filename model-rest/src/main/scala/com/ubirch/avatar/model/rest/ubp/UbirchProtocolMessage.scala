@@ -6,18 +6,19 @@ import org.json4s.JsonAST.JValue
 
 /**
   *
-  * @param version
-  * @param mainVersion
-  * @param subVersion
-  * @param hwDeviceId
-  * @param hashedHwDeviceId
-  * @param firmwareVersion
-  * @param prevSignature array of bytes as String
-  * @param msgType
-  * @param payloads      UbPayloads
-  * @param signature     array of bytes as String
-  * @param rawPayload    array of bytes as String
-  * @param rawMessage    array of bytes as String
+  * @param version          version info of ubMesgpack message
+  * @param mainVersion      main version info of ubMesgpack message
+  * @param subVersion       sub version info of ubMesgpack message
+  * @param hwDeviceId       hwDeviceId of device sending this data
+  * @param hashedHwDeviceId hashed hwDeviceId
+  * @param firmwareVersion  firmware deivce currentlz uses
+  * @param prevSignature    array of bytes as String
+  * @param msgType          ub protocol msg type
+  * @param payloads         UbPayloads
+  * @param signature        array of bytes as String
+  * @param rawPayload       array of bytes as String
+  * @param rawMessage       array of bytes as String
+  * @param payloadHash      SHA512 hash of binary payload
   */
 case class UbMessage(
                       version: Int,
@@ -31,7 +32,8 @@ case class UbMessage(
                       payloads: UbPayloads,
                       signature: Option[String] = None,
                       rawPayload: String,
-                      rawMessage: String
+                      rawMessage: String,
+                      payloadHash: String
                     )
 
 case class UbPayloads(

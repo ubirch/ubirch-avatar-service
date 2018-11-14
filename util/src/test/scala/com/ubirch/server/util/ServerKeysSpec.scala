@@ -11,7 +11,7 @@ class ServerKeysSpec extends FeatureSpec
   with StrictLogging {
 
   val data = "Hallo Welt"
-  val dataBin = data.getBytes
+  val dataBin: Array[Byte] = data.getBytes
 
   feature("ServerKeys test") {
 
@@ -51,9 +51,9 @@ class ServerKeysSpec extends FeatureSpec
 
 
     scenario("sign data with Server Key") {
-      val s = EccUtil.signPayload(ServerKeys.privKeyEnc, data)
+      val s = EccUtil.signPayload(ServerKeys.privKeyB64, data)
 
-      val v = EccUtil.validateSignature(ServerKeys.pubKeyEnc, signature = s, payload = data)
+      val v = EccUtil.validateSignature(ServerKeys.pubKeyB64, signature = s, payload = data)
 
       v shouldBe true
     }

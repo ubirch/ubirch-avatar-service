@@ -52,7 +52,7 @@ object Boot extends App
 
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
-  val publicKey = ServerKeys.pubKeyEnc
+  val publicKey = ServerKeys.pubKeyB64
   logger.info(s"publicKey=$publicKey")
 
   implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
@@ -88,7 +88,7 @@ object Boot extends App
     val pinterface = Config.httpPrometheusInterface
     val pport = Config.httpPrometheusPort
 
-    implicit val timeout = Timeout(5, TimeUnit.SECONDS)
+    implicit val timeout: Timeout = Timeout(5, TimeUnit.SECONDS)
 
     //    logger.info(s"start prometheus http server on $pinterface:$pport")
     //    import io.prometheus.client.exporter.HTTPServer
@@ -100,7 +100,7 @@ object Boot extends App
 
   }
 
-  private def stop() = {
+  private def stop(): Unit = {
 
     Runtime.getRuntime.addShutdownHook(new Thread() {
 

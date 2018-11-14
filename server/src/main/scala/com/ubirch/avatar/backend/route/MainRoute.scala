@@ -16,6 +16,7 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
 
   val welcome: WelcomeRoute = new WelcomeRoute {}
   val deepCheck: DeepCheckRoute = new DeepCheckRoute {}
+  val backEndInfo: BackendInfoRoute = new BackendInfoRoute {}
 
   val device: DeviceRoute = new DeviceRoute {}
   val deviceUpdatePlain: DeviceUpdatePlainRoute = new DeviceUpdatePlainRoute {}
@@ -59,7 +60,9 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
             welcome.route
           } ~ pathEndOrSingleSlash {
             welcome.route
-          } ~ deepCheck.route
+          } ~ deepCheck.route ~
+            backEndInfo.route
+
 
         }
       }
