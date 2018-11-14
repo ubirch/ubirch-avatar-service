@@ -26,10 +26,7 @@ object PatchDevices extends App
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   val adminGroup = Set(
-    UUIDUtil.fromString("7ff974c8-8224-4c14-9db3-2f0ecc5ff83e"),
-    UUIDUtil.fromString("116b01ab-2a13-4126-9251-e49d06639ea2"),
-    UUIDUtil.fromString("8f6d9eba-d5e5-4d00-aed2-ebba9253413d"),
-    UUIDUtil.fromString("05c6fb1a-5e82-419a-a6c1-3feaa991b70b")
+    UUIDUtil.fromString("7ff974c8-8224-4c14-9db3-2f0ecc5ff83e")
   )
 
   val trackleServiceQueue = s"${Config.enviroment}-trackle-service-inbox"
@@ -41,12 +38,15 @@ object PatchDevices extends App
           device =>
             val patchedDev = device.copy(
               //              pubRawQueues = Some(device.pubRawQueues.get + trackleServiceQueue)
-              pubRawQueues = Some(Set("trackle-demo-avatar-service-inbox", trackleServiceQueue))
+              pubRawQueues = Some(
+                Set(s"${Config.enviroment}-avatar-service-inbox", trackleServiceQueue)
+              ),
+              groups = adminGroup
             )
-            println(patchedDev.deviceName)
-            println(patchedDev.deviceTypeKey)
-            println(patchedDev.pubRawQueues)
-            println("--")
+            logger.debug(patchedDev.deviceName)
+            logger.debug(patchedDev.deviceTypeKey)
+            logger.debug(patchedDev.pubRawQueues.getOrElse(Set.empty).mkString("'"))
+
             DeviceManager.update(patchedDev)
         }
     }
