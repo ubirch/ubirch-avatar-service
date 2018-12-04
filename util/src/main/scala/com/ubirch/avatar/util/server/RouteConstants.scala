@@ -10,6 +10,7 @@ object RouteConstants {
   val currentVersion = "v1"
   val serviceName = "avatarService"
   val check = "check"
+  val readyCheck = "readyCheck"
   val deepCheck = "deepCheck"
   val device = "device"
   val json = "json"

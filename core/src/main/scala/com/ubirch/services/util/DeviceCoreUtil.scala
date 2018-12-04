@@ -9,6 +9,7 @@ import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.crypto.ecc.EccUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.keyservice.client.rest.KeyServiceClientRest
+import com.ubirch.keyservice.client.rest.cache.redis.KeyServiceClientRedisCacheUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.json4s._
 import org.json4s.native.Serialization._
@@ -102,7 +103,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
                            )
                            (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
     try {
-      KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId.toLowerCase).map {
+      KeyServiceClientRedisCacheUtil.cacheValidKeys(device.hwDeviceId.toLowerCase).map {
         case Some(keys) if keys.isEmpty =>
           //throw new Exception(s"device ${device.deviceId} has no aktive keys")
           logger.error(s"device ${device.deviceId} has no aktive keys")

@@ -40,7 +40,35 @@ class DeepCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient
 
   val route: Route = {
 
-    path(RouteConstants.deepCheck) {
+    path(RouteConstants.readyCheck) {
+      respondWithCORS {
+        get {
+
+          onComplete(deepCheckActor ? DeepCheckRequest()) {
+
+            case Failure(t) =>
+              logger.error(s"failed to run deepCheck: ${t.getMessage}", t)
+              complete(serverErrorResponse(errorType = "ServerError", errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
+
+            case Success(resp) =>
+              resp match {
+
+                case res: DeepCheckResponse if res.status =>
+                  complete(StatusCodes.OK -> res)
+                case res: DeepCheckResponse if !res.status =>
+                  complete(response(responseObject = res, status = StatusCodes.ServiceUnavailable))
+                case jre: JsonErrorResponse =>
+                  complete(StatusCodes.InternalServerError -> jre)
+                case _ =>
+                  complete(serverErrorResponse(errorType = "ServerError", errorMessage = "failed to run deep check"))
+
+              }
+
+          }
+
+        }
+      }
+    } ~ path(RouteConstants.deepCheck) {
       respondWithCORS {
         get {
 
