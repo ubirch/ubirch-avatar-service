@@ -34,7 +34,7 @@ class DeepCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient
   with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = _system.dispatcher
-  implicit val timeout: Timeout = Timeout(10 * Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(5 * Config.actorTimeout seconds)
 
   private val deepCheckActor = _system.actorOf(new RoundRobinPool(Config.akkaNumberOfBackendWorkers).props(Props(new DeepCheckActor())), ActorNames.DEEP_CHECK)
 
