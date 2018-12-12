@@ -181,14 +181,14 @@ lazy val util = project
  ********************************************************/
 
 lazy val depServer = Seq(
-
-  //testing
-  scalatest % "test",
-
+  ubirchDeepCheckModel,
   ubirchJson,
   ubirchRestAkkaHttp,
   ubirchResponse,
-  ubirchOidcUtils
+  ubirchOidcUtils,
+
+  //testing
+  scalatest % "test",
 
 ) ++ akka ++ akkaCamel ++ prometheus ++ constructr ++ scalaLogging
 
@@ -198,6 +198,7 @@ lazy val depConfig = Seq(
 )
 
 lazy val depCore = Seq(
+  ubirchDeepCheckModel,
   ubirchElasticsearchClientBinary,
   ubirchCamelUtils,
   ubirchCrypto,
@@ -224,7 +225,7 @@ lazy val depClientRest = Seq(
   akkaStream,
   akkaSlf4j,
   ubirchResponse,
-  ubirchDeepCheckModel,
+
   scalatest % "test"
 ) ++ scalaLogging
 
@@ -373,7 +374,7 @@ val prometheus = Seq(
 val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
 val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
-val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.3.1" excludeAll (excludedLoggers: _*)
+val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.0.1" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.0.1" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)

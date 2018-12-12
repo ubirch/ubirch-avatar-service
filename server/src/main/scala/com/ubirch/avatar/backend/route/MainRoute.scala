@@ -15,7 +15,7 @@ import com.ubirch.util.mongo.connection.MongoUtil
 class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer) {
 
   val welcome: WelcomeRoute = new WelcomeRoute {}
-  val deepCheck: DeepCheckRoute = new DeepCheckRoute {}
+  val deepCheck: ServiceCheckRoute = new ServiceCheckRoute {}
   val backEndInfo: BackendInfoRoute = new BackendInfoRoute {}
 
   val device: DeviceRoute = new DeviceRoute {}
