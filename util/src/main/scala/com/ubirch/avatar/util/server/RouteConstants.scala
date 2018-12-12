@@ -11,6 +11,8 @@ object RouteConstants {
   val serviceName = "avatarService"
   val check = "check"
   val deepCheck = "deepCheck"
+  val readyCheck = "readyCheck"
+  val liveCheck = "liveCheck"
   val device = "device"
   val json = "json"
   val stub = "stub"
@@ -50,22 +52,32 @@ object RouteConstants {
   def pathDeviceWithId(id: String): String = s"$pathDevice/$id"
 
   val pathDeviceStub = s"$pathDevice/$stub"
+
   def pathDeviceStubWithId(id: String): String = s"$pathDeviceStub/$id"
 
   val pathDeviceClaim = s"$pathDevice/$claim"
 
   def pathDeviceState(id: String): String = s"${pathDeviceWithId(id)}/$state"
+
   val pathDeviceDataRaw: String = s"$pathDevice/$data/$raw"
+
   def pathDeviceDataHistory(id: String): String = s"${pathDeviceWithId(id)}/$data/$history"
+
   val pathDeviceUpdate: String = s"$pathDevice/$update"
   val pathDeviceVerify: String = s"$pathDevice/$verify"
+
   def pathDeviceHistoryFrom(id: String, from: Int): String = s"${pathDeviceDataHistory(id)}/$from"
+
   def pathDeviceHistoryFromSize(id: String, from: Int, size: Int): String = s"${pathDeviceDataHistory(id)}/$from/$size"
 
   def pathDeviceHistoryByDatePrefix(id: String): String = s"${pathDeviceDataHistory(id)}/$byDate"
+
   def pathDeviceHistoryByDateFromTo(id: String, fromDate: String, toDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$from/$fromDate/$to/$toDate"
+
   def pathDeviceHistoryByDateBefore(id: String, beforeDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$before/$beforeDate"
+
   def pathDeviceHistoryByDateAfter(id: String, afterDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$after/$afterDate"
+
   def pathDeviceHistoryByDateDay(id: String, dayDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$day/$dayDate"
 
 }

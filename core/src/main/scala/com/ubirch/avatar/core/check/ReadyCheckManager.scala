@@ -6,8 +6,6 @@ import akka.stream.Materializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
-import com.ubirch.keyservice.client.rest.KeyServiceClientRest
-import com.ubirch.user.client.rest.UserServiceClientRest
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
@@ -21,7 +19,7 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2017-06-08
   */
-object DeepCheckManager extends StrictLogging {
+object ReadyCheckManager extends StrictLogging {
 
   /**
     * Check if we can run a simple query on the database.
@@ -30,36 +28,27 @@ object DeepCheckManager extends StrictLogging {
     */
   def connectivityCheck()(implicit _system: ActorSystem, httpClient: HttpExt, materializer: Materializer, mongo: MongoUtil): Future[DeepCheckResponse] = {
 
-    //@REVIEW
-    // TODO check MQTT connection
-    // TODO check SQS connections
-    // TODO check Auth connections
-
     (for {
 
       // direct dependencies
+
       esDeepCheck <- ESSimpleStorage.connectivityCheck(
         docIndex = Config.esDeviceDataRawIndex,
         docType = Config.esDeviceDataRawType
       )
-
       esDeepCheckWithPrefix = DeepCheckResponseUtil.addServicePrefix("avatar-service", esDeepCheck)
-      mongoConnectivity <- AvatarStateManager.connectivityCheck()
-      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service")
 
-      // other services
-      keyDeepCheck <- KeyServiceClientRest.deepCheck()
-      userDeepCheck <- UserServiceClientRest.deepCheck()
+      mongoConnectivity <- AvatarStateManager.connectivityCheck()
+
+      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service")
 
     } yield {
 
       DeepCheckResponseUtil.merge(
         Seq(
           esDeepCheckWithPrefix,
-          //          mongoConnectivity,
-          redisConnectivity,
-          keyDeepCheck,
-          userDeepCheck
+          mongoConnectivity,
+          redisConnectivity
         )
       )
 

@@ -7,6 +7,7 @@ import org.joda.time.DateTime
   */
 final case class DeviceInfo(
                              deviceId: String,
+                             hwDeviceId: String,
                              deviceName: String,
                              deviceTypeKey: String = "unknownDeviceType",
                              deviceLastUpdated: Option[DateTime],

@@ -13,6 +13,7 @@ object DeviceStubManger {
 
     DeviceInfo(
       deviceId = device.deviceId,
+      hwDeviceId = device.hwDeviceId,
       deviceName = device.deviceName,
       deviceTypeKey = device.deviceTypeKey,
       deviceLastUpdated = device.deviceLastUpdated,
