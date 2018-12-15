@@ -36,8 +36,21 @@ object DeepCheckManager extends StrictLogging {
       readyCheck <- ReadyCheckManager.connectivityCheck()
 
       // other services
-      keyDeepCheck <- KeyServiceClientRest.deepCheck()
-      userDeepCheck <- UserServiceClientRest.deepCheck()
+      keyDeepCheck <- KeyServiceClientRest.deepCheck().map { res =>
+        DeepCheckResponseUtil.addServicePrefix("[avatar-service.key-service]", res)
+      }.recover {
+        case e =>
+          logger.error("connectivityCheck", e)
+          DeepCheckResponse(status = false, Seq(s"key-service error: ${e.getMessage}"))
+      }
+
+      userDeepCheck <- UserServiceClientRest.deepCheck().map { res =>
+        DeepCheckResponseUtil.addServicePrefix("[avatar-service.user-service]", res)
+      }.recover {
+        case e =>
+          logger.error("connectivityCheck", e)
+          DeepCheckResponse(status = false, Seq(s"user-service error: ${e.getMessage}"))
+      }
 
     } yield {
 
@@ -52,7 +65,7 @@ object DeepCheckManager extends StrictLogging {
     }).recover {
       case e =>
         logger.error("connectivityCheck", e)
-        DeepCheckResponse(status = false, Seq(e.getMessage))
+        DeepCheckResponse(status = false, Seq(s"deep check error: ${e.getMessage}"))
     }
   }
 
