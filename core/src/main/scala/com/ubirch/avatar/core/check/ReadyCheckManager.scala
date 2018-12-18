@@ -41,7 +41,7 @@ object ReadyCheckManager extends StrictLogging {
 
       mongoConnectivity <- AvatarStateManager.connectivityCheck("avatar-service.mongo")
 
-      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-servicer.redis")
+      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service.redis")
 
     } yield {
 
