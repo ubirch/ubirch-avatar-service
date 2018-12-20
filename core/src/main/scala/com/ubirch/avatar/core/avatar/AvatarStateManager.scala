@@ -192,15 +192,15 @@ object AvatarStateManager extends MongoFormats
 
   }
 
-  def connectivityCheck()(implicit mongo: MongoUtil): Future[DeepCheckResponse] = {
+  def connectivityCheck(serviceName: String)(implicit mongo: MongoUtil): Future[DeepCheckResponse] = {
 
     mongo.connectivityCheck[AvatarState](collectionName) map { deepCheckRes =>
-      DeepCheckResponseUtil.addServicePrefix("avatar-service", deepCheckRes)
+      DeepCheckResponseUtil.addServicePrefix(serviceName, deepCheckRes)
     } recover[DeepCheckResponse] {
       case e =>
         logger.error("", e)
-        DeepCheckResponseUtil.addServicePrefix("avatar-service",
-          DeepCheckResponse(status = false, messages = Seq(s"[avatar-service] ${e.getMessage}"))
+        DeepCheckResponseUtil.addServicePrefix(serviceName,
+          DeepCheckResponse(status = false, messages = Seq(s"[avatar-state] ${e.getMessage}"))
         )
     }
   }

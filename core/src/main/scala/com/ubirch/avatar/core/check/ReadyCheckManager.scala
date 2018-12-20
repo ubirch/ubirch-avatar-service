@@ -32,21 +32,22 @@ object ReadyCheckManager extends StrictLogging {
 
       // direct dependencies
 
-      esDeepCheck <- ESSimpleStorage.connectivityCheck(
+      esConnectivity <- ESSimpleStorage.connectivityCheck(
         docIndex = Config.esDeviceDataRawIndex,
         docType = Config.esDeviceDataRawType
-      )
-      esDeepCheckWithPrefix = DeepCheckResponseUtil.addServicePrefix("avatar-service", esDeepCheck)
+      ).map { res =>
+        DeepCheckResponseUtil.addServicePrefix("[avatar-service.elasticsearch]", res)
+      }
 
-      mongoConnectivity <- AvatarStateManager.connectivityCheck()
+      mongoConnectivity <- AvatarStateManager.connectivityCheck("avatar-service.mongo")
 
-      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service")
+      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service.redis")
 
     } yield {
 
       DeepCheckResponseUtil.merge(
         Seq(
-          esDeepCheckWithPrefix,
+          esConnectivity,
           mongoConnectivity,
           redisConnectivity
         )
