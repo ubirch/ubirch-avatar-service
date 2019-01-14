@@ -39,7 +39,7 @@ object PatchDevices extends App
             val patchedDev = device.copy(
               //              pubRawQueues = Some(device.pubRawQueues.get + trackleServiceQueue)
               pubRawQueues = Some(
-                Set(s"${Config.enviroment}-avatar-service-inbox", trackleServiceQueue)
+                Set(s"${Config.enviroment}_avatar_service_inbox", trackleServiceQueue)
               ),
               groups = adminGroup
             )
