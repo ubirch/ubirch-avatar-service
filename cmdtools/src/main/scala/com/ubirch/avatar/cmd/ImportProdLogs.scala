@@ -95,7 +95,7 @@ object ImportProdLogs
           orderNr = rowData(orderNrOffset),
           tester = rowData(testerOffset)
         )
-        logger.info(s"deviceInfo: ${di.deviceType} / ${di.testResult} / ${di.hwDeviceId}")
+        logger.info(s"deviceInfo: ${di.hwDeviceId} / type: ${di.deviceType} / exists: ${di.testResult} (${rowData(testResultOffset)})")
         getDeviceTypeKey(di.deviceType).map { dtype =>
           DeviceManager.infoByHwId(di.hwDeviceId).onComplete {
             case Success(devOpt) =>

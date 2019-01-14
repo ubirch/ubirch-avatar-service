@@ -188,7 +188,7 @@ lazy val depServer = Seq(
   ubirchOidcUtils,
 
   //testing
-  scalatest % "test",
+  scalatest % "test"
 
 ) ++ akka ++ akkaCamel ++ prometheus ++ constructr ++ scalaLogging
 
@@ -378,8 +378,8 @@ val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAl
 val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.0.1" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.0.1" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
-val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.8.4" excludeAll (excludedLoggers: _*)
-val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.8.4" excludeAll (excludedLoggers: _*)
+val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
+val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.3" excludeAll (excludedLoggers: _*)
 val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.2"
 val ubirchResponse = ubirchUtilG %% "response-util" % "0.5.0" excludeAll (excludedLoggers: _*)
