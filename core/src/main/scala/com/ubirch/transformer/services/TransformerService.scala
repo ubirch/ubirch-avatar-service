@@ -11,7 +11,7 @@ import com.ubirch.avatar.model.rest.payload._
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
-import org.json4s.JsonAST.JValue
+import org.json4s.JsonAST.{JObject, JValue}
 
 import scala.concurrent.ExecutionContext
 
@@ -160,10 +160,12 @@ object TransformerService
         val la = (drd.p \ "la").extractOpt[String]
         val lo = (drd.p \ "lo").extractOpt[String]
 
-        logger.debug(s"found ts $ts for device: ${drd.deviceId}")
+        if (ts.isDefined) {
+          logger.debug(s"found ts $ts for device: ${drd.deviceId}")
+        }
 
         try {
-          val patchedPay = if (la.isDefined && lo.isDefined) {
+          val patchedPay = (if (la.isDefined && lo.isDefined) {
             logger.debug("found lo/la")
             val geo = LocationSnippet(location = GeoLocation(
               lat = nf.parse(la.get).doubleValue(),
@@ -172,7 +174,10 @@ object TransformerService
             drd.p merge Json4sUtil.any2jvalue(geo).get
           }
           else
-            drd.p
+            drd.p) match {
+            case pp if ts.isDefined =>
+              pp merge JObject.("ts" -> None)
+          }
 
           (Some(patchedPay), ts)
         }

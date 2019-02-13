@@ -57,6 +57,26 @@ object DeviceManager
     }
   }
 
+  def all(): Future[Seq[Device]] = {
+    // TODO automated tests
+    ESSimpleStorage.getDocs(
+      docIndex = esIndex,
+      docType = esType,
+      query = None,
+      size = Some(Config.esLargePageSize)
+    ).recover[List[JValue]] {
+      case e =>
+        logger.error(s"error fetching all devices", e)
+        List()
+    }.map { res =>
+      logger.debug(s"all(): result=$res")
+      if (res.nonEmpty)
+        res.map(_.extract[Device])
+      else
+        Seq()
+    }
+  }
+
   /**
     * Select all device stubs in any of the given groups.
     *
@@ -173,7 +193,7 @@ object DeviceManager
     }
   }
 
-  
+
   // TODO automated tests
   def info(deviceId: UUID): Future[Option[Device]] = info(deviceId.toString)
 
@@ -250,6 +270,29 @@ object DeviceManager
 
         case None => Future(None)
       }
+
+    }
+
+  }
+
+  def updateWithOutChecks(device: Device)(implicit mongo: MongoUtil): Future[Option[Device]] = {
+    val toUpdate = device.copy(
+      updated = Some(DateTime.now(DateTimeZone.UTC))
+    )
+
+    Json4sUtil.any2jvalue(toUpdate) match {
+
+      case Some(devJval) =>
+        val dev = ESSimpleStorage.storeDoc(
+          docIndex = esIndex,
+          docType = esType,
+          docIdOpt = Some(toUpdate.deviceId),
+          doc = devJval
+        ).map(_.extractOpt[Device])
+
+        dev
+
+      case None => Future(None)
 
     }
 
