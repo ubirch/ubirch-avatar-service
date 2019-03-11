@@ -57,6 +57,26 @@ object DeviceManager
     }
   }
 
+  def all(): Future[Seq[Device]] = {
+    // TODO automated tests
+    ESSimpleStorage.getDocs(
+      docIndex = esIndex,
+      docType = esType,
+      query = None,
+      size = Some(Config.esLargePageSize)
+    ).recover[List[JValue]] {
+      case e =>
+        logger.error(s"error fetching all devices", e)
+        List()
+    }.map { res =>
+      logger.debug(s"all(): result=$res")
+      if (res.nonEmpty)
+        res.map(_.extract[Device])
+      else
+        Seq()
+    }
+  }
+
   /**
     * Select all device stubs in any of the given groups.
     *
