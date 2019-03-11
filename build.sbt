@@ -270,18 +270,18 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-val akkaV = "2.5.11"
+val akkaV = "2.5.21"
 val akkaHttpV = "10.1.3"
 val json4sV = "3.6.0"
-val awsSdkV = "1.11.515"
-val camelV = "2.22.0"
+val awsSdkV = "1.11.438"
+val camelV = "2.23.1"
 val scalaTestV = "3.0.5"
 val spireV = "0.13.0"
 val logbackV = "1.2.3"
 val logstashEncV = "5.0"
 val slf4jV = "1.7.25"
 val log4jV = "2.9.1"
-val scalaLogV = "3.7.2"
+val scalaLogV = "3.9.0"
 val scalaLogSLF4JV = "2.1.2"
 
 // GROUP NAMES
