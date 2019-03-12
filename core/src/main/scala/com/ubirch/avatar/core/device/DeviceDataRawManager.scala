@@ -13,7 +13,7 @@ import com.ubirch.util.elasticsearch.client.util.SortUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
 import org.elasticsearch.index.query.QueryBuilders
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone, LocalTime}
 import org.json4s.JsonAST.JValue
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -59,6 +59,33 @@ object DeviceDataRawManager
     val sort = Some(SortUtil.sortBuilder("ts", asc = false))
 
     ESSimpleStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
+      res.map(_.extract[DeviceDataRaw])
+    }
+
+  }
+
+  def history(day: DateTime,
+              from: Int,
+              size: Int
+             ): Future[Seq[DeviceDataRaw]] = {
+
+    val dayFrom = day.withTime(LocalTime.MIDNIGHT).toDateTime(DateTimeZone.UTC)
+    val dayUntil = day.plusDays(1).withTime(LocalTime.MIDNIGHT).toDateTime(DateTimeZone.UTC)
+
+    val query = QueryBuilders
+      .rangeQuery("ts")
+      .from(dayFrom)
+      .includeLower(true)
+      .to(dayUntil)
+      .includeUpper(false)
+
+    //      .boolQuery()
+    //      .must(QueryBuilders.rangeQuery("ts").gte(dayFrom))
+    //      .must(QueryBuilders.rangeQuery("ts").lte(dayUntil))
+
+    val sort = SortUtil.sortBuilder("ts", asc = false)
+
+    ESSimpleStorage.getDocs(index, esType, Some(query), Some(from), Some(size), Some(sort)).map { res =>
       res.map(_.extract[DeviceDataRaw])
     }
 

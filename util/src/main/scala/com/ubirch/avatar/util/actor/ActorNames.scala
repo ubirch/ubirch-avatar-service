@@ -8,6 +8,8 @@ object ActorNames {
 
   final val HISTORY: String = "AVS-device-data-history-actor"
 
+  final val REPROCESSING: String = "AVS-device-data-reprocessing-actor"
+
   final val TRANSFORMER_PRODUCER: String = "AVS-transformer-producer"
 
   final val TRANSFORMER_CONSUMER: String = "AVS-transformer-consumer"
