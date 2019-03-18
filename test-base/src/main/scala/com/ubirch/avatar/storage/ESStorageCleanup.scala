@@ -3,7 +3,6 @@ package com.ubirch.avatar.storage
 import com.ubirch.avatar.util.server.ElasticsearchMappings
 import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
 
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse
 import org.elasticsearch.client.Requests
 import org.elasticsearch.client.transport.TransportClient
 import org.elasticsearch.index.IndexNotFoundException
@@ -44,11 +43,12 @@ trait ESStorageCleanup extends ElasticsearchMappings {
       try {
 
         val deleteRequest = Requests.deleteIndexRequest(index)
-        val response: DeleteIndexResponse = esClient.admin().indices().delete(deleteRequest).actionGet()
+        val response = esClient.admin().indices().delete(deleteRequest).actionGet()
 
-        response.isAcknowledged match {
-          case true => logger.info(s"deleted index: '$index'")
-          case false => logger.error(s"failed to delete  index: '$index'")
+        if (response.isAcknowledged) {
+          logger.info(s"deleted index: '$index'")
+        } else {
+          logger.error(s"failed to delete  index: '$index'")
         }
 
       } catch {

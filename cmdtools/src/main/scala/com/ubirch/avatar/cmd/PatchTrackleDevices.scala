@@ -29,6 +29,7 @@ object PatchTrackleDevices extends App
 
   val adminGroup = Set(
     UUIDUtil.fromString(
+      //trackle-dev admin
       "7ff974c8-8224-4c14-9db3-2f0ecc5ff83e"
     )
   )
@@ -41,6 +42,10 @@ object PatchTrackleDevices extends App
       devices =>
         devices.filter(d => Const.TRACKLESENSOR.equals(d.deviceTypeKey)) foreach { device =>
           val patchedDev = device.copy(
+            pubQueues = Some(
+              Set(
+                s"${Config.enviroment}_ubirch_transformer_outbox"
+              )),
             pubRawQueues = Some(
               Set(
                 s"${Config.enviroment}_ubirch_transformer_inbox",
@@ -49,12 +54,11 @@ object PatchTrackleDevices extends App
             ),
             groups = device.groups ++ adminGroup
           )
-          logger.info(patchedDev.deviceName)
-          logger.info(patchedDev.deviceTypeKey)
-          logger.info(patchedDev.pubRawQueues.getOrElse(Set.empty).mkString("'"))
+
+          logger.info("${patchedDev.deviceName} \t\t ${patchedDev.deviceTypeKey} \t\t ${patchedDev.pubRawQueues.getOrElse(Set.empty).mkString(\"'\")}")
 
           DeviceManager.update(patchedDev)
-          Thread.sleep(500);
+          Thread.sleep(250);
         }
 
     }
