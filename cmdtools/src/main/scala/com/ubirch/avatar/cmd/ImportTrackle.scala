@@ -23,8 +23,7 @@ import scala.io.{Codec, Source}
 import scala.language.postfixOps
 
 /**
-  * author: cvandrei
-  * since: 2017-07-24
+  * author: derMicha
   */
 object ImportTrackle extends App
   with StrictLogging {
@@ -38,8 +37,8 @@ object ImportTrackle extends App
 
   //  private val hwDeviceId = UUIDUtil.uuidStr
 
-  private val hwDeviceId = "123123"
-  private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
+  //private val hwDeviceId = "123123"
+  //private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
   private val ts = new DateTime().toLocalDateTime.toString
 
   //private val deviceProps: JValue = parse(
