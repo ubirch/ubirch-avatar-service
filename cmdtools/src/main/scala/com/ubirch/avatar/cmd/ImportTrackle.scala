@@ -37,8 +37,9 @@ object ImportTrackle extends App
 
   //  private val hwDeviceId = UUIDUtil.uuidStr
 
-  //private val hwDeviceId = "123123"
-  //private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
+  private val hwDeviceId = "123123"
+
+  private val hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
   private val ts = new DateTime().toLocalDateTime.toString
 
   //private val deviceProps: JValue = parse(
@@ -167,7 +168,7 @@ object ImportTrackle extends App
 
         val tracklePayload = TrackleSensorPayload(
           ts = cdp.dateTime,
-          t = (((t1 + t2) / 2)*100).toInt,
+          t = (((t1 + t2) / 2) * 100).toInt,
           cy = cdp.paketCounter,
           er = 0
         )
