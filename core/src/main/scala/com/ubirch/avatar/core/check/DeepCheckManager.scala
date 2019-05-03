@@ -40,7 +40,7 @@ object DeepCheckManager extends StrictLogging {
         DeepCheckResponseUtil.addServicePrefix("[avatar-service.key-service]", res)
       }.recover {
         case e =>
-          logger.error("connectivityCheck", e)
+          logger.error("KeyService connectivityCheck", e)
           DeepCheckResponse(status = false, Seq(s"key-service error: ${e.getMessage}"))
       }
 
@@ -48,7 +48,7 @@ object DeepCheckManager extends StrictLogging {
         DeepCheckResponseUtil.addServicePrefix("[avatar-service.user-service]", res)
       }.recover {
         case e =>
-          logger.error("connectivityCheck", e)
+          logger.error("UserService connectivityCheck", e)
           DeepCheckResponse(status = false, Seq(s"user-service error: ${e.getMessage}"))
       }
 

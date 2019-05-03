@@ -54,11 +54,11 @@ object PatchTrackleDevices extends App
             ),
             groups = device.groups ++ adminGroup
           )
+          val queueNames = patchedDev.pubRawQueues.getOrElse(Set.empty).mkString(",")
+          logger.info(s"${patchedDev.deviceName} \t\t ${patchedDev.deviceTypeKey} \t\t ${queueNames}")
 
-          logger.info("${patchedDev.deviceName} \t\t ${patchedDev.deviceTypeKey} \t\t ${patchedDev.pubRawQueues.getOrElse(Set.empty).mkString(\"'\")}")
-
+          Thread.sleep(250)
           DeviceManager.update(patchedDev)
-          Thread.sleep(250);
         }
 
     }

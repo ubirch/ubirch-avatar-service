@@ -375,8 +375,10 @@ val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (exclud
 val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.0" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.0" excludeAll (excludedLoggers: _*)
+
+val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.2.2" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.2.2" excludeAll (excludedLoggers: _*)
+
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
@@ -414,17 +416,26 @@ lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
 lazy val mergeStrategy = Seq(
   assemblyMergeStrategy in assembly := {
     case PathList("org", "joda", "time", xs@_*) => MergeStrategy.first
-    case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
-    case m if m.toLowerCase.matches("meta-inf.*\\.sf$") => MergeStrategy.discard
+    //case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
+    //case m if m.toLowerCase.matches("meta-inf.*\\.sf$") => MergeStrategy.discard
     case m if m.toLowerCase.endsWith("application.conf") => MergeStrategy.concat
     case m if m.toLowerCase.endsWith("application.dev.conf") => MergeStrategy.first
     case m if m.toLowerCase.endsWith("application.base.conf") => MergeStrategy.first
+    case m if m.toLowerCase.endsWith("application.docker.conf") => MergeStrategy.first
     case m if m.toLowerCase.endsWith("logback.xml") => MergeStrategy.first
     case m if m.toLowerCase.endsWith("logback-test.xml") => MergeStrategy.discard
+    case m if m.toLowerCase.endsWith("logback.test.xml") => MergeStrategy.discard
+    case m if m.toLowerCase.endsWith("logback.docker.xml") => MergeStrategy.first
+    case m if m.toLowerCase.endsWith("io.netty.versions.properties") => MergeStrategy.discard
+    case m if m.toLowerCase.endsWith("module-info.class") => MergeStrategy.discard
+    case m if m.endsWith("Logger.class") => MergeStrategy.first
+    case m if m.endsWith("ServerKeys$.class") => MergeStrategy.first
+    case m if m.endsWith("ServerKeys.class") => MergeStrategy.first
     case "reference.conf" => MergeStrategy.concat
-    case _ => MergeStrategy.first
+    case n => MergeStrategy.defaultMergeStrategy(n)
   }
 )
+
 
 def generateDockerFile(file: File, jarFile: sbt.File): Seq[File] = {
   val contents =

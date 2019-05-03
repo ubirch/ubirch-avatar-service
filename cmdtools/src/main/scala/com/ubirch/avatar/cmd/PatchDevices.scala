@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.config.{Config, ConfigKeys}
+import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.util.json.MyJsonProtocol
@@ -31,27 +31,30 @@ object PatchDevices extends App
     UUIDUtil.fromString("db1488ae-becc-40a3-a5c2-b6daadd6715b")
   )
 
-  //val trackleServiceQueue = s"${Config.enviroment}-trackle-service-inbox"
+  val trackleServiceQueue = s"${Config.enviroment}-trackle-service-inbox"
 
   def patch = {
-    DeviceManager.all(adminGroup) map {
-      //DeviceManager.all() map {
+    //    DeviceManager.all(adminGroup) map {
+    DeviceManager.all() map {
       devices =>
         //        devices.filter(d => Const.TRACKLESENSOR.equals(d.deviceTypeKey)) foreach {
-        devices.foreach { device =>
+        devices.filter(d => Const.TRACKLESENSOR.equals(d.deviceTypeKey)).foreach { device =>
           val patchedDev = device.copy(
-            //              pubRawQueues = Some(device.pubRawQueues.get + trackleServiceQueue)
             pubRawQueues = Some(
-              Set(s"${Config.enviroment}_ubirch_transformer_inbox")
-            ),
-            groups = device.groups ++ adminGroup
+              Set(trackleServiceQueue,
+                s"${Config.enviroment}_ubirch_transformer_inbox"))
+            //              pubRawQueues = Some(
+            //              Set(s"${Config.enviroment}_ubirch_transformer_inbox")
+            //            ),
+            //            groups = device.groups ++ adminGroup
           )
           logger.info(patchedDev.deviceName)
           logger.info(patchedDev.deviceTypeKey)
           logger.info(patchedDev.pubRawQueues.getOrElse(Set.empty).mkString("'"))
 
-          DeviceManager.update(patchedDev)
-          Thread.sleep(500);
+          //DeviceManager.update(patchedDev)
+          Thread.sleep(500)
+          patchedDev
         }
     }
   }
