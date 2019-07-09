@@ -54,7 +54,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         tags = Some(device.tags)
       )
 
-      log.debug(s"received for deviceId ${device.deviceId} message: $drdPatched")
+      log.debug(s"received for deviceId ${device.deviceId} message: device ${drdPatched.deviceId}")
 
       //manage new device state
       val pl = try {
@@ -65,11 +65,11 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       catch {
         case e: MappingException =>
           drdPatched.p.extract[JValue]
-
       }
 
       processPayload(device, pl, drdPatched.s).onComplete {
         case Success(Some(d)) =>
+          log.debug(s"current AvatarState updated: ${device.deviceId}")
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)

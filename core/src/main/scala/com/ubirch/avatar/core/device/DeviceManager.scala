@@ -189,7 +189,7 @@ object DeviceManager
         logger.error(s"error fetching device infoByHashedHwId for $hashedHwDeviceId", e)
         List()
     }.map { docs =>
-      logger.debug(s"query $query took ${System.currentTimeMillis() - start}ms")
+      logger.debug(s"query $hashedHwDeviceId: took ${System.currentTimeMillis() - start}ms")
       logger.debug(s"found ${docs.size} results")
       docs.headOption match {
         case Some(jval) =>
