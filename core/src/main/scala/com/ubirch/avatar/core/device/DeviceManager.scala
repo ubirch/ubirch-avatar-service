@@ -177,6 +177,7 @@ object DeviceManager
 
     // TODO automated tests
     val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
+    val start = System.currentTimeMillis()
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
       docType = esType,
@@ -186,6 +187,8 @@ object DeviceManager
         logger.error(s"error fetching device infoByHashedHwId for $hashedHwDeviceId", e)
         List()
     }.map { docs =>
+      logger.debug(s"query $query took ${System.currentTimeMillis() - start}ms")
+      logger.debug(s"found $docs results")
       docs.headOption match {
         case Some(jval) => jval.extractOpt[Device]
         case None => None

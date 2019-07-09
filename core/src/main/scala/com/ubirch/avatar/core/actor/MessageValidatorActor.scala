@@ -46,6 +46,10 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
           processorActor tell((drd, dev), sender = s)
         case None =>
           s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid hwDeviceId: ${drd.a}", deviceId = None, hashedHwDeviceId = Some(drd.a))
+      }.recover {
+        case t: Throwable =>
+          log.error(t, "unable to validate message")
+          s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"unknown error: ${t.getMessage}", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v001 =>
