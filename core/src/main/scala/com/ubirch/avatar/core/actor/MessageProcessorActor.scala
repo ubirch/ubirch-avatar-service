@@ -114,11 +114,16 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private def processPayload(device: Device, payload: JValue, signature: Option[String] = None): Future[Option[DeviceStateUpdate]] = {
     processStateTimer.start
+    val start = System.currentTimeMillis()
     AvatarStateManagerREST.setReported(restDevice = device, payload, signature) collect {
       case Some(currentAvatarState) =>
+        log.debug(s"AvatarStateManagerREST.setReported(${device.deviceId}) took ${System.currentTimeMillis() - start}ms")
+        val esStart = System.currentTimeMillis()
         val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
         DeviceStateManager.upsert(state = dsu)
+        log.debug(s"DeviceStateManager.createNewDeviceState(${device.deviceId}) took ${System.currentTimeMillis() - esStart}ms")
         processStateTimer.stop
+
         Some(dsu)
     }
   }
