@@ -48,7 +48,7 @@ object PatchTrackleDevices extends App
               )),
             pubRawQueues = Some(
               Set(
-                s"${Config.enviroment}_ubirch_transformer_inbox",
+                //                s"${Config.enviroment}_ubirch_transformer_inbox",
                 trackleServiceQueue
               )
             ),
