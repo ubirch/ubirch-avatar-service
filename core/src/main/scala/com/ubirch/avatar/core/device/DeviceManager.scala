@@ -176,18 +176,25 @@ object DeviceManager
   def infoByHashedHwId(hashedHwDeviceId: String): Future[Option[Device]] = {
 
     // TODO automated tests
+    logger.debug(s"starting infoByHashedHwId($hashedHwDeviceId)")
     val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
+    val start = System.currentTimeMillis()
     ESSimpleStorage.getDocs(
       docIndex = esIndex,
       docType = esType,
       query = Some(query)
     ).recover[List[JValue]] {
       case e =>
+        logger.debug(s"query $query took ${System.currentTimeMillis() - start}ms")
         logger.error(s"error fetching device infoByHashedHwId for $hashedHwDeviceId", e)
         List()
     }.map { docs =>
+      logger.debug(s"query $hashedHwDeviceId: took ${System.currentTimeMillis() - start}ms")
+      logger.debug(s"found ${docs.size} results")
       docs.headOption match {
-        case Some(jval) => jval.extractOpt[Device]
+        case Some(jval) =>
+          logger.debug(s"extracted device: ${jval.extractOpt[Device]}")
+          jval.extractOpt[Device]
         case None => None
       }
     }

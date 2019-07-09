@@ -57,6 +57,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
           case vt: ValueType => vt
         }) match {
           case ddrs: DeviceDataRaws if ddrs.ddrs.nonEmpty =>
+            log.info(s"validating msgpack data (ddrs): ${ddrs.ddrs.size}")
             ddrs.ddrs.foreach(ddr => validatorActor forward ddr)
           case vt: ValueType =>
             val em = s"invalid messagePack header type: ${vt.name()}"

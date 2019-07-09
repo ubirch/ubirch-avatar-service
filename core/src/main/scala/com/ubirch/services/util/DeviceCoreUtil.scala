@@ -35,7 +35,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
   }
 
   def validateSimpleMessage(hwDeviceId: String): Future[Option[Device]] = {
-    logger.info("validateSimpleMessage")
+    logger.info(s"validateSimpleMessage: device id=$hwDeviceId")
     DeviceManager.infoByHashedHwId(hwDeviceId).map {
       case Some(device) =>
         logger.debug(s"found device with primaryKey: $hwDeviceId")

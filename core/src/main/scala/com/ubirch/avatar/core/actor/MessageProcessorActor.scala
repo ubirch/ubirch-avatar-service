@@ -54,7 +54,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         tags = Some(device.tags)
       )
 
-      log.debug(s"received for deviceId ${device.deviceId} message: $drdPatched")
+      log.debug(s"received for deviceId ${device.deviceId} message: device ${drdPatched.deviceId}")
 
       //manage new device state
       val pl = try {
@@ -65,11 +65,11 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       catch {
         case e: MappingException =>
           drdPatched.p.extract[JValue]
-
       }
 
       processPayload(device, pl, drdPatched.s).onComplete {
         case Success(Some(d)) =>
+          log.debug(s"current AvatarState updated: ${device.deviceId}")
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
@@ -114,11 +114,16 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private def processPayload(device: Device, payload: JValue, signature: Option[String] = None): Future[Option[DeviceStateUpdate]] = {
     processStateTimer.start
+    val start = System.currentTimeMillis()
     AvatarStateManagerREST.setReported(restDevice = device, payload, signature) collect {
       case Some(currentAvatarState) =>
+        log.debug(s"AvatarStateManagerREST.setReported(${device.deviceId}) took ${System.currentTimeMillis() - start}ms")
+        val esStart = System.currentTimeMillis()
         val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
         DeviceStateManager.upsert(state = dsu)
+        log.debug(s"DeviceStateManager.createNewDeviceState(${device.deviceId}) took ${System.currentTimeMillis() - esStart}ms")
         processStateTimer.stop
+
         Some(dsu)
     }
   }
