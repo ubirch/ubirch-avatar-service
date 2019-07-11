@@ -50,12 +50,18 @@ object DeviceStateManager extends MyJsonProtocol with StrictLogging {
       case Some(doc) =>
 
         val id = state.id.toString
-        ESBulkStorage.storeDocBulk(
-          docIndex = index,
-          docType = esType,
-          docId = id,
-          doc = doc
-        ) map (_.extractOpt[DeviceStateUpdate])
+        Future {
+          val start = System.currentTimeMillis()
+          ESBulkStorage.storeDocBulk(
+            docIndex = index,
+            docType = esType,
+            docId = id,
+            doc = doc
+          )
+          logger.debug(s"DeviceStateUpdate: took ${System.currentTimeMillis() - start}ms")
+        }
+
+        Future(doc.extractOpt[DeviceStateUpdate])
 
       case None => Future(None)
 
