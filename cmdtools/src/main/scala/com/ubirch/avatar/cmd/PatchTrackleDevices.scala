@@ -9,7 +9,6 @@ import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.mongo.connection.MongoUtil
-import com.ubirch.util.uuid.UUIDUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -28,10 +27,10 @@ object PatchTrackleDevices extends App
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   val adminGroup = Set(
-    UUIDUtil.fromString(
-      //trackle-dev admin
-      "7ff974c8-8224-4c14-9db3-2f0ecc5ff83e"
-    )
+    //    UUIDUtil.fromString(
+    //      //trackle-dev admin
+    //      "7ff974c8-8224-4c14-9db3-2f0ecc5ff83e"
+    //    )
   )
 
   val trackleServiceQueue = s"${Config.enviroment}-trackle-service-inbox"
@@ -44,7 +43,7 @@ object PatchTrackleDevices extends App
           val patchedDev = device.copy(
             pubQueues = Some(
               Set(
-                s"${Config.enviroment}_ubirch_transformer_outbox"
+                //s"${Config.enviroment}_ubirch_transformer_outbox"
               )),
             pubRawQueues = Some(
               Set(
