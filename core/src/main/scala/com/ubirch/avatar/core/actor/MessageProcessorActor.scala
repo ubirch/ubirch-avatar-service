@@ -37,8 +37,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
-  private val outboxManagerActor = context.
-    actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
+  private val outboxManagerActor = context.actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
 
   private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100000)}")
 

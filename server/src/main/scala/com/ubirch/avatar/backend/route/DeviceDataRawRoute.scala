@@ -1,13 +1,16 @@
 package com.ubirch.avatar.backend.route
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
 import com.ubirch.avatar.core.actor.{DeviceRawDataReprocessing, DeviceRawDataReprocessingActor}
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
+import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import org.joda.time.{DateTime, DateTimeZone}
@@ -19,16 +22,19 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-11-02
   */
-class DeviceDataRawRoute(implicit system: ActorSystem) extends ResponseUtil
+class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materializer, system: ActorSystem) extends ResponseUtil
   with CORSDirective {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   private val reprocessingActor = system.actorOf(DeviceRawDataReprocessingActor.props, ActorNames.REPROCESSING)
 
+  private val oidcDirective = new OidcDirective()
+
   val route: Route = {
 
     // TODO authentication
+
 
     path("data" / "reprocess" / Segment) { dayStr =>
       try {
@@ -63,8 +69,26 @@ class DeviceDataRawRoute(implicit system: ActorSystem) extends ResponseUtil
           }
         }
       }
-    }
+    } ~ path(data / transferDates / Segment) { hwDeviceId =>
+      oidcDirective.oidcToken2UserContext { userContext =>
+        get {
+          respondWithCORS {
 
+            onComplete(DeviceDataRawManager.getTransferDates(hwDeviceId)) {
+
+              case Success(res) => res match {
+                case dates =>
+                  complete(dates)
+              }
+
+              case Failure(t) =>
+                complete(requestErrorResponse("GetDataTransferDatesError",
+                  s"failed retrieve dates of data transfers for heDeviceId: $hwDeviceId due to: $t"))
+            }
+          }
+        }
+      }
+    }
   }
 
 }

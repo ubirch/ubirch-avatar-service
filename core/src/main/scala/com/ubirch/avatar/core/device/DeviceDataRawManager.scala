@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.device
 
-import java.util.UUID
+import java.util.{Date, UUID}
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
@@ -207,6 +207,20 @@ object DeviceDataRawManager
 
     }
   }
+
+  def getTransferDates(hwDeviceId: String): Future[Set[Date]] = {
+
+    val query = Some(QueryBuilders.termQuery("hwDeviceId", hwDeviceId))
+    ESSimpleStorage
+      .getDocs(index, esType, query)
+      .map(_.map(_.extract[DeviceDataRaw]).map(_.ts.toDate).toSet)
+      .recover {
+        case ex =>
+          logger.error(s"something went wrong retrieving all deviceDataRaw for hwDeviceId: $hwDeviceId due to: $ex")
+          Set[Date]()
+      }
+  }
+
 
   /**
     * evil dirty hack, works just for trackle

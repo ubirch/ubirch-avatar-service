@@ -104,9 +104,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   }
 
-  private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]]
-
-  = {
+  private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
     logger.debug("AllStubs")
     queryOwnerId(session) flatMap { u =>
       queryGroups(session) flatMap { g =>

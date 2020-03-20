@@ -27,4 +27,5 @@ object AvatarClientRestConfig extends ConfigBase {
 
   def urlDeviceWithId(deviceId: String) = s"$host${RouteConstants.pathDeviceWithId(deviceId)}"
 
+  def urlDataTransferDates(hwDeviceId: String) = s"$host${RouteConstants.pathDeviceDataTransferDates(hwDeviceId)}"
 }
