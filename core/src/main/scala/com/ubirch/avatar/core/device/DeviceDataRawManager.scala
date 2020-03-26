@@ -208,15 +208,15 @@ object DeviceDataRawManager
     }
   }
 
-  def getTransferDates(hwDeviceId: String): Future[Set[Date]] = {
+  def getTransferDates(deviceId: String): Future[Set[Date]] = {
 
-    val query = Some(QueryBuilders.termQuery("hwDeviceId", hwDeviceId))
+    val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     ESSimpleStorage
       .getDocs(index, esType, query)
       .map(_.map(_.extract[DeviceDataRaw]).map(_.ts.toDate).toSet)
       .recover {
         case ex =>
-          logger.error(s"something went wrong retrieving all deviceDataRaw for hwDeviceId: $hwDeviceId due to: $ex")
+          logger.error(s"something went wrong retrieving all deviceDataRaw for hwDeviceId: $deviceId due to: $ex")
           Set[Date]()
       }
   }

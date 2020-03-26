@@ -1,9 +1,12 @@
 package com.ubirch.avatar.backend.route
 
+import java.util.Date
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.core.actor.{DeviceRawDataReprocessing, DeviceRawDataReprocessingActor}
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -23,7 +26,9 @@ import scala.util.{Failure, Success}
   * since: 2016-11-02
   */
 class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materializer, system: ActorSystem) extends ResponseUtil
-  with CORSDirective {
+  with CORSDirective
+  with StrictLogging {
+
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
@@ -69,21 +74,22 @@ class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materialize
           }
         }
       }
-    } ~ path(data / transferDates / Segment) { hwDeviceId =>
-      oidcDirective.oidcToken2UserContext { userContext =>
+    } ~ path(data / transferDates / Segment) { deviceId =>
+      oidcDirective.oidcToken2UserContext { _ =>
         get {
+
+          logger.info(s"GET /data/transferDates/$deviceId")
           respondWithCORS {
+            onComplete(DeviceDataRawManager.getTransferDates(deviceId)) {
 
-            onComplete(DeviceDataRawManager.getTransferDates(hwDeviceId)) {
-
-              case Success(res) => res match {
-                case dates =>
+              case Success(dates : Set[Date]) =>
+                  logger.info(s"the following unique transferDates will be returned: $dates")
                   complete(dates)
-              }
+
 
               case Failure(t) =>
                 complete(requestErrorResponse("GetDataTransferDatesError",
-                  s"failed retrieve dates of data transfers for heDeviceId: $hwDeviceId due to: $t"))
+                  s"failed retrieve dates of data transfers for heDeviceId: $deviceId due to: $t"))
             }
           }
         }

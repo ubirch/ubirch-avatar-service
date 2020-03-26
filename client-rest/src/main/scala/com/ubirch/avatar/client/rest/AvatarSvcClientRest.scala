@@ -3,7 +3,7 @@ package com.ubirch.avatar.client.rest
 import java.util.{Date, UUID}
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.client.rest.config.AvatarClientRestConfig
+import com.ubirch.avatar.client.rest.config.{AvatarClientRestConfig}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo, DeviceStateUpdate, DeviceUserClaim}
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
@@ -25,6 +25,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   */
 object AvatarSvcClientRest extends MyJsonProtocol
   with StrictLogging {
+
 
   def check()(implicit httpClient: HttpExt, materializer: Materializer): Future[Option[JsonResponse]] = {
 
@@ -124,7 +125,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
   }
 
 
-  def dataTransferDatesGET(hwDeviceId: UUID,
+  def dataTransferDatesGET(deviceId: String,
                            oidcToken: Option[String] = None,
                            ubirchToken: Option[String] = None)
                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[Date]]] = {
@@ -133,12 +134,13 @@ object AvatarSvcClientRest extends MyJsonProtocol
 
     if (oidcToken.isEmpty && ubirchToken.isEmpty) {
 
-      logger.error(s"either an OpenID Connect or ubirch token is needed to retrieve the dates of data transfer for hwDeviceId=$hwDeviceId")
+      logger.error(s"either an OpenID Connect or ubirch token is needed to retrieve the dates of data transfer for deviceId=$deviceId")
       Future(Left(JsonErrorResponse(errorType = "RestClientError", errorMessage = "error before sending the request: either an OpenID Connect or ubirch token")))
 
     } else {
 
-      val url = AvatarClientRestConfig.urlDataTransferDates(hwDeviceId.toString)
+      logger.debug(s"requesting dataTransferDates by avatarService for deviceId: $deviceId")
+      val url = AvatarClientRestConfig.urlDataTransferDates(deviceId)
       val req = HttpRequest(
         method = HttpMethods.GET,
         uri = url,
