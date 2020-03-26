@@ -1,21 +1,22 @@
 package com.ubirch.avatar.client.rest
 
-import java.util.{Date, UUID}
+import java.util.UUID
 
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.model._
+import akka.stream.Materializer
+import akka.util.ByteString
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.client.rest.config.{AvatarClientRestConfig}
+import com.ubirch.avatar.client.rest.config.AvatarClientRestConfig
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo, DeviceStateUpdate, DeviceUserClaim}
+import com.ubirch.avatar.model.rest.device._
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
 import com.ubirch.util.http.auth.AuthUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import org.joda.time.DateTime
 import org.json4s.native.Serialization.read
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse, StatusCode, StatusCodes}
-import akka.stream.Materializer
-import akka.util.ByteString
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -128,7 +129,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
   def dataTransferDatesGET(deviceId: String,
                            oidcToken: Option[String] = None,
                            ubirchToken: Option[String] = None)
-                          (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[Date]]] = {
+                          (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[DateTime]]] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
 
@@ -151,7 +152,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
         case HttpResponse(StatusCodes.OK, _, entity, _) =>
 
           entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
-            Right(read[Set[Date]](body.utf8String))
+            Right(read[Set[DateTime]](body.utf8String))
           }
 
         case res@HttpResponse(code, _, entity, _) =>

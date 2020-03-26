@@ -1,7 +1,5 @@
 package com.ubirch.avatar.backend.route
 
-import java.util.Date
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
@@ -82,9 +80,9 @@ class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materialize
           respondWithCORS {
             onComplete(DeviceDataRawManager.getTransferDates(deviceId)) {
 
-              case Success(dates : Set[Date]) =>
-                  logger.info(s"the following unique transferDates will be returned: $dates")
-                  complete(dates)
+              case Success(dates: Set[DateTime]) =>
+                logger.info(s"the following unique transferDates will be returned: $dates")
+                complete(dates)
 
 
               case Failure(t) =>
