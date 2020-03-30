@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.device
 
-import java.util.{Date, UUID}
+import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.avatar.config.Config
@@ -208,16 +208,15 @@ object DeviceDataRawManager
     }
   }
 
-  def getTransferDates(deviceId: String): Future[Set[Date]] = {
-
+  def getTransferDates(deviceId: String): Future[Set[DateTime]] = {
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     ESSimpleStorage
       .getDocs(index, esType, query)
-      .map(_.map(_.extract[DeviceDataRaw]).map(_.ts.toDate).toSet)
+      .map(_.map(_.extract[DeviceDataRaw]).map(_.ts.withTimeAtStartOfDay()).toSet)
       .recover {
         case ex =>
           logger.error(s"something went wrong retrieving all deviceDataRaw for hwDeviceId: $deviceId due to: $ex")
-          Set[Date]()
+          Set[DateTime]()
       }
   }
 
