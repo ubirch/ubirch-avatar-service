@@ -26,10 +26,10 @@
     </encoder>
   </appender>
 
-  <logger name="com.ubirch" level="INFO"/>
+  <logger name="com.ubirch" level="DEBUG"/>
   <logger name="com.ubirch.util.oidc.directive.OidcDirective" level="WARN"/>
   <logger name="com.ubirch.avatar.core.avatar.AvatarStateManage" level="INFO"/>
-  <logger name="com.ubirch.avatar.backend.actor.DeviceApiActor" level="INFO"/>
+  <logger name="com.ubirch.avatar.backend.actor.DeviceApiActor" level="DEBUG"/>
   <logger name="com.ubirch.user.client.rest.UserServiceClientRest" level="INFO"/>
   <logger name="com.ubirch.util.mongo.connection.MongoUtil" level="INFO"/>
   <logger name="org.apache.http" level="INFO"/>

@@ -208,6 +208,19 @@ object DeviceDataRawManager
     }
   }
 
+  def getTransferDates(deviceId: String): Future[Set[DateTime]] = {
+    val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
+    ESSimpleStorage
+      .getDocs(index, esType, query)
+      .map(_.map(_.extract[DeviceDataRaw]).map(_.ts.withTimeAtStartOfDay()).toSet)
+      .recover {
+        case ex =>
+          logger.error(s"something went wrong retrieving all deviceDataRaw for hwDeviceId: $deviceId due to: $ex")
+          Set[DateTime]()
+      }
+  }
+
+
   /**
     * evil dirty hack, works just for trackle
     *

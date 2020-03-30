@@ -30,6 +30,7 @@ object RouteConstants {
   val bulk = "bulk"
   val mpack = "mpack"
   val mpacks = "mpacks"
+  val transferDates = "transferDates"
   val data = "data"
   val raw = "raw"
   val verify = "verify"
@@ -60,6 +61,7 @@ object RouteConstants {
   def pathDeviceState(id: String): String = s"${pathDeviceWithId(id)}/$state"
 
   val pathDeviceDataRaw: String = s"$pathDevice/$data/$raw"
+  def pathDeviceDataTransferDates(deviceId: String): String = s"$pathDevice/$data/$transferDates/$deviceId"
 
   def pathDeviceDataHistory(id: String): String = s"${pathDeviceWithId(id)}/$data/$history"
 

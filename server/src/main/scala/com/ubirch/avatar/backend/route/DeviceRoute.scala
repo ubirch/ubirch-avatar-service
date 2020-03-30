@@ -14,6 +14,7 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.oidc.directive.OidcDirective
+import com.ubirch.util.oidc.model.UserContext
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -43,7 +44,7 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
       oidcDirective.oidcToken2UserContext { userContext =>
 
         get {
-
+          logger.info(s"GET /device by userContext: $userContext")
           onComplete(deviceApiActor ? AllDevices(session = AvatarSession(userContext = userContext))) {
 
             case Success(resp) =>
@@ -61,6 +62,7 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
         } ~ post {
 
           entity(as[Device]) { device =>
+            logger.info(s"POST /device with device: $device")
 
             val avatarSession = AvatarSession(userContext)
             onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
