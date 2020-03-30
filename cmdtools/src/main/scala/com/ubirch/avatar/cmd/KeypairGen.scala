@@ -1,7 +1,6 @@
 package com.ubirch.avatar.cmd
 
 import java.io.{File, FileOutputStream}
-import java.util.Base64
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import com.ubirch.crypto.ecc.EccUtil
@@ -15,6 +14,8 @@ import org.joda.time.format.DateTimeFormat
   */
 object KeypairGen extends App with StrictLogging {
 
+
+  private val eccUtil = new EccUtil()
   val envs = List(
     "master",
     "prod",
@@ -32,7 +33,7 @@ object KeypairGen extends App with StrictLogging {
   val nowStr = fmt.print(now)
 
   envs.foreach { env =>
-    val (pubKey, prvKey) = EccUtil.generateEccKeyPair
+    val (pubKey, prvKey) = eccUtil.generateEccKeyPair
 
     val pubKeyBin = EdDSAPublicKey.decode(pubKey.getEncoded)
     val prvKeyBin = EdDSAPrivateKey.decode(prvKey.getEncoded)

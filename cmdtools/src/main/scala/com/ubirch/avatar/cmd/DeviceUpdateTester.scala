@@ -23,7 +23,8 @@ object DeviceUpdateTester extends App with MyJsonProtocol {
   val avsApiUrl = new URL("http://localhost:8080/api/avatarService/v1/device/update")
   //  val avsApiUrl = new URL("https://api.ubirch.dev.ubirch.com/api/avatarService/v1/device/update")
 
-  val (pubKey, privKey) = EccUtil.generateEccKeyPair
+  private val eccUtil = new EccUtil()
+  val (pubKey, privKey) = eccUtil.generateEccKeyPair
 
   val pubKeyHex = "8b93b9fd501493e2ef39a0efc19ba3325750be77149c5568af6ebd3bb2717ba6"
   val privKeyHex = "26009602df60c827c56a60a488c29aa3ad525349d3c77e21e73c6e25bc79a07a8b93b9fd501493e2ef39a0efc19ba3325750be77149c5568af6ebd3bb2717ba6"
@@ -51,7 +52,7 @@ object DeviceUpdateTester extends App with MyJsonProtocol {
   val payloadStr = Json4sUtil.jvalue2String(payload)
   println(payloadStr)
 
-  val signature = EccUtil.signPayload(privKey64, payloadStr)
+  val signature = eccUtil.signPayload(privKey64, payloadStr)
 
   val ddr = DeviceDataRaw(
     v = MessageVersion.v003,
@@ -69,10 +70,10 @@ object DeviceUpdateTester extends App with MyJsonProtocol {
   val headers = Headers(List[Header](Header("Content-Type:application/json")))
   val body = RequestBody(contentType = MediaType.APPLICATION_JSON, string = ddrStr)
 
-  doPost
+  doPost()
 
   Thread.sleep(500)
-  doPost
+  doPost()
 
   //  Thread.sleep(1000)
   //  doPost
@@ -88,7 +89,7 @@ object DeviceUpdateTester extends App with MyJsonProtocol {
 
   println("Ende")
 
-  private def doPost = {
+  private def doPost(): Unit = {
     val resp = hc.post(url = avsApiUrl, body = Some(body), requestHeaders = headers)
     println(resp.body.asString)
   }

@@ -22,6 +22,7 @@ import scala.concurrent.Future
 object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
 
   private def createSimpleSignature(payload: JValue, device: Device): String = createSimpleSignature(payload, device.hwDeviceId)
+  private val eccUtil = new EccUtil()
 
   /**
     * @deprecated this code is legacy and will be deleted asap
@@ -79,7 +80,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
                                    signature: String,
                                    payload: Array[Byte]): Future[Boolean] = {
 
-    Future(EccUtil.validateSignature(publicKey = key, signature = signature, payload = payload))
+    Future(eccUtil.validateSignature(publicKey = key, signature = signature, payload = payload))
   }
 
   def validateSignedMessage(device: Device,
@@ -111,14 +112,14 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
           keys.map { key =>
             val valid = if (hashedPayload)
               try {
-                EccUtil.validateSignatureSha512(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+                eccUtil.validateSignatureSha512(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
               }
               catch {
                 case e: Exception => false
               }
             else
               try {
-                EccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
+                eccUtil.validateSignature(publicKey = key.pubKeyInfo.pubKey, signature = signature, payload = payload)
               }
               catch {
                 case e: Exception => false

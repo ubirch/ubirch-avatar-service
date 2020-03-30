@@ -53,7 +53,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
 
             entity(as[DeviceClaim]) { deviceClaim =>
 
-              onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, externalId = userContext.externalUserId, providerId = userContext.providerId)) {
+              onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, externalId = userContext.externalUserId, userId = userContext.userId)) {
 
                 case Success(resp) =>
                   resp match {

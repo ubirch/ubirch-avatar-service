@@ -12,7 +12,6 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.json4s.{JValue, MappingException}
 
@@ -68,14 +67,14 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       }
 
       processPayload(device, pl, drdPatched.s).onComplete {
-        case Success(Some(d)) =>
+        case Success(Some(d: DeviceStateUpdate)) =>
           log.debug(s"current AvatarState updated: ${device.deviceId}")
           s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
         case Success(None) =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId=device.deviceId, inSync=Some(false), currentDeviceSignature=drdPatched.s))
+          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
           s ! d
