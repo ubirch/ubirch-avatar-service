@@ -55,6 +55,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
 
               onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, externalId = userContext.externalUserId, userId = userContext.userId)) {
 
+
                 case Success(resp) =>
                   resp match {
                     case duc: DeviceUserClaim =>

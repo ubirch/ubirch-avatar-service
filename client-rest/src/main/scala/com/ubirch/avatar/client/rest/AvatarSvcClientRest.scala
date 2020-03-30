@@ -2,23 +2,21 @@ package com.ubirch.avatar.client.rest
 
 import java.util.UUID
 
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.model._
+import akka.stream.Materializer
+import akka.util.ByteString
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.client.rest.config.AvatarClientRestConfig
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceDataRaw, DeviceInfo, DeviceStateUpdate, DeviceUserClaim}
+import com.ubirch.avatar.model.rest.device._
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
 import com.ubirch.util.http.auth.AuthUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
-
+import org.joda.time.DateTime
 import org.json4s.native.Serialization.read
-
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse, StatusCode, StatusCodes}
-import akka.stream.Materializer
-import akka.util.ByteString
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
@@ -28,6 +26,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   */
 object AvatarSvcClientRest extends MyJsonProtocol
   with StrictLogging {
+
 
   def check()(implicit httpClient: HttpExt, materializer: Materializer): Future[Option[JsonResponse]] = {
 
@@ -126,6 +125,47 @@ object AvatarSvcClientRest extends MyJsonProtocol
 
   }
 
+
+  def dataTransferDatesGET(deviceId: String,
+                           oidcToken: Option[String] = None,
+                           ubirchToken: Option[String] = None)
+                          (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[DateTime]]] = {
+
+    implicit val ec: ExecutionContextExecutor = materializer.executionContext
+
+    if (oidcToken.isEmpty && ubirchToken.isEmpty) {
+
+      logger.error(s"either an OpenID Connect or ubirch token is needed to retrieve the dates of data transfer for deviceId=$deviceId")
+      Future(Left(JsonErrorResponse(errorType = "RestClientError", errorMessage = "error before sending the request: either an OpenID Connect or ubirch token")))
+
+    } else {
+
+      logger.debug(s"requesting dataTransferDates by avatarService for deviceId: $deviceId")
+      val url = AvatarClientRestConfig.urlDataTransferDates(deviceId)
+      val req = HttpRequest(
+        method = HttpMethods.GET,
+        uri = url,
+        headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken))
+
+      httpClient.singleRequest(req) flatMap {
+
+        case HttpResponse(StatusCodes.OK, _, entity, _) =>
+
+          entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
+            Right(read[Set[DateTime]](body.utf8String))
+          }
+
+        case res@HttpResponse(code, _, entity, _) =>
+
+          logger.error(s"deviceGET() call to avatar-service failed: url=$url code=$code, status=${res.status}")
+          entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
+            Left(read[JsonErrorResponse](body.utf8String))
+          }
+
+      }
+    }
+  }
+
   /**
     * @param deviceDataRaw device data to post
     * @param httpClient    http connection
@@ -180,8 +220,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
     */
   def devicePOST(device: Device,
                  oidcToken: Option[String] = None,
-                 ubirchToken: Option[String] = None
-                )
+                 ubirchToken: Option[String] = None)
                 (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Device]] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
@@ -242,8 +281,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
     * @param materializer Akka materializer required by http connection
     */
   def deviceStubGET(oidcToken: Option[String] = None,
-                    ubirchToken: Option[String] = None
-                   )
+                    ubirchToken: Option[String] = None)
                    (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[DeviceInfo]]] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
@@ -292,8 +330,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
     * @param materializer Akka materializer required by http connection
     */
   def deviceGET(oidcToken: Option[String] = None,
-                ubirchToken: Option[String] = None
-               )
+                ubirchToken: Option[String] = None)
                (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Set[Device]]] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
@@ -344,8 +381,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
     */
   def deviceIdPUT(device: Device,
                   oidcToken: Option[String] = None,
-                  ubirchToken: Option[String] = None
-                 )
+                  ubirchToken: Option[String] = None)
                  (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Device]] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
@@ -408,8 +444,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
     */
   def deviceIdDELETE(deviceId: UUID,
                      oidcToken: Option[String] = None,
-                     ubirchToken: Option[String] = None
-                    )
+                     ubirchToken: Option[String] = None)
                     (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Boolean]] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
@@ -459,8 +494,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
     */
   def claimDevicePUT(hwDeviceId: String,
                      oidcToken: Option[String] = None,
-                     ubirchToken: Option[String] = None
-                    )
+                     ubirchToken: Option[String] = None)
                     (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, DeviceUserClaim]] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
