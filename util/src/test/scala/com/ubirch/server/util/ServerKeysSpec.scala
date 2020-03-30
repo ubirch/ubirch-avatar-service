@@ -13,20 +13,23 @@ class ServerKeysSpec extends FeatureSpec
   val data = "Hallo Welt"
   val dataBin: Array[Byte] = data.getBytes
 
+  private val eccUtil = new EccUtil()
+
+
   feature("ServerKeys test") {
 
     scenario("sign data new keys") {
-      val (puk, prk) = EccUtil.generateEccKeyPairEncoded
+      val (puk, prk) = eccUtil.generateEccKeyPairEncoded
 
-      val s = EccUtil.signPayload(prk, data)
+      val s = eccUtil.signPayload(prk, data)
 
-      val v = EccUtil.validateSignature(puk, signature = s, payload = data)
+      val v = eccUtil.validateSignature(puk, signature = s, payload = data)
 
       v shouldBe true
     }
 
     scenario("sign data new keys (2bin)") {
-      val (puk, prk) = EccUtil.generateEccKeyPair
+      val (puk, prk) = eccUtil.generateEccKeyPair
 
       val pukBin = EdDSAPublicKey.decode(puk.getEncoded)
       val prkBin = EdDSAPrivateKey.decode(prk.getEncoded)
@@ -34,26 +37,26 @@ class ServerKeysSpec extends FeatureSpec
       val pukBinHex = Hex.encodeHexString(pukBin)
       val prkBinHex = Hex.encodeHexString(prkBin)
 
-      val puk2 = EccUtil.decodePublicKey(pukBin)
-      val prk2 = EccUtil.decodePrivateKey(prkBin)
+      val puk2 = eccUtil.decodePublicKey(pukBin)
+      val prk2 = eccUtil.decodePrivateKey(prkBin)
 
       puk2.equals(puk) shouldBe true
       prk2.equals(prk) shouldBe true
 
-      val puk2Enc = EccUtil.encodePublicKey(puk2)
-      val prk2Enc = EccUtil.encodePrivateKey(prk2)
+      val puk2Enc = eccUtil.encodePublicKey(puk2)
+      val prk2Enc = eccUtil.encodePrivateKey(prk2)
 
-      val s = EccUtil.signPayload(prk2Enc, data)
-      val v = EccUtil.validateSignature(puk2Enc, signature = s, payload = data)
+      val s = eccUtil.signPayload(prk2Enc, data)
+      val v = eccUtil.validateSignature(puk2Enc, signature = s, payload = data)
 
       true shouldBe true
     }
 
 
     scenario("sign data with Server Key") {
-      val s = EccUtil.signPayload(ServerKeys.privKeyB64, data)
+      val s = eccUtil.signPayload(ServerKeys.privKeyB64, data)
 
-      val v = EccUtil.validateSignature(ServerKeys.pubKeyB64, signature = s, payload = data)
+      val v = eccUtil.validateSignature(ServerKeys.pubKeyB64, signature = s, payload = data)
 
       v shouldBe true
     }

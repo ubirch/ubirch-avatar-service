@@ -1,25 +1,21 @@
 package com.ubirch.avatar.backend.route
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.stream.Materializer
+import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.actor.MessageValidatorActor
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.routing.RoundRobinPool
-import akka.stream.Materializer
-import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor
@@ -37,7 +33,7 @@ class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   with StrictLogging  {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val validatorActor = system.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
 

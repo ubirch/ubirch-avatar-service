@@ -59,30 +59,25 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
     case duc: DeviceUserClaimRequest =>
       val s = sender
+
       DeviceManager.infoByHwId(duc.hwDeviceId).map {
         case Some(device) =>
-          UserServiceClientRest.userGET(providerId = duc.providerId, externalUserId = duc.externalId).map {
-            case Some(user) if user.id.isDefined =>
-              if (device.owners.isEmpty || device.owners.contains(user.id.get)) {
-                if (device.owners.isEmpty)
-                  DeviceManager.update(device.copy(owners = Set(user.id.get)))
-                s ! DeviceUserClaim(
-                  hwDeviceId = duc.hwDeviceId,
-                  deviceId = device.deviceId,
-                  userId = user.id.get
-                )
-              }
-              else {
-                s ! JsonErrorResponse(
-                  errorType = "DeviceClaimError",
-                  errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
-                )
-              }
-            case None =>
-              s ! JsonErrorResponse(
-                errorType = "DeviceClaimError",
-                errorMessage = s"cloud not claim device ${duc.hwDeviceId} with invalid user ${duc.externalId}"
-              )
+
+          val userId = UUID.fromString(duc.userId)
+          if (device.owners.isEmpty || device.owners.contains(userId)) {
+            if (device.owners.isEmpty)
+              DeviceManager.update(device.copy(owners = Set(userId)))
+            s ! DeviceUserClaim(
+              hwDeviceId = duc.hwDeviceId,
+              deviceId = device.deviceId,
+              userId = userId
+            )
+          }
+          else {
+            s ! JsonErrorResponse(
+              errorType = "DeviceClaimError",
+              errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
+            )
           }
         case None =>
           s ! JsonErrorResponse(
@@ -106,12 +101,10 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
     logger.debug("AllStubs")
-    queryOwnerId(session) flatMap { u =>
-      queryGroups(session) flatMap { g =>
-        logger.debug(s"allStubs groups: $g")
-        val res = DeviceManager.allStubs(userId = u.head, groups = g)
-        res
-      }
+    val userId = UUID.fromString(session.userContext.userId)
+    queryGroups(session) flatMap { g =>
+      logger.debug(s"allStubs groups: $g")
+      DeviceManager.allStubs(userId = userId, groups = g)
     }
   }
 
@@ -181,31 +174,16 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   private def addGroupsAndOwner(session: AvatarSession, device: Device): Future[Option[Device]] = {
 
-    for {
+    queryGroups(session).map { groupIds =>
 
-      groupIds <- queryGroups(session)
-      ownerId <- queryOwnerId(session)
-
-    } yield {
-
-      if (ownerId.isEmpty) {
-
-        logger.error(s"unable to create device if ownerId is missing: $device, session=$session")
-        None
-
-      } else {
-
-        Some(
-          device.copy(
-            groups = groupIds ++ device.groups,
-            owners = ownerId
-          )
+      val ownerId = Set(UUID.fromString(session.userContext.userId))
+      Some(
+        device.copy(
+          groups = groupIds ++ device.groups,
+          owners = ownerId
         )
-
-      }
-
+      )
     }
-
   }
 
   private def queryGroups(session: AvatarSession): Future[Set[UUID]] = {
@@ -230,30 +208,6 @@ class DeviceApiActor(implicit mongo: MongoUtil,
     }
   }
 
-  private def queryOwnerId(session: AvatarSession): Future[Set[UUID]] = {
-
-    UserServiceClientRest.userGET(
-      providerId = session.userContext.providerId,
-      externalUserId = session.userContext.externalUserId
-    ) map {
-
-      case None =>
-        logger.debug(s"queryOwnerId: missing user record (session=$session)")
-        Set.empty
-
-      case Some(user) if user.id.isDefined =>
-        logger.debug(s"queryOwnerId: ${
-          user.id
-        } (session=$session)")
-        Set(user.id.get)
-
-      case Some(user) if user.id.isEmpty =>
-        logger.debug(s"queryOwnerId: user without id (user=$user, session=$session)")
-        Set()
-
-    }
-
-  }
 
 }
 

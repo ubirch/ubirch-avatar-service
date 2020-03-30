@@ -17,7 +17,7 @@ import org.json4s.native.Serialization._
 object DeviceUtil {
 
   implicit val formats: Formats = JsonFormats.default
-
+  val eccUtil = new EccUtil
 
   def hashHwDeviceId(hwDeviceId: UUID): String = hashHwDeviceId(hwDeviceId.toString)
 
@@ -33,7 +33,7 @@ object DeviceUtil {
     */
   def sign(payload: JValue): String = {
     val payloadStr = write(payload)
-    EccUtil.signPayload(ServerKeys.privKeyB64, payloadStr)
+    eccUtil.signPayload(ServerKeys.privKeyB64, payloadStr)
   }
 
   def deviceWithDefaults(device: Device): Device = {

@@ -9,7 +9,8 @@ import org.apache.commons.codec.binary.Hex
 
 object KeyImporter extends App {
 
-  val (pu2, pr2) = EccUtil.generateEccKeyPair
+  private val eccUtil = new EccUtil()
+  val (pu2, pr2) = eccUtil.generateEccKeyPair
 
   val pu2Hex = Hex.encodeHexString(pu2.getEncoded)
   val pr2Hex = Hex.encodeHexString(pr2.getEncoded)
@@ -28,14 +29,14 @@ object KeyImporter extends App {
   val puBytes64 = Base64.getEncoder.encodeToString(puBytes)
   val prBytes64 = Base64.getEncoder.encodeToString(prBytes)
 
-  val pu = EccUtil.decodePublicKey(puBytes)
-  val pr = EccUtil.decodePrivateKey(prBytes)
+  val pu = eccUtil.decodePublicKey(puBytes)
+  val pr = eccUtil.decodePrivateKey(prBytes)
 
-  val pu3 = EccUtil.decodePublicKey(puBytesHex)
-  val pr3 = EccUtil.decodePrivateKey(prBytesHex)
+  val pu3 = eccUtil.decodePublicKey(puBytesHex)
+  val pr3 = eccUtil.decodePrivateKey(prBytesHex)
 
-  val pu4 = EccUtil.decodePublicKey(puBytes64)
-  val pr4 = EccUtil.decodePrivateKey(prBytes64)
+  val pu4 = eccUtil.decodePublicKey(puBytes64)
+  val pr4 = eccUtil.decodePrivateKey(prBytes64)
 
   val puBytes2 = pu2.getEncoded
   val prBytes2 = pr2.getEncoded

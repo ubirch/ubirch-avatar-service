@@ -27,7 +27,7 @@ object UbMsgPacker
     with MyJsonProtocol {
 
   private final val SIGPARTLEN: Int = 67
-
+  private val eccUtil = new EccUtil()
 
   def processUbirchprot(binData: Array[Byte]): Set[UbMessage] = {
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
@@ -420,7 +420,8 @@ object UbMsgPacker
 
     val payloadBin = packer.toByteArray
 
-    val signatureB64 = EccUtil.signPayloadSha512(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
+
+    val signatureB64 = eccUtil.signPayloadSha512(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
     packer.write(Base64.getDecoder.decode(signatureB64))
     packer.writeArrayEnd(true)
     packer.toByteArray

@@ -7,7 +7,7 @@ case class DeviceClaim(hwDeviceId: String)
 case class DeviceUserClaimRequest(
                                    hwDeviceId: String,
                                    externalId: String,
-                                   providerId: String
+                                   userId: String
                                  )
 
 case class DeviceUserClaim(
