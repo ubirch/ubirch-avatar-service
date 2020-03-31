@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -14,8 +14,8 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 
 /**
-  * Created by derMicha on 24/05/17.
-  */
+ * Created by derMicha on 24/05/17.
+ */
 
 class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
@@ -41,23 +41,29 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
       }
       else
         drd.copy(deviceId = Some(device.deviceId))
-      device.pubRawQueues.getOrElse(Set()).foreach { queue =>
 
-        getSqsProducer(queue).map { taRef =>
-          Json4sUtil.any2String(drdExt) match {
-            case Some(drdStr) =>
-              taRef ! drdStr
-            case None =>
-              log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
+
+      device.pubRawQueues
+        .getOrElse(Set())
+        .foreach { queue =>
+          getSqsProducer(queue).map { taRef =>
+            Json4sUtil.any2String(drdExt) match {
+              case Some(drdStr) =>
+                taRef ! drdStr
+              case None =>
+                log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
+            }
           }
         }
-      }
 
     case mr: MessageReceiver =>
 
       getMqttProducer(mr).map { taRef =>
         taRef ! mr.message
       }
+
+    case Terminated(actorRef) =>
+      log.warning("Actor {} terminated", actorRef)
   }
 
   override def unhandled(message: Any): Unit = {
@@ -70,6 +76,13 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     }
   }
 
+
+  def transformerProducerActor(queue: String, curRefBase: String): ActorRef = synchronized {
+    log.debug("Creating actor := {}", curRefBase)
+    val actorRef = context.system.actorOf(TransformerProducerActor.props(queue), curRefBase)
+    context.watch(actorRef)
+  }
+
   //@TODO refactor
   private def getSqsProducer(queue: String): Future[ActorRef] = {
 
@@ -77,17 +90,26 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     val curRefBasePath = s"$TRACTOR_BASE_PATH$queue"
 
     val aref = context.system.actorSelection(curRefBasePath)
-    val fs: FiniteDuration = 100 millis
 
-    aref.resolveOne(fs).map { ar =>
-      log.debug(s"reused actor with path: $curRefBasePath")
+    def getActor = aref.resolveOne(timeout = 100 millis)
+
+    getActor.map { ar =>
+      log.debug(s"Reused actor with path: $curRefBasePath")
       ar
     }.recover {
-      case t =>
-        log.debug(s"had to create fresh actor with path: $curRefBasePath")
-        val acr = context.system.actorOf(TransformerProducerActor.props(queue), curRefBase)
-        acr
+      case e =>
+        log.debug("1. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
+        transformerProducerActor(queue, curRefBase)
+    }.recoverWith {
+      case e =>
+        log.debug("2. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
+        getActor
+    }.recover {
+      case e =>
+        log.error("3. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
+        throw new Exception("Error Creating Transformer Actor", e)
     }
+
   }
 
   //@TODO refactor
