@@ -63,7 +63,8 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
       }
 
     case Terminated(actorRef) =>
-      log.warning("Actor {} terminated", actorRef)  }
+      log.warning("Actor {} terminated", actorRef)
+  }
 
   override def unhandled(message: Any): Unit = {
     message match {
@@ -77,6 +78,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
 
   def transformerProducerActor(queue: String, curRefBase: String): ActorRef = synchronized {
+    log.debug("Creating actor := {}", curRefBase)
     val actorRef = context.system.actorOf(TransformerProducerActor.props(queue), curRefBase)
     context.watch(actorRef)
   }
@@ -88,19 +90,23 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     val curRefBasePath = s"$TRACTOR_BASE_PATH$queue"
 
     val aref = context.system.actorSelection(curRefBasePath)
-    val fs: FiniteDuration = 100 millis
 
-    aref.resolveOne(fs).map { ar =>
-      log.debug(s"reused actor with path: $curRefBasePath")
+    def getActor = aref.resolveOne(timeout = 100 millis)
+
+    getActor.map { ar =>
+      log.debug(s"Reused actor with path: $curRefBasePath")
       ar
     }.recover {
       case e =>
-        log.debug("exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
-        log.debug(s"had to create fresh actor with path: $curRefBasePath")
+        log.debug("1. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
         transformerProducerActor(queue, curRefBase)
-    }.recover{
+    }.recoverWith {
       case e =>
-        log.error("exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
+        log.debug("2. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
+        getActor
+    }.recover {
+      case e =>
+        log.error("3. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
         throw new Exception("Error Creating Transformer Actor", e)
     }
 
