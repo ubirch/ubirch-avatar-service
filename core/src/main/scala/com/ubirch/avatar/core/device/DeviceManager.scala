@@ -313,6 +313,7 @@ object DeviceManager
           hwDeviceId = device.hwDeviceId.toLowerCase,
           hashedHwDeviceId = existingIdOpt.get.hashedHwDeviceId,
           created = existingIdOpt.get.created,
+          deviceConfig = device.deviceConfig,
           updated = Some(DateTime.now(DateTimeZone.UTC))
         )
         Json4sUtil.any2jvalue(toUpdate) match {
