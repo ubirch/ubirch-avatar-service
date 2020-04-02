@@ -59,7 +59,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
                 case Success(resp) =>
                   resp match {
                     case duc: DeviceUserClaim =>
-                      complete(HttpStatus.SC_ACCEPTED -> duc)
+                      complete(HttpStatus.SC_OK -> duc)
                     case jre: JsonErrorResponse =>
                       complete(HttpStatus.SC_BAD_REQUEST -> jre)
                     case _ =>
