@@ -519,7 +519,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
           )
           httpClient.singleRequest(req) flatMap {
 
-            case HttpResponse(StatusCodes.OK, _, entity, _) =>
+            case HttpResponse(StatusCodes.Accepted, _, entity, _) =>
 
               entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
                 Right(read[DeviceUserClaim](body.utf8String))
