@@ -63,7 +63,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
       DeviceManager.infoByHwId(duc.hwDeviceId).map {
         case Some(device) =>
 
-          val userId = UUID.fromString(duc.userId)
+          val userId = duc.userId
           if (device.owners.isEmpty || device.owners.contains(userId)) {
             if (device.owners.isEmpty)
               DeviceManager.update(device.copy(owners = Set(userId)))
@@ -101,10 +101,10 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   private def allStubs(session: AvatarSession): Future[Seq[DeviceInfo]] = {
     logger.debug("AllStubs")
-    val userId = UUID.fromString(session.userContext.userId)
+
     queryGroups(session) flatMap { g =>
       logger.debug(s"allStubs groups: $g")
-      DeviceManager.allStubs(userId = userId, groups = g)
+      DeviceManager.allStubs(userId = session.userContext.userId, groups = g)
     }
   }
 
@@ -176,7 +176,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
     queryGroups(session).map { groupIds =>
 
-      val ownerId = Set(UUID.fromString(session.userContext.userId))
+      val ownerId = Set(session.userContext.userId)
       Some(
         device.copy(
           groups = groupIds ++ device.groups,

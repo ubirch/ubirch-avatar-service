@@ -2,6 +2,7 @@ package com.ubirch.avatar.backend.route
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.stream.Materializer
@@ -14,7 +15,6 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.oidc.directive.OidcDirective
-import com.ubirch.util.oidc.model.UserContext
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -33,7 +33,7 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
     with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
@@ -49,7 +49,9 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
 
             case Success(resp) =>
               resp match {
-                case devices: AllDevicesResult => complete(devices.devices)
+                case devices: AllDevicesResult =>
+                  logger.debug(s"returning ${devices.devices}")
+                  complete(StatusCodes.OK -> devices.devices)
                 case _ => complete(serverErrorResponse(errorType = "QueryError", errorMessage = "DeviceRoute.post failed with unhandled message"))
               }
 
