@@ -544,9 +544,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
           Future(Left(JsonErrorResponse(errorType = "RestClientError", errorMessage = "error before sending the request: failed to convert input to JSON")))
 
       }
-
     }
-
   }
 
   private def logErrorAndReturnNone[T](errorMsg: String,
