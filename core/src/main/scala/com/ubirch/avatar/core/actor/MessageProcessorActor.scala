@@ -17,7 +17,6 @@ import org.json4s.{JValue, MappingException}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
 
 /**
   * author: derMicha
@@ -59,35 +58,37 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         drdPatched.p.extract[Array[JValue]].foldLeft[JValue](Json4sUtil.string2JValue("{}").get) { (a, b) =>
           a merge b
         }
-      }
-      catch {
+      } catch {
         case e: MappingException =>
           drdPatched.p.extract[JValue]
       }
 
-      processPayload(device, pl, drdPatched.s).onComplete {
-        case Success(Some(d: DeviceStateUpdate)) =>
+      val deviceStateUpdate = processPayload(device, pl, drdPatched.s).map {
+        case Some(d: DeviceStateUpdate) =>
           log.debug(s"current AvatarState updated: ${device.deviceId}")
-          s ! d
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-        case Success(None) =>
+          d
+        case None =>
           log.error(s"current AvatarStateRest not available: ${device.deviceId}")
           val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-          s ! d
-        case Failure(t) =>
+          d
+      }.recover {
+        case t: Throwable =>
           log.error(t, s"current AvatarStateRest not available: ${device.deviceId}")
-          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId=device.deviceId, inSync=Some(false), currentDeviceSignature=drdPatched.s))
+          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
           val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
           outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-          s ! d
+          d
       }
 
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
         log.debug(s"stores data for ${device.deviceId}")
-        persistenceActor ! drdPatched
+        deviceStateUpdate.map { d =>
+          persistenceActor tell((drdPatched, d), s)
+        }
       }
       else
         log.debug(s"stores no data for ${device.deviceId}")
