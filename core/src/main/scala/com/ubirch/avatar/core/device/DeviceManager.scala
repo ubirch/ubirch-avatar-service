@@ -57,6 +57,35 @@ object DeviceManager
     }
   }
 
+  /**
+    * Select all devices in any of the given groups or with the userId as owner.
+    *
+    * @param userId the id of the owner
+    * @param groups select devices only if they're in any of these groups
+    * @return devices; empty if none found
+    */
+  def all(userId: UUID, groups: Set[UUID]): Future[Seq[Device]] = {
+
+    // TODO automated tests
+    ESSimpleStorage.getDocs(
+      docIndex = esIndex,
+      docType = esType,
+      query = groupsUserTermsQuery(userId, groups),
+      size = Some(Config.esLargePageSize)
+    ).recover[List[JValue]] {
+      case e =>
+        logger.error(s"error fetching device all for groups $groups", e)
+        List()
+    }.map { res =>
+      logger.debug(s"all(): result=$res")
+      if (res.nonEmpty)
+        res.map(_.extract[Device])
+      else
+        Seq()
+    }
+  }
+
+
   def all(): Future[Seq[Device]] = {
     // TODO automated tests
     ESSimpleStorage.getDocs(
@@ -200,7 +229,7 @@ object DeviceManager
     }
   }
 
-  
+
   // TODO automated tests
   def info(deviceId: UUID): Future[Option[Device]] = info(deviceId.toString)
 

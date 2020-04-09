@@ -95,7 +95,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
   private def allDevices(session: AvatarSession): Future[Seq[Device]] = {
 
-    queryGroups(session) flatMap DeviceManager.all
+    queryGroups(session).flatMap(groups => DeviceManager.all(UUID.fromString(session.userContext.userId), groups))
 
   }
 
