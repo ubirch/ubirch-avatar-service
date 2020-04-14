@@ -1,7 +1,9 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.pattern.ask
 import akka.routing.RoundRobinPool
+import akka.util.Timeout
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
@@ -12,9 +14,11 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.json4s.{JValue, MappingException}
 
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 
@@ -38,6 +42,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
   private val outboxManagerActor = context.actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
 
   private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100000)}")
+
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
+
 
   override def receive: Receive = {
 
@@ -63,54 +70,63 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           drdPatched.p.extract[JValue]
       }
 
-      val deviceStateUpdate = processPayload(device, pl, drdPatched.s).map {
-        case Some(d: DeviceStateUpdate) =>
-          log.debug(s"current AvatarState updated: ${device.deviceId}")
-          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-          d
-        case None =>
-          log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
-          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-          d
-      }.recover {
-        case t: Throwable =>
-          log.error(t, s"current AvatarStateRest not available: ${device.deviceId}")
-          val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
-          val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-          outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
-          d
-      }
-
-      if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
-        log.debug(s"stores data for ${device.deviceId}")
-        deviceStateUpdate.map { d =>
-          persistenceActor tell((drdPatched, d), s)
+      val persisted =
+        if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
+          log.debug(s"stores data for ${device.deviceId}")
+          persistenceActor ? drdPatched map {
+            case trueOrFalse: Boolean => trueOrFalse
+            case unknown =>
+              log.error(s"received unknown message type $unknown")
+              false
+          }
+        } else {
+          log.debug(s"stores no data for ${device.deviceId}")
+          Future.successful(true)
         }
-      } else {
-        log.debug(s"stores no data for ${device.deviceId}")
-        deviceStateUpdate.map(s ! _)
+
+      persisted.map {
+        case false => s ! JsonErrorResponse(errorType = "database error", errorMessage = "something went wrong storing the deviceDataRaw in database.")
+        case true =>
+
+          processPayload(device, pl, drdPatched.s).map {
+            case Some(d: DeviceStateUpdate) =>
+              log.debug(s"current AvatarState updated: ${device.deviceId}")
+              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+              s ! d
+            case None =>
+              log.error(s"current AvatarStateRest not available: ${device.deviceId}")
+              val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
+              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+              s ! d
+          }.recover {
+            case t: Throwable =>
+              log.error(t, s"current AvatarStateRest not available: ${device.deviceId}")
+              val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
+              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+              s ! d
+          }
+
+
+          if (DeviceCoreUtil.checkNotaryUsage(device)) {
+            log.debug(s"use notary service for ${device.deviceId}")
+            notaryActor ! drdPatched
+          }
+          else
+            log.debug(s"do not use notary service for ${device.deviceId}")
+
+          if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
+            log.debug(s"chain data: ${device.deviceId}")
+            chainActor ! (drdPatched, device)
+          }
+          else
+            log.debug(s"do not chain data for ${device.deviceId}")
+
+          // publish incomming raw data
+          outboxManagerActor ! (device, drdPatched)
       }
-
-
-      if (DeviceCoreUtil.checkNotaryUsage(device)) {
-        log.debug(s"use notary service for ${device.deviceId}")
-        notaryActor ! drdPatched
-      }
-      else
-        log.debug(s"do not use notary service for ${device.deviceId}")
-
-      if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
-        log.debug(s"chain data: ${device.deviceId}")
-        chainActor ! (drdPatched, device)
-      }
-      else
-        log.debug(s"do not chain data for ${device.deviceId}")
-
-      // publish incomming raw data
-      outboxManagerActor ! (device, drdPatched)
   }
 
   private def processPayload(device: Device, payload: JValue, signature: Option[String] = None): Future[Option[DeviceStateUpdate]] = {
