@@ -87,10 +87,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
         log.debug(s"stores data for ${device.deviceId}")
         deviceStateUpdate.map { d =>
-          persistenceActor forward(drdPatched, d)
+          persistenceActor tell((drdPatched, d), s)
         }
-      }
-      else {
+      } else {
         log.debug(s"stores no data for ${device.deviceId}")
         deviceStateUpdate.map(s ! _)
       }
