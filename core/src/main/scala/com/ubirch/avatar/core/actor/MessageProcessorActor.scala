@@ -90,8 +90,11 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           persistenceActor forward(drdPatched, d)
         }
       }
-      else
+      else {
         log.debug(s"stores no data for ${device.deviceId}")
+        deviceStateUpdate.map(s ! _)
+      }
+
 
       if (DeviceCoreUtil.checkNotaryUsage(device)) {
         log.debug(s"use notary service for ${device.deviceId}")
