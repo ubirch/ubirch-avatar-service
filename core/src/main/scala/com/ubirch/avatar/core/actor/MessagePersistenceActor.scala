@@ -6,7 +6,6 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.{DeviceDataRawAnchoredManager, DeviceDataRawManager}
 import com.ubirch.avatar.model.actors.AnchoredRawData
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
-import com.ubirch.util.model.JsonErrorResponse
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -24,11 +23,10 @@ class MessagePersistenceActor extends Actor with ActorLogging {
       DeviceDataRawManager.store(drd.copy(txHash = None)).map {
         case Some(ddr) =>
           log.debug(s"successfully stored deviceDataRaw for device with id ${ddr.deviceId} in database.")
-          s ! d
+          s ! true
         case None =>
-          val msg = s"something went wrong storing the deviceDataRaw in database for deviceStateUpdate: $d."
-          log.error(msg)
-          s ! JsonErrorResponse(errorType = "database error", errorMessage = msg)
+          log.error(s"something went wrong storing the deviceDataRaw in database for deviceStateUpdate: $d.")
+          s ! false
       }
 
     case anchored: AnchoredRawData =>
