@@ -5,7 +5,7 @@ import akka.routing.RoundRobinPool
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.{DeviceDataRawAnchoredManager, DeviceDataRawManager}
 import com.ubirch.avatar.model.actors.AnchoredRawData
-import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -17,7 +17,7 @@ class MessagePersistenceActor extends Actor with ActorLogging {
 
   override def receive: Receive = {
 
-    case (drd: DeviceDataRaw, d: DeviceStateUpdate) =>
+    case drd: DeviceDataRaw =>
       val s = context.sender()
       log.debug(s"received message: $drd")
       DeviceDataRawManager.store(drd.copy(txHash = None)).map {
@@ -25,7 +25,7 @@ class MessagePersistenceActor extends Actor with ActorLogging {
           log.debug(s"successfully stored deviceDataRaw for device with id ${ddr.deviceId} in database.")
           s ! true
         case None =>
-          log.error(s"something went wrong storing the deviceDataRaw in database for deviceStateUpdate: $d.")
+          log.error(s"something went wrong storing the deviceDataRaw in database :($drd).")
           s ! false
       }
 
