@@ -27,6 +27,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 object AvatarSvcClientRest extends MyJsonProtocol
   with StrictLogging {
 
+  val statusOkCodes: Set[StatusCode] = Set(StatusCodes.OK, StatusCodes.Accepted)
 
   def check()(implicit httpClient: HttpExt, materializer: Materializer): Future[Option[JsonResponse]] = {
 
@@ -34,7 +35,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
     val url = AvatarClientRestConfig.urlCheck
     httpClient.singleRequest(HttpRequest(uri = url)) flatMap {
 
-      case HttpResponse(StatusCodes.OK, _, entity, _) =>
+      case HttpResponse(status, _, entity, _) if statusOkCodes.contains(status) =>
 
         entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
           Some(read[JsonResponse](body.utf8String))
@@ -54,12 +55,11 @@ object AvatarSvcClientRest extends MyJsonProtocol
   def deepCheck()(implicit httpClient: HttpExt, materializer: Materializer): Future[DeepCheckResponse] = {
 
     implicit val ec: ExecutionContextExecutor = materializer.executionContext
-    val statusCodes: Set[StatusCode] = Set(StatusCodes.OK, StatusCodes.ServiceUnavailable)
 
     val url = AvatarClientRestConfig.urlDeepCheck
     httpClient.singleRequest(HttpRequest(uri = url)) flatMap {
 
-      case HttpResponse(status, _, entity, _) if statusCodes.contains(status) =>
+      case HttpResponse(status, _, entity, _) if statusOkCodes.contains(status) =>
 
         entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
           read[DeepCheckResponse](body.utf8String)
@@ -101,7 +101,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
         )
         httpClient.singleRequest(req) flatMap {
 
-          case HttpResponse(StatusCodes.OK, _, entity, _) =>
+          case HttpResponse(status, _, entity, _) if statusOkCodes.contains(status) =>
 
             entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
               Right(read[DeviceStateUpdate](body.utf8String))
@@ -149,7 +149,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
 
       httpClient.singleRequest(req) flatMap {
 
-        case HttpResponse(StatusCodes.OK, _, entity, _) =>
+        case HttpResponse(status, _, entity, _) if statusOkCodes.contains(status) =>
 
           entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
             Right(read[Set[DateTime]](body.utf8String))
@@ -187,7 +187,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
         )
         httpClient.singleRequest(req) flatMap {
 
-          case HttpResponse(StatusCodes.OK, _, entity, _) =>
+          case HttpResponse(status, _, entity, _) if statusOkCodes.contains(status) =>
 
             entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
               Right(read[JsonResponse](body.utf8String))
@@ -244,7 +244,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
           )
           httpClient.singleRequest(req) flatMap {
 
-            case HttpResponse(StatusCodes.OK, _, entity, _) =>
+            case HttpResponse(status, _, entity, _) if statusOkCodes.contains(status) =>
 
               entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
                 Right(read[Device](body.utf8String))
@@ -519,7 +519,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
           )
           httpClient.singleRequest(req) flatMap {
 
-            case HttpResponse(StatusCodes.OK, _, entity, _) =>
+            case HttpResponse(httpCode, _, entity, _) if (httpCode.intValue() >= 200 && httpCode.intValue() < 300) =>
 
               entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
                 Right(read[DeviceUserClaim](body.utf8String))
