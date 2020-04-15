@@ -201,9 +201,16 @@ object DeviceDataRawManager
           docType = esType,
           docId = id,
           doc = doc
-        ) map (_.extractOpt[DeviceDataRaw])
+        ).map(_.extractOpt[DeviceDataRaw])
+          .recover {
+            case ex =>
+              logger.error(s"Couldn't store deviceDataRaw: $data, due to: ${ex.getMessage}")
+              None
+          }
 
-      case None => Future(None)
+      case None =>
+        logger.error(s"Couldn't store deviceDataRaw as parsing it to JValue failed: $data.")
+        Future(None)
 
     }
   }
