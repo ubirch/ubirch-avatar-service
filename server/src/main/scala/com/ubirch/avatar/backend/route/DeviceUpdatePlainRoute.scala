@@ -31,7 +31,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
     with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val validatorActor = system.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
 

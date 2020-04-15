@@ -62,24 +62,29 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
       DeviceManager.infoByHwId(duc.hwDeviceId).map {
         case Some(device) =>
-
+          logger.debug(s"found device information $device to claim device with hwDeviceId ${duc.hwDeviceId}.")
           val userId = duc.userId
           if (device.owners.isEmpty || device.owners.contains(userId)) {
-            if (device.owners.isEmpty)
+            if (device.owners.isEmpty) {
+              logger.info(s"updating device with userId $userId as new owner.")
               DeviceManager.update(device.copy(owners = Set(userId)))
+            } else {
+              logger.info(s"user with id $userId is already owner of device $device")
+            }
             s ! DeviceUserClaim(
               hwDeviceId = duc.hwDeviceId,
               deviceId = device.deviceId,
               userId = userId
             )
-          }
-          else {
+          } else {
             s ! JsonErrorResponse(
               errorType = "DeviceClaimError",
               errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
             )
           }
+
         case None =>
+          logger.error(s"couldn't find device information to claim device with hwDeviceId ${duc.hwDeviceId}")
           s ! JsonErrorResponse(
             errorType = "DeviceClaimError",
             errorMessage = s"device ${duc.hwDeviceId} does not exist"

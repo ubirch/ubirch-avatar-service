@@ -94,7 +94,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     def getActor = aref.resolveOne(timeout = 100 millis)
 
     getActor.map { ar =>
-      log.debug(s"Reused actor with path: $curRefBasePath")
+      log.debug(s"reused sqs producer actor with path: $curRefBasePath")
       ar
     }.recover {
       case e =>
@@ -122,7 +122,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     val fs: FiniteDuration = 500 millis
 
     aref.resolveOne(fs).map { ar =>
-      log.debug(s"reused actor with path: $curRefBasePath")
+      log.debug(s"reused mqtt producer actor with path: $curRefBasePath")
       ar
     }.recover {
       case t: Throwable =>

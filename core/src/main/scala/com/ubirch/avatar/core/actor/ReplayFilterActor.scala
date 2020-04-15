@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
 import com.ubirch.avatar.model.db.device.Device
@@ -12,12 +12,14 @@ import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.redis.RedisClientUtil
 import org.joda.time.{DateTime, Days}
 
+import scala.concurrent.ExecutionContextExecutor
+
 class ReplayFilterActor(implicit mongo: MongoUtil)
   extends Actor
     with ActorLogging {
 
-  implicit val system = context.system
-  implicit val disp = context.dispatcher
+  implicit val system: ActorSystem = context.system
+  implicit val disp: ExecutionContextExecutor = context.dispatcher
 
   private val processorActor = context
     .actorSelection(ActorNames.MSG_PROCESSOR_PATH)
@@ -25,7 +27,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
   private val outboxManagerActor = context
     .actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
 
-  val redis = RedisClientUtil.getRedisClient()
+  private val redis = RedisClientUtil.getRedisClient()
 
   override def receive: Receive = {
 

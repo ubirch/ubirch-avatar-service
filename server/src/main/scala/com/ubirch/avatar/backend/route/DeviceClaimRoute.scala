@@ -52,7 +52,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
           put {
 
             entity(as[DeviceClaim]) { deviceClaim =>
-
+              logger.info(s"PUT .../device/claim for $deviceClaim")
               onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, externalId = userContext.externalUserId, userId = userContext.userId)) {
 
 
