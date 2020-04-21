@@ -10,7 +10,6 @@ import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.backend.actor.{CreateDevice, CreateResult}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
@@ -21,7 +20,6 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.duration._
@@ -59,18 +57,19 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
 
             // TODO the given deviceId from the url path is being ignored and this duplicated `POST device` --> can we delete this code?
             entity(as[Device]) { device =>
+              logger.info(s"POST .../device/id for device: $device")
               postDevice(device, AvatarSession(userContext))
             }
 
           } ~ put {
-
             // TODO suggestion: move this to `PUT /device` since otherwise we need additional logic to check that the given deviceId matches the one provided in the json
             entity(as[Device]) { device =>
+              logger.info(s"PUT .../device/id for device: $device")
               updateDevice(deviceId, device)
             }
 
           } ~ delete {
-
+            logger.info(s"DELETE .../device/id with id: $deviceId")
             deleteDevice(deviceId)
 
           }

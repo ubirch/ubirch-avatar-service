@@ -57,7 +57,7 @@ object AvatarStateManager extends MongoFormats
     */
   def create(avatarState: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    byDeviceId(avatarState.deviceId.toString) flatMap {
+    byDeviceId(avatarState.deviceId) flatMap {
 
       case Some(_: AvatarState) =>
 
