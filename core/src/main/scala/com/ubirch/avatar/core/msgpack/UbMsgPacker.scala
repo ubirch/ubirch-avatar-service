@@ -412,10 +412,7 @@ object UbMsgPacker
       val config = dsu.p.asInstanceOf[JObject]
 
       val (remainingConfig, eolBoolean) = config.findField {
-        case JField("EOL", value) =>
-          packer.write("EOL")
-          packer.write(value)
-          true
+        case JField("EOL", _) => true
         case _ => false
       } match {
         case Some(field) if field._2.extract[Boolean] => (config.removeField(_ == field).asInstanceOf[JObject], true)
@@ -446,7 +443,7 @@ object UbMsgPacker
       packer.toByteArray
     } catch {
       case ex: Throwable =>
-        logger.info("packing ubirch protocol (extracting deviceStateUpdate) for response failed ", ex)
+        logger.info(s"packing ubirch protocol (extracting deviceStateUpdate) for response failed: ${ex.getMessage} ", ex)
         throw ex
     }
   }
