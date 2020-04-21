@@ -382,67 +382,73 @@ object UbMsgPacker
 
   def packUbProt(dsu: DeviceStateUpdate): Array[Byte] = {
 
-    val packer = ScalaMessagePack.messagePack.createBufferPacker()
+    try {
+      val packer = ScalaMessagePack.messagePack.createBufferPacker()
 
-    val subversion = if (dsu.ds.isDefined) 3 else 2
+      val subversion = if (dsu.ds.isDefined) 3 else 2
 
-    val uuid = UUIDUtil.uuid
-    val binUuid = UUIDUtil.toByteArray(uuid)
+      val uuid = UUIDUtil.uuid
+      val binUuid = UUIDUtil.toByteArray(uuid)
 
-    val arraySize = if (dsu.ds.isDefined)
-      6
-    else
-      5
-    packer.writeArrayBegin(arraySize)
-    packer.write((1 << 4) + subversion)
-    packer.write(binUuid)
-    if (dsu.ds.isDefined) {
-      try {
-        //        val binSig = Hex.decodeHex(dsu.ds.get)
-        val binSig = Base64.getDecoder.decode(dsu.ds.get)
-        packer.write(binSig)
+      val arraySize = if (dsu.ds.isDefined)
+        6
+      else
+        5
+      packer.writeArrayBegin(arraySize)
+      packer.write((1 << 4) + subversion)
+      packer.write(binUuid)
+      if (dsu.ds.isDefined) {
+        try {
+          //        val binSig = Hex.decodeHex(dsu.ds.get)
+          val binSig = Base64.getDecoder.decode(dsu.ds.get)
+          packer.write(binSig)
+        }
+        catch {
+          case e: Exception =>
+            logger.error(s"invalid signature: ${dsu.ds.get}")
+        }
       }
-      catch {
-        case e: Exception =>
-          logger.error(s"invalid signature: ${dsu.ds.get}")
+      packer.write(85)
+      val config = dsu.p.asInstanceOf[JObject]
+
+      val (remainingConfig, eolBoolean) = config.findField {
+        case JField("EOL", value) =>
+          packer.write("EOL")
+          packer.write(value)
+          true
+        case _ => false
+      } match {
+        case Some(field) if field._2.extract[Boolean] => (config.removeField(_ == field).asInstanceOf[JObject], true)
+        case Some(field) => (config.removeField(_ == field).asInstanceOf[JObject], false)
+        case _ => (config, false)
       }
-    }
-    packer.write(85)
-    val config = dsu.p.asInstanceOf[JObject]
 
-    val (remainingConfig, eolBoolean) = config.findField {
-      case JField("EOL", value) =>
-        packer.write("EOL")
-        packer.write(value)
-        true
-      case _ => false
-    } match {
-      case Some(field) if field._2.extract[Boolean] => (config.removeField(_ == field).asInstanceOf[JObject], true)
-      case Some(field) => (config.removeField(_ == field).asInstanceOf[JObject], false)
-      case _ => (config, false)
-    }
-
-    val pl = remainingConfig.extract[Map[String, Int]]
-    val plKeys = pl.keySet
-    packer.writeMapBegin(plKeys.size + 1)
-    packer.write("EOL")
-    packer.write(eolBoolean)
-    plKeys.foreach { k: String =>
-      if (pl.contains(k)) {
-        packer.write(k)
-        val value: Int = pl(k)
-        packer.write(value)
+      val pl = remainingConfig.extract[Map[String, Int]]
+      val plKeys = pl.keySet
+      packer.writeMapBegin(plKeys.size + 1)
+      packer.write("EOL")
+      packer.write(eolBoolean)
+      plKeys.foreach { k: String =>
+        if (pl.contains(k)) {
+          packer.write(k)
+          val value: Int = pl(k)
+          packer.write(value)
+        }
       }
+      packer.writeMapEnd()
+
+      val payloadBin = packer.toByteArray
+
+
+      val signatureB64 = eccUtil.signPayloadSha512(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
+      packer.write(Base64.getDecoder.decode(signatureB64))
+      packer.writeArrayEnd(true)
+      packer.toByteArray
+    } catch {
+      case ex: Throwable =>
+        logger.info("packing ubirch protocol (extracting deviceStateUpdate) for response failed ", ex)
+        throw ex
     }
-    packer.writeMapEnd()
-
-    val payloadBin = packer.toByteArray
-
-
-    val signatureB64 = eccUtil.signPayloadSha512(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
-    packer.write(Base64.getDecoder.decode(signatureB64))
-    packer.writeArrayEnd(true)
-    packer.toByteArray
   }
 
 }
