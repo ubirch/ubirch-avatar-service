@@ -54,26 +54,21 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
             getDeviceInfo(deviceId)
 
           } ~ post {
-
             // TODO the given deviceId from the url path is being ignored and this duplicated `POST device` --> can we delete this code?
             entity(as[Device]) { device =>
               logger.info(s"POST .../device/id for device: $device")
               postDevice(device, AvatarSession(userContext))
             }
-
           } ~ put {
             // TODO suggestion: move this to `PUT /device` since otherwise we need additional logic to check that the given deviceId matches the one provided in the json
             entity(as[Device]) { device =>
               logger.info(s"PUT .../device/id for device: $device")
               updateDevice(deviceId, device)
             }
-
           } ~ delete {
             logger.info(s"DELETE .../device/id with id: $deviceId")
             deleteDevice(deviceId)
-
           }
-
         }
       }
 

@@ -14,6 +14,7 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
+import org.json4s.JObject
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
@@ -407,13 +408,30 @@ object UbMsgPacker
       }
     }
     packer.write(85)
-    val pl = dsu.p.extract[Map[String, Int]]
+    val config = dsu.p.asInstanceOf[JObject]
+
+    val (remainingConfig, eolBoolean) = config.findField {
+      case JField("EOL", value) =>
+        packer.write("EOL")
+        packer.write(value)
+        true
+      case _ => false
+    } match {
+      case Some(field) if field._2.extract[Boolean] => (config.removeField(_ == field).asInstanceOf[JObject], true)
+      case Some(field) => (config.removeField(_ == field).asInstanceOf[JObject], false)
+      case _ => (config, false)
+    }
+
+    val pl = remainingConfig.extract[Map[String, Int]]
     val plKeys = pl.keySet
-    packer.writeMapBegin(plKeys.size)
-    plKeys.foreach { k =>
-      if (pl.get(k).isDefined) {
+    packer.writeMapBegin(plKeys.size + 1)
+    packer.write("EOL")
+    packer.write(eolBoolean)
+    plKeys.foreach { k: String =>
+      if (pl.contains(k)) {
         packer.write(k)
-        packer.write(pl(k))
+        val value: Int = pl(k)
+        packer.write(value)
       }
     }
     packer.writeMapEnd()
