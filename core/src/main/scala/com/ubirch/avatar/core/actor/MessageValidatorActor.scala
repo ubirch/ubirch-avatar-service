@@ -41,7 +41,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
       log.debug(s"received message with version ${drd.v}")
 
-      DeviceCoreUtil.validateSimpleMessage(hwDeviceId = drd.a).map {
+      DeviceCoreUtil.validateSimpleMessage(hashedHwDeviceId = drd.a).map {
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
@@ -99,7 +99,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
             s ! logAndCreateErrorResponse(s"signature missing: ${drd.a}}", "ValidationError", deviceId = Some(dev.deviceId), hashedHwDeviceId = Some(dev.hashedHwDeviceId))
 
         case None =>
-          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", deviceId = None, hashedHwDeviceId = Some(drd.a))
+          s ! logAndCreateErrorResponse(s"invalid hashedHwDeviceId: ${drd.a}", "ValidationError", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v40 =>
@@ -111,7 +111,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
         case None =>
-          s ! logAndCreateErrorResponse(s"invalid hwDeviceId: ${drd.a}", "ValidationError", deviceId = None, hashedHwDeviceId = Some(drd.a))
+          s ! logAndCreateErrorResponse(s"invalid hashedHwDeviceId: ${drd.a}", "ValidationError", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }
 
     case drd: DeviceDataRaw =>

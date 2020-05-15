@@ -206,9 +206,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
         Set.empty
 
       case Some(groups: Set[Group]) =>
-        logger.debug(s"found groups: groups=$groups, userContext=${
-          session.userContext
-        }")
+        logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")
         groups filter (_.id.isDefined) map (_.id.get)
     }
   }
