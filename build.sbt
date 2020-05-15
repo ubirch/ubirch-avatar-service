@@ -382,7 +382,7 @@ val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.0" excl
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
-val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.11-SNAPSHOT" excludeAll (excludedLoggers: _*)
+val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.12-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.2"
 val ubirchResponse = ubirchUtilG %% "response-util" % "0.5.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
@@ -396,7 +396,7 @@ val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
   )
 val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.2" excludeAll (excludedLoggers: _*)
 
-val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.2" excludeAll (excludedLoggers: _*)
+val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.5-SNAPSHOT" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
