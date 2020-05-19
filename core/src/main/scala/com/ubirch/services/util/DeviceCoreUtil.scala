@@ -35,14 +35,14 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     HashUtil.sha512Base64(concatenated)
   }
 
-  def validateSimpleMessage(hwDeviceId: String): Future[Option[Device]] = {
-    logger.info(s"validateSimpleMessage: device id=$hwDeviceId")
-    DeviceManager.infoByHashedHwId(hwDeviceId).map {
+  def validateSimpleMessage(hashedHwDeviceId: String): Future[Option[Device]] = {
+    logger.info(s"validateSimpleMessage: device id=$hashedHwDeviceId")
+    DeviceManager.infoByHashedHwId(hashedHwDeviceId).map {
       case Some(device) =>
-        logger.debug(s"found device with primaryKey: $hwDeviceId")
+        logger.debug(s"found device with primaryKey: $hashedHwDeviceId")
         Some(device)
       case None =>
-        logger.error(s"device with primaryKey=$hwDeviceId not found")
+        logger.error(s"device with primaryKey=$hashedHwDeviceId not found")
         None
     }
   }

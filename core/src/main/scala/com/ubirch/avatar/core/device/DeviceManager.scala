@@ -199,6 +199,10 @@ object DeviceManager
         case Some(jval) => jval.extractOpt[Device]
         case None => None
       }
+    }.recover {
+      case e =>
+        logger.error(s"error parsing device from jValue for $hwDeviceId", e)
+        None
     }
   }
 

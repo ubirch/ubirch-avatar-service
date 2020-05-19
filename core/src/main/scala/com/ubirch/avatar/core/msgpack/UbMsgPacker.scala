@@ -428,8 +428,7 @@ object UbMsgPacker
       plKeys.foreach { k: String =>
         if (pl.contains(k)) {
           packer.write(k)
-          val value: Int = pl(k)
-          packer.write(value)
+          packer.write(pl(k))
         }
       }
       packer.writeMapEnd()
@@ -443,7 +442,7 @@ object UbMsgPacker
       packer.toByteArray
     } catch {
       case ex: Throwable =>
-        logger.info(s"packing ubirch protocol (extracting deviceStateUpdate) for response failed: ${ex.getMessage} ", ex)
+        logger.error(s"packing ubirch protocol (extracting deviceStateUpdate) for response failed: ${ex.getMessage} ", ex)
         throw ex
     }
   }
