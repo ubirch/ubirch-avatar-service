@@ -373,6 +373,53 @@ object AvatarSvcClientRest extends MyJsonProtocol
   }
 
   /**
+    * @param oidcToken    OpenID Connect token to use for authorization
+    * @param ubirchToken  ubirch token to use for authorization (ignored if oidcToken is set)
+    * @param httpClient   http connection
+    * @param materializer Akka materializer required by http connection
+    */
+  def deviceGETById(deviceId: UUID,
+                    oidcToken: Option[String] = None,
+                    ubirchToken: Option[String] = None)
+                   (implicit httpClient: HttpExt, materializer: Materializer): Future[Either[JsonErrorResponse, Device]] = {
+
+    implicit val ec: ExecutionContextExecutor = materializer.executionContext
+    if (oidcToken.isEmpty && ubirchToken.isEmpty) {
+
+      logger.error("either an OpenID Connect or ubirch token is needed to query devices")
+      Future(Left(JsonErrorResponse(errorType = "RestClientError", errorMessage = "error before sending the request: either an OpenID Connect or ubirch token is missing")))
+
+    } else {
+
+      val url = AvatarClientRestConfig.urlDevice + s"/$deviceId"
+      val req = HttpRequest(
+        method = HttpMethods.GET,
+        uri = url,
+        headers = AuthUtil.authHeaders(oidcToken = oidcToken, ubirchToken = ubirchToken)
+      )
+      httpClient.singleRequest(req) flatMap {
+
+        case HttpResponse(StatusCodes.OK, _, entity, _) =>
+
+          entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
+            Right(read[Device](body.utf8String))
+          }
+
+        case HttpResponse(StatusCodes.Forbidden, _, _, _) =>
+
+          Future(Left(JsonErrorResponse(errorType = "InvalidToken", errorMessage = "login token is not valid")))
+
+        case res@HttpResponse(code, _, entity, _) =>
+
+          logger.error(s"deviceGET() call to avatar-service failed: url=$url code=$code, status=${res.status}")
+          entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
+            Left(read[JsonErrorResponse](body.utf8String))
+          }
+      }
+    }
+  }
+
+  /**
     * @param device       updated device
     * @param oidcToken    OpenID Connect token to use for authorization
     * @param ubirchToken  ubirch token to use for authorization (ignored if oidcToken is set)
@@ -519,7 +566,7 @@ object AvatarSvcClientRest extends MyJsonProtocol
           )
           httpClient.singleRequest(req) flatMap {
 
-            case HttpResponse(httpCode, _, entity, _) if (httpCode.intValue() >= 200 && httpCode.intValue() < 300) =>
+            case HttpResponse(httpCode, _, entity, _) if httpCode.intValue() >= 200 && httpCode.intValue() < 300 =>
 
               entity.dataBytes.runFold(ByteString(""))(_ ++ _) map { body =>
                 Right(read[DeviceUserClaim](body.utf8String))

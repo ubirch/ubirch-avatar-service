@@ -50,7 +50,7 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
         oidcDirective.oidcToken2UserContext { userContext =>
 
           get {
-
+            logger.info(s"GET .../device/$deviceId")
             getDeviceInfo(deviceId)
 
           } ~ post {
@@ -88,14 +88,12 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
         resp match {
 
           case None =>
-            complete(
-              requestErrorResponse(
-                errorType = "QueryError",
-                errorMessage = s"deviceId not found: deviceId=$deviceId"
-              )
-            )
+            logger.debug(s"no device will be returned for deviceId: $deviceId")
+            complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
 
-          case Some(device) => complete(device)
+          case Some(device: Device) =>
+            logger.debug(s"returning device: $device")
+            complete(StatusCodes.OK -> device)
 
         }
 
