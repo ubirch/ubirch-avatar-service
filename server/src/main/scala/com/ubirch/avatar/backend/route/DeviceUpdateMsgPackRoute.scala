@@ -50,6 +50,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
           reqMetrics.start
           post {
             entity(as[Array[Byte]]) { binData =>
+              logger.info(s"POST update/mpack")
               onComplete(msgPackProcessorActor ? binData) {
                 case Success(resp) =>
                   resp match {
@@ -60,21 +61,24 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
                         complete(StatusCodes.Accepted -> Json4sUtil.any2String(dsu))
                       else {
                         val ubPack = UbMsgPacker.packUbProt(dsu)
-                        logger.debug(s"response (hex) : ${Hex.encodeHexString(ubPack)}")
+                        logger.debug(s"returning Accepted for POST update/mpack (hex) : ${Hex.encodeHexString(ubPack)}")
                         complete(StatusCodes.Accepted -> ubPack)
                       }
                     case jr: JsonResponse =>
                       reqMetrics.incError()
                       reqMetrics.stop
+                      logger.info(s"returning Accepted for POST update/mpack ${jr.toJsonString}")
                       complete(StatusCodes.Accepted -> jr.toJsonString)
                     case jer: JsonErrorResponse =>
                       reqMetrics.incError()
                       reqMetrics.stop
+                      logger.info(s"returning Bad Request for POST update/mpack ${jer.toJsonString}")
                       complete(StatusCodes.BadRequest -> jer.toJsonString)
                     case _ =>
                       reqMetrics.inc()
                       reqMetrics.stop
                       val jer = JsonErrorResponse(errorType = "response error", errorMessage = "ERROR 1: no result")
+                      logger.info(s"returning Internal Server Error for POST ${jer.toJsonString}")
                       complete(StatusCodes.InternalServerError -> jer.toJsonString)
                   }
                 case Failure(t) =>
@@ -82,6 +86,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
                   reqMetrics.stop
                   logger.error("got no result", t)
                   val jer = JsonErrorResponse(errorType = "internal error", errorMessage = t.getMessage)
+                  logger.info(s"returning Internal Server Error for POST ${jer.toJsonString}")
                   complete(StatusCodes.InternalServerError -> jer.toJsonString)
               }
             }

@@ -77,10 +77,9 @@ class DeviceApiActor(implicit mongo: MongoUtil,
               userId = userId
             )
           } else {
-            s ! JsonErrorResponse(
-              errorType = "DeviceClaimError",
-              errorMessage = s"device ${duc.hwDeviceId} already claimed by ${device.owners.size} user(s)"
-            )
+            val errorMsg = s"device ${duc.hwDeviceId} already claimed by ${device.owners} user(s) and not by $userId"
+            logger.error(s"error claiming device $errorMsg")
+            s ! JsonErrorResponse(errorType = "DeviceClaimError", errorMessage = errorMsg)
           }
 
         case None =>
