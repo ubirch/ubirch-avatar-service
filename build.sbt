@@ -5,6 +5,8 @@ concurrentRestrictions in Global := Seq(
 
 val commonSettings = Seq(
 
+  publishConfiguration := publishConfiguration.value.withOverwrite(true),
+  publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
   scalaVersion := "2.11.12",
   scalacOptions ++= Seq("-feature"),
   organization := "com.ubirch.avatar",
@@ -376,8 +378,8 @@ val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAll (excludedLoggers: _*)
 
-val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.1" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.0" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.2" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.2" excludeAll (excludedLoggers: _*)
 
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)

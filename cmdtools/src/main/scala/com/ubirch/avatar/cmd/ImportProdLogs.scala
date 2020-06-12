@@ -4,13 +4,17 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.config.Const
+import com.ubirch.avatar.config.{ConfigKeys, Const}
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
+import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
+import org.joda.time.{DateTime, DateTimeZone}
+import org.json4s.JsonAST.JValue
+import org.json4s.jackson.Json
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -23,13 +27,15 @@ object ImportProdLogs
 
   val conf = ConfigFactory.load()
 
+  implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
+
   implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   case class DeviceInfo(
                          deviceType: String,
-                         testTimestamp: String,
+                         testTimestamp: DateTime,
                          testResult: Boolean,
                          hwDeviceId: String,
                          tempSensorId: String,
@@ -87,7 +93,7 @@ object ImportProdLogs
 
         val di = DeviceInfo(
           deviceType = rowData(deviceTypeOffset),
-          testTimestamp = rowData(deviceTestDatetimeOffset),
+          testTimestamp = DateTime.parse(rowData(deviceTestDatetimeOffset)).withZone(DateTimeZone.UTC),
           testResult = !rowData(testResultOffset).toLowerCase.contains("failed"),
           hwDeviceId = hwDeviceId,
           tempSensorId = rowData(tempSensorIdOffset),
@@ -105,7 +111,20 @@ object ImportProdLogs
                   if (deleteExistingDevices) {
                     DeviceManager.delete(dev)
                     logger.info(s"device deleted: ${dev.hwDeviceId}")
+                  } else {
+                    if (dev.deviceProperties.isDefined) {
+                      val devUpdated = dev.copy(
+                        deviceProperties = Some(
+                          dev.deviceProperties.get
+                            merge
+                            Json4sUtil.any2jvalue(Map[String, Any](
+                              "testTimestamp" -> s"${di.testTimestamp}"
+                            )).get)
+                      )
+                      DeviceManager.update(devUpdated)
+                    }
                   }
+
                 case None =>
                   if (createMissingDevices && di.testResult) {
                     val dev = Device(
@@ -129,7 +148,8 @@ object ImportProdLogs
                             "tester" -> s"${di.tester}",
                             "testerResult" -> di.testResult,
                             "orderNr" -> s"${di.orderNr}",
-                            "tempSensorId" -> s"${di.tempSensorId}"
+                            "tempSensorId" -> s"${di.tempSensorId}",
+                            "testTimestamp" -> s"${di.testTimestamp}"
                           )).get
                       ),
                       deviceConfig = Some(

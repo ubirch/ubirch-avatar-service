@@ -46,9 +46,7 @@ ENTRYPOINT [ \
     "-XX:+UseParNewGC", \
     "-XX:+UseConcMarkSweepGC", \
     "-Xset:weaveJavaxPackages=true", \
-    "-Xms1g", \
-    "-Xmx3g", \
+    "-Xms512m", \
+    "-Xmx2g", \
     "-Djava.awt.headless=true" \
 ]
-
-
