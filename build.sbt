@@ -23,7 +23,7 @@ val commonSettings = Seq(
       println("USERNAME and/or PASSWORD is taken from /.sbt/.credentials.")
       credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
   },
-  version := "0.6.5-SNAPSHOT",
+  version := "0.6.6-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
@@ -391,12 +391,9 @@ val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (exclud
 val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAll (excludedLoggers: _*)
-val ubirchEsHighLevelClient = ubirchUtilG %% "elasticsearch-high-level-client" % "0.1.4-SNAPSHOT" excludeAll (excludedLoggers: _*)
+val ubirchEsHighLevelClient = ubirchUtilG %% "elasticsearch-high-level-client" % "0.1.3-SNAPSHOT" excludeAll (excludedLoggers: _*)
 
-val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.2" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.2" excludeAll (excludedLoggers: _*)
-
-val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
+val ubirchJson = ubirchUtilG %% "json" % "0.5.2" excludeAll (excludedLoggers: _*)
 val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.12-SNAPSHOT" excludeAll (excludedLoggers: _*)
