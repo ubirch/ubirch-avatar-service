@@ -3,10 +3,9 @@ package com.ubirch.avatar.core.device
 import java.util.UUID
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
-import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
+import com.ubirch.util.elasticsearch.{EsBulkClient, EsSimpleClient}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,7 +19,6 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
   with StrictLogging {
 
   private val index = Config.esDeviceDataRawAnchoredIndex
-  private val esType = Config.esDeviceDataRawAnchoredType
 
   /**
     * Search an anchored [[DeviceDataRaw]] (with txHash) based on it's id.
@@ -32,9 +30,8 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
 
     logger.debug(s"query byId: id=$id")
 
-    ESSimpleStorage.getDoc(
+    EsSimpleClient.getDoc(
       docIndex = index,
-      docType = esType,
       docId = id.toString
     ) map {
       case Some(res) => Some(res.extract[DeviceDataRaw])
@@ -49,7 +46,7 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
     * @param data a device's raw data to store
     * @return json of what we stored
     */
-  def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
+  def store(data: DeviceDataRaw): Option[DeviceDataRaw] = {
 
     logger.debug(s"store data: $data")
     Json4sUtil.any2jvalue(data) match {
@@ -57,14 +54,14 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
       case Some(doc) =>
 
         val id = data.id.toString
-        ESBulkStorage.storeDocBulk(
+        EsBulkClient.storeDocBulk(
           docIndex = index,
-          docType = esType,
           docId = id,
           doc = doc
-        ) map (_.extractOpt[DeviceDataRaw])
+        )
+        Some(data)
 
-      case None => Future(None)
+      case None => None
 
     }
 

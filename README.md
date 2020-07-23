@@ -19,6 +19,13 @@ ubirch Avatar Service is responsible for:
 this content has been moved to a separate file: _docs/release-history.md_
 
 
+### SBT Dependency Graphs
+
+To browse the dependency graph, this project uses the plugin sbt-dependency-graph 
+(https://github.com/jrudolph/sbt-dependency-graph)
+
+To browse e.g. the dependencyGraph for each module use the command 'dependencyBrowseTree' in the sbt shell.
+
 ## Scala Dependencies
 
 this content has been moved to a separate file: _docs/release-history.md_

@@ -5,8 +5,6 @@ import com.ubirch.avatar.model.DummyDeviceDataRaw
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
@@ -26,11 +24,11 @@ object DeviceDataRawTestUtil {
     val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)
 
     val storedSeries = dataSeries map { deviceData =>
-      Await.result(DeviceDataRawManager.store(deviceData), 1 seconds).get
+      DeviceDataRawManager.store(deviceData)
     }
     Thread.sleep(1200 + elementCount * 5)
 
-    (device, storedSeries)
+    (device, dataSeries)
 
   }
 
