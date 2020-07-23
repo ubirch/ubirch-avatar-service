@@ -55,20 +55,10 @@ class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materialize
         respondWithCORS {
           entity(as[DeviceDataRaw]) { deviceMessage =>
 
-            onComplete(DeviceDataRawManager.store(deviceMessage)) {
-
-              case Success(res) => res match {
-                case None =>
-                  complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
-                case Some(storedMessage) =>
-                  complete(storedMessage)
-              }
-
-              case Failure(t) =>
-                complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
-
-            }
-
+            if (DeviceDataRawManager.store(deviceMessage))
+              complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
+            else
+              complete(deviceMessage)
           }
         }
       }

@@ -8,7 +8,6 @@ import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.test.base.ElasticsearchSpec
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.concurrent.Await
@@ -31,7 +30,7 @@ class DeviceHistoryManagerSpec
       val deviceHistory = DummyDeviceHistory.data()
 
       // test
-      val response = Await.result(DeviceHistoryManager.store(deviceHistory), 1 seconds).get
+      val response = DeviceHistoryManager.store(deviceHistory).get
       Thread.sleep(1500)
 
       // verify
@@ -46,7 +45,7 @@ class DeviceHistoryManagerSpec
 
       // prepare
       val deviceHistory1 = DummyDeviceHistory.data()
-      val storedDeviceHistory1 = Await.result(DeviceHistoryManager.store(deviceHistory1), 1 seconds).get
+      val storedDeviceHistory1 = DeviceHistoryManager.store(deviceHistory1).get
 
       val deviceHistory2 = DummyDeviceHistory.data(
         deviceId = storedDeviceHistory1.deviceId,
@@ -54,7 +53,7 @@ class DeviceHistoryManagerSpec
       )
 
       // test
-      val response = Await.result(DeviceHistoryManager.store(deviceHistory2), 1 seconds).get
+      val response = DeviceHistoryManager.store(deviceHistory2).get
       Thread.sleep(1500)
 
       // verify

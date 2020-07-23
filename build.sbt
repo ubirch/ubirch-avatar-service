@@ -15,12 +15,26 @@ val commonSettings = Seq(
     url("https://github.com/ubirch/ubirch-avatar-service"),
     "scm:git:git@github.com:ubirch/ubirch-avatar-service.git"
   )),
-  version := "0.6.4-SNAPSHOT",
+  (sys.env.get("CLOUDREPO_USER"), sys.env.get("CLOUDREPO_PW")) match {
+    case (Some(username), Some(password)) =>
+      println("USERNAME and/or PASSWORD found.")
+      credentials += Credentials("ubirch.mycloudrepo.io", "ubirch.mycloudrepo.io", username, password)
+    case _ =>
+      println("USERNAME and/or PASSWORD is taken from /.sbt/.credentials.")
+      credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
+  },
+  version := "0.6.5-SNAPSHOT",
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
-    Resolver.sonatypeRepo("snapshots")
-  )
+    Resolver.sonatypeRepo("snapshots"),
+    resolverTrackle
+  ),
+  publishMavenStyle := true,
+  publishTo := Some("io.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/trackle-mvn")
+
+  //  https://www.scala-lang.org/2019/10/17/dependency-management.html
+  //  , conflictManager := ConflictManager.strict
 )
 
 /*
@@ -98,7 +112,9 @@ lazy val clientRest = (project in file("client-rest"))
   .dependsOn(config, modelRest, util, testBase % "test")
   .settings(
     description := "REST client for the avatarService",
-    libraryDependencies ++= depClientRest
+    libraryDependencies ++= depClientRest,
+    publishTo := Some("io.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/trackle-mvn"),
+    publishMavenStyle := true
   )
 
 lazy val core = project
@@ -201,7 +217,7 @@ lazy val depConfig = Seq(
 
 lazy val depCore = Seq(
   ubirchDeepCheckModel,
-  ubirchElasticsearchClientBinary,
+  ubirchEsHighLevelClient,
   ubirchCamelUtils,
   ubirchCrypto,
   ubirchMongo,
@@ -227,7 +243,6 @@ lazy val depClientRest = Seq(
   akkaStream,
   akkaSlf4j,
   ubirchResponse,
-
   scalatest % "test"
 ) ++ scalaLogging
 
@@ -250,8 +265,7 @@ lazy val depModelRest = Seq(
 lazy val depUtil = Seq(
   ubirchCrypto,
   ubirchJson,
-  ubirchElasticsearchClientBinary,
-  ubirchElasticsearchUtil,
+  ubirchEsHighLevelClient,
   ubirchMongo,
   ubirchOidcUtils,
   ubirchUUID % "test",
@@ -282,7 +296,7 @@ val spireV = "0.13.0"
 val logbackV = "1.2.3"
 val logstashEncV = "5.0"
 val slf4jV = "1.7.25"
-val log4jV = "2.9.1"
+val log4jV = "2.13.0"
 val scalaLogV = "3.9.0"
 val scalaLogSLF4JV = "2.1.2"
 
@@ -377,6 +391,7 @@ val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (exclud
 val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAll (excludedLoggers: _*)
+val ubirchEsHighLevelClient = ubirchUtilG %% "elasticsearch-high-level-client" % "0.1.4-SNAPSHOT" excludeAll (excludedLoggers: _*)
 
 val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.2" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.2" excludeAll (excludedLoggers: _*)
@@ -399,7 +414,6 @@ val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
 val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.2" excludeAll (excludedLoggers: _*)
 
 val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.5-SNAPSHOT" excludeAll (excludedLoggers: _*)
-
 /*
  * RESOLVER
  ********************************************************/
@@ -410,6 +424,7 @@ lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/r
 lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
 lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
+lazy val resolverTrackle = "ubirch.mycloudrepo.io" at "https://ubirch.mycloudrepo.io/repositories/trackle-mvn"
 
 /*
  * MISC

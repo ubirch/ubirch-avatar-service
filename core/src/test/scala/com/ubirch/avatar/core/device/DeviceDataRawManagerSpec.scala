@@ -27,15 +27,12 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val rawData = DummyDeviceDataRaw.data(device = device)
 
       // test
-      val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData), 1 seconds).get
+      DeviceDataRawManager.store(rawData)
       Thread.sleep(1200)
 
       // verify
-      val expectedStoredRaw = rawData.copy(id = storedRaw1.id)
-      storedRaw1 should be(expectedStoredRaw)
-
-      val deviceDataRawInDb = Await.result(DeviceDataRawManager.loadById(storedRaw1.id), 1 seconds)
-      Some(storedRaw1) should be(deviceDataRawInDb)
+      val deviceDataRawInDb = Await.result(DeviceDataRawManager.loadById(rawData.id), 1 seconds)
+      Some(rawData) should be(deviceDataRawInDb)
 
     }
 
@@ -45,20 +42,23 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val device = DummyDevices.minimalDevice()
 
       val rawData1 = DummyDeviceDataRaw.data(device = device)
-      val storedRaw1 = Await.result(DeviceDataRawManager.store(rawData1), 1 seconds).get
+      val storedRaw1 = DeviceDataRawManager.store(rawData1)
 
-      val rawData2 = DummyDeviceDataRaw.data(device = device, messageId = storedRaw1.id)
+      val rawData2 = DummyDeviceDataRaw.data(device = device, messageId = rawData1.id)
 
       // test
-      val storedRaw2 = Await.result(DeviceDataRawManager.store(rawData2), 1 seconds).get
+      val storedRaw2 = DeviceDataRawManager.store(rawData2)
       Thread.sleep(1200)
 
       // verify
+      storedRaw1 shouldBe true
+      storedRaw2 shouldBe true
+
       val deviceDataRawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
       deviceDataRawList.size should be(2)
 
-      deviceDataRawList.head should be(storedRaw2)
-      deviceDataRawList(1) should be(storedRaw1)
+      deviceDataRawList.head should be(rawData2)
+      deviceDataRawList(1) should be(rawData1)
 
     }
 
