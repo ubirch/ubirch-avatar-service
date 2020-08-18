@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor._
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device

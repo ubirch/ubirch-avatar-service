@@ -3,13 +3,11 @@ package com.ubirch.avatar.core.msgpack
 import java.io.ByteArrayInputStream
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
-import org.json4s.JValue
-import org.json4s.native.Serialization.{read, write}
-import org.msgpack.{MessageTypeException, ScalaMessagePack}
 import org.msgpack.`type`.ValueType
+import org.msgpack.{MessageTypeException, ScalaMessagePack}
 import org.scalatest.{FeatureSpec, Matchers}
 
 case class A(ar: List[B])

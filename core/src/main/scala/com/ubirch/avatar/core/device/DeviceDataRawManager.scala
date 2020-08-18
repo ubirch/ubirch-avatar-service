@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
@@ -28,7 +28,6 @@ object DeviceDataRawManager
     with StrictLogging {
 
   private val index = Config.esDeviceDataRawIndex
-  private val esType = Config.esDeviceDataRawType
 
   /**
     * Query the history of deviceDataRaw for a specified device.
@@ -104,7 +103,6 @@ object DeviceDataRawManager
     val query = Some(QueryBuilders.termQuery("id", id.toString))
 
     EsSimpleClient.getDocs(index, query).map { res =>
-      //      res.map(_.extract[DeviceDataRaw]).headOption
       res.map { doc =>
         doc.extractOpt[JValue] match {
           case Some(d) =>
@@ -189,7 +187,8 @@ object DeviceDataRawManager
     * @param data a device's raw data to store
     * @return json of what we stored
     */
-  def store(data: DeviceDataRaw): Boolean = {
+  def store(data: DeviceDataRaw): Option[DeviceDataRaw] = {
+
 
     logger.debug(s"store data: $data")
     Json4sUtil.any2jvalue(data) match {
@@ -200,13 +199,14 @@ object DeviceDataRawManager
           docIndex = index,
           docId = id,
           doc = doc
-        )
-
+        ) match {
+          case true => doc.extractOpt[DeviceDataRaw]
+          case false => None
+        }
 
       case None =>
         logger.error(s"Couldn't store deviceDataRaw as parsing it to JValue failed: $data.")
-        false
-
+        None
     }
   }
 

@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.{DeviceHistory, DeviceHistoryLegacy}
 import com.ubirch.util.elasticsearch.util.SortBuilderUtil
@@ -186,25 +186,20 @@ object DeviceHistoryManager extends MyJsonProtocol
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-        try {
-
-          val id = data.messageId.toString
-          logger.debug(s"store data ( /$index/$id ): $doc")
-          logger.debug(s"jsonDoc: ${Json4sUtil.jvalue2String(doc)}")
-          EsBulkClient.storeDocBulk(
-            docIndex = index,
-            docId = id,
-            doc = doc
-          )
-          logger.debug(s"stored doc for device $doc with id ${data.deviceId} via bulk storage")
-          doc.extractOpt[DeviceHistory]
-
+        val id = data.messageId.toString
+        logger.debug(s"store data ( /$index/$id ): $doc")
+        logger.debug(s"jsonDoc: ${Json4sUtil.jvalue2String(doc)}")
+        EsBulkClient.storeDocBulk(
+          docIndex = index,
+          docId = id,
+          doc = doc
+        ) match {
+          case true =>
+            logger.debug(s"stored doc for device ${data.deviceId}: $doc")
+            doc.extractOpt[DeviceHistory]
+          case false => None
         }
-        catch {
-          case e: Exception =>
-            logger.error(s"store data failed for device ${data.deviceId}: ${e.getMessage}", e)
-            None
-        }
+
       case None =>
         logger.debug(s"failed storing device histoy for device: ${data.deviceId}")
         None
@@ -214,11 +209,7 @@ object DeviceHistoryManager extends MyJsonProtocol
 
   private def upgradeDdl(ddpl: DeviceHistoryLegacy) = {
     val dn = if (ddpl.deviceName.isEmpty)
-      s"${
-        ddpl.deviceType
-      }-${
-        ddpl.deviceId
-      }"
+      s"${ddpl.deviceType}-${ddpl.deviceId}"
     else
       ddpl.deviceName.get.trim
 

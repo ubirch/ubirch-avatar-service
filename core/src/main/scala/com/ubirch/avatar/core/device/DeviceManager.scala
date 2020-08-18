@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
 import com.ubirch.avatar.model._
@@ -296,7 +296,10 @@ object DeviceManager
             docIndex = esIndex,
             docIdOpt = Some(deviceToStore.deviceId),
             doc = devJval
-          ) map (_ => devJval.extractOpt[db.device.Device])
+          ).map {
+            case true => devJval.extractOpt[Device]
+            case false => None
+          }
 
         case None => Future(None)
       }
@@ -347,7 +350,10 @@ object DeviceManager
               docIndex = esIndex,
               docIdOpt = Some(toUpdate.deviceId),
               doc = devJval
-            ).map(_ => devJval.extractOpt[Device])
+            ).map {
+              case true => devJval.extractOpt[Device]
+              case false => None
+            }
 
             if (device.deviceConfig.isDefined) {
               AvatarStateManager.setDesired(toUpdate, toUpdate.deviceConfig.get)

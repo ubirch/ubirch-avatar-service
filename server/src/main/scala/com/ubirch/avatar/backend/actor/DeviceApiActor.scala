@@ -6,7 +6,7 @@ import akka.actor.{Actor, Props}
 import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
@@ -202,7 +202,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
       case None =>
         logger.debug("queryGroups: None")
-        Set.empty
+        Set[UUID]()
 
       case Some(groups: Set[Group]) =>
         logger.debug(s"found groups: groups=$groups, userContext=${session.userContext}")

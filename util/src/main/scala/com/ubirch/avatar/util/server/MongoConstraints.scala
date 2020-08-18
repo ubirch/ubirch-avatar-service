@@ -1,10 +1,8 @@
 package com.ubirch.avatar.util.server
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.util.mongo.MongoConstraintsBase
-
 import reactivemongo.api.indexes.{Index, IndexType}
 
 /**

@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.actor.{DeviceRawDataReprocessing, DeviceRawDataReprocessingActor}
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
@@ -55,10 +55,13 @@ class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materialize
         respondWithCORS {
           entity(as[DeviceDataRaw]) { deviceMessage =>
 
-            if (DeviceDataRawManager.store(deviceMessage))
-              complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
-            else
-              complete(deviceMessage)
+            DeviceDataRawManager.store(deviceMessage) match {
+
+              case None =>
+                complete(requestErrorResponse("CreateError", s"failed persist message: $deviceMessage"))
+              case Some(storedMessage) =>
+                complete(storedMessage)
+            }
           }
         }
       }

@@ -24,11 +24,11 @@ object DeviceDataRawTestUtil {
     val (device: Device, dataSeries: List[DeviceDataRaw]) = DummyDeviceDataRaw.dataSeries(elementCount = elementCount)
 
     val storedSeries = dataSeries map { deviceData =>
-      DeviceDataRawManager.store(deviceData)
+      DeviceDataRawManager.store(deviceData).get
     }
     Thread.sleep(1200 + elementCount * 5)
 
-    (device, dataSeries)
+    (device, storedSeries)
 
   }
 

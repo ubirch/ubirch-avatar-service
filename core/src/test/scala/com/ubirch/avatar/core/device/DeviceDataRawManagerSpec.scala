@@ -42,12 +42,12 @@ class DeviceDataRawManagerSpec extends ElasticsearchSpec
       val device = DummyDevices.minimalDevice()
 
       val rawData1 = DummyDeviceDataRaw.data(device = device)
-      val storedRaw1 = DeviceDataRawManager.store(rawData1)
+      val storedRaw1 = DeviceDataRawManager.store(rawData1).get
 
       val rawData2 = DummyDeviceDataRaw.data(device = device, messageId = rawData1.id)
 
       // test
-      val storedRaw2 = DeviceDataRawManager.store(rawData2)
+      val storedRaw2 = DeviceDataRawManager.store(rawData2).get
       Thread.sleep(1200)
 
       // verify

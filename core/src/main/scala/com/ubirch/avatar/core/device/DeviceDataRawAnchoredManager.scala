@@ -2,7 +2,7 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.util.elasticsearch.{EsBulkClient, EsSimpleClient}
@@ -58,8 +58,10 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
           docIndex = index,
           docId = id,
           doc = doc
-        )
-        Some(data)
+        ) match {
+          case true => doc.extractOpt[DeviceDataRaw]
+          case false => None
+        }
 
       case None => None
 
@@ -68,3 +70,4 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
   }
 
 }
+

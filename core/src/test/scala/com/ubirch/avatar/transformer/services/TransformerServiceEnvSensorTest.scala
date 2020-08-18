@@ -1,7 +1,6 @@
 package com.ubirch.avatar.transformer.services
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
@@ -11,7 +10,6 @@ import com.ubirch.avatar.model.rest.payload.{EnvSensorPayload, EnvSensorRawPaylo
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.transformer.services.TransformerService
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-
 import org.json4s.JValue
 import org.scalatest.{FeatureSpec, Matchers}
 

@@ -3,7 +3,7 @@ package com.ubirch.avatar.core.check
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
 import com.ubirch.util.deepCheck.model.DeepCheckResponse

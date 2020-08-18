@@ -53,8 +53,9 @@ class DeviceDataRawRouteSpec extends RouteSpec
       // prepare
       val device = DummyDevices.minimalDevice()
       val raw1 = DummyDeviceDataRaw.data(device = device)
-      val storedRaw1 = DeviceDataRawManager.store(raw1)
-      val raw2 = DummyDeviceDataRaw.data(messageId = raw1.id, device = device)
+
+      val storedRaw1 = DeviceDataRawManager.store(raw1).get
+      val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)
 
       // test
       Post(RouteConstants.pathDeviceDataRaw, raw2) ~> Route.seal(routes) ~> check {

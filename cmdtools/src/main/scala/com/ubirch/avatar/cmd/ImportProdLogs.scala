@@ -3,7 +3,7 @@ package com.ubirch.avatar.cmd
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.{ConfigKeys, Const}
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.db.device.Device
@@ -13,8 +13,6 @@ import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
-import org.json4s.JsonAST.JValue
-import org.json4s.jackson.Json
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContextExecutor, Future}

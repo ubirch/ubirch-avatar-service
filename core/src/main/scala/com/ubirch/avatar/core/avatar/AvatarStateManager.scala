@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.avatar
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.{AvatarState, Device}
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
@@ -9,10 +9,10 @@ import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
 import org.joda.time.DateTime
-import org.json4s.JValue
 import org.json4s.jackson.JsonMethods._
 import org.json4s.native.Serialization.write
-import reactivemongo.bson.{BSONDocumentReader, BSONDocumentWriter, Macros, document}
+import org.json4s.{Formats, JValue}
+import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, Macros, document}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -24,7 +24,7 @@ import scala.concurrent.Future
 object AvatarStateManager extends MongoFormats
   with StrictLogging {
 
-  private implicit val formats = JsonFormats.default
+  private implicit val formats: Formats = JsonFormats.default
 
 
   private val collectionName = Config.mongoCollectionAvatarState
@@ -45,7 +45,7 @@ object AvatarStateManager extends MongoFormats
     val selector = document("deviceId" -> deviceId)
 
     mongo.collection(collectionName) flatMap {
-      _.find(selector).one[AvatarState]
+      _.find[BSONDocument, AvatarState](selector).one[AvatarState]
     }
 
   }
@@ -133,7 +133,7 @@ object AvatarStateManager extends MongoFormats
     */
   def upsert(state: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
-    byDeviceId(state.deviceId.toString) flatMap {
+    byDeviceId(state.deviceId) flatMap {
       case None => create(state)
       case Some(_: AvatarState) => update(state)
     }

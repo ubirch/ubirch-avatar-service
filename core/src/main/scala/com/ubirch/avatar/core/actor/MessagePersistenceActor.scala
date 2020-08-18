@@ -20,7 +20,15 @@ class MessagePersistenceActor extends Actor with ActorLogging {
     case drd: DeviceDataRaw =>
       val s = context.sender()
       log.debug(s"received message: $drd")
-      s ! DeviceDataRawManager.store(drd.copy(txHash = None))
+
+      DeviceDataRawManager.store(drd.copy(txHash = None)) match {
+        case Some(ddr) =>
+          log.debug(s"successfully stored deviceDataRaw for device with id ${ddr.deviceId} in database.")
+          s ! true
+        case None =>
+          log.error(s"something went wrong storing the deviceDataRaw in database :($drd).")
+          s ! false
+      }
 
     case anchored: AnchoredRawData =>
       log.debug(s"received message (anchored raw data): $anchored")

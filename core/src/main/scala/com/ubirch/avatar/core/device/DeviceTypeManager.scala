@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.device
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.util.model.DeviceTypeUtil
@@ -21,7 +21,6 @@ object DeviceTypeManager extends StrictLogging {
   private implicit def formats: Formats = JsonFormats.default
 
   private val index = Config.esDeviceTypeIndex
-  private val esType = Config.esDeviceTypeType
 
   /**
     * @return all existing [[DeviceType]]s; empty if none exist
@@ -71,8 +70,10 @@ object DeviceTypeManager extends StrictLogging {
               docIndex = index,
               docIdOpt = Some(key),
               doc = doc
-            ) map (_ => doc.extractOpt[DeviceType])
-
+            ) map {
+              case true => doc.extractOpt[DeviceType]
+              case false => None
+            }
         }
 
       case None =>
@@ -101,7 +102,10 @@ object DeviceTypeManager extends StrictLogging {
               docIndex = index,
               docIdOpt = Some(key),
               doc = doc
-            ) map (_ => doc.extractOpt[DeviceType])
+            ) map {
+              case true => doc.extractOpt[DeviceType]
+              case false => None
+            }
 
           case None => Future(None)
 

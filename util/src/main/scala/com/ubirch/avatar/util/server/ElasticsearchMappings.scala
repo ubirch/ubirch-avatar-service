@@ -23,16 +23,16 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |      },
          |      "deviceId" : {
          |        "type" : "keyword"
-           |      },
-           |      "s" : {
-           |        "type" : "keyword"
-           |      },
-           |      "ts" : {
-           |        "type" : "date",
-           |        "format" : "strict_date_time"
-           |      }
-           |    }
-           |}""".stripMargin
+         |      },
+         |      "s" : {
+         |        "type" : "keyword"
+         |      },
+         |      "ts" : {
+         |        "type" : "date",
+         |        "format" : "strict_date_time"
+         |      }
+         |    }
+         |}""".stripMargin
     ,
 
     // ubirch-device-history
@@ -47,25 +47,25 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |      },
          |      "deviceDataRawId" : {
          |        "type" : "keyword"
-           |      },
-           |      "id" : {
-           |        "type" : "keyword"
-           |      },
-           |      "a" : {
-           |        "type" : "keyword"
-           |      },
-           |      "deviceName" : {
-           |        "type" : "keyword"
-           |      },
-           |      "timestamp" : {
-           |        "type" : "date",
-           |        "format" : "strict_date_time"
-           |      },
-           |      "deviceMessage.location" : {
-           |        "type" : "geo_point"
-           |      }
-           |    }
-           |}""".stripMargin
+         |      },
+         |      "id" : {
+         |        "type" : "keyword"
+         |      },
+         |      "a" : {
+         |        "type" : "keyword"
+         |      },
+         |      "deviceName" : {
+         |        "type" : "keyword"
+         |      },
+         |      "timestamp" : {
+         |        "type" : "date",
+         |        "format" : "strict_date_time"
+         |      },
+         |      "deviceMessage.location" : {
+         |        "type" : "geo_point"
+         |      }
+         |    }
+         |}""".stripMargin
     ,
 
     // ubirch-device-raw-data-anchored
@@ -80,13 +80,13 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |      },
          |      "deviceName" : {
          |        "type" : "keyword"
-           |      },
-           |      "timestamp" : {
-           |        "type" : "date",
-           |        "format" : "strict_date_time"
-           |      }
-           |    }
-           |}""".stripMargin
+         |      },
+         |      "timestamp" : {
+         |        "type" : "date",
+         |        "format" : "strict_date_time"
+         |      }
+         |    }
+         |}""".stripMargin
     ,
 
     // ubirch-devices
@@ -101,25 +101,25 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |      },
          |      "groups" : {
          |        "type" : "keyword"
-           |      },
-           |      "uuid" : {
-           |        "type" : "keyword"
-           |      },
-           |      "hwDeviceId" : {
-           |        "type" : "keyword"
-           |      },
-           |      "hashedHwDeviceId" : {
-           |        "type" : "keyword"
-           |      },
-           |      "deviceName" : {
-           |        "type" : "keyword"
-           |      },
-           |      "created" : {
-           |        "type" : "date",
-           |        "format" : "strict_date_time"
-           |      }
-           |    }
-           |}""".stripMargin
+         |      },
+         |      "uuid" : {
+         |        "type" : "keyword"
+         |      },
+         |      "hwDeviceId" : {
+         |        "type" : "keyword"
+         |      },
+         |      "hashedHwDeviceId" : {
+         |        "type" : "keyword"
+         |      },
+         |      "deviceName" : {
+         |        "type" : "keyword"
+         |      },
+         |      "created" : {
+         |        "type" : "date",
+         |        "format" : "strict_date_time"
+         |      }
+         |    }
+         |}""".stripMargin
     ,
 
     // ubirch-device-state // TODO rename to ubirch-avatar-state-history?
@@ -134,9 +134,9 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |      },
          |      "s" : {
          |        "type" : "keyword"
-           |      }
-           |    }
-           |}""".stripMargin
+         |      }
+         |    }
+         |}""".stripMargin
     ,
 
     // ubirch-device-type
@@ -148,7 +148,6 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |      }
          |    }
          |}""".stripMargin
-
 
   )
 

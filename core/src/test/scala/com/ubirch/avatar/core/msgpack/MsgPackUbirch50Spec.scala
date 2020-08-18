@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.msgpack
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
+import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.model.rest.ubp.UbMessage
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
 import org.scalatest.{FeatureSpec, Matchers}

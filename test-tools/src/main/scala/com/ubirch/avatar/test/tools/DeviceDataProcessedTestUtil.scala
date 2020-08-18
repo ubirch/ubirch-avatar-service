@@ -75,8 +75,8 @@ object DeviceDataProcessedTestUtil {
     val storedSeries: ListBuffer[DeviceHistory] = ListBuffer()
 
     list foreach { deviceData =>
-      val storedData = DeviceHistoryManager.store(deviceData).get
-      storedSeries += storedData
+      val storedRawData = DeviceHistoryManager.store(deviceData).get
+      storedSeries += storedRawData
     }
     Thread.sleep(1500 + list.size)
 

@@ -3,7 +3,7 @@ package com.ubirch.transformer.services
 import java.text.NumberFormat
 import java.util.Locale
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceHistory, DeviceType}

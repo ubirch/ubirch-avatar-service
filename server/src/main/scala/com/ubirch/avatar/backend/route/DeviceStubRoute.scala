@@ -1,8 +1,13 @@
 package com.ubirch.avatar.backend.route
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
-import com.ubirch.avatar.backend.actor.{AllStubs, AllStubsResult, DeviceApiActor}
+import akka.actor.ActorSystem
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.server.Route
+import akka.pattern.ask
+import akka.stream.Materializer
+import akka.util.Timeout
+import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.backend.actor.{AllStubs, AllStubsResult}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
@@ -10,13 +15,6 @@ import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-
-import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.stream.Materializer
-import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor
@@ -34,7 +32,7 @@ class DeviceStubRoute(implicit httpClient: HttpExt, materializer: Materializer, 
     with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
