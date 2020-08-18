@@ -2,14 +2,14 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.crypto.hash.HashUtil
-import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
-import com.ubirch.util.elasticsearch.client.util.SortUtil
+import com.ubirch.util.elasticsearch.util.SortBuilderUtil
+import com.ubirch.util.elasticsearch.{EsBulkClient, EsSimpleClient}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
 import org.elasticsearch.index.query.QueryBuilders
@@ -28,7 +28,6 @@ object DeviceDataRawManager
     with StrictLogging {
 
   private val index = Config.esDeviceDataRawIndex
-  private val esType = Config.esDeviceDataRawType
 
   /**
     * Query the history of deviceDataRaw for a specified device.
@@ -56,9 +55,9 @@ object DeviceDataRawManager
     require(!hashedHwDeviceId.isEmpty, "hashedHwDeviceId may not be empty")
 
     val query = Some(QueryBuilders.termQuery("a", hashedHwDeviceId))
-    val sort = Some(SortUtil.sortBuilder("ts", asc = false))
+    val sort = Some(SortBuilderUtil.sortBuilder("ts", asc = false))
 
-    ESSimpleStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
+    EsSimpleClient.getDocs(index, query, Some(from), Some(size), sort).map { res =>
       res.map(_.extract[DeviceDataRaw])
     }
 
@@ -83,9 +82,9 @@ object DeviceDataRawManager
     //      .must(QueryBuilders.rangeQuery("ts").gte(dayFrom))
     //      .must(QueryBuilders.rangeQuery("ts").lte(dayUntil))
 
-    val sort = SortUtil.sortBuilder("ts", asc = false)
+    val sort = SortBuilderUtil.sortBuilder("ts", asc = false)
 
-    ESSimpleStorage.getDocs(index, esType, Some(query), Some(from), Some(size), Some(sort)).map { res =>
+    EsSimpleClient.getDocs(index, Some(query), Some(from), Some(size), Some(sort)).map { res =>
       res.map(_.extract[DeviceDataRaw])
     }
 
@@ -103,8 +102,7 @@ object DeviceDataRawManager
 
     val query = Some(QueryBuilders.termQuery("id", id.toString))
 
-    ESSimpleStorage.getDocs(index, esType, query).map { res =>
-      //      res.map(_.extract[DeviceDataRaw]).headOption
+    EsSimpleClient.getDocs(index, query).map { res =>
       res.map { doc =>
         doc.extractOpt[JValue] match {
           case Some(d) =>
@@ -128,7 +126,7 @@ object DeviceDataRawManager
 
     val query = Some(QueryBuilders.matchQuery("s", signature))
     try {
-      ESSimpleStorage.getDocs(index, esType, query).map { res =>
+      EsSimpleClient.getDocs(index, query).map { res =>
         res.map { doc =>
           doc.extract[DeviceDataRaw]
         }.headOption
@@ -159,7 +157,7 @@ object DeviceDataRawManager
     )
 
     try {
-      ESSimpleStorage.getDocs(index, esType, query).map { res =>
+      EsSimpleClient.getDocs(index, query).map { res =>
         res.map { doc =>
           val ddr = doc.extractOpt[DeviceDataRaw]
           if (ddr.isDefined) {
@@ -189,36 +187,33 @@ object DeviceDataRawManager
     * @param data a device's raw data to store
     * @return json of what we stored
     */
-  def store(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
+  def store(data: DeviceDataRaw): Option[DeviceDataRaw] = {
 
     logger.debug(s"store data: $data")
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
         val id = data.id.toString
-        ESBulkStorage.storeDocBulk(
+        EsBulkClient.storeDocBulk(
           docIndex = index,
-          docType = esType,
           docId = id,
           doc = doc
-        ).map(_.extractOpt[DeviceDataRaw])
-          .recover {
-            case ex =>
-              logger.error(s"Couldn't store deviceDataRaw: $data, due to: ${ex.getMessage}")
-              None
-          }
+        ) match {
+          case true => doc.extractOpt[DeviceDataRaw]
+          case false => None
+        }
 
       case None =>
         logger.error(s"Couldn't store deviceDataRaw as parsing it to JValue failed: $data.")
-        Future(None)
+        None
 
     }
   }
 
   def getTransferDates(deviceId: String): Future[Set[DateTime]] = {
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
-    ESSimpleStorage
-      .getDocs(index, esType, query)
+    EsSimpleClient
+      .getDocs(index, query)
       .map(_.map(_.extract[DeviceDataRaw]).map(_.ts.withTimeAtStartOfDay()).toSet)
       .recover {
         case ex =>

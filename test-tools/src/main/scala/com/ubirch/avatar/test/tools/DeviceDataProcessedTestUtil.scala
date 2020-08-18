@@ -6,12 +6,9 @@ import com.ubirch.avatar.core.device.DeviceHistoryManager
 import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.test.tools.model.DummyDeviceHistory
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.collection.mutable.ListBuffer
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
 /**
@@ -78,7 +75,7 @@ object DeviceDataProcessedTestUtil {
     val storedSeries: ListBuffer[DeviceHistory] = ListBuffer()
 
     list foreach { deviceData =>
-      val storedRawData = Await.result(DeviceHistoryManager.store(deviceData), 2 seconds).get
+      val storedRawData = DeviceHistoryManager.store(deviceData).get
       storedSeries += storedRawData
     }
     Thread.sleep(1500 + list.size)

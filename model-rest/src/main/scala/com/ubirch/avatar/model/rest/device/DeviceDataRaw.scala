@@ -4,7 +4,6 @@ import java.util.UUID
 
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 import org.json4s._
 
@@ -83,6 +82,39 @@ case class DeviceDataRaw(
   override def toString: String = s"id: $id / v: $v / p: $p / txhash: $txHash"
 
 }
+
+object DeviceDataRawConverter {
+
+  def toClientDeviceDataRaw(dataRaw: com.ubirch.avatar.model.rest.device.DeviceDataRaw): com.ubirch.avatar.client.model.DeviceDataRaw =
+    com.ubirch.avatar.client.model.DeviceDataRaw(
+      id = dataRaw.id,
+      v = dataRaw.v,
+      fw = dataRaw.fw,
+      umv = dataRaw.umv,
+      usv = dataRaw.usv,
+      a = dataRaw.a,
+      did = dataRaw.did,
+      ts = dataRaw.ts,
+      k = dataRaw.k,
+      s = dataRaw.s,
+      ps = dataRaw.ps,
+      mpraw = dataRaw.mpraw,
+      mppay = dataRaw.mppay,
+      mppayhash = dataRaw.mppayhash,
+      p = dataRaw.p,
+      config = dataRaw.config,
+      meta = dataRaw.meta,
+      deviceId = dataRaw.deviceId,
+      deviceName = dataRaw.deviceName,
+      txHash = dataRaw.txHash,
+      txHashLink = dataRaw.txHashLink,
+      txHashLinkHtml = dataRaw.txHashLinkHtml,
+      deviceType = dataRaw.deviceType,
+      tags = dataRaw.tags,
+      refId = dataRaw.refId
+    )
+}
+
 
 case class DeviceDataRawEnvelope(
                                   validationState: String,

@@ -3,7 +3,7 @@ package com.ubirch.avatar.backend.actor.util
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor.DeviceApiActor
 import com.ubirch.avatar.core.actor._
 import com.ubirch.avatar.core.udp.UDPReceiverActor
@@ -13,7 +13,7 @@ import com.ubirch.util.mongo.connection.MongoUtil
 
 object ActorStarter extends StrictLogging {
 
-  def init(system: ActorSystem)(implicit mongoUtil: MongoUtil, httpClient: HttpExt, materializer: Materializer) = {
+  def init(system: ActorSystem)(implicit mongoUtil: MongoUtil, httpClient: HttpExt, materializer: Materializer): Unit = {
 
     val d =
       system.actorOf(

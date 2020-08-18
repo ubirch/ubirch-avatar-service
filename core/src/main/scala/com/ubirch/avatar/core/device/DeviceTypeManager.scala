@@ -1,10 +1,10 @@
 package com.ubirch.avatar.core.device
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.util.model.DeviceTypeUtil
-import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+import com.ubirch.util.elasticsearch.EsSimpleClient
 import com.ubirch.util.json.{Json4sUtil, JsonFormats}
 import org.elasticsearch.index.query.QueryBuilders
 import org.json4s.Formats
@@ -21,14 +21,13 @@ object DeviceTypeManager extends StrictLogging {
   private implicit def formats: Formats = JsonFormats.default
 
   private val index = Config.esDeviceTypeIndex
-  private val esType = Config.esDeviceTypeType
 
   /**
     * @return all existing [[DeviceType]]s; empty if none exist
     */
   def all(): Future[Set[DeviceType]] = {
 
-    ESSimpleStorage.getDocs(index, esType) map { res =>
+    EsSimpleClient.getDocs(index) map { res =>
       res.map(_.extract[DeviceType]).toSet
     }
 
@@ -44,7 +43,7 @@ object DeviceTypeManager extends StrictLogging {
 
     val query = Some(QueryBuilders.termQuery("key", key))
 
-    ESSimpleStorage.getDocs(index, esType, query) map { res =>
+    EsSimpleClient.getDocs(index, query) map { res =>
       res.map(_.extract[DeviceType]).headOption
     }
 
@@ -67,13 +66,14 @@ object DeviceTypeManager extends StrictLogging {
           case Some(dbRecord) => Future(None)
 
           case None =>
-            ESSimpleStorage.storeDoc(
+            EsSimpleClient.storeDoc(
               docIndex = index,
-              docType = esType,
               docIdOpt = Some(key),
               doc = doc
-            ) map (_.extractOpt[DeviceType])
-
+            ) map {
+              case true => doc.extractOpt[DeviceType]
+              case false => None
+            }
         }
 
       case None =>
@@ -98,12 +98,14 @@ object DeviceTypeManager extends StrictLogging {
         getByKey(key) flatMap {
 
           case Some(_) =>
-            ESSimpleStorage.storeDoc(
+            EsSimpleClient.storeDoc(
               docIndex = index,
-              docType = esType,
               docIdOpt = Some(key),
               doc = doc
-            ) map (_.extractOpt[DeviceType])
+            ) map {
+              case true => doc.extractOpt[DeviceType]
+              case false => None
+            }
 
           case None => Future(None)
 

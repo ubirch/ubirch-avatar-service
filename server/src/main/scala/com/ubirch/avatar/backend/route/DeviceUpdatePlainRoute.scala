@@ -8,7 +8,7 @@ import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.prometheus.ReqMetrics
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
@@ -53,16 +53,16 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                           case dm: DeviceStateUpdate =>
                             val dsuJson = Json4sUtil.any2jvalue(dm).get
                             val dsuString = Json4sUtil.jvalue2String(dsuJson)
-                            reqMetrics.inc
+                            reqMetrics.inc()
                             reqMetrics.stop
                             complete(StatusCodes.Accepted -> dsuString)
                           case jer: JsonErrorResponse =>
-                            reqMetrics.incError
+                            reqMetrics.incError()
                             reqMetrics.stop
                             logger.error(jer.errorMessage)
                             complete(StatusCodes.BadRequest -> jer.toJsonString)
                           case _ =>
-                            reqMetrics.incError
+                            reqMetrics.incError()
                             reqMetrics.stop
                             logger.error("update device data failed")
                             val jer = JsonErrorResponse(errorType = "ValidationError", errorMessage = "update device data failed")
@@ -70,7 +70,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                         }
 
                       case Failure(t) =>
-                        reqMetrics.incError
+                        reqMetrics.incError()
                         reqMetrics.stop
                         logger.error("update device data failed", t)
                         val jer = JsonErrorResponse(errorType = "ServerError", errorMessage = t.getMessage)
@@ -78,7 +78,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                     }
 
                   case None =>
-                    reqMetrics.incError
+                    reqMetrics.incError()
                     reqMetrics.stop
                     val jer = JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json")
                     complete(StatusCodes.BadRequest -> jer.toJsonString)
@@ -86,7 +86,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
                 }
 
               case None =>
-                reqMetrics.incError
+                reqMetrics.incError()
                 reqMetrics.stop
                 val jer = JsonErrorResponse(errorType = "ValidationError", errorMessage = "invalid json input")
                 complete(StatusCodes.BadRequest -> jer.toJsonString)

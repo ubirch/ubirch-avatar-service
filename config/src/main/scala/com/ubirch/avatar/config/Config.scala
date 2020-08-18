@@ -270,4 +270,18 @@ object Config extends ConfigBase {
    */
   def serverPrivateKey: String = config.getString(ConfigKeys.SIGNING_PRIVATE_KEY)
 
+
+  def userToken: Option[String] = {
+
+    val key = s"ubirchAvatarService.client.rest.userToken"
+
+
+    if (config.hasPath(key)) {
+      Some(config.getString(key))
+    } else {
+      None
+    }
+
+  }
+
 }

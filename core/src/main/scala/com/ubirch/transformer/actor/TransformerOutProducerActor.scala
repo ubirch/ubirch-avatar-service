@@ -2,8 +2,7 @@ package com.ubirch.transformer.actor
 
 import akka.actor.{Actor, Props}
 import akka.camel.Producer
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.util.camel.CamelActorUtil
 

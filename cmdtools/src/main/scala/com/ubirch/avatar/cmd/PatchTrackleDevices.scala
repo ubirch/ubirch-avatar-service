@@ -3,7 +3,7 @@ package com.ubirch.avatar.cmd
 import akka.actor.ActorSystem
 import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.ActorMaterializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
@@ -54,7 +54,7 @@ object PatchTrackleDevices extends App
             groups = device.groups ++ adminGroup
           )
           val queueNames = patchedDev.pubRawQueues.getOrElse(Set.empty).mkString(",")
-          logger.info(s"${patchedDev.deviceName} \t\t ${patchedDev.deviceTypeKey} \t\t ${queueNames}")
+          logger.info(s"${patchedDev.deviceName} \t\t ${patchedDev.deviceTypeKey} \t\t $queueNames")
 
           Thread.sleep(250)
           DeviceManager.update(patchedDev)

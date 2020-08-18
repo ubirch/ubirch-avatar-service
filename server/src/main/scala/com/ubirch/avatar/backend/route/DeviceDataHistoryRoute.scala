@@ -2,12 +2,11 @@ package com.ubirch.avatar.backend.route
 
 import java.util.UUID
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
-import akka.routing.RoundRobinPool
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor.HistoryActor
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceHistoryManager
@@ -34,7 +33,7 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
   with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val historyActor = system.actorOf(HistoryActor.props, ActorNames.HISTORY)
 

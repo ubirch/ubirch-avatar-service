@@ -12,7 +12,7 @@
 * update to `com.ubirch.user:client-rest:1.0.2`
 * update to `com.ubirch.key:client-rest:0.11.2`
 * introduced Akka HTTP based rest client with new module `client-rest`
-* marked old rest client methods as deprecated (see `AvatarRestClient`)
+* marked old rest client methods as deprecated (see `AvatarServiceClient`)
 
 ### Version 0.5.0 (not released)
 
@@ -61,7 +61,7 @@
 
 ### Version 0.4.1 (2018-03-19)
 
-* added `AvatarRestClient.deviceIdDELETE()`
+* added `AvatarServiceClient.deviceIdDELETE()`
 * refactored endpoint `DELTET /device/$DEVICE_ID` to be idempotent (deleted device is no longer returned) 
 
 ### Version 0.4.0 (2018-03-19)
@@ -70,12 +70,12 @@
 * fixed pubKey checking
 * update to `com.ubirch.util:oidc-utils:0.5.2`
 * update to `com.ubirch.util:redis-util:0.3.5`
-* refactored `AvatarRestClient` to accept ubirch tokens, too (previously all tokens were used as if they're OIDC tokens) 
+* refactored `AvatarServiceClient` to accept ubirch tokens, too (previously all tokens were used as if they're OIDC tokens) 
 
 ### Version 0.3.30 (2018-03-13)
 
-* added `AvatarRestClient.deviceGET()`
-* added `AvatarRestClient.deviceIdPUT()`
+* added `AvatarServiceClient.deviceGET()`
+* added `AvatarServiceClient.deviceIdPUT()`
 
 ### Version 0.3.29 (2018-03-08)
 
@@ -151,8 +151,8 @@
 ### Version 0.3.18 (sbt)
 
 * refactor where REST client connection timeouts are configured
-* less logging in `AvatarRestClient`
-* add method `AvatarRestClient.deviceStubGET`
+* less logging in `AvatarServiceClient`
+* add method `AvatarServiceClient.deviceStubGET`
 * update to `com.ubirch.util:json:0.4.3`
 * update to `com.ubirch.util:oidc-utils:0.4.9`
 * update to `com.ubirch.util:elasticsearch-client-binary:2.0.8`

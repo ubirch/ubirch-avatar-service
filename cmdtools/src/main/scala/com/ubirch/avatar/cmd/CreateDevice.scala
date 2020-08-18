@@ -3,7 +3,7 @@ package com.ubirch.avatar.cmd
 import akka.actor.ActorSystem
 import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.ActorMaterializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.{ConfigKeys, Const}
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
@@ -15,15 +15,17 @@ import com.ubirch.util.uuid.UUIDUtil
 import org.json4s.JsonAST.JValue
 import org.json4s.native.Serialization.read
 
+import scala.concurrent.ExecutionContextExecutor
+
 object CreateDevice extends App
   with ElasticsearchMappings
   with MongoConstraints
   with MyJsonProtocol
   with StrictLogging {
 
-  implicit val system = ActorSystem("AvatarService")
+  implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
-  implicit val executionContext = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   implicit val httpClient: HttpExt = Http()
 

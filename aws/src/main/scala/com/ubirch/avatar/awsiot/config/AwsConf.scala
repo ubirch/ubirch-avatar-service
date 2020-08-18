@@ -2,7 +2,7 @@ package com.ubirch.avatar.awsiot.config
 
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.sqs.AmazonSQSClient
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 
 /**
@@ -12,9 +12,9 @@ object AwsConf extends StrictLogging {
 
   val region: String = "us-east-1"
 
-  val accessKey = Config.awsAccessKey
+  val accessKey: String = Config.awsAccessKey
 
-  val secretKey = Config.awsSecretAccessKey
+  val secretKey: String = Config.awsSecretAccessKey
 
   val awsCredentials = new BasicAWSCredentials(accessKey, secretKey)
 

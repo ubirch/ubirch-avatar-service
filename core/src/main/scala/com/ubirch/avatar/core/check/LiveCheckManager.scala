@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.check
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.util.deepCheck.model.ServiceCheckResponse
 
 import scala.concurrent.ExecutionContext.Implicits.global

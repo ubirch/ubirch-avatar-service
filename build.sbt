@@ -19,7 +19,8 @@ val commonSettings = Seq(
   test in assembly := {},
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
-    Resolver.sonatypeRepo("snapshots")
+    Resolver.sonatypeRepo("snapshots"),
+    resolverUbirchUtils
   )
 )
 
@@ -34,8 +35,8 @@ lazy val avatarService = (project in file("."))
   )
   .aggregate(
     aws,
-    client,
-    clientRest,
+    //    client,
+    //    clientRest,
     cmdtools,
     config,
     core,
@@ -76,30 +77,33 @@ lazy val server = project
   )
 
 lazy val cmdtools = project
-  .settings(commonSettings)
-  .dependsOn(core, client, clientRest, util, testBase)
+  .settings(
+    commonSettings,
+    libraryDependencies += ubirchAvatarServiceClient
+  )
+  .dependsOn(core, util, testBase, config)
   .settings(
     description := "command line tools"
   )
 
-lazy val client = project
-  .settings(commonSettings)
-  .dependsOn(config, modelRest, util)
-  .settings(
-    description := "REST client for the avatarService",
-    libraryDependencies ++= depClient,
-    resolvers ++= Seq(
-      resolverBeeClient
-    )
-  )
-
-lazy val clientRest = (project in file("client-rest"))
-  .settings(commonSettings)
-  .dependsOn(config, modelRest, util, testBase % "test")
-  .settings(
-    description := "REST client for the avatarService",
-    libraryDependencies ++= depClientRest
-  )
+//lazy val client = project
+//  .settings(commonSettings)
+//  .dependsOn(config, modelRest, util)
+//  .settings(
+//    description := "REST client for the avatarService",
+//    libraryDependencies ++= depClient,
+//    resolvers ++= Seq(
+//      resolverBeeClient
+//    )
+//  )
+//
+//lazy val clientRest = (project in file("client-rest"))
+//  .settings(commonSettings)
+//  .dependsOn(config, modelRest, util, testBase % "test")
+//  .settings(
+//    description := "REST client for the avatarService",
+//    libraryDependencies ++= depClientRest
+//  )
 
 lazy val core = project
   .settings(commonSettings)
@@ -201,7 +205,8 @@ lazy val depConfig = Seq(
 
 lazy val depCore = Seq(
   ubirchDeepCheckModel,
-  ubirchElasticsearchClientBinary,
+  //  ubirchElasticsearchClientBinary,
+  ubirchElasticsearchUtils,
   ubirchCamelUtils,
   ubirchCrypto,
   ubirchMongo,
@@ -244,14 +249,16 @@ lazy val depModelDb = Seq(
 
 lazy val depModelRest = Seq(
   json4sNative,
-  ubirchUUID
+  ubirchUUID,
+  ubirchAvatarServiceClient
 ) ++ joda
 
 lazy val depUtil = Seq(
   ubirchCrypto,
   ubirchJson,
-  ubirchElasticsearchClientBinary,
-  ubirchElasticsearchUtil,
+  //  ubirchElasticsearchClientBinary,
+  //  ubirchElasticsearchUtil,
+  ubirchElasticsearchUtils,
   ubirchMongo,
   ubirchOidcUtils,
   ubirchUUID % "test",
@@ -260,7 +267,8 @@ lazy val depUtil = Seq(
 
 lazy val depTestBase = Seq(
   scalatest,
-  ubirchMongoTest,
+  //  ubirchMongoTest,
+  ubirchMongo,
   ubirchRestAkkaHttpTest,
   beeClient,
   ubirchUUID,
@@ -305,7 +313,7 @@ val scalaLogging = Seq(
   "ch.qos.logback" % "logback-core" % logbackV,
   "ch.qos.logback" % "logback-classic" % logbackV,
   "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,
-  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
+  //  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
 )
 
@@ -378,18 +386,20 @@ val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers
 val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAll (excludedLoggers: _*)
 
-val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.2" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.2" excludeAll (excludedLoggers: _*)
-
+//val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.2" excludeAll (excludedLoggers: _*)
+//val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.2" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
-val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
-val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
+//val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
+//val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
+val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.12-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.2"
 val ubirchResponse = ubirchUtilG %% "response-util" % "0.5.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.3" excludeAll (excludedLoggers: _*)
+val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
 
 val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
 
@@ -410,7 +420,7 @@ lazy val resolverEclipse = "eclipse-paho" at "https://repo.eclipse.org/content/r
 lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.elastic.co/maven"
 lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
-
+lazy val resolverUbirchUtils = "ubirch.utils.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/ubirch-utils-mvn"
 /*
  * MISC
  ********************************************************/

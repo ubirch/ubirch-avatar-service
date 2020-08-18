@@ -1,6 +1,6 @@
 package com.ubirch.avatar.util.model
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.server.util.ServerKeys

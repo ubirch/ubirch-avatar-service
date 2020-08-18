@@ -1,6 +1,6 @@
 package com.ubirch.server.util
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.crypto.ecc.EccUtil
 import net.i2p.crypto.eddsa.{EdDSAPrivateKey, EdDSAPublicKey}
 import org.apache.commons.codec.binary.Hex

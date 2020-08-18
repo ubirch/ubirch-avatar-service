@@ -2,13 +2,9 @@ package com.ubirch.avatar.core.msgpack
 
 import java.io.ByteArrayInputStream
 
-import com.google.common.primitives.{Ints, Longs}
-import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.core.device.DeviceDataRawManager
-import com.ubirch.crypto.hash.HashUtil
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.util.json.MyJsonProtocol
 import org.apache.commons.codec.binary.Hex
-import org.json4s.JsonAST.JArray
 import org.msgpack.ScalaMessagePack
 import org.scalatest.{FeatureSpec, Matchers}
 

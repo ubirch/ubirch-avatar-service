@@ -1,6 +1,11 @@
 package com.ubirch.avatar.backend.route
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import akka.actor.ActorSystem
+import akka.http.scaladsl.HttpExt
+import akka.http.scaladsl.server.Route
+import akka.stream.Materializer
+import akka.util.Timeout
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.DeviceInfo
@@ -8,11 +13,6 @@ import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-import akka.actor.ActorSystem
-import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.server.Route
-import akka.stream.Materializer
-import akka.util.Timeout
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.ExecutionContextExecutor
@@ -29,7 +29,7 @@ class DeviceStubIdRoute(implicit httpClient: HttpExt, materializer: Materializer
     with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val timeout = Timeout(Config.actorTimeout seconds)
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val oidcDirective = new OidcDirective()
 

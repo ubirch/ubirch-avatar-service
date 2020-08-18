@@ -1,6 +1,6 @@
 package com.ubirch.avatar.transformer.services
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.transformer.services.PtxTransformerService
 import com.ubirch.util.json.MyJsonProtocol
 import org.scalatest.{FeatureSpec, Matchers}

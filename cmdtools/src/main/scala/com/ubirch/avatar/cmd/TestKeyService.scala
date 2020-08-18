@@ -1,9 +1,13 @@
 package com.ubirch.avatar.cmd
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.client.rest.AvatarRestClient
+import akka.actor.ActorSystem
+import akka.http.scaladsl.{Http, HttpExt}
+import akka.stream.ActorMaterializer
+import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.client.AvatarServiceClient
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
+import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceDataRawConverter}
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
@@ -25,7 +29,9 @@ object TestKeyService
   val notaryServiceEnabled = false
 
   val numberOfRawMessages = 1
-
+  implicit val system: ActorSystem = ActorSystem("trackleService")
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val httpClient: HttpExt = Http()
   DeviceTypeManager.init()
 
   val properties: JValue = read[JValue](
@@ -60,8 +66,9 @@ object TestKeyService
         timestampOffset = 0
       )
 
-      series foreach { dataRaw =>
-        AvatarRestClient.deviceUpdatePOST(dataRaw)
+      series foreach { dataRaw: DeviceDataRaw =>
+        val clientDataRaw = DeviceDataRawConverter.toClientDeviceDataRaw(dataRaw)
+        AvatarServiceClient.deviceUpdatePOST(clientDataRaw)
         // TODO migrate to AvatarSvcClientRest
         // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
         //AvatarSvcClientRest.deviceUpdatePOST(dataRaw)

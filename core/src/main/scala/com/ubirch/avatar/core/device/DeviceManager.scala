@@ -2,14 +2,14 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceInfo
 import com.ubirch.avatar.util.model.DeviceUtil
-import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+import com.ubirch.util.elasticsearch.EsSimpleClient
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
@@ -39,9 +39,8 @@ object DeviceManager
   def all(groups: Set[UUID]): Future[Seq[Device]] = {
 
     // TODO automated tests
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = esIndex,
-      docType = esType,
       query = groupsTermsQuery(groups),
       size = Some(Config.esLargePageSize)
     ).recover[List[JValue]] {
@@ -67,9 +66,8 @@ object DeviceManager
   def all(userId: UUID, groups: Set[UUID]): Future[Seq[Device]] = {
 
     // TODO automated tests
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = esIndex,
-      docType = esType,
       query = groupsUserTermsQuery(userId, groups),
       size = Some(Config.esLargePageSize)
     ).recover[List[JValue]] {
@@ -88,9 +86,8 @@ object DeviceManager
 
   def all(): Future[Seq[Device]] = {
     // TODO automated tests
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = esIndex,
-      docType = esType,
       query = None,
       size = Some(Config.esLargePageSize)
     ).recover[List[JValue]] {
@@ -115,9 +112,8 @@ object DeviceManager
   def allStubs(userId: UUID, groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
 
     // TODO automated tests
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = esIndex,
-      docType = esType,
       query = groupsUserTermsQuery(userId, groups),
       size = Some(Config.esLargePageSize)
     ).recover[List[JValue]] {
@@ -169,9 +165,8 @@ object DeviceManager
   def delete(device: Device): Future[Option[Device]] = {
 
     // TODO automated tests
-    ESSimpleStorage.deleteDoc(
+    EsSimpleClient.deleteDoc(
       docIndex = esIndex,
-      docType = esType,
       docId = device.deviceId
     ).map {
       case true => Some(device)
@@ -185,9 +180,8 @@ object DeviceManager
     // TODO automated tests
     // TODO test case: hwDevice exist w/ lowercase and uppercase
     val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId.toLowerCase)
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = esIndex,
-      docType = esType,
       query = Some(query)
     ).recover[List[JValue]] {
       case e =>
@@ -212,9 +206,8 @@ object DeviceManager
     logger.debug(s"starting infoByHashedHwId($hashedHwDeviceId)")
     val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
     val start = System.currentTimeMillis()
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = esIndex,
-      docType = esType,
       query = Some(query)
     ).recover[List[JValue]] {
       case e =>
@@ -240,9 +233,8 @@ object DeviceManager
   def info(deviceId: String): Future[Option[Device]] = {
 
     // TODO automated tests
-    ESSimpleStorage.getDoc(
+    EsSimpleClient.getDoc(
       docIndex = esIndex,
-      docType = esType,
       docId = deviceId
     ).recover[Option[JValue]] {
       case e =>
@@ -301,12 +293,14 @@ object DeviceManager
       Json4sUtil.any2jvalue(devWithDefaults) match {
 
         case Some(devJval) =>
-          ESSimpleStorage.storeDoc(
+          EsSimpleClient.storeDoc(
             docIndex = esIndex,
-            docType = esType,
             docIdOpt = Some(deviceToStore.deviceId),
             doc = devJval
-          ) map (_.extractOpt[db.device.Device])
+          ).map {
+            case true => devJval.extractOpt[Device]
+            case false => None
+          }
 
         case None => Future(None)
       }
@@ -353,12 +347,15 @@ object DeviceManager
 
           case Some(devJval) =>
 
-            val dev = ESSimpleStorage.storeDoc(
+            val dev = EsSimpleClient.storeDoc(
               docIndex = esIndex,
-              docType = esType,
               docIdOpt = Some(toUpdate.deviceId),
               doc = devJval
-            ).map(_.extractOpt[Device])
+            ).map {
+              case true => devJval.extractOpt[Device]
+              case false => None
+            }
+
 
             if (device.deviceConfig.isDefined) {
               AvatarStateManager.setDesired(toUpdate, toUpdate.deviceConfig.get)

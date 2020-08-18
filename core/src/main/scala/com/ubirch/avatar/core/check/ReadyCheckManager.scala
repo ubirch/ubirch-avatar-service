@@ -3,12 +3,12 @@ package com.ubirch.avatar.core.check
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
-import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+import com.ubirch.util.elasticsearch.EsSimpleClient
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.redis.RedisClientUtil
 
@@ -32,9 +32,8 @@ object ReadyCheckManager extends StrictLogging {
 
       // direct dependencies
 
-      esConnectivity <- ESSimpleStorage.connectivityCheck(
-        docIndex = Config.esDeviceDataRawIndex,
-        docType = Config.esDeviceDataRawType
+      esConnectivity <- EsSimpleClient.connectivityCheck(
+        docIndex = Config.esDeviceDataRawIndex
       ).map { res =>
         DeepCheckResponseUtil.addServicePrefix("[avatar-service.elasticsearch]", res)
       }

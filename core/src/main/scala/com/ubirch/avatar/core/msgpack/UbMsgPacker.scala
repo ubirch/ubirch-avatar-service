@@ -3,7 +3,7 @@ package com.ubirch.avatar.core.msgpack
 import java.io.ByteArrayInputStream
 import java.util.Base64
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.model.rest.ubp.{UbMessage, UbPayloads}
 import com.ubirch.avatar.util.model.DeviceUtil

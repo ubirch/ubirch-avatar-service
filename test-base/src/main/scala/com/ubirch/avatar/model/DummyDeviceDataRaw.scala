@@ -9,7 +9,6 @@ import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
-import org.json4s.JValue
 import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._
 

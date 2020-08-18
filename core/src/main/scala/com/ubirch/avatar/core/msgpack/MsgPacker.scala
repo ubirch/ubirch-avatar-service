@@ -4,12 +4,10 @@ import java.io.ByteArrayInputStream
 import java.lang.{Long => JavaLong}
 import java.util.Base64
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.rest.device.{MsgPackMessage, MsgPackMessageV2}
 import com.ubirch.util.json.Json4sUtil
-
 import org.apache.commons.codec.binary
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
@@ -73,8 +71,8 @@ object MsgPacker extends StrictLogging {
     val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
     val itr = unpacker.iterator()
 
-    unpacker.getNextType() match {
-      case ValueType.ARRAY if itr.hasNext() =>
+    unpacker.getNextType match {
+      case ValueType.ARRAY if itr.hasNext =>
         val va = itr.next().asArrayValue()
 
         val messageVersion = va.get(0).asRawValue().getString
@@ -85,12 +83,12 @@ object MsgPacker extends StrictLogging {
         //val hwDeviceId = new UUID(byteBuffer.getLong(), byteBuffer.getLong())
         val hwDeviceIdHex = binary.Hex.encodeHexString(hwDeviceIdBytes)
         val hwDeviceId =
-          hwDeviceIdHex.take(hwDeviceIdHex.size / 2) +
+          hwDeviceIdHex.take(hwDeviceIdHex.length / 2) +
             "-" +
-            hwDeviceIdHex.takeRight(hwDeviceIdHex.size / 2)
+            hwDeviceIdHex.takeRight(hwDeviceIdHex.length / 2)
 
         val prevMessageHashBytes = va.get(3).asRawValue().getByteArray
-        val prevMessageHash = if (prevMessageHashBytes.size > 0)
+        val prevMessageHash = if (prevMessageHashBytes.nonEmpty)
           Some(binary.Hex.encodeHexString(prevMessageHashBytes))
         else
           None
@@ -150,7 +148,6 @@ object MsgPacker extends StrictLogging {
   /**
     * Calliope MsgPack
     *
-    * @param binData
     * @return
     */
   def unpackSingleValue(binData: Array[Byte]): Set[MsgPackMessage] = {

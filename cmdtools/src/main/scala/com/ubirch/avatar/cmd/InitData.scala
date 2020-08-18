@@ -1,15 +1,21 @@
 package com.ubirch.avatar.cmd
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.client.rest.AvatarRestClient
+import akka.actor.ActorSystem
+import akka.http.scaladsl.{Http, HttpExt}
+import akka.stream.ActorMaterializer
+import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.client.AvatarServiceClient
+import com.ubirch.avatar.client.model.DeviceStateUpdate
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
+import com.ubirch.avatar.model.rest.device.DeviceDataRawConverter
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
 import org.json4s.native.Serialization.read
 
 import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
@@ -25,6 +31,9 @@ object InitData
   val notaryServiceEnabled = false
 
   val numberOfRawMessages = 10
+  implicit val system: ActorSystem = ActorSystem("trackleService")
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val httpClient: HttpExt = Http()
 
   DeviceTypeManager.init()
 
@@ -76,11 +85,14 @@ object InitData
       series foreach { dataRaw =>
         logger.debug("-----------------------------------------------------------------------------------------")
         try {
-          val resp = AvatarRestClient.deviceUpdatePOST(dataRaw)
-          // TODO migrate to AvatarSvcClientRest
-          // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
-          //val resp = AvatarSvcClientRest.deviceUpdatePOST(dataRaw)
-          logger.debug(s"response: ${resp.body.asString}")
+          AvatarServiceClient.deviceUpdatePOST(DeviceDataRawConverter.toClientDeviceDataRaw(dataRaw)).map {
+            case Right(resp: DeviceStateUpdate) =>
+              logger.debug(s"response: $resp")
+            case Left(jsonErrorResponse) =>
+              logger.error(s"response: $jsonErrorResponse")
+          }
+
+
         }
         catch {
           case e: Exception =>

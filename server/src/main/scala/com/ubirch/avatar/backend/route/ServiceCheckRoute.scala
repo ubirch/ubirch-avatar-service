@@ -8,7 +8,7 @@ import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.ServcieCheckActor
 import com.ubirch.avatar.util.actor.ActorNames

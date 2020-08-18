@@ -3,12 +3,14 @@ package com.ubirch.avatar.cmd
 import java.io.File
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
-import com.ubirch.avatar.client.rest.AvatarRestClient
-import com.ubirch.avatar.client.rest.config.AvatarClientConfig
-import com.ubirch.avatar.model.db.device.Device
+import akka.actor.ActorSystem
+import akka.http.scaladsl.{Http, HttpExt}
+import akka.stream.ActorMaterializer
+import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.client.AvatarServiceClient
+import com.ubirch.avatar.client.model.{Device, DeviceDataRaw}
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.MessageVersion
-import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.rest.payload.TrackleSensorPayload
 import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
@@ -16,9 +18,10 @@ import com.ubirch.transformer.services.PtxTransformerService
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime
-import uk.co.bigbeeconsultants.http.response.Status
 
 import scala.collection._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.io.{Codec, Source}
 import scala.language.postfixOps
 
@@ -29,7 +32,9 @@ object ImportTrackle extends App
   with StrictLogging {
 
   val userId = UUID.fromString("884e57da-e02f-415a-bfab-7d6bb0b7ed44")
-
+  implicit val system: ActorSystem = ActorSystem("trackleService")
+  implicit val materializer: ActorMaterializer = ActorMaterializer()
+  implicit val httpClient: HttpExt = Http()
   /**
     * may be you have to fix that, usually Google Drive is a root folder inside your home folder
     */
@@ -63,7 +68,7 @@ object ImportTrackle extends App
   //    pubQueues = pubQ
   //  )
 
-  AvatarClientConfig.userToken match {
+  Config.userToken match {
 
     case None =>
       logger.error("unable to import trackle data if auth token is not configured (see config key 'ubirchAvatarService.cmdTools.userToken'")
@@ -77,18 +82,19 @@ object ImportTrackle extends App
 
   }
 
-  private def createDevice(device: Device, oidcToken: String): Boolean = {
 
-    val deviceCreationResponse = AvatarRestClient.devicePOST(device, oidcToken = Some(oidcToken))
+  private def createDevice(device: Device, oidcToken: String): Future[Boolean] = {
+
+    AvatarServiceClient.devicePOST(device, oidcToken = Some(oidcToken)).map {
+      case Right(device) => true
+      case Left(jsonErrorResponse) =>
+        logger.error(s"failed to create device: response=$jsonErrorResponse")
+        false
+    }
     // TODO migrate to AvatarSvcClientRest
     // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
     //val deviceCreationResponse = AvatarSvcClientRest.devicePOST(device, oidcToken = Some(oidcToken))
 
-    if (deviceCreationResponse.status != Status.S200_OK) {
-      logger.error(s"failed to create device: response=$deviceCreationResponse")
-    }
-
-    deviceCreationResponse.status == Status.S200_OK
 
   }
 
@@ -169,9 +175,7 @@ object ImportTrackle extends App
         val tracklePayload = TrackleSensorPayload(
           ts = cdp.dateTime,
           t = (((t1 + t2) / 2) * 100).toInt,
-          cy = cdp.paketCounter,
-          er = 0
-        )
+          cy = cdp.paketCounter)
 
         Json4sUtil.any2jvalue(tracklePayload) match {
 
@@ -185,14 +189,13 @@ object ImportTrackle extends App
               p = payload
             )
 
-            val ddrBulkResponse = AvatarRestClient.deviceUpdateBulkPOST(ddr, oidcToken = Some(oidcToken))
-            // TODO migrate to AvatarSvcClientRest
-            // see `AvatarSvcClientRestSpec` for example instantiating http client and materializer
-            //val ddrBulkResponse = AvatarSvcClientRest.deviceUpdateBulkPOST(ddr)
-            if (ddrBulkResponse.status == Status.S200_OK) {
-              logger.info(s"data created")
-            } else {
-              logger.error(s"failed to create data: $ddrBulkResponse")
+            AvatarServiceClient.deviceUpdateBulkPOST(ddr).map { //, oidcToken = Some(oidcToken))
+
+              case Right(jsonResponse) =>
+                logger.info(s"data created $jsonResponse")
+              case Left(jsonErrorResponse) =>
+                logger.error(s"failed to create data: $jsonErrorResponse")
+
             }
             Thread.sleep(100)
 
@@ -208,13 +211,13 @@ object ImportTrackle extends App
 
 /**
   * 1. TrackleId,: 1 (0 or 1)
-  *2. Paket Count: 179 (1 Byte, max 255)
-  *3. Timestamp: 2271 (0-65535)
-  *4. T1  (Temp in °C, formula by Delta, see below)
-  *5. T2  (Temp in °C, formula by Delta, see below)
-  *6. T3 (Temp in °C, formula by Delta, see below)
-  *7. Day
-  *8. Time
+  * 2. Paket Count: 179 (1 Byte, max 255)
+  * 3. Timestamp: 2271 (0-65535)
+  * 4. T1  (Temp in °C, formula by Delta, see below)
+  * 5. T2  (Temp in °C, formula by Delta, see below)
+  * 6. T3 (Temp in °C, formula by Delta, see below)
+  * 7. Day
+  * 8. Time
   */
 case class CsvData(
                     trackleId: String,
@@ -250,18 +253,18 @@ object CsvData {
 
 /**
   *
-  *1. Timestamp: 2271 (0-65535)
-  *2. TrackleId: TR1 (01 oder 1)
-  *3. Akkuladung: 1308mV
-  *4. Paket Count: 117 (1 Byte, max 255)
-  *5. T1adc: 22192 (Widerstand in Ohm)
-  *6. T2adc: 22103 (Widerstand in Ohm)
-  *7. T1r: 114.285 (resistance, formula: ((((adc * 1.35) / 65536) / 0.0005) / 8.0)   )
-  *8. T2r: 113.827 (resistance, formula: ((((adc * 1.35) / 65536) / 0.0005) / 8.0)
-  *9. T1: 36.75 (Temp in °C, formula by Delta, see below)
-  *10. T2: 35.57 (Temp in °C, formula by Delta, see below)
-  *11. T3: 36.22C (currently not relevant)
-  *12. T = avg
+  * 1. Timestamp: 2271 (0-65535)
+  * 2. TrackleId: TR1 (01 oder 1)
+  * 3. Akkuladung: 1308mV
+  * 4. Paket Count: 117 (1 Byte, max 255)
+  * 5. T1adc: 22192 (Widerstand in Ohm)
+  * 6. T2adc: 22103 (Widerstand in Ohm)
+  * 7. T1r: 114.285 (resistance, formula: ((((adc * 1.35) / 65536) / 0.0005) / 8.0)   )
+  * 8. T2r: 113.827 (resistance, formula: ((((adc * 1.35) / 65536) / 0.0005) / 8.0)
+  * 9. T1: 36.75 (Temp in °C, formula by Delta, see below)
+  * 10. T2: 35.57 (Temp in °C, formula by Delta, see below)
+  * 11. T3: 36.22C (currently not relevant)
+  * 12. T = avg
   */
 case class LogData(
                     timestamp: Int,

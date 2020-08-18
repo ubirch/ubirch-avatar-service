@@ -7,21 +7,19 @@ import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
-import com.typesafe.scalalogging.slf4j.StrictLogging
-
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor.util.ActorStarter
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.server.util.ServerKeys
-import com.ubirch.util.elasticsearch.client.binary.storage.ESSimpleStorage
+import com.ubirch.util.elasticsearch.EsSimpleClient
 import com.ubirch.util.mongo.connection.MongoUtil
+import org.elasticsearch.client.RestHighLevelClient
 
-import org.elasticsearch.client.transport.TransportClient
-
-import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
@@ -55,7 +53,7 @@ object Boot extends App
   val publicKey = ServerKeys.pubKeyB64
   logger.info(s"publicKey=$publicKey")
 
-  implicit val esClient: TransportClient = ESSimpleStorage.getCurrentEsClient
+  implicit val esClient: RestHighLevelClient = EsSimpleClient.getCurrentEsClient
   try {
     createElasticsearchMappings()
   }

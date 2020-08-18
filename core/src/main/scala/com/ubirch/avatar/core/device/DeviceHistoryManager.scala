@@ -2,11 +2,11 @@ package com.ubirch.avatar.core.device
 
 import java.util.UUID
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.{DeviceHistory, DeviceHistoryLegacy}
-import com.ubirch.util.elasticsearch.client.binary.storage.{ESBulkStorage, ESSimpleStorage}
-import com.ubirch.util.elasticsearch.client.util.SortUtil
+import com.ubirch.util.elasticsearch.util.SortBuilderUtil
+import com.ubirch.util.elasticsearch.{EsBulkClient, EsSimpleClient}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.elasticsearch.index.query.QueryBuilders
 import org.joda.time.DateTime
@@ -22,7 +22,6 @@ object DeviceHistoryManager extends MyJsonProtocol
   with StrictLogging {
 
   private val index = Config.esDeviceDataHistoryIndex
-  private val esType = Config.esDeviceDataHistoryType
 
   /**
     * Query the history of deviceDataHistory for a specified deviceId.
@@ -40,9 +39,9 @@ object DeviceHistoryManager extends MyJsonProtocol
     require(deviceId.nonEmpty, "deviceId may not be empty")
 
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
+    val sort = Some(SortBuilderUtil.sortBuilder("timestamp", asc = false))
 
-    ESSimpleStorage.getDocs(index, esType, query, Some(from), Some(size), sort).map { res =>
+    EsSimpleClient.getDocs(index, query, Some(from), Some(size), sort).map { res =>
       res.map(_.extract[DeviceHistoryLegacy]).map { ddpl =>
         upgradeDdl(ddpl)
       }
@@ -64,11 +63,10 @@ object DeviceHistoryManager extends MyJsonProtocol
       .must(QueryBuilders.rangeQuery("timestamp").gte(from))
       .must(QueryBuilders.rangeQuery("timestamp").lte(to))
 
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
+    val sort = Some(SortBuilderUtil.sortBuilder("timestamp", asc = false))
 
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = index,
-      docType = esType,
       sort = sort,
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
@@ -93,11 +91,10 @@ object DeviceHistoryManager extends MyJsonProtocol
       .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
       .must(QueryBuilders.rangeQuery("timestamp").lt(before))
 
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
+    val sort = Some(SortBuilderUtil.sortBuilder("timestamp", asc = false))
 
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = index,
-      docType = esType,
       sort = sort,
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
@@ -121,11 +118,10 @@ object DeviceHistoryManager extends MyJsonProtocol
       .must(QueryBuilders.termQuery("deviceId", deviceId.toString))
       .must(QueryBuilders.rangeQuery("timestamp").gt(after))
 
-    val sort = Some(SortUtil.sortBuilder("timestamp", asc = false))
+    val sort = Some(SortBuilderUtil.sortBuilder("timestamp", asc = false))
 
-    ESSimpleStorage.getDocs(
+    EsSimpleClient.getDocs(
       docIndex = index,
-      docType = esType,
       sort = sort,
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
@@ -172,7 +168,7 @@ object DeviceHistoryManager extends MyJsonProtocol
 
     val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
 
-    ESSimpleStorage.getDocs(index, esType, query).map { res =>
+    EsSimpleClient.getDocs(index, query).map { res =>
       res.map(_.extract[DeviceHistoryLegacy]).map { ddpl =>
         upgradeDdl(ddpl)
       }.headOption
@@ -185,45 +181,36 @@ object DeviceHistoryManager extends MyJsonProtocol
     * @param data a device's processed data to store
     * @return json of what we stored
     */
-  def store(data: DeviceHistory): Future[Option[DeviceHistory]] = {
+  def store(data: DeviceHistory): Option[DeviceHistory] = {
 
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-        try {
 
-          val id = data.messageId.toString
-          logger.debug(s"store data ( /$index/$esType/$id ): $doc")
-          logger.debug(s"jsonDoc: ${Json4sUtil.jvalue2String(doc)}")
-          ESBulkStorage.storeDocBulk(
-            docIndex = index,
-            docType = esType,
-            docId = id,
-            doc = doc
-          ).map { d =>
-            logger.debug(s"stored doc for device ${data.deviceId}: $d")
-            d.extractOpt[DeviceHistory]
-          }
+        val id = data.messageId.toString
+        logger.debug(s"store data ( /$index/$id ): $doc")
+        logger.debug(s"jsonDoc: ${Json4sUtil.jvalue2String(doc)}")
+        EsBulkClient.storeDocBulk(
+          docIndex = index,
+          docId = id,
+          doc = doc
+        ) match {
+          case true =>
+            logger.debug(s"stored doc for device ${data.deviceId}: $doc")
+            doc.extractOpt[DeviceHistory]
+          case false => None
         }
-        catch {
-          case e: Exception =>
-            logger.error(s"store data failed for device ${data.deviceId}: ${e.getMessage}", e)
-            Future(None)
-        }
+
       case None =>
         logger.debug(s"failed storing device histoy for device: ${data.deviceId}")
-        Future(None)
+        None
     }
   }
 
 
   private def upgradeDdl(ddpl: DeviceHistoryLegacy) = {
     val dn = if (ddpl.deviceName.isEmpty)
-      s"${
-        ddpl.deviceType
-      }-${
-        ddpl.deviceId
-      }"
+      s"${ddpl.deviceType}-${ddpl.deviceId}"
     else
       ddpl.deviceName.get.trim
 

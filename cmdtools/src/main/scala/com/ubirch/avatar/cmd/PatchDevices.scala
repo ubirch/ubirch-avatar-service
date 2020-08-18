@@ -3,7 +3,7 @@ package com.ubirch.avatar.cmd
 import akka.actor.ActorSystem
 import akka.http.scaladsl.{Http, HttpExt}
 import akka.stream.ActorMaterializer
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}

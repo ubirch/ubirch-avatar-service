@@ -1,13 +1,12 @@
 package com.ubirch.avatar.backend.route
 
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.core.device.DeviceDataRawManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.util.server.RouteConstants
-
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.concurrent.Await
@@ -54,7 +53,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
       // prepare
       val device = DummyDevices.minimalDevice()
       val raw1 = DummyDeviceDataRaw.data(device = device)
-      val storedRaw1 = Await.result(DeviceDataRawManager.store(raw1), 1 second).get
+      val storedRaw1 = DeviceDataRawManager.store(raw1).get
       val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)
 
       // test
