@@ -26,6 +26,7 @@ object AvatarStateManager extends MongoFormats
 
   private implicit val formats: Formats = JsonFormats.default
 
+
   private val collectionName = Config.mongoCollectionAvatarState
 
   implicit protected def avatarStateWriter: BSONDocumentWriter[AvatarState] = Macros.writer[AvatarState]

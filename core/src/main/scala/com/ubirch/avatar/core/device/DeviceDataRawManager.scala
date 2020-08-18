@@ -189,6 +189,7 @@ object DeviceDataRawManager
     */
   def store(data: DeviceDataRaw): Option[DeviceDataRaw] = {
 
+
     logger.debug(s"store data: $data")
     Json4sUtil.any2jvalue(data) match {
 
@@ -206,7 +207,6 @@ object DeviceDataRawManager
       case None =>
         logger.error(s"Couldn't store deviceDataRaw as parsing it to JValue failed: $data.")
         None
-
     }
   }
 

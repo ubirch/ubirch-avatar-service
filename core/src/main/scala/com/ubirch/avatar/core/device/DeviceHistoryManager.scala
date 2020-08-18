@@ -186,7 +186,6 @@ object DeviceHistoryManager extends MyJsonProtocol
     Json4sUtil.any2jvalue(data) match {
 
       case Some(doc) =>
-
         val id = data.messageId.toString
         logger.debug(s"store data ( /$index/$id ): $doc")
         logger.debug(s"jsonDoc: ${Json4sUtil.jvalue2String(doc)}")

@@ -149,7 +149,6 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |    }
          |}""".stripMargin
 
-
   )
 
 }

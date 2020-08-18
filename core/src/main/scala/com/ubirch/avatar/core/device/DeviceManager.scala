@@ -29,7 +29,6 @@ object DeviceManager
 
   private val esIndex = Config.esDeviceIndex
   private val esType = Config.esDeviceType
-
   /**
     * Select all devices in any of the given groups.
     *
@@ -259,10 +258,10 @@ object DeviceManager
 
   private def groupsUserTermsQuery(userId: UUID, groups: Set[UUID]): Option[QueryBuilder] = {
     val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
-    val userIdAsString: String = userId.toString
+    val userIdAsString: Seq[String] = Seq(userId.toString)
     Some(QueryBuilders.boolQuery()
       .should(QueryBuilders.termsQuery("groups", groupsAsString: _*))
-      .should(QueryBuilders.termsQuery("owners", userIdAsString))
+      .should(QueryBuilders.termsQuery("owners", userIdAsString: _*))
       .minimumShouldMatch(1)
     )
   }
@@ -355,7 +354,6 @@ object DeviceManager
               case true => devJval.extractOpt[Device]
               case false => None
             }
-
 
             if (device.deviceConfig.isDefined) {
               AvatarStateManager.setDesired(toUpdate, toUpdate.deviceConfig.get)

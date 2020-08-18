@@ -53,6 +53,7 @@ class DeviceDataRawRouteSpec extends RouteSpec
       // prepare
       val device = DummyDevices.minimalDevice()
       val raw1 = DummyDeviceDataRaw.data(device = device)
+
       val storedRaw1 = DeviceDataRawManager.store(raw1).get
       val raw2 = DummyDeviceDataRaw.data(messageId = storedRaw1.id, device = device)
 
@@ -65,12 +66,13 @@ class DeviceDataRawRouteSpec extends RouteSpec
         val storedRaw2 = responseAs[DeviceDataRaw]
         storedRaw2 shouldEqual raw2.copy(id = storedRaw2.id)
 
+        storedRaw1 shouldBe true
         Thread.sleep(1000)
         val rawList = Await.result(DeviceDataRawManager.history(device), 1 seconds)
         rawList.size should be(2)
 
         rawList.head should be(storedRaw2)
-        rawList(1) should be(storedRaw1)
+        rawList(1) should be(raw1)
 
       }
 
