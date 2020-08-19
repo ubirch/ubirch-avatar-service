@@ -28,7 +28,7 @@ function build_software() {
 	# get local .ivy2
 	rsync -r ~/.ivy2/ ./.ivy2/
 	rsync -r ~/.coursier/ ./.coursier/
-  	docker run --ulimit nofile=10000:10000 --user `id -u`:`id -g` --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY  --volume=${PWD}:/build ubirch/sbt-build:${SBT_CONTAINER_VERSION} $1
+  	docker run --ulimit nofile=10000:10000 --user `id -u`:`id -g` --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --env CLOUDREPO_USER=$CLOUDREPO_USER --env CLOUDREPO_PW=$CLOUDREPO_PW --volume=${PWD}:/build ubirch/sbt-build:${SBT_CONTAINER_VERSION} $1
 	# write back to local .ivy2
 
   if [ $? -ne 0 ]; then
