@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
@@ -24,7 +24,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer) extends Actor with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
-
+  implicit val actorSystem: ActorSystem = context.system
   private val processorActor = context
     .actorSelection(ActorNames.MSG_PROCESSOR_PATH)
 

@@ -5,7 +5,7 @@ import java.util.Base64
 
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
-import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.util.crypto.ecc.EccUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}

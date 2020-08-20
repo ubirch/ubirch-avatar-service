@@ -3,7 +3,7 @@ package com.ubirch.avatar.cmd
 import java.io.{File, FileOutputStream}
 
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.util.crypto.ecc.EccUtil
 import net.i2p.crypto.eddsa.{EdDSAPrivateKey, EdDSAPublicKey}
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.DateTime

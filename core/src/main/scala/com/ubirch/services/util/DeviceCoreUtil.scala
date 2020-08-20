@@ -1,14 +1,14 @@
 package com.ubirch.services.util
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.crypto.ecc.EccUtil
-import com.ubirch.crypto.hash.HashUtil
-import com.ubirch.keyservice.client.rest.KeyServiceClientRest
+import com.ubirch.idservice.client.IdServiceClientCached
+import com.ubirch.util.crypto.ecc.EccUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.json4s._
 import org.json4s.native.Serialization._
@@ -88,7 +88,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
                             payload: JValue,
                             hashedPayload: Boolean
                            )
-                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
+                           (implicit httpClient: HttpExt, materializer: Materializer, system: ActorSystem): Future[Boolean] = {
     val binData = write(payload).getBytes
     validateSignedMessage(device = device,
       signature = signature,
@@ -101,9 +101,10 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
                             payload: Array[Byte],
                             hashedPayload: Boolean
                            )
-                           (implicit httpClient: HttpExt, materializer: Materializer): Future[Boolean] = {
+                           (implicit httpClient: HttpExt, materializer: Materializer, system: ActorSystem): Future[Boolean] = {
     try {
-      KeyServiceClientRest.currentlyValidPubKeys(device.hwDeviceId.toLowerCase).map {
+
+      IdServiceClientCached.currentlyValidPubKeysCached(device.hwDeviceId.toLowerCase).map {
         case Some(keys) if keys.isEmpty =>
           //throw new Exception(s"device ${device.deviceId} has no aktive keys")
           logger.error(s"device ${device.deviceId} has no aktive keys")
@@ -136,15 +137,5 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
         logger.error("Error while key lookup")
         Future(false)
     }
-  }
-
-  /**
-    * checks whether notary service should be used for this device
-    *
-    * @param device the device on which to to perform the check
-    * @return
-    */
-  def checkNotaryUsage(device: Device): Boolean = {
-    DeviceManager.checkProperty(device, Const.BLOCKC)
   }
 }

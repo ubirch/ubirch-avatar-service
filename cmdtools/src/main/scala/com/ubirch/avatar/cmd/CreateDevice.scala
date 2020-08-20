@@ -8,7 +8,7 @@ import com.ubirch.avatar.config.{ConfigKeys, Const}
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil

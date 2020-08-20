@@ -11,7 +11,6 @@ import com.ubirch.avatar.core.prometheus.Timer
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
@@ -34,8 +33,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
   private implicit val exContext: ExecutionContextExecutor = context.dispatcher
 
   private val persistenceActor: ActorRef = context.actorOf(MessagePersistenceActor.props, ActorNames.PERSISTENCE_SVC)
-
-  private val notaryActor: ActorRef = context.actorOf(MessageNotaryActor.props, ActorNames.NOTARY_SVC)
 
   private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
@@ -108,14 +105,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
               outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
               s ! d
           }
-
-
-          if (DeviceCoreUtil.checkNotaryUsage(device)) {
-            log.debug(s"use notary service for ${device.deviceId}")
-            notaryActor ! drdPatched
-          }
-          else
-            log.debug(s"do not use notary service for ${device.deviceId}")
 
           if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
             log.debug(s"chain data: ${device.deviceId}")
