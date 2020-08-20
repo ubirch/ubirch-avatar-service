@@ -4,8 +4,8 @@ import java.util.Base64
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.crypto.codec.CodecUtil
-import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.util.crypto.codec.CodecUtil
+import com.ubirch.util.crypto.ecc.EccUtil
 
 object ServerKeys extends StrictLogging {
 

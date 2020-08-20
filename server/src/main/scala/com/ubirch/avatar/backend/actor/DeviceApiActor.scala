@@ -12,8 +12,8 @@ import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{DeviceInfo, DeviceUserClaim, DeviceUserClaimRequest}
 import com.ubirch.avatar.util.server.AvatarSession
-import com.ubirch.user.client.rest.UserServiceClientRest
-import com.ubirch.user.model.rest.Group
+import com.ubirch.user.client.UserServiceClient
+import com.ubirch.user.client.model.Group
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 
@@ -194,7 +194,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
     logger.debug(s"contextName = ${session.userContext.context} / providerId = ${session.userContext.providerId} / externalUserId = ${session.userContext.externalUserId}")
 
-    UserServiceClientRest.groupMemberOf(
+    UserServiceClient.groupMemberOf(
       contextName = session.userContext.context,
       providerId = session.userContext.providerId,
       externalUserId = session.userContext.externalUserId

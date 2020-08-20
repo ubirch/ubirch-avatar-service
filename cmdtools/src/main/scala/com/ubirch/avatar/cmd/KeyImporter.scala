@@ -4,7 +4,7 @@ import java.io.{File, FileInputStream}
 import java.util.Base64
 
 import com.google.common.io.ByteStreams
-import com.ubirch.crypto.ecc.EccUtil
+import com.ubirch.util.crypto.ecc.EccUtil
 import org.apache.commons.codec.binary.Hex
 
 object KeyImporter extends App {

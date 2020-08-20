@@ -52,8 +52,6 @@ object ActorNames {
 
   final val DEVICE_API_PATH: String = s"/user/$DEVICE_API"
 
-  final val NOTARY_SVC: String = "AVS-notary-service"
-
   final val CHAIN_SVC: String = "AVS-chain-service"
 
   final val OUT_PRODUCER: String = "AVS-out-producer"

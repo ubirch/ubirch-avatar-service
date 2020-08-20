@@ -27,9 +27,6 @@ object InitData
     with MyJsonProtocol
     with StrictLogging {
 
-  // NOTE if true this the NotaryService will be used. it is limited by it's wallet so please be careful when activating it.
-  val notaryServiceEnabled = false
-
   val numberOfRawMessages = 10
   implicit val system: ActorSystem = ActorSystem("trackleService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -56,17 +53,10 @@ object InitData
        |""".stripMargin
   )
 
-  val device = if (notaryServiceEnabled) {
-    DummyDevices.device(
-      deviceTypeKey = Const.ENVIRONMENTSENSOR,
-      deviceProperties = Some(properties_BC)
-    )
-  } else {
-    DummyDevices.device(
-      deviceTypeKey = Const.ENVIRONMENTSENSOR,
-      deviceProperties = Some(properties_NOBC)
-    )
-  }
+  val device = DummyDevices.device(
+    deviceTypeKey = Const.ENVIRONMENTSENSOR,
+    deviceProperties = Some(properties_NOBC)
+  )
 
   Await.result(DeviceManager.create(device), 5 seconds) match {
     case Some(dev) =>

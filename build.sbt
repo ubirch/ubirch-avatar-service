@@ -224,7 +224,6 @@ lazy val depCore = Seq(
   ubirchCamelUtils,
   ubirchCrypto,
   ubirchMongo,
-  ubirchNotary,
   ubirchResponse,
   ubirchKeyClientRest,
   ubirchUserClientRest,
@@ -394,36 +393,34 @@ val prometheus = Seq(
   , "org.aspectj" % "aspectjweaver" % "1.8.10"
 )
 
-val ubirchCamelUtils = ubirchUtilG %% "camel-utils" % "0.1.0" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
-val ubirchConfig = ubirchUtilG %% "config" % "0.2.3" excludeAll (excludedLoggers: _*)
-val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
-val ubirchDeepCheckModel = ubirchUtilG %% "deep-check-model" % "0.4.0" excludeAll (excludedLoggers: _*)
+val ubirchCamelUtils = ubirchUtilG %% "ubirch-camel-utils" % "0.1.1" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
+val ubirchConfig = ubirchUtilG %% "ubirch-config-utils" % "0.2.4" excludeAll (excludedLoggers: _*)
+//val ubirchCrypto = ubirchUtilG %% "crypto" % "0.4.11" excludeAll (excludedLoggers: _*)
+val ubirchCrypto = ubirchUtilG %% "ubirch-crypto-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
+val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
 val ubirchEsHighLevelClient = ubirchUtilG %% "elasticsearch-high-level-client" % "0.1.3-SNAPSHOT" excludeAll (excludedLoggers: _*)
 
 //val ubirchElasticsearchClientBinary = ubirchUtilG %% "elasticsearch-client-binary" % "3.3.2" excludeAll (excludedLoggers: _*)
 //val ubirchElasticsearchUtil = ubirchUtilG %% "elasticsearch-util" % "3.3.2" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.1.0" excludeAll (excludedLoggers: _*)
-val ubirchJson = ubirchUtilG %% "json" % "0.5.1" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.1.1" excludeAll (excludedLoggers: _*)
+val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
 //val ubirchMongoTest = ubirchUtilG %% "mongo-test-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
 //val ubirchMongo = ubirchUtilG %% "mongo-utils" % "0.9.1" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
-val ubirchOidcUtils = ubirchUtilG %% "oidc-utils" % "0.8.12-SNAPSHOT" excludeAll (excludedLoggers: _*)
+val ubirchOidcUtils = ubirchUtilG %% "ubirch-oidc-utils" % "0.8.15" excludeAll (excludedLoggers: _*)
 //val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.6.0"
-val ubirchUtilRedisUtil = ubirchUtilG %% "redis-util" % "0.5.2"
-val ubirchResponse = ubirchUtilG %% "response-util" % "0.5.0" excludeAll (excludedLoggers: _*)
+val ubirchUtilRedisUtil = ubirchUtilG %% "ubirch-redis-utils" % "0.6.1"
+val ubirchResponse = ubirchUtilG %% "ubirch-response-utils" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "rest-akka-http" % "0.4.0" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttpTest = ubirchUtilG %% "rest-akka-http-test" % "0.4.0" excludeAll (excludedLoggers: _*)
-val ubirchUUID = ubirchUtilG %% "uuid" % "0.1.3" excludeAll (excludedLoggers: _*)
+val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.4" excludeAll (excludedLoggers: _*)
 val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
 
 val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
 
-val ubirchNotary = "com.ubirch.notary" %% "client" % "0.3.3" excludeAll (
-  excludedLoggers ++ Seq(ExclusionRule(organization = "com.ubirch.util", name = "json-auto-convert")): _*
-  )
-val ubirchUserClientRest = "com.ubirch.user" %% "client-rest" % "1.0.2" excludeAll (excludedLoggers: _*)
+val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.4" excludeAll (excludedLoggers: _*)
 
-val ubirchKeyClientRest = "com.ubirch.key" %% "client-rest" % "0.11.5-SNAPSHOT" excludeAll (excludedLoggers: _*)
+val ubirchKeyClientRest = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.4" excludeAll (excludedLoggers: _*)
 /*
  * RESOLVER
  ********************************************************/
