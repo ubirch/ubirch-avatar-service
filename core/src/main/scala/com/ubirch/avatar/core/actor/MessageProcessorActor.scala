@@ -34,7 +34,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private val persistenceActor: ActorRef = context.actorOf(MessagePersistenceActor.props, ActorNames.PERSISTENCE_SVC)
 
-  private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
+//  private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
 
   private val outboxManagerActor = context.actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
 
@@ -106,12 +106,12 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
               s ! d
           }
 
-          if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
-            log.debug(s"chain data: ${device.deviceId}")
-            chainActor ! (drdPatched, device)
-          }
-          else
-            log.debug(s"do not chain data for ${device.deviceId}")
+          //          if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
+          //            log.debug(s"chain data: ${device.deviceId}")
+          //            chainActor ! (drdPatched, device)
+          //          }
+          //          else
+          //            log.debug(s"do not chain data for ${device.deviceId}")
 
           // publish incomming raw data
           outboxManagerActor ! (device, drdPatched)
