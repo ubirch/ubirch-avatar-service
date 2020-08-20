@@ -4,9 +4,8 @@ import java.util.UUID
 
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 import org.json4s.JValue
 import org.json4s.native.JsonMethods._

@@ -12,9 +12,9 @@ import com.ubirch.avatar.client.model.{Device, DeviceDataRaw}
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.payload.TrackleSensorPayload
-import com.ubirch.crypto.hash.HashUtil
 import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.transformer.services.PtxTransformerService
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.DateTime

@@ -8,7 +8,7 @@ import com.ubirch.avatar.config.{ConfigKeys, Const}
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.model.DeviceTypeUtil
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil

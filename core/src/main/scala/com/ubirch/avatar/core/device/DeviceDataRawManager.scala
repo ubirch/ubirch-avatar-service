@@ -7,7 +7,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.elasticsearch.util.SortBuilderUtil
 import com.ubirch.util.elasticsearch.{EsBulkClient, EsSimpleClient}
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}

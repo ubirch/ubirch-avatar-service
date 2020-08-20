@@ -12,7 +12,7 @@ import com.ubirch.avatar.core.msgpack.{MsgPacker, UbMsgPacker}
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceDataRaws}
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil

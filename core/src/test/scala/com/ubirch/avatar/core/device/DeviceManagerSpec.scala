@@ -4,10 +4,9 @@ import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.test.base.ElasticsearchSpecAsync
 import com.ubirch.avatar.util.model.DeviceUtil
-import com.ubirch.crypto.hash.HashUtil
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.{DateTime, DateTimeZone}
 
 /**
