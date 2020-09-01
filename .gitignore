@@ -26,3 +26,4 @@ TMP
 .sbt.cache.lock
 /cache
 dump.rdb
+xml-test-reports/

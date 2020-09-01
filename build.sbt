@@ -404,7 +404,7 @@ val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.4" excludeAll (exclud
 
 val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
 val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.4" excludeAll (excludedLoggers: _*)
-val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.4" excludeAll (excludedLoggers: _*)
+val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
 
 //val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
 
