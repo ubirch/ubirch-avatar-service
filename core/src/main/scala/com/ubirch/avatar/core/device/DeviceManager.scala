@@ -28,7 +28,7 @@ object DeviceManager
     with StrictLogging {
 
   private val esIndex = Config.esDeviceIndex
-  private val esType = Config.esDeviceType
+
   /**
     * Select all devices in any of the given groups.
     *

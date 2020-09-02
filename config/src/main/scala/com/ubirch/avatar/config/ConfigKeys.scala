@@ -50,29 +50,23 @@ object ConfigKeys {
   final val esDeviceTypePrefix = s"$esPrefix.devicetype"
   final val esDeviceStatePrefix = s"$esPrefix.devicestate"
 
-  // Device Index & Type
+  // Device Index
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
-  final val ES_DEVICE_TYPE = s"$esDevicePrefix.type"
 
-  // DeviceRawData Index & Type
+  // DeviceRawData Index
   final val ES_DEVICE_DATA_RAW_INDEX = s"$esDeviceRawDataPrefix.index"
-  final val ES_DEVICE_DATA_RAW_TYPE = s"$esDeviceRawDataPrefix.type"
 
-  // anchored DeviceRawData (with txHash) Index & Type
+  // anchored DeviceRawData (with txHash) Index
   final val ES_DEVICE_DATA_RAW_ANCHORED_INDEX = s"$esDeviceRawDataAnchoredPrefix.index"
-  final val ES_DEVICE_DATA_RAW_ANCHORED_TYPE = s"$esDeviceRawDataAnchoredPrefix.type"
 
-  // DeviceHistory Index & Type
+  // DeviceHistory Index
   final val ES_DEVICE_HISTORY_INDEX = s"$esDeviceHistoryPrefix.index"
-  final val ES_DEVICE_HISTORY_TYPE = s"$esDeviceHistoryPrefix.type"
 
   // Device Type
   final val ES_DEVICE_TYPE_INDEX = s"$esDeviceTypePrefix.index"
-  final val ES_DEVICE_TYPE_TYPE = s"$esDeviceTypePrefix.type"
 
   // Device State
   final val ES_DEVICE_STATE_INDEX = s"$esDeviceStatePrefix.index"
-  final val ES_DEVICE_STATE_TYPE = s"$esDeviceStatePrefix.type"
 
 
   // Misc
