@@ -2,7 +2,6 @@ package com.ubirch.avatar.core.device
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceStateUpdate}
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.server.util.ServerKeys
@@ -20,9 +19,8 @@ import scala.concurrent.Future
 object DeviceStateManager extends MyJsonProtocol with StrictLogging {
 
   private val index = Config.esDeviceStateIndex
-  private val esType = Config.esDeviceStateType
 
-  def createNewDeviceState(device: Device, avatarState: AvatarState): DeviceStateUpdate = {
+  def createNewDeviceState(avatarState: AvatarState): DeviceStateUpdate = {
 
     val payload = avatarState.delta.getOrElse(Json4sUtil.string2JValue("{}").get)
 

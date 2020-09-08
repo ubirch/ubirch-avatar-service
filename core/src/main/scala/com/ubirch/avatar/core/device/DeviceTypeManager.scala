@@ -25,13 +25,17 @@ object DeviceTypeManager extends StrictLogging {
   /**
     * @return all existing [[DeviceType]]s; empty if none exist
     */
-  def all(): Future[Set[DeviceType]] = {
+  def all(): Future[Set[DeviceType]] =
 
-    EsSimpleClient.getDocs(index) map { res =>
-      res.map(_.extract[DeviceType]).toSet
-    }
+    EsSimpleClient
+      .getDocs(index)
+      .map(_.map(_.extract[DeviceType]).toSet)
+      .recover {
+        case ex =>
+          logger.error(s"retrieve deviceTypes all() from index=$index failed", ex)
+          Set.empty
+      }
 
-  }
 
   /**
     * Search for a [[DeviceType]] based on it's key.
@@ -43,9 +47,14 @@ object DeviceTypeManager extends StrictLogging {
 
     val query = Some(QueryBuilders.termQuery("key", key))
 
-    EsSimpleClient.getDocs(index, query) map { res =>
-      res.map(_.extract[DeviceType]).headOption
-    }
+    EsSimpleClient
+      .getDocs(index, query)
+      .map(_.map(_.extract[DeviceType]).headOption)
+      .recover {
+        case ex =>
+          logger.error(s"retrieve deviceType via getByKey(): index=$index, key=$key failed", ex)
+          None
+      }
 
   }
 
@@ -70,9 +79,13 @@ object DeviceTypeManager extends StrictLogging {
               docIndex = index,
               docIdOpt = Some(key),
               doc = doc
-            ) map {
+            ).map {
               case true => doc.extractOpt[DeviceType]
               case false => None
+            }.recover {
+              case ex =>
+                logger.error(s"storeDoc() failed for index=$index, docId=$key, doc=$doc failed", ex)
+                None
             }
         }
 
@@ -102,9 +115,13 @@ object DeviceTypeManager extends StrictLogging {
               docIndex = index,
               docIdOpt = Some(key),
               doc = doc
-            ) map {
+            ).map {
               case true => doc.extractOpt[DeviceType]
               case false => None
+            }.recover {
+              case ex =>
+                logger.error(s"storeDoc() failed for index=$index, docId=$key, doc=$doc failed", ex)
+                None
             }
 
           case None => Future(None)

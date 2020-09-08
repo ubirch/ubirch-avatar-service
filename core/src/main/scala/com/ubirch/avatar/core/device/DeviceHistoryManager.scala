@@ -41,10 +41,18 @@ object DeviceHistoryManager extends MyJsonProtocol
     val query = Some(QueryBuilders.termQuery("deviceId", deviceId))
     val sort = Some(SortBuilderUtil.sortBuilder("timestamp", asc = false))
 
-    EsSimpleClient.getDocs(index, query, Some(from), Some(size), sort).map { res =>
-      res.map(_.extract[DeviceHistoryLegacy]).map { ddpl =>
-        upgradeDdl(ddpl)
-      }
+    EsSimpleClient
+      .getDocs(index, query, Some(from), Some(size), sort)
+      .map { res =>
+        res
+          .map(_.extract[DeviceHistoryLegacy])
+          .map { ddpl =>
+            upgradeDdl(ddpl)
+          }
+      }.recover {
+      case ex =>
+        logger.error(s"retrieving history of devie with id=$deviceId from=$from size=$size failed", ex)
+        Seq.empty
     }
   }
 
@@ -70,10 +78,16 @@ object DeviceHistoryManager extends MyJsonProtocol
       sort = sort,
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
-    ) map { res =>
-      res.map(_.extract[DeviceHistoryLegacy]).map { ddpl =>
-        upgradeDdl(ddpl)
-      }
+    ).map { res =>
+      res
+        .map(_.extract[DeviceHistoryLegacy])
+        .map { ddpl =>
+          upgradeDdl(ddpl)
+        }
+    }.recover {
+      case ex =>
+        logger.error(s"retrieving history of device with id=$deviceId from=$from to=$to failed", ex)
+        Seq.empty
     }
 
   }
@@ -98,10 +112,14 @@ object DeviceHistoryManager extends MyJsonProtocol
       sort = sort,
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
-    ) map { res =>
+    ).map { res =>
       res.map(_.extract[DeviceHistoryLegacy]).map { ddpl =>
         upgradeDdl(ddpl)
       }
+    }.recover {
+      case ex =>
+        logger.error(s"retrieving history of device with id=$deviceId before=$before failed", ex)
+        Seq.empty
     }
   }
 
@@ -125,10 +143,16 @@ object DeviceHistoryManager extends MyJsonProtocol
       sort = sort,
       query = Some(combinedQuery),
       size = Some(Config.esLargePageSize)
-    ) map { res =>
-      res.map(_.extract[DeviceHistoryLegacy]).map { ddpl =>
-        upgradeDdl(ddpl)
-      }
+    ).map { res =>
+      res
+        .map(_.extract[DeviceHistoryLegacy])
+        .map { ddpl =>
+          upgradeDdl(ddpl)
+        }
+    }.recover {
+      case ex =>
+        logger.error(s"retrieving history of device with id=$deviceId after=$after failed", ex)
+        Seq.empty
     }
 
   }
@@ -168,10 +192,18 @@ object DeviceHistoryManager extends MyJsonProtocol
 
     val query = Some(QueryBuilders.termQuery("messageId", messageId.toString))
 
-    EsSimpleClient.getDocs(index, query).map { res =>
-      res.map(_.extract[DeviceHistoryLegacy]).map { ddpl =>
-        upgradeDdl(ddpl)
-      }.headOption
+    EsSimpleClient
+      .getDocs(index, query)
+      .map { res =>
+        res
+          .map(_.extract[DeviceHistoryLegacy])
+          .map { ddpl =>
+            upgradeDdl(ddpl)
+          }.headOption
+      }.recover {
+      case ex =>
+        logger.error(s"retrieving history by messageId=$messageId failed", ex)
+        None
     }
   }
 

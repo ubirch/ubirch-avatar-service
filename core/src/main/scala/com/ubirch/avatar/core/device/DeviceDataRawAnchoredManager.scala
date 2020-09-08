@@ -33,9 +33,13 @@ object DeviceDataRawAnchoredManager extends MyJsonProtocol
     EsSimpleClient.getDoc(
       docIndex = index,
       docId = id.toString
-    ) map {
+    ).map {
       case Some(res) => Some(res.extract[DeviceDataRaw])
       case None => None
+    }.recover {
+      case ex =>
+        logger.error(s"retrieved deviceDataRaw byId id=$id", ex)
+        None
     }
 
   }
