@@ -170,6 +170,10 @@ object DeviceManager
     ).map {
       case true => Some(device)
       case _ => None
+    }.recover {
+      case ex =>
+        logger.error(s"error deleting device $device", ex)
+        None
     }
 
   }
@@ -182,11 +186,7 @@ object DeviceManager
     EsSimpleClient.getDocs(
       docIndex = esIndex,
       query = Some(query)
-    ).recover[List[JValue]] {
-      case e =>
-        logger.error(s"error fetching device infoByHwId for $hwDeviceId", e)
-        List()
-    }.map { doc =>
+    ).map { doc =>
 
       doc.headOption match {
         case Some(jval) => jval.extractOpt[Device]
@@ -299,6 +299,10 @@ object DeviceManager
           ).map {
             case true => devJval.extractOpt[Device]
             case false => None
+          }.recover {
+            case ex =>
+              logger.error(s"error storing document $devJval in index=$esIndex with id=${deviceToStore.deviceId}", ex)
+              None
           }
 
         case None => Future(None)
@@ -353,6 +357,10 @@ object DeviceManager
             ).map {
               case true => devJval.extractOpt[Device]
               case false => None
+            }.recover {
+              case ex =>
+                logger.error(s"error storing document $devJval in index=$esIndex with id=${toUpdate.deviceId}", ex)
+                None
             }
 
             if (device.deviceConfig.isDefined) {
