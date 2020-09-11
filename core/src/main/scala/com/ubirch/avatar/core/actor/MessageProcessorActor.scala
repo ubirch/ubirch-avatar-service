@@ -33,8 +33,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
 
   private val persistenceActor: ActorRef = context.actorOf(MessagePersistenceActor.props, ActorNames.PERSISTENCE_SVC)
 
-//  private val chainActor: ActorRef = context.actorOf(Props[MessageChainActor], ActorNames.CHAIN_SVC)
-
   private val outboxManagerActor = context.actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
 
   private val processStateTimer = new Timer(s"process_state_${scala.util.Random.nextInt(100000)}")
@@ -92,16 +90,14 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
               s ! d
             case None =>
               log.error(s"current AvatarStateRest not available: ${device.deviceId}")
-              val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
-              //              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-              //              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+              val d = DeviceStateManager.createNewDeviceState(AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
               s ! d
           }.recover {
             case t: Throwable =>
               log.error(t, s"current AvatarStateRest not available: ${device.deviceId}")
-              val d = DeviceStateManager.createNewDeviceState(device, AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
               //              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
               //              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+              val d = DeviceStateManager.createNewDeviceState(AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
               s ! d
           }
 
@@ -124,7 +120,7 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       case Some(currentAvatarState) =>
         log.debug(s"AvatarStateManagerREST.setReported(${device.deviceId}) took ${System.currentTimeMillis() - start}ms")
         val esStart = System.currentTimeMillis()
-        val dsu = DeviceStateManager.createNewDeviceState(device, currentAvatarState)
+        val dsu = DeviceStateManager.createNewDeviceState(currentAvatarState)
         DeviceStateManager.upsert(state = dsu)
         log.debug(s"DeviceStateManager.createNewDeviceState(${device.deviceId}) took ${System.currentTimeMillis() - esStart}ms")
         processStateTimer.stop

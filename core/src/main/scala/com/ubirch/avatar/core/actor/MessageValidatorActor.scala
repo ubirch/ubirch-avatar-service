@@ -36,6 +36,7 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   override def receive: Receive = {
 
     case drd: DeviceDataRaw if drd.v == MessageVersion.v000 =>
+      //This seems to be the Trackle default message version
       val s = sender()
 
       log.debug(s"received message with version ${drd.v}")

@@ -57,9 +57,14 @@ object DeviceDataRawManager
     val query = Some(QueryBuilders.termQuery("a", hashedHwDeviceId))
     val sort = Some(SortBuilderUtil.sortBuilder("ts", asc = false))
 
-    EsSimpleClient.getDocs(index, query, Some(from), Some(size), sort).map { res =>
-      res.map(_.extract[DeviceDataRaw])
-    }
+    EsSimpleClient
+      .getDocs(index, query, Some(from), Some(size), sort)
+      .map(_.map(_.extract[DeviceDataRaw]))
+      .recover {
+        case ex =>
+          logger.error(s"retrieving history for hashedHwDeviceId=$hashedHwDeviceId, from=$from, size=$size", ex)
+          Seq.empty
+      }
 
   }
 
@@ -84,9 +89,14 @@ object DeviceDataRawManager
 
     val sort = SortBuilderUtil.sortBuilder("ts", asc = false)
 
-    EsSimpleClient.getDocs(index, Some(query), Some(from), Some(size), Some(sort)).map { res =>
-      res.map(_.extract[DeviceDataRaw])
-    }
+    EsSimpleClient
+      .getDocs(index, Some(query), Some(from), Some(size), Some(sort))
+      .map(_.map(_.extract[DeviceDataRaw]))
+      .recover {
+        case ex =>
+          logger.error(s"retrieving deviceDataRaw for day=$day, from=$from, size=$size, query=$query", ex)
+          Seq.empty
+      }
 
   }
 
@@ -111,6 +121,10 @@ object DeviceDataRawManager
             None
         }
       }.filter(_.isDefined).map(_.get).headOption
+    }.recover {
+      case ex =>
+        logger.error(s"retrieved deviceDataRaw by loadById id=$id", ex)
+        None
     }
   }
 
