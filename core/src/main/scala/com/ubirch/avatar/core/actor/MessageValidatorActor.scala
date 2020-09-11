@@ -4,13 +4,12 @@ import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
-import com.ubirch.avatar.config.{Config, ConfigKeys}
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.services.util.DeviceCoreUtil
-import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
@@ -129,8 +128,8 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   private def logAndCreateErrorResponse(msg: String, errType: String, deviceId: Option[String], hashedHwDeviceId: Option[String]): JsonErrorResponse = {
     log.error(msg)
     val jer = JsonErrorResponse(errorType = errType, errorMessage = msg)
-    if (deviceId.isDefined)
-      outboxManagerActor ! MessageReceiver(deviceId.get, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+    //    if (deviceId.isDefined)
+    //      outboxManagerActor ! MessageReceiver(deviceId.get, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
     jer
   }
 

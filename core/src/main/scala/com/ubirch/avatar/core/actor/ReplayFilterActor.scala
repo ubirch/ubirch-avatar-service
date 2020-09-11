@@ -1,12 +1,11 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
-import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
+import com.ubirch.avatar.config.{Config, Const}
 import com.ubirch.avatar.core.device.{DeviceDataRawManager, DeviceManager}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.redis.RedisClientUtil
@@ -43,7 +42,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
             errorType = "ValidationError",
             errorMessage = s"received message from the past error for device ${device.deviceId}"
           )
-          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          //          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
           s ! jer
         }
         else if (drd.s.isEmpty) {
@@ -51,7 +50,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
             errorType = "ValidationError",
             errorMessage = s"received message without a signature for device ${device.deviceId}"
           )
-          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+          //          outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
           s ! jer
         }
         else
@@ -61,7 +60,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
                 errorType = "ValidationError",
                 errorMessage = s"replay attack detected for device ${device.deviceId}"
               )
-              outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+              //              outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
               s ! jer
             case None =>
               DeviceDataRawManager.loadBySignature(drd.s.get).map {
@@ -70,7 +69,7 @@ class ReplayFilterActor(implicit mongo: MongoUtil)
                     errorType = "ValidationError",
                     errorMessage = s"delayed replay attack detected for device ${device.deviceId}"
                   )
-                  outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
+                  //                  outboxManagerActor ! MessageReceiver(device.deviceId, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
                   s ! jer
                 case None =>
                   redis.set(currenSig, drd.ts.toString, exSeconds = Some(Config.getMessageSignatureCache))

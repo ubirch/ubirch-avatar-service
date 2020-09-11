@@ -2,7 +2,6 @@ package com.ubirch.transformer.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import com.ubirch.avatar.config.ConfigKeys
-import com.ubirch.avatar.core.actor.DeviceMessageProcessedActor
 import com.ubirch.transformer.model.MessageReceiver
 
 import scala.concurrent.duration._
@@ -32,8 +31,8 @@ class TransformerOutboxManagerActor extends Actor with ActorLogging {
       mr.target match {
         case ConfigKeys.INTERNOUTBOX =>
           getInternProducer(mr).map(_ ! mr.message)
-        case ConfigKeys.EXTERNOUTBOX =>
-          getExternProducer(mr).map(_ ! mr.message)
+        //        case ConfigKeys.EXTERNOUTBOX =>
+        //          getExternProducer(mr).map(_ ! mr.message)
         case _ =>
           log.error(s"invalid target: ${mr.target}")
       }
@@ -59,25 +58,25 @@ class TransformerOutboxManagerActor extends Actor with ActorLogging {
     }
   }
 
-  //@TODO refactor
-  private def getExternProducer(mr: MessageReceiver): Future[ActorRef] = {
-
-    val curRefBase = s"$DMACTOR_BASE${mr.topic}"
-    val curRefBasePath = s"$DMACTOR_BASE_PATH${mr.topic}"
-
-    val aref = context.system.actorSelection(curRefBasePath)
-    val fs: FiniteDuration = 100 millis
-
-    aref.resolveOne(fs).map { ar =>
-      log.debug(s"reused actor with path: $curRefBasePath")
-      ar
-    }.recover {
-      case t =>
-        log.debug(s"had to create fresh actor with path: $curRefBasePath")
-        val acr = context.system.actorOf(DeviceMessageProcessedActor.props(mr.topic), curRefBase)
-        acr
-    }
-  }
+  //  //@TODO refactor
+  //  private def getExternProducer(mr: MessageReceiver): Future[ActorRef] = {
+  //
+  //    val curRefBase = s"$DMACTOR_BASE${mr.topic}"
+  //    val curRefBasePath = s"$DMACTOR_BASE_PATH${mr.topic}"
+  //
+  //    val aref = context.system.actorSelection(curRefBasePath)
+  //    val fs: FiniteDuration = 100 millis
+  //
+  //    aref.resolveOne(fs).map { ar =>
+  //      log.debug(s"reused actor with path: $curRefBasePath")
+  //      ar
+  //    }.recover {
+  //      case t =>
+  //        log.debug(s"had to create fresh actor with path: $curRefBasePath")
+  //        val acr = context.system.actorOf(DeviceMessageProcessedActor.props(mr.topic), curRefBase)
+  //        acr
+  //    }
+  //  }
 
   override def unhandled(message: Any): Unit = {
 

@@ -4,14 +4,13 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
-import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
+import com.ubirch.avatar.config.{Config, Const}
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
 import com.ubirch.avatar.core.prometheus.Timer
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceDataRaw, DeviceStateUpdate}
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -86,21 +85,19 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           processPayload(device, pl, drdPatched.s).map {
             case Some(d: DeviceStateUpdate) =>
               log.debug(s"current AvatarState updated: ${device.deviceId}")
-              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
+              //              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+              //              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
               s ! d
             case None =>
               log.error(s"current AvatarStateRest not available: ${device.deviceId}")
               val d = DeviceStateManager.createNewDeviceState(AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
-              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
               s ! d
           }.recover {
             case t: Throwable =>
               log.error(t, s"current AvatarStateRest not available: ${device.deviceId}")
+              //              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
+              //              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
               val d = DeviceStateManager.createNewDeviceState(AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
-              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
               s ! d
           }
 
