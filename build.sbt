@@ -49,8 +49,6 @@ lazy val avatarService = (project in file("."))
   )
   .aggregate(
     aws,
-    //    client,
-    //    clientRest,
     cmdtools,
     config,
     core,
@@ -99,25 +97,6 @@ lazy val cmdtools = project
   .settings(
     description := "command line tools"
   )
-
-//lazy val client = project
-//  .settings(commonSettings)
-//  .dependsOn(config, modelRest, util)
-//  .settings(
-//    description := "REST client for the avatarService",
-//    libraryDependencies ++= depClient,
-//    resolvers ++= Seq(
-//      resolverBeeClient
-//    )
-//  )
-//
-//lazy val clientRest = (project in file("client-rest"))
-//  .settings(commonSettings)
-//  .dependsOn(config, modelRest, util, testBase % "test")
-//  .settings(
-//    description := "REST client for the avatarService",
-//    libraryDependencies ++= depClientRest
-//  )
 
 lazy val core = project
   .settings(commonSettings)
@@ -226,7 +205,6 @@ lazy val depCore = Seq(
   ubirchResponse,
   ubirchIdServiceClient,
   ubirchUserClientRest,
-  //  ubirchChainModel,
   ubirchUtilRedisUtil,
   spireMath,
   msgpackScala,
@@ -321,7 +299,6 @@ val scalaLogging = Seq(
   "ch.qos.logback" % "logback-core" % logbackV,
   "ch.qos.logback" % "logback-classic" % logbackV,
   "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,
-  //  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % scalaLogSLF4JV,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
 )
 
@@ -384,16 +361,16 @@ val prometheus = Seq(
   "io.prometheus" % "simpleclient" % "0.3.0",
   "io.prometheus" % "simpleclient_hotspot" % "0.3.0",
   "io.prometheus" % "simpleclient_httpserver" % "0.3.0",
-  "io.prometheus" % "simpleclient_pushgateway" % "0.3.0"
-  , "com.workday" %% "prometheus-akka" % "0.8.5"
-  , "org.aspectj" % "aspectjweaver" % "1.8.10"
+  "io.prometheus" % "simpleclient_pushgateway" % "0.3.0",
+  "com.workday" %% "prometheus-akka" % "0.8.5",
+  "org.aspectj" % "aspectjweaver" % "1.8.10"
 )
 
 val ubirchCamelUtils = ubirchUtilG %% "ubirch-camel-utils" % "0.1.1" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
 val ubirchConfig = ubirchUtilG %% "ubirch-config-utils" % "0.2.4" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "ubirch-crypto-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.2" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.3" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "ubirch-oidc-utils" % "0.8.15" excludeAll (excludedLoggers: _*)
@@ -406,8 +383,6 @@ val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-cl
 val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.4" excludeAll (excludedLoggers: _*)
 val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
 
-//val ubirchChainModel = "com.ubirch.chain" %% "model-rest" % "0.2.0" excludeAll (excludedLoggers: _*)
-
 /*
  * RESOLVER
  ********************************************************/
@@ -419,6 +394,7 @@ lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.
 lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
 lazy val resolverUbirchUtils = "ubirch.utils.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/ubirch-utils-mvn"
+
 /*
  * MISC
  ********************************************************/
