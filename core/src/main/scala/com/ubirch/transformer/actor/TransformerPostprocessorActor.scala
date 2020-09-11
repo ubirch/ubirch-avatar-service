@@ -61,7 +61,7 @@ class TransformerPostprocessorActor extends Actor with MyJsonProtocol with Actor
 
               if (Config.mqttPublishProcessed) {
                 log.debug(s"currently do not send processed message to mqtt for deviceId ${device.deviceId}")
-                outboxManagerActor ! MessageReceiver(ddp.deviceId, jvalStr, ConfigKeys.EXTERNOUTBOX)
+//                outboxManagerActor ! MessageReceiver(ddp.deviceId, jvalStr, ConfigKeys.EXTERNOUTBOX)
               }
               else
                 log.info(s"do not send processed message for deviceId ${device.deviceId} to mqtt")

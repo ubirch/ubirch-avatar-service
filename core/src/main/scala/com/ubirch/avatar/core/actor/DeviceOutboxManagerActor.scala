@@ -5,7 +5,6 @@ import akka.camel.CamelMessage
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.transformer.actor.TransformerProducerActor
-import com.ubirch.transformer.model.MessageReceiver
 import com.ubirch.util.json.Json4sUtil
 import org.apache.camel.Message
 
@@ -56,11 +55,11 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
           }
         }
 
-    case mr: MessageReceiver =>
+    //    case mr: MessageReceiver =>
 
-      getMqttProducer(mr).map { taRef =>
-        taRef ! mr.message
-      }
+    //      getMqttProducer(mr).map { taRef =>
+    //        taRef ! mr.message
+    //      }
 
     case Terminated(actorRef) =>
       log.warning("Actor {} terminated", actorRef)
@@ -112,24 +111,24 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   }
 
-  //@TODO refactor
-  private def getMqttProducer(mr: MessageReceiver): Future[ActorRef] = {
-
-    val curRefBase = s"$DOMACTOR_BASE${mr.getKey}"
-    val curRefBasePath = s"$DOMACTOR_BASE_PATH${mr.getKey}"
-
-    val aref = context.system.actorSelection(curRefBasePath)
-    val fs: FiniteDuration = 500 millis
-
-    aref.resolveOne(fs).map { ar =>
-      log.debug(s"reused mqtt producer actor with path: $curRefBasePath")
-      ar
-    }.recover {
-      case t: Throwable =>
-        log.debug(s"had to create fresh actor with path: $curRefBasePath")
-        context.system.actorOf(DeviceStateUpdateActor.props(mr.topic), curRefBase)
-    }
-  }
+  //  //@TODO refactor
+  //  private def getMqttProducer(mr: MessageReceiver): Future[ActorRef] = {
+  //
+  //    val curRefBase = s"$DOMACTOR_BASE${mr.getKey}"
+  //    val curRefBasePath = s"$DOMACTOR_BASE_PATH${mr.getKey}"
+  //
+  //    val aref = context.system.actorSelection(curRefBasePath)
+  //    val fs: FiniteDuration = 500 millis
+  //
+  //    aref.resolveOne(fs).map { ar =>
+  //      log.debug(s"reused mqtt producer actor with path: $curRefBasePath")
+  //      ar
+  //    }.recover {
+  //      case t: Throwable =>
+  //        log.debug(s"had to create fresh actor with path: $curRefBasePath")
+  //        context.system.actorOf(DeviceStateUpdateActor.props(mr.topic), curRefBase)
+  //    }
+  //  }
 
 }
 
