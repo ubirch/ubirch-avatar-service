@@ -366,22 +366,22 @@ val prometheus = Seq(
   "org.aspectj" % "aspectjweaver" % "1.8.10"
 )
 
+val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
 val ubirchCamelUtils = ubirchUtilG %% "ubirch-camel-utils" % "0.1.1" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
 val ubirchConfig = ubirchUtilG %% "ubirch-config-utils" % "0.2.4" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "ubirch-crypto-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.4" excludeAll (excludedLoggers: _*)
+val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.6" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "ubirch-oidc-utils" % "0.8.15" excludeAll (excludedLoggers: _*)
 val ubirchUtilRedisUtil = ubirchUtilG %% "ubirch-redis-utils" % "0.6.1"
 val ubirchResponse = ubirchUtilG %% "ubirch-response-utils" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "ubirch-rest-akka-http-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
+val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.4" excludeAll (excludedLoggers: _*)
 val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.4" excludeAll (excludedLoggers: _*)
 
-val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
-val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.4" excludeAll (excludedLoggers: _*)
-val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.5" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
