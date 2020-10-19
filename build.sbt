@@ -380,7 +380,7 @@ val ubirchRestAkkaHttp = ubirchUtilG %% "ubirch-rest-akka-http-utils" % "0.4.1" 
 val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.4" excludeAll (excludedLoggers: _*)
 
 val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.6" excludeAll (excludedLoggers: _*)
-val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.6" excludeAll (excludedLoggers: _*)
+val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.6-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.5" excludeAll (excludedLoggers: _*)
 
 /*
