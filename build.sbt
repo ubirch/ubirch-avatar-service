@@ -28,7 +28,8 @@ val commonSettings = Seq(
   resolvers ++= Seq(
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots"),
-    resolverUbirchUtils
+    resolverUbirchUtils,
+    resolverUbirchMvn
   ),
   publishMavenStyle := true,
   publishTo := Some("io.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/trackle-mvn")
@@ -394,6 +395,7 @@ lazy val resolverElasticsearch = "elasticsearch-releases" at "https://artifacts.
 lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe.com/typesafe/releases/"
 lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
 lazy val resolverUbirchUtils = "ubirch.utils.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/ubirch-utils-mvn"
+lazy val resolverUbirchMvn = "ubirch.mvn.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/mvn-public"
 
 /*
  * MISC
