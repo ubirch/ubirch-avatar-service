@@ -13,8 +13,8 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
 
 /**
- * Created by derMicha on 24/05/17.
- */
+  * Created by derMicha on 24/05/17.
+  */
 
 class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
@@ -31,6 +31,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
   override def receive: Receive = {
 
     case (device: Device, drd: DeviceDataRaw) =>
+      val s = sender()
       val drdExt = if (drd.mppay.isDefined && drd.mppay.get.length > 50000) {
         drd.copy(
           deviceId = Some(device.deviceId),
@@ -42,18 +43,20 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
         drd.copy(deviceId = Some(device.deviceId))
 
 
-      device.pubRawQueues
+      Future.sequence(device.pubRawQueues
         .getOrElse(Set())
-        .foreach { queue =>
+        .map { queue =>
           getSqsProducer(queue).map { taRef =>
             Json4sUtil.any2String(drdExt) match {
               case Some(drdStr) =>
                 taRef ! drdStr
+                true
               case None =>
                 log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
+                false
             }
           }
-        }
+        }).map(s ! !_.contains(false))
 
     //    case mr: MessageReceiver =>
 
