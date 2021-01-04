@@ -68,9 +68,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
         if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
           log.debug(s"stores data for ${device.deviceId}")
           persistenceActor ? drdPatched map {
-            case true =>
+            case boolean if boolean == true =>
               // publish incoming raw data to trackle and return true or false depending on success
-              outboxManagerActor ! (device, drdPatched)
+              outboxManagerActor ? (device, drdPatched)
             case false => false
             case unknown =>
               log.error(s"received unknown message type $unknown")
