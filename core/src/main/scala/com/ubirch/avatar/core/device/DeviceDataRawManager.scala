@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.device
 
-import java.util.UUID
-
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
@@ -16,6 +14,7 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.joda.time.{DateTime, DateTimeZone, LocalTime}
 import org.json4s.JsonAST.JValue
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionException, Future}
 
@@ -52,7 +51,7 @@ object DeviceDataRawManager
               size: Int
              ): Future[Seq[DeviceDataRaw]] = {
 
-    require(!hashedHwDeviceId.isEmpty, "hashedHwDeviceId may not be empty")
+    require(hashedHwDeviceId.nonEmpty, "hashedHwDeviceId may not be empty")
 
     val query = Some(QueryBuilders.termQuery("a", hashedHwDeviceId))
     val sort = Some(SortBuilderUtil.sortBuilder("ts", asc = false))
@@ -221,6 +220,38 @@ object DeviceDataRawManager
       case None =>
         logger.error(s"Couldn't store deviceDataRaw as parsing it to JValue failed: $data.")
         None
+    }
+  }
+
+  /**
+    * Store a [[DeviceDataRaw]].
+    *
+    * @param data a device's raw data to store
+    * @return json of what we stored
+    */
+  def storeOne(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
+
+
+    logger.debug(s"store data: $data")
+    Json4sUtil.any2jvalue(data) match {
+
+      case Some(doc) =>
+        val id = data.id.toString
+        EsSimpleClient.storeDoc(
+          docIndex = index,
+          doc = doc,
+          docIdOpt = Some(id),
+          retry = 1
+        ).map {
+          case true => doc.extractOpt[DeviceDataRaw]
+          case false =>
+            logger.error(s"failed to store deviceDataRaw $data")
+            None
+        }
+
+      case None =>
+        logger.error(s"Couldn't store deviceDataRaw as parsing it to JValue failed: $data.")
+        Future.successful(None)
     }
   }
 

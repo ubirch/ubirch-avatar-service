@@ -64,11 +64,14 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           drdPatched.p.extract[JValue]
       }
 
-      val persisted =
+      val persistedAndForwarded =
         if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
           log.debug(s"stores data for ${device.deviceId}")
           persistenceActor ? drdPatched map {
-            case trueOrFalse: Boolean => trueOrFalse
+            case true =>
+              // publish incoming raw data to trackle and return true or false depending on success
+              outboxManagerActor ! (device, drdPatched)
+            case false => false
             case unknown =>
               log.error(s"received unknown message type $unknown")
               false
@@ -78,10 +81,10 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           Future.successful(true)
         }
 
-      persisted.map {
-        case false => s ! JsonErrorResponse(errorType = "database error", errorMessage = "something went wrong storing the deviceDataRaw in database.")
+      persistedAndForwarded.map {
+        case false => s ! JsonErrorResponse(errorType = "database error",
+          errorMessage = "something went wrong storing or forwarding the deviceDataRaw in database.")
         case true =>
-
           processPayload(device, pl, drdPatched.s).map {
             case Some(d: DeviceStateUpdate) =>
               log.debug(s"current AvatarState updated: ${device.deviceId}")
@@ -101,15 +104,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
               s ! d
           }
 
-          //          if (DeviceManager.checkProperty(device, Const.CHAINDATA) || DeviceManager.checkProperty(device, Const.CHAINHASHEDDATA)) {
-          //            log.debug(s"chain data: ${device.deviceId}")
-          //            chainActor ! (drdPatched, device)
-          //          }
-          //          else
-          //            log.debug(s"do not chain data for ${device.deviceId}")
-
-          // publish incomming raw data
-          outboxManagerActor ! (device, drdPatched)
       }
   }
 
