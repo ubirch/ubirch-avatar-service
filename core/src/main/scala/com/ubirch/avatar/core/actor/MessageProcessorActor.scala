@@ -17,7 +17,7 @@ import com.ubirch.util.mongo.connection.MongoUtil
 import org.json4s.{JValue, MappingException}
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContextExecutor, Future, Promise}
 import scala.language.postfixOps
 
 /**
@@ -64,24 +64,31 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           drdPatched.p.extract[JValue]
       }
 
-      val persistedAndForwarded =
-        if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
-          log.debug(s"stores data for ${device.deviceId}")
-          persistenceActor ? drdPatched map {
-            case boolean if boolean == true =>
-              // publish incoming raw data to trackle and return true or false depending on success
-              outboxManagerActor ? (device, drdPatched)
-            case false => false
-            case unknown =>
-              log.error(s"received unknown message type $unknown")
-              false
-          }
-        } else {
-          log.debug(s"stores no data for ${device.deviceId}")
-          Future.successful(true)
-        }
 
-      persistedAndForwarded.map {
+      val persistedAndForwarded = Promise[Boolean]()
+
+      if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
+        log.debug(s"stores data for ${device.deviceId}")
+        persistenceActor ? drdPatched map {
+          case boolean if boolean == true =>
+            // publish incoming raw data to trackle and return true or false depending on success
+            outboxManagerActor ? (device, drdPatched) map {
+              case b: Boolean => persistedAndForwarded.success(b)
+              case unknown =>
+                log.error(s"received unknown message type $unknown")
+                persistedAndForwarded.success(false)
+            }
+          case false => persistedAndForwarded.success(false)
+          case unknown =>
+            log.error(s"received unknown message type $unknown")
+            persistedAndForwarded.success(false)
+        }
+      } else {
+        log.debug(s"stores no data for ${device.deviceId}")
+        persistedAndForwarded.success(true)
+      }
+
+      persistedAndForwarded.future.map {
         case false => s ! JsonErrorResponse(errorType = "database error",
           errorMessage = "something went wrong storing or forwarding the deviceDataRaw in database.")
         case true =>
