@@ -2,14 +2,27 @@
 
 ubirch device-configuration and -dataflow service
 
+## Run the service
+
+by executing:
+
+    sbt server/run
+
+you can also enter the sbt shell and enter:
+
+    clean
+    compile
+    project server
+    run
+
 ## General Information
 
 ubirch Avatar Service is responsible for:
 
 * offering ubirch IoT devices an endpoint to sync their state
 * processing incoming raw data from ubirch IoT devices
-** validating signatures
-** transforming raw data
+  ** validating signatures
+  ** transforming raw data
 * offering CRUD API to manage ubirch IoT Devices
 * managing device states using Amazon AWS IoT
 * publishing processed data for further processing (AWS SQS)
