@@ -12,6 +12,10 @@ object ActorNames {
 
   final val TRANSFORMER_PRODUCER: String = "AVS-transformer-producer"
 
+  final val TRANSFORMER_PRODUCER2: String = "AVS-transformer-producer2"
+
+  final val TRANSFORMER_PRODUCER2_PATH: String = s"/user/$TRANSFORMER_PRODUCER2"
+
   final val TRANSFORMER_CONSUMER: String = "AVS-transformer-consumer"
 
   final val TRANSFORMER_PRE: String = "AVS-transformer-pre-actor"

@@ -8,7 +8,7 @@ import com.ubirch.avatar.backend.actor.DeviceApiActor
 import com.ubirch.avatar.core.actor._
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.actor.TransformerConsumerActor
+import com.ubirch.transformer.actor.{TransformerConsumerActor, TransformerProducerActor2}
 import com.ubirch.util.mongo.connection.MongoUtil
 
 object ActorStarter extends StrictLogging {
@@ -58,6 +58,11 @@ object ActorStarter extends StrictLogging {
     val ob = system.actorOf(
       DeviceOutboxManagerActor.props(),
       ActorNames.DEVICE_OUTBOX_MANAGER
+    )
+
+    val ts = system.actorOf(
+      TransformerProducerActor2.props("localhost:9092", "trackle-msgpack"),
+      ActorNames.TRANSFORMER_PRODUCER2
     )
 
     //    val din = system.actorOf(

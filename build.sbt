@@ -268,6 +268,7 @@ lazy val depTestBase = Seq(
 // VERSIONS
 val akkaV = "2.5.21"
 val akkaHttpV = "10.1.3"
+val akkaStreamKafkaV = "1.1.0"
 val json4sV = "3.6.0"
 val awsSdkV = "1.11.438"
 val camelV = "2.23.1"
@@ -307,12 +308,14 @@ val akkaStream = akkaG %% "akka-stream" % akkaV
 val akkaSlf4j = akkaG %% "akka-slf4j" % akkaV
 val akkaHttp = akkaG %% "akka-http" % akkaHttpV
 val akkaCluster = akkaG %% "akka-cluster" % akkaV
+val akkaStreamKafka = akkaG %% "akka-stream-kafka" % akkaStreamKafkaV
 val akka = Seq(
   akkaActor,
   akkaStream,
   akkaSlf4j,
   akkaHttp,
-  akkaCluster
+  akkaCluster,
+  akkaStreamKafka,
 )
 
 val akkaCamel = Seq(

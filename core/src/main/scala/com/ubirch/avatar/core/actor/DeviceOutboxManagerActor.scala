@@ -4,7 +4,9 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.camel.CamelMessage
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
-import com.ubirch.transformer.actor.TransformerProducerActor
+import com.ubirch.avatar.util.actor.ActorNames
+import com.ubirch.transformer.actor.TransformerProducerActor2.{KafkaMessage, PublisherException, PublisherSuccess}
+import com.ubirch.transformer.actor.{TransformerProducerActor, TransformerProducerActor2}
 import com.ubirch.util.json.Json4sUtil
 import org.apache.camel.Message
 
@@ -28,6 +30,8 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   final val DOMACTOR_BASE_PATH: String = s"/user/$DOMACTOR_BASE"
 
+  private val transformerProducerActor2 = context.actorSelection(ActorNames.TRANSFORMER_PRODUCER2_PATH)
+
   override def receive: Receive = {
 
     case (device: Device, drd: DeviceDataRaw) =>
@@ -42,10 +46,19 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
       else
         drd.copy(deviceId = Some(device.deviceId))
 
-
+      Json4sUtil.any2String(drdExt) match {
+        case Some(drdStr) =>
+          transformerProducerActor2 ! KafkaMessage(drdStr)
+          s ! true
+        case None =>
+          log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
+          s ! false
+      }
+      /*
       Future.sequence(device.pubRawQueues
         .getOrElse(Set())
         .map { queue =>
+          // @TODO this part should be changed as Kafka interface
           getSqsProducer(queue).map { taRef =>
             Json4sUtil.any2String(drdExt) match {
               case Some(drdStr) =>
@@ -56,13 +69,19 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
                 false
             }
           }
-        }).map(s ! !_.contains(false))
+        }).map(s ! !_.contains(false))*/
 
     //    case mr: MessageReceiver =>
 
     //      getMqttProducer(mr).map { taRef =>
     //        taRef ! mr.message
     //      }
+
+    case PublisherSuccess(_) =>
+      log.info("succeeded to send payload.")
+
+    case PublisherException(err) =>
+      log.error(s"failed to send payload. err: ${err.getMessage}")
 
     case Terminated(actorRef) =>
       log.warning("Actor {} terminated", actorRef)
