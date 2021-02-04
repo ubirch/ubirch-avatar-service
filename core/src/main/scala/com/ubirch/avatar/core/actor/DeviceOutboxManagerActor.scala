@@ -2,17 +2,21 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.camel.CamelMessage
+import akka.pattern.ask
+import akka.util.Timeout
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.actor.TransformerProducerActor2.{KafkaMessage, PublisherException, PublisherSuccess}
-import com.ubirch.transformer.actor.{TransformerProducerActor, TransformerProducerActor2}
+import com.ubirch.transformer.actor.KafkaProducerActor.KafkaMessage
+import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
 import org.apache.camel.Message
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 /**
   * Created by derMicha on 24/05/17.
@@ -30,7 +34,10 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   final val DOMACTOR_BASE_PATH: String = s"/user/$DOMACTOR_BASE"
 
-  private val transformerProducerActor2 = context.actorSelection(ActorNames.TRANSFORMER_PRODUCER2_PATH)
+  // @todo config
+  private val kafkaProducerActor = context.actorSelection(ActorNames.kafkaProducerPath("trackle-msgpack"))
+
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   override def receive: Receive = {
 
@@ -48,40 +55,39 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
       Json4sUtil.any2String(drdExt) match {
         case Some(drdStr) =>
-          transformerProducerActor2 ! KafkaMessage(drdStr)
-          s ! true
+          (kafkaProducerActor ? KafkaMessage(drdStr)) onComplete {
+            case Success(_) =>
+              log.info(s"succeeded to publish DeviceRawData to Kafka")
+              s ! true
+            case Failure(err) =>
+              log.error(s"failed to publish DeviceRawData to Kafka. error: ${err}")
+              s ! false
+          }
         case None =>
           log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
           s ! false
       }
-      /*
+
+      // This part was used before Kafka started being used. That's why the result of this procedure is not tracked by sender.
+      // When the avatar service is deleted and the code is moved out to the other service, this part will be removed.
       Future.sequence(device.pubRawQueues
         .getOrElse(Set())
         .map { queue =>
-          // @TODO this part should be changed as Kafka interface
           getSqsProducer(queue).map { taRef =>
             Json4sUtil.any2String(drdExt) match {
               case Some(drdStr) =>
                 taRef ! drdStr
-                true
               case None =>
                 log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
-                false
             }
           }
-        }).map(s ! !_.contains(false))*/
+        })
 
     //    case mr: MessageReceiver =>
 
     //      getMqttProducer(mr).map { taRef =>
     //        taRef ! mr.message
     //      }
-
-    case PublisherSuccess(_) =>
-      log.info("succeeded to send payload.")
-
-    case PublisherException(err) =>
-      log.error(s"failed to send payload. err: ${err.getMessage}")
 
     case Terminated(actorRef) =>
       log.warning("Actor {} terminated", actorRef)
