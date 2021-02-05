@@ -34,7 +34,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   final val DOMACTOR_BASE_PATH: String = s"/user/$DOMACTOR_BASE"
 
-  private val kafkaProducerActor = context.actorSelection(ActorNames.kafkaProducerPath(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC))
+  private val kafkaProducerActor = context.actorSelection(ActorNames.kafkaProducerPath(Config.kafkaTrackelMsgpackTopic))
 
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
