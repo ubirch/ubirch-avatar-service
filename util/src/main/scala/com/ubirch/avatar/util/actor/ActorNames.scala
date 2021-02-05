@@ -13,8 +13,8 @@ object ActorNames {
   final val TRANSFORMER_PRODUCER: String = "AVS-transformer-producer"
 
   final val KAFKA_PRODUCER: String = "AVS-kafka-producer"
-  def kafkaProducer(topicName: String) = s"${KAFKA_PRODUCER}-$topicName"
-  def kafkaProducerPath(topicName: String) = s"/user/${kafkaProducer(topicName)}"
+  def kafkaProducer(topic: String) = s"${KAFKA_PRODUCER}-$topic"
+  def kafkaProducerPath(topic: String) = s"/user/${kafkaProducer(topic)}"
 
   final val TRANSFORMER_CONSUMER: String = "AVS-transformer-consumer"
 
