@@ -5,6 +5,7 @@ import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor.DeviceApiActor
+import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.core.actor._
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
@@ -60,10 +61,9 @@ object ActorStarter extends StrictLogging {
       ActorNames.DEVICE_OUTBOX_MANAGER
     )
 
-    // @todo config
     val ts = system.actorOf(
-      KafkaProducerActor.props("localhost:9092", "trackle-msgpack"),
-      ActorNames.kafkaProducer("trackle-msgpack")
+      KafkaProducerActor.props(ConfigKeys.KAFKA_BOOTSTRAPSERVER, ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC),
+      ActorNames.kafkaProducer(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
     )
 
     //    val din = system.actorOf(

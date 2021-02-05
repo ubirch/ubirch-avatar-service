@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.camel.CamelMessage
 import akka.pattern.ask
 import akka.util.Timeout
-import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
@@ -34,8 +34,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   final val DOMACTOR_BASE_PATH: String = s"/user/$DOMACTOR_BASE"
 
-  // @todo config
-  private val kafkaProducerActor = context.actorSelection(ActorNames.kafkaProducerPath("trackle-msgpack"))
+  private val kafkaProducerActor = context.actorSelection(ActorNames.kafkaProducerPath(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC))
 
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 

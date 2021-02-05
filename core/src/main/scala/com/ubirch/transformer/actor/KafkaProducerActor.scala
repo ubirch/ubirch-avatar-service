@@ -7,13 +7,15 @@ import com.ubirch.transformer.actor.KafkaProducerActor.KafkaMessage
 
 import scala.concurrent.ExecutionContext
 
-class KafkaProducerActor(kafkaUrl: String, topicName: String) extends Actor with ActorLogging {
+class KafkaProducerActor(kafkaUrl: String, topic: String) extends Actor with ActorLogging {
   implicit val ec: ExecutionContext = context.dispatcher
 
-  // @TODO error handling
   private val kafkaProducer =
-    try { new KafkaProducer(kafkaUrl, topicName, context.system) }
-    catch { case ex: Exception => throw new RuntimeException(ex.getMessage) }
+    try { new KafkaProducer(kafkaUrl, topic, context.system) }
+    catch { case ex: Exception =>
+      log.error(s"Error occurred while initializing Kafka producer! ${ex.getMessage}")
+      throw ex
+    }
 
   override def receive: Receive = {
     case KafkaMessage(payload) =>
@@ -28,6 +30,6 @@ class KafkaProducerActor(kafkaUrl: String, topicName: String) extends Actor with
 }
 
 object KafkaProducerActor {
-  def props(kafkaUrl: String, topicName: String): Props = Props(classOf[KafkaProducerActor], kafkaUrl, topicName)
+  def props(kafkaUrl: String, topic: String): Props = Props(new KafkaProducerActor(kafkaUrl, topic))
   case class KafkaMessage(payload: String)
 }
