@@ -10,7 +10,7 @@ import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.actor._
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.actor.{KafkaProducerActor, TransformerConsumerActor}
+import com.ubirch.transformer.actor.TransformerConsumerActor
 import com.ubirch.util.mongo.connection.MongoUtil
 
 object ActorStarter extends StrictLogging {
@@ -60,11 +60,6 @@ object ActorStarter extends StrictLogging {
     val ob = system.actorOf(
       DeviceOutboxManagerActor.props(),
       ActorNames.DEVICE_OUTBOX_MANAGER
-    )
-
-    val ts = system.actorOf(
-      KafkaProducerActor.props(Config.kafkaBoostrapServer, Config.kafkaTrackelMsgpackTopic),
-      ActorNames.kafkaProducer(Config.kafkaTrackelMsgpackTopic)
     )
 
     //    val din = system.actorOf(

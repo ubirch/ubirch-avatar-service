@@ -274,7 +274,7 @@ object Config extends ConfigBase {
   /*
   * Kafka
    */
-  def kafkaBoostrapServer: String = config.getString(ConfigKeys.KAFKA_BOOT_STRAP_SERVER)
+  def kafkaBoostrapServer: String = config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
   def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
 
   def userToken: Option[String] = {

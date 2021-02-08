@@ -165,7 +165,7 @@ object ConfigKeys {
 
   final val kafkaPrefix = s"$prefix.kafka"
 
-  final val KAFKA_BOOT_STRAP_SERVER = s"$kafkaPrefix.bootstrapServers"
+  final val KAFKA_PROD_BOOTSTRAP_SERVER = s"$kafkaPrefix.producer.bootstrapServers"
 
   final val KAFKA_TRACKLE_MSGPACK_TOPIC = s"$kafkaPrefix.trackleMsgpackTopic"
 }

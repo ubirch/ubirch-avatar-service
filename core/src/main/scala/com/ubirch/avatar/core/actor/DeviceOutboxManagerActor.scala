@@ -2,13 +2,11 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.camel.CamelMessage
-import akka.pattern.ask
 import akka.util.Timeout
-import com.ubirch.avatar.config.{Config, ConfigKeys}
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.kafka.KafkaProducer
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
-import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.actor.KafkaProducerActor.KafkaMessage
 import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
 import org.apache.camel.Message
@@ -34,7 +32,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   final val DOMACTOR_BASE_PATH: String = s"/user/$DOMACTOR_BASE"
 
-  private val kafkaProducerActor = context.actorSelection(ActorNames.kafkaProducerPath(Config.kafkaTrackelMsgpackTopic))
+  private val kafkaProducer = KafkaProducer.create(Config.kafkaBoostrapServer, Config.kafkaTrackelMsgpackTopic, context.system)
 
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
@@ -54,7 +52,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
       Json4sUtil.any2String(drdExt) match {
         case Some(drdStr) =>
-          (kafkaProducerActor ? KafkaMessage(drdStr)) onComplete {
+          kafkaProducer.send(drdStr) onComplete {
             case Success(_) =>
               log.info(s"succeeded to publish DeviceRawData to Kafka")
               s ! true

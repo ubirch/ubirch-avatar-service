@@ -294,8 +294,6 @@ val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
-  "com.typesafe.akka" %% "akka-slf4j" % akkaV,
-  "ch.qos.logback" % "logback-classic" % logbackV,
   "org.apache.logging.log4j" % "log4j-core" % log4jV,
   //  "org.slf4j" % "log4j-over-slf4j" % slf4jV,
   //  "org.slf4j" % "jul-to-slf4j" % slf4jV,
