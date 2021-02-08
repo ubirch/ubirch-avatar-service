@@ -25,7 +25,6 @@ class TransformerProducerActor(queue: String)
 
 }
 
-
 object TransformerProducerActor {
   def props(queue: String): Props = Props(new TransformerProducerActor(queue))
 }

@@ -5,8 +5,6 @@ import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor.DeviceApiActor
-import com.ubirch.avatar.config.Config.config
-import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.actor._
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
