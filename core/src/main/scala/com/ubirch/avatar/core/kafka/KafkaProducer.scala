@@ -7,7 +7,6 @@ import org.apache.kafka.clients.producer.{Callback, ProducerRecord, RecordMetada
 import org.apache.kafka.common.serialization.StringSerializer
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
-import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
 
 class KafkaProducer(kafkaUrl: String, topic: String, actorSystem: ActorSystem) {
@@ -21,7 +20,12 @@ class KafkaProducer(kafkaUrl: String, topic: String, actorSystem: ActorSystem) {
     val record = new ProducerRecord[String, String](topic, message)
     val promise = Promise[RecordMetadata]()
     try {
-      producer.send(record, producerCallback(result => promise.complete(result)))
+      producer.send(record, new Callback {
+          override def onCompletion(metadata: RecordMetadata, exception: Exception): Unit = {
+            if(exception == null) promise.success(metadata)
+            else promise.failure(exception)
+          }
+        })
     } catch {
       case NonFatal(e) => promise.failure(e)
     }
@@ -31,17 +35,6 @@ class KafkaProducer(kafkaUrl: String, topic: String, actorSystem: ActorSystem) {
   def close(): Unit = {
     producer.close()
   }
-
-  private def producerCallback(callback: Try[RecordMetadata] => Unit): Callback =
-    new Callback {
-      override def onCompletion(metadata: RecordMetadata, exception: Exception): Unit = {
-        val result = {
-          if(exception == null) Success(metadata)
-          else Failure(exception)
-        }
-        callback(result)
-      }
-    }
 }
 
 object KafkaProducer extends StrictLogging {
