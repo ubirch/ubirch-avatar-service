@@ -31,13 +31,7 @@ case class Device(deviceId: String,
 
   override def equals(obj: scala.Any): Boolean = {
     obj match {
-      case dev: Device =>
-        if (
-          dev.deviceId == this.deviceId
-        )
-          true
-        else
-          false
+      case dev: Device => dev.deviceId == this.deviceId
       case _ => false
     }
   }

@@ -163,4 +163,9 @@ object ConfigKeys {
   // server ecc signing private key
   final val SIGNING_PRIVATE_KEY = "crypto.ecc.signingPrivateKey"
 
+  final val kafkaPrefix = s"$prefix.kafka"
+
+  final val KAFKA_PROD_BOOTSTRAP_SERVER = s"$kafkaPrefix.producer.bootstrapServers"
+
+  final val KAFKA_TRACKLE_MSGPACK_TOPIC = s"$kafkaPrefix.trackleMsgpackTopic"
 }

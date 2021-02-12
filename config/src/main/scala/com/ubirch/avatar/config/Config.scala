@@ -271,6 +271,12 @@ object Config extends ConfigBase {
   def serverPrivateKey: String = config.getString(ConfigKeys.SIGNING_PRIVATE_KEY)
 
 
+  /*
+  * Kafka
+   */
+  def kafkaBoostrapServer: String = config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
+  def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
+
   def userToken: Option[String] = {
 
     val key = s"ubirchAvatarService.client.rest.userToken"
