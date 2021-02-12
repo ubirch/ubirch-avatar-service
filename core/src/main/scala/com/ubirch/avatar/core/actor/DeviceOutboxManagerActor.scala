@@ -2,6 +2,9 @@ package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 import akka.camel.CamelMessage
+import akka.util.Timeout
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.kafka.KafkaProducer
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.transformer.actor.TransformerProducerActor
@@ -11,6 +14,7 @@ import org.apache.camel.Message
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
+import scala.util.{Failure, Success}
 
 /**
   * Created by derMicha on 24/05/17.
@@ -28,6 +32,10 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   final val DOMACTOR_BASE_PATH: String = s"/user/$DOMACTOR_BASE"
 
+  private val kafkaProducer = KafkaProducer.create(Config.kafkaBoostrapServer, Config.kafkaTrackelMsgpackTopic, context.system)
+
+  implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
+
   override def receive: Receive = {
 
     case (device: Device, drd: DeviceDataRaw) =>
@@ -42,7 +50,23 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
       else
         drd.copy(deviceId = Some(device.deviceId))
 
+      Json4sUtil.any2String(drdExt) match {
+        case Some(drdStr) =>
+          kafkaProducer.send(drdStr) onComplete {
+            case Success(_) =>
+              log.info(s"succeeded to publish DeviceRawData to Kafka")
+              s ! true
+            case Failure(err) =>
+              log.error(s"failed to publish DeviceRawData to Kafka. error: ${err}")
+              s ! false
+          }
+        case None =>
+          log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
+          s ! false
+      }
 
+      // This part was used before Kafka started being used. That's why the result of this procedure is not tracked by sender.
+      // When the avatar service is deleted and the code is moved out to the other service, this part will be removed.
       Future.sequence(device.pubRawQueues
         .getOrElse(Set())
         .map { queue =>
@@ -50,13 +74,11 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
             Json4sUtil.any2String(drdExt) match {
               case Some(drdStr) =>
                 taRef ! drdStr
-                true
               case None =>
                 log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
-                false
             }
           }
-        }).map(s ! !_.contains(false))
+        })
 
     //    case mr: MessageReceiver =>
 

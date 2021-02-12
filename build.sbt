@@ -268,6 +268,7 @@ lazy val depTestBase = Seq(
 // VERSIONS
 val akkaV = "2.5.21"
 val akkaHttpV = "10.1.3"
+val akkaStreamKafkaV = "1.1.0"
 val json4sV = "3.6.0"
 val awsSdkV = "1.11.438"
 val camelV = "2.23.1"
@@ -293,10 +294,7 @@ val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
-  //  "org.slf4j" % "log4j-over-slf4j" % slf4jV,
-  //  "org.slf4j" % "jul-to-slf4j" % slf4jV,
-  //  "org.apache.logging.log4j" % "log4j-to-slf4j" % "2.11.0",
-  //  "ch.qos.logback" % "logback-core" % logbackV,
+  "org.apache.logging.log4j" % "log4j-core" % log4jV,
   "ch.qos.logback" % "logback-classic" % logbackV,
   "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
@@ -307,12 +305,14 @@ val akkaStream = akkaG %% "akka-stream" % akkaV
 val akkaSlf4j = akkaG %% "akka-slf4j" % akkaV
 val akkaHttp = akkaG %% "akka-http" % akkaHttpV
 val akkaCluster = akkaG %% "akka-cluster" % akkaV
+val akkaStreamKafka = akkaG %% "akka-stream-kafka" % akkaStreamKafkaV
 val akka = Seq(
   akkaActor,
   akkaStream,
   akkaSlf4j,
   akkaHttp,
-  akkaCluster
+  akkaCluster,
+  akkaStreamKafka,
 )
 
 val akkaCamel = Seq(
