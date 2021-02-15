@@ -1,6 +1,5 @@
 package com.ubirch.avatar.config
 
-import com.ubirch.util.camel.SqsConfig
 import com.ubirch.util.config.ConfigBase
 
 /**
@@ -159,91 +158,16 @@ object Config extends ConfigBase {
     */
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
+  /**
+   * @return ElasticSearch size of large pages in regards to pagination
+   */
+  def esLargePageSize: Int = config.getInt(ConfigKeys.ES_LARGE_PAGE_SIZE)
+
   /*
    * Mongo Related
    ************************************************************************************************/
 
   def mongoCollectionAvatarState: String = config.getString(ConfigKeys.COLLECTION_AVATAR_STATE)
-
-  /*
-   * AWS
-   ************************************************************************************************/
-
-  /**
-    * @return ElasticSearch size of large pages in regards to pagination
-    */
-  def esLargePageSize: Int = config.getInt(ConfigKeys.ES_LARGE_PAGE_SIZE)
-
-  /**
-    * AWS local mode defines whether app is running on a locally or at AWS
-    *
-    * @return boolean value
-    */
-  def awsLocalMode: Boolean = config.getBoolean(ConfigKeys.AWS_LOCAL_MODE)
-
-  /**
-    * AWS base MQTT topic name for all AWS IoT Things
-    *
-    * @return boolean value
-    */
-  def awsTopicsBasename: String = config.getString(ConfigKeys.AWS_TOPICS_BASENAME)
-
-  /**
-    * @return boolean value
-    */
-  def awsStatesDesired: String = config.getString(ConfigKeys.AWS_STATES_DESIRED)
-
-  /**
-    * @return boolean value
-    */
-  def awsStatesReported: String = config.getString(ConfigKeys.AWS_STATES_REPORTED)
-
-  /**
-    * @return boolean value
-    */
-  def awsStatesDelta: String = config.getString(ConfigKeys.AWS_STATES_DELTA)
-
-  /**
-    * @return boolean value
-    */
-  def awsStatesTimestamp: String = config.getString(ConfigKeys.AWS_STATES_TIMESTAMP)
-
-  def awsRegion: String = config.getString(ConfigKeys.AWS_REGION)
-
-  def awsQueueOwnerId: String = config.getString(ConfigKeys.AWS_QUEUE_OWNER_ID)
-
-  def awsAccessKey: String = config.getString(ConfigKeys.AWS_ACCESS_KEY)
-
-  def awsSecretAccessKey: String = config.getString(ConfigKeys.AWS_SECRET_ACCESS_KEY)
-
-  def awsSqsMaxMessagesPerPoll: Int = config.getInt(ConfigKeys.AWS_SQS_MAX_MESSAGES_PER_POLL)
-
-  def awsSqsQueueTransformer: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER)
-
-  def awsSqsQueueTransformerOut: String = config.getString(ConfigKeys.AWS_SQS_QUEUES_TRANSFORMER_OUT)
-
-  def awsSqsUbirchChainDeviceMsgIn: String = config.getString(ConfigKeys.AWS_SQS_UBIRCH_CHAIN_DEVICE_MSG_IN)
-
-  def awsSqsUbirchChainDeviceHashIn: String = config.getString(ConfigKeys.AWS_SQS_UBIRCH_CHAIN_DEVICE_HASH_IN)
-
-  def sqsConfig(queue: String): SqsConfig = SqsConfig(
-    queue = queue,
-    region = awsRegion,
-    queueOwnerId = awsQueueOwnerId,
-    accessKey = awsAccessKey,
-    secretAccessKey = awsSecretAccessKey,
-    concurrentConsumers = 10
-  )
-
-  def sqsFullConfig(queue: String): SqsConfig = SqsConfig(
-    queue = queue,
-    region = awsRegion,
-    queueOwnerId = awsQueueOwnerId,
-    accessKey = awsAccessKey,
-    secretAccessKey = awsSecretAccessKey,
-    concurrentConsumers = 2,
-    maxMessagesPerPoll = Some(awsSqsMaxMessagesPerPoll)
-  )
 
   /*
    * MQTT
