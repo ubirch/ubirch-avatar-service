@@ -65,27 +65,6 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
           s ! false
       }
 
-      // This part was used before Kafka started being used. That's why the result of this procedure is not tracked by sender.
-      // When the avatar service is deleted and the code is moved out to the other service, this part will be removed.
-      Future.sequence(device.pubRawQueues
-        .getOrElse(Set())
-        .map { queue =>
-          getSqsProducer(queue).map { taRef =>
-            Json4sUtil.any2String(drdExt) match {
-              case Some(drdStr) =>
-                taRef ! drdStr
-              case None =>
-                log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
-            }
-          }
-        })
-
-    //    case mr: MessageReceiver =>
-
-    //      getMqttProducer(mr).map { taRef =>
-    //        taRef ! mr.message
-    //      }
-
     case Terminated(actorRef) =>
       log.warning("Actor {} terminated", actorRef)
   }
