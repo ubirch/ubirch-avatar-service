@@ -1,18 +1,17 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
+import akka.actor.{Actor, ActorLogging, Props, Terminated}
 import akka.camel.CamelMessage
 import akka.util.Timeout
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.kafka.KafkaProducer
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
-import com.ubirch.transformer.actor.TransformerProducerActor
 import com.ubirch.util.json.Json4sUtil
 import org.apache.camel.Message
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.ExecutionContextExecutor
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
@@ -65,27 +64,6 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
           s ! false
       }
 
-      // This part was used before Kafka started being used. That's why the result of this procedure is not tracked by sender.
-      // When the avatar service is deleted and the code is moved out to the other service, this part will be removed.
-      Future.sequence(device.pubRawQueues
-        .getOrElse(Set())
-        .map { queue =>
-          getSqsProducer(queue).map { taRef =>
-            Json4sUtil.any2String(drdExt) match {
-              case Some(drdStr) =>
-                taRef ! drdStr
-              case None =>
-                log.error(s"error sending for device ${device.deviceId} raw message ${drd.id}")
-            }
-          }
-        })
-
-    //    case mr: MessageReceiver =>
-
-    //      getMqttProducer(mr).map { taRef =>
-    //        taRef ! mr.message
-    //      }
-
     case Terminated(actorRef) =>
       log.warning("Actor {} terminated", actorRef)
   }
@@ -99,62 +77,6 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
       case _ => log.error(s"${message.getClass.toString}")
     }
   }
-
-
-  def transformerProducerActor(queue: String, curRefBase: String): ActorRef = synchronized {
-    log.debug("Creating actor := {}", curRefBase)
-    val actorRef = context.system.actorOf(TransformerProducerActor.props(queue), curRefBase)
-    context.watch(actorRef)
-  }
-
-  //@TODO refactor
-  private def getSqsProducer(queue: String): Future[ActorRef] = {
-
-    val curRefBase = s"$TRACTOR_BASE$queue"
-    val curRefBasePath = s"$TRACTOR_BASE_PATH$queue"
-
-    val aref = context.system.actorSelection(curRefBasePath)
-
-    def getActor = aref.resolveOne(timeout = 100 millis)
-
-    getActor.map { ar =>
-      log.debug(s"reused sqs producer actor with path: $curRefBasePath")
-      ar
-    }.recover {
-      case e =>
-        log.debug("1. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
-        transformerProducerActor(queue, curRefBase)
-    }.recoverWith {
-      case e =>
-        log.debug("2. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
-        getActor
-    }.recover {
-      case e =>
-        log.error("3. exception={} message={}", e.getClass.getCanonicalName, e.getMessage)
-        throw new Exception("Error Creating Transformer Actor", e)
-    }
-
-  }
-
-  //  //@TODO refactor
-  //  private def getMqttProducer(mr: MessageReceiver): Future[ActorRef] = {
-  //
-  //    val curRefBase = s"$DOMACTOR_BASE${mr.getKey}"
-  //    val curRefBasePath = s"$DOMACTOR_BASE_PATH${mr.getKey}"
-  //
-  //    val aref = context.system.actorSelection(curRefBasePath)
-  //    val fs: FiniteDuration = 500 millis
-  //
-  //    aref.resolveOne(fs).map { ar =>
-  //      log.debug(s"reused mqtt producer actor with path: $curRefBasePath")
-  //      ar
-  //    }.recover {
-  //      case t: Throwable =>
-  //        log.debug(s"had to create fresh actor with path: $curRefBasePath")
-  //        context.system.actorOf(DeviceStateUpdateActor.props(mr.topic), curRefBase)
-  //    }
-  //  }
-
 }
 
 object DeviceOutboxManagerActor {

@@ -8,7 +8,6 @@ import com.ubirch.avatar.backend.actor.DeviceApiActor
 import com.ubirch.avatar.core.actor._
 import com.ubirch.avatar.core.udp.UDPReceiverActor
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.transformer.actor.TransformerConsumerActor
 import com.ubirch.util.mongo.connection.MongoUtil
 
 object ActorStarter extends StrictLogging {
@@ -26,11 +25,6 @@ object ActorStarter extends StrictLogging {
         MessageValidatorActor.props,
         ActorNames.MSG_VALIDATOR
       )
-
-    val t =
-      system.actorOf(
-        TransformerConsumerActor.props,
-        ActorNames.TRANSFORMER_CONSUMER)
 
     val ur =
       system.actorOf(

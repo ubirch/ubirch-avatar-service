@@ -48,7 +48,6 @@ lazy val avatarService = (project in file("."))
     skip in publish := true
   )
   .aggregate(
-    aws,
     cmdtools,
     config,
     core,
@@ -100,7 +99,7 @@ lazy val cmdtools = project
 
 lazy val core = project
   .settings(commonSettings)
-  .dependsOn(config, aws, modelDb, modelRest, util, testBase % "test")
+  .dependsOn(config, modelDb, modelRest, util, testBase % "test")
   .settings(
     description := "business logic",
     libraryDependencies ++= depCore,
@@ -108,14 +107,6 @@ lazy val core = project
       resolverEclipse,
       resolverElasticsearch
     )
-  )
-
-lazy val aws = project
-  .settings(commonSettings)
-  .dependsOn(config, modelRest, util, testBase % "test")
-  .settings(
-    description := "aws related stuff",
-    libraryDependencies ++= depAws
   )
 
 lazy val config = project
@@ -229,7 +220,7 @@ lazy val depAws = Seq(
   ubirchJson,
   ubirchUUID % "test",
   scalatest % "test"
-) ++ awsSqsSdk ++ scalaLogging
+) ++ scalaLogging
 
 lazy val depModelDb = Seq(
   json4sNative,
@@ -270,7 +261,6 @@ val akkaV = "2.5.21"
 val akkaHttpV = "10.1.3"
 val akkaStreamKafkaV = "1.1.0"
 val json4sV = "3.6.0"
-val awsSdkV = "1.11.438"
 val camelV = "2.23.1"
 val scalaTestV = "3.0.5"
 val spireV = "0.13.0"
@@ -285,7 +275,6 @@ val scalaLogSLF4JV = "2.1.2"
 val akkaG = "com.typesafe.akka"
 val logbackG = "ch.qos.logback"
 val json4sG = "org.json4s"
-val awsG = "com.amazonaws"
 val ubirchUtilG = "com.ubirch.util"
 
 val scalatest = "org.scalatest" %% "scalatest" % scalaTestV
@@ -317,7 +306,6 @@ val akka = Seq(
 
 val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
-  "org.apache.camel" % "camel-aws" % camelV,
   "org.apache.camel" % "camel-paho" % camelV,
   "org.apache.camel" % "camel-mqtt" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
@@ -333,11 +321,6 @@ val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 val json4s = Seq(json4sNative, json4sExt, json4sJackson)
 
 val spireMath = "org.spire-math" %% "spire" % spireV
-
-// list of all available AWS artifacts: https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-bom/pom.xml
-val awsSqsSdk = Seq(
-  awsG % "aws-java-sdk-sqs" % awsSdkV
-)
 
 val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 

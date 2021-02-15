@@ -95,49 +95,6 @@ object ConfigKeys {
 
   final val COLLECTION_AVATAR_STATE = s"$mongoCollection.avatarState"
 
-  /* AWS Related Config Keys
-   **********************************************************************/
-
-  final val awsPrefix = s"$prefix.aws"
-
-  // AWS local mode defines whether app is running on a locally or at AWS
-  final val AWS_LOCAL_MODE = s"$awsPrefix.localmode"
-
-  // AWS base MQTT topic name for all AWS IoT Things
-  final val AWS_TOPICS_BASENAME = s"$awsPrefix.topics.basename"
-
-  // AWS IoT desired state name
-  final val AWS_STATES_DESIRED = s"$awsPrefix.states.desired"
-
-  // AWS IoT reported state name
-  final val AWS_STATES_REPORTED = s"$awsPrefix.states.reported"
-
-  // AWS IoT reported state name
-  final val AWS_STATES_DELTA = s"$awsPrefix.states.delta"
-
-  // AWS IoT reported state name
-  final val AWS_STATES_TIMESTAMP = s"$awsPrefix.states.timestamp"
-
-  // AWS Auth keys
-  final val AWS_ACCESS_KEY = s"$awsPrefix.awsaccesskey"
-
-  // AWS Auth keys
-  final val AWS_SECRET_ACCESS_KEY = s"$awsPrefix.awssecretaccesskey"
-
-  //AWS Region
-  final val AWS_REGION = s"$awsPrefix.region"
-
-  //AWS Queue Owner
-  final val AWS_QUEUE_OWNER_ID = s"$awsPrefix.queueOwnerId"
-
-  // AWS SQS queues
-  final val AWS_SQS_MAX_MESSAGES_PER_POLL = s"$awsPrefix.sqs.maxMessagesPerPoll"
-
-  final val AWS_SQS_QUEUES_TRANSFORMER = s"$awsPrefix.sqs.queues.transformer"
-  final val AWS_SQS_QUEUES_TRANSFORMER_OUT = s"$awsPrefix.sqs.queues.transformer_out"
-  final val AWS_SQS_UBIRCH_CHAIN_DEVICE_MSG_IN = s"$awsPrefix.sqs.queues.deviceDataIn"
-  final val AWS_SQS_UBIRCH_CHAIN_DEVICE_HASH_IN = s"$awsPrefix.sqs.queues.deviceDataHashIn"
-
   /* MQTT Related Config Keys
  **********************************************************************/
 
