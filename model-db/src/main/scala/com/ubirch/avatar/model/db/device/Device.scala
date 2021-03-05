@@ -2,7 +2,6 @@ package com.ubirch.avatar.model.db.device
 
 import java.util.UUID
 
-import com.ubirch.avatar.config.Config
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 
@@ -21,8 +20,8 @@ case class Device(deviceId: String,
                   deviceConfig: Option[JValue] = None,
                   deviceProperties: Option[JValue] = None,
                   subQueues: Option[Set[String]] = None,
-                  pubQueues: Option[Set[String]] = Some(Set(Config.awsSqsQueueTransformerOut)),
-                  pubRawQueues: Option[Set[String]] = Some(Set(Config.awsSqsQueueTransformer)),
+                  pubQueues: Option[Set[String]] = None,
+                  pubRawQueues: Option[Set[String]] = None,
                   avatarLastUpdated: Option[DateTime] = None,
                   deviceLastUpdated: Option[DateTime] = None,
                   updated: Option[DateTime] = None,
