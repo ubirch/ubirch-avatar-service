@@ -53,10 +53,10 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
         case Some(drdStr) =>
           kafkaProducer.send(drdStr) onComplete {
             case Success(_) =>
-              log.info(s"succeeded to publish DeviceRawData to Kafka")
+              log.info(s"succeeded to publish DeviceRawData to Kafka. deviceId: ${device.deviceId}, raw message: ${drd.id}")
               s ! true
             case Failure(err) =>
-              log.error(s"failed to publish DeviceRawData to Kafka. error: ${err}")
+              log.error(s"failed to publish DeviceRawData to Kafka. deviceId: ${device.deviceId}, raw message: ${drd.id}, error: ${err}")
               s ! false
           }
         case None =>
