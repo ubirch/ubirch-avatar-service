@@ -74,33 +74,6 @@ Since ubirch avatar service is using ElastiSearch for logging it can be hard to 
 
 as environment variable then the logging is send to STDOUT.
 
-## AWS
-
-### AWS Console Account
-
-Login on https://console.aws.amazon.com/console/home with your AWS account. Without an account or not having logged
-AWS connections might not work.
-
-### AWS CLI
-
-On MacOS you can install the aws-cli tool through brew:
-
-    brew install awscli
-
-To configure it then run:
-
-    aws configure
-
-The default region should be `us-east-1` while the output format can remain None since it's not relevant yet.
-
-### AWS Configuration
-
-The AvatarService opens a connection to AWS which depends on the following environment variables:
-
-    export AWS_ACCESS_KEY_ID=foo
-    export AWS_SECRET_ACCESS_KEY=bar
-
-
 ## Deployment Notes
 
 ### Elasticsearch

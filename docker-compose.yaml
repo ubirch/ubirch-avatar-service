@@ -20,8 +20,6 @@ services:
     links:
      - elasticsearch
     environment:
-     - AWS_ACCESS_KEY_ID
-     - AWS_SECRET_ACCESS_KEY
      - ES_HOST=elasticsearch
      - ES_PORT_HTTP=9200
      - ES_PORT_TCP=9300

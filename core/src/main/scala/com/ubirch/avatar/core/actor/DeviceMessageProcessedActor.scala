@@ -24,7 +24,6 @@ class DeviceMessageProcessedActor(deviceUuid: String)
   val clientId: String = s"avatarService_${UUIDUtil.uuidStr}"
 
   override def endpointUri: String = s"mqtt:" +
-    //    s"DeviceMessageProcessedActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
     s"DeviceMessageProcessedActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&userName=$mqttUser&password=$mqttPassword"
 
 }

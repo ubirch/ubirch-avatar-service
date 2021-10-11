@@ -29,8 +29,6 @@ class MqttDeviceConsumerActor()
 
   val clientId: String = s"avatarService_${Config.enviroment}"
 
-  //  override def endpointUri = s"paho:${Config.mqttQueueDevicesIn}?clientId=$clientId&brokerUrl=$mqttBrokerUrl&qualityOfService=$qualityOfService"
-
   override def endpointUri = s"mqtt:" +
     s"MqttDeviceConsumerActor?host=$mqttBrokerUrl&subscribeTopicName=$mqttDeviceInTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword&qualityOfService=$qualityOfService&cleanSession=false"
 

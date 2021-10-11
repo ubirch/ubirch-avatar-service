@@ -24,7 +24,6 @@
     <logger name="com.ubirch.avatar.core.actor" level="DEBUG"/>
     <logger name="org.apache.http" level="INFO"/>
     <logger name="akka.camel.internal" level="DEBUG"/>
-    <logger name="com.amazonaws" level="INFO"/>
     <logger name="reactivemongo.core" level="INFO"/>
 
     <!--<logger name="akka.actor" level="WARN"/>-->

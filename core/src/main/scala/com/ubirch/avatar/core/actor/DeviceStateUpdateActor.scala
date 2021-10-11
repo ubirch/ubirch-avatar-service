@@ -20,10 +20,7 @@ class DeviceStateUpdateActor(deviceUuid: String)
 
   val mqttDeviceOutTopic: String = s"${Config.mqttTopicDevicesBase}/$deviceUuid/${Config.mqttTopicDevicesOut}"
 
-  //val clientId: String = s"avs_${UUIDUtil.uuidStr}"
-
   override def endpointUri: String = s"mqtt:" +
-    //  s"DeviceStateUpdateActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&clientId=$clientId&userName=$mqttUser&password=$mqttPassword"
     s"DeviceStateUpdateActor?host=$mqttBrokerUrl&publishTopicName=$mqttDeviceOutTopic&userName=$mqttUser&password=$mqttPassword"
 }
 

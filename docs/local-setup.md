@@ -20,12 +20,8 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
  1. start server, e.g. in a terminal
 
-    1. set AWS env vars:
-
-        export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-
-        export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
-
+    1. set MQTT env vars:
+    
         export MQTT_USER={MQTT-User}
 
         export MQTT_PASSWORD={MQTT-Password}
@@ -42,11 +38,9 @@ Running this removes all your local ElasticSearch indexes and recreates them!!
 
  3. start test data tool
 
-    1. set AWS env vars:
+    1. set MQTT env vars:
 
         ```bash
-        export AWS_ACCESS_KEY_ID={YOUR AWS ACCESS KEY}
-        export AWS_SECRET_ACCESS_KEY={YOUR AWS SECRET KEY}
         export MQTT_USER={MQTT-User}
         export MQTT_PASSWORD={MQTT-Password}
         ```
