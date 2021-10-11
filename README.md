@@ -25,7 +25,7 @@ ubirch Avatar Service is responsible for:
   ** transforming raw data
 * offering CRUD API to manage ubirch IoT Devices
 * managing device states using Amazon AWS IoT
-* publishing processed data for further processing (AWS SQS)
+* publishing processed data for further processing (Kafka)
 
 ## Release History
 
@@ -52,21 +52,13 @@ this content has been moved to a separate file: _docs/rest-methods.md_
 ## Configuration
 
 The ubirch avatar service has several external dependencies:
- * AWS SQS
+ * Kafka
+ * Redis
  * ElasticSearch
 
  Those are configured via environment variables.
  
-### AWS SQS
- In order to talk to AWS SQS the service needs two SQS targets:
-
-    SQS_UBIRCH_TRANSFORMER_INBOX=<string>
-    SQS_UBIRCH_TRANSFORMER_OUTBOX=<string>
-
- Those queues need authentication with AWS credentials. These are passed via
-
-    AWS_ACCESS_KEY_ID=<string>
-    AWS_SECRET_ACCESS_KEY=<string>
+### AWS SQS -- deprecated. SQS is not used anymore
 
 ### ElasticSearch
 Avatar service is using ElasticSearch for logging and device management. It needs a specific ES version and access to Port 9200 (HTTP) and Port 93000 (TCP)

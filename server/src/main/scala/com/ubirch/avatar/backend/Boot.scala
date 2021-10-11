@@ -71,10 +71,6 @@ object Boot extends App
 
   DeviceTypeManager.init()
 
-  //  val camel = CamelExtension(system)
-  //  val camelContext = camel.context
-  //  val registry = camel.context.getComponent("sqs")
-
   val bindingFuture = start()
 
   stop()

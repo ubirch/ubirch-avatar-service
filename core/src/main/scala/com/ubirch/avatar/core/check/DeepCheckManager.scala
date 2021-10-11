@@ -28,8 +28,7 @@ object DeepCheckManager extends StrictLogging {
 
     //@REVIEW
     // TODO check MQTT connection
-    // TODO check SQS connections
-    // TODO check Auth connections
+    // TODO check Kafka connection
 
     (for {
 

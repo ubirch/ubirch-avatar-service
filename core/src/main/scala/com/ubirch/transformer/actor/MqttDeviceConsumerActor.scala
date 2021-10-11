@@ -66,7 +66,7 @@ class MqttDeviceConsumerActor()
             jval.extractOpt[DeviceDataRaw] match {
               case Some(ddr) =>
 
-              //TODO forward to SQS consumer
+              //TODO forward to SQS (deprecated, use Kafka instead (?)) consumer
 
               //validatorActor ! ddr.copy(uuid = Some(deviceUuid))
               case None =>
