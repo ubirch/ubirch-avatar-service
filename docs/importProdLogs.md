@@ -11,21 +11,17 @@ Import Production Log
 1. in case of used locally you need this services
  
     1. ElasticSearch
-    1. mongoDB
-    1. Redis
-    1. mqtt
-    1. AuthService
-    1. UserService
-    1. KeyService
-    1. avatarService
+    2. mongoDB
+    3. Redis
+    4. Kafka
+    5. mqtt
+    6. UserService
+    7. IdentityService
+    8. AvatarService
 
 1. use this script: *com.ubirch.avatar.cmd.ImportProdLogs* 
 
     1. parameter: -Dconfig.resource=application-import-local.conf
-    1. env vars (all envs): 
-    
-        1. AWS_ACCESS_KEY_ID=***********************
-        1. AWS_SECRET_ACCESS_KEY=***********************
     
     1. env vars (trackle-dev):
     
