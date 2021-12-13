@@ -269,7 +269,7 @@ val spireV = "0.13.0"
 val logbackV = "1.2.3"
 val logstashEncV = "5.0"
 val slf4jV = "1.7.25"
-val log4jV = "2.13.0"
+val log4jV = "2.15.0"
 val scalaLogV = "3.9.0"
 val scalaLogSLF4JV = "2.1.2"
 
@@ -285,6 +285,7 @@ val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
+  "org.apache.logging.log4j" % "log4j-core" % log4jV,
   "ch.qos.logback" % "logback-classic" % logbackV,
   "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
@@ -333,7 +334,7 @@ val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
-  ExclusionRule(organization = "org.apache.logging.log4j")
+  ExclusionRule(organization = "org.apache.logging")
 )
 
 val constructr = Seq(
