@@ -29,7 +29,9 @@ val commonSettings = Seq(
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots"),
     resolverUbirchUtils,
-    resolverUbirchMvn
+    resolverUbirchMvn,
+    ubirchMvnCentralProxy,
+    ubirchRickBetonProxy
   ),
   publishMavenStyle := true,
   publishTo := Some("io.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/trackle-mvn")
@@ -283,7 +285,6 @@ val akkaTestkit = akkaG %% "akka-testkit" % akkaV
 
 val scalaLogging = Seq(
   "org.slf4j" % "slf4j-api" % slf4jV,
-  "org.apache.logging.log4j" % "log4j-core" % log4jV,
   "ch.qos.logback" % "logback-classic" % logbackV,
   "net.logstash.logback" % "logstash-logback-encoder" % logstashEncV,
   "com.typesafe.scala-logging" %% "scala-logging" % scalaLogV
@@ -332,7 +333,7 @@ val excludedLoggers = Seq(
   ExclusionRule(organization = "com.typesafe.scala-logging"),
   ExclusionRule(organization = "org.slf4j"),
   ExclusionRule(organization = "ch.qos.logback"),
-  ExclusionRule(organization = "org.apache.logging")
+  ExclusionRule(organization = "org.apache.logging.log4j")
 )
 
 val constructr = Seq(
@@ -379,6 +380,8 @@ lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe
 lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
 lazy val resolverUbirchUtils = "ubirch.utils.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/ubirch-utils-mvn"
 lazy val resolverUbirchMvn = "ubirch.mvn.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/mvn-public"
+lazy val ubirchMvnCentralProxy = "mvn.central.proxy" at "https://ubirch.mycloudrepo.io/repositories/mvn-central-proxy"
+lazy val ubirchRickBetonProxy = "mvn.rick.beton.proxy" at "https://ubirch.mycloudrepo.io/repositories/ubirch-mvn-rick-beton-proxy"
 
 /*
  * MISC
