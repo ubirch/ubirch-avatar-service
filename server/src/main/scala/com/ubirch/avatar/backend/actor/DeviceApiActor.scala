@@ -1,11 +1,11 @@
 package com.ubirch.avatar.backend.actor
 
-import java.util.UUID
-
 import akka.actor.{Actor, Props}
 import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
+import cats.data.EitherT
+import cats.implicits.catsStdInstancesForFuture
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
@@ -14,10 +14,17 @@ import com.ubirch.avatar.model.rest.device.{DeviceInfo, DeviceUserClaim, DeviceU
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.user.client.UserServiceClient
 import com.ubirch.user.client.model.Group
+import com.ubirch.util.json.JsonFormats
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
+import org.joda.time.DateTime
+import org.json4s.{DefaultFormats, Formats}
+import org.json4s.JsonAST.JField
+import org.json4s.ext.{JavaTypesSerializers, JodaTimeSerializers}
 
+import java.util.UUID
 import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.util.Try
 
 /**
   * Created by derMicha on 30/10/16.
@@ -41,6 +48,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
                      materializer: Materializer) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
+  implicit val formats: Formats = JsonFormats.default
 
   override def receive: Receive = {
 
@@ -59,37 +67,65 @@ class DeviceApiActor(implicit mongo: MongoUtil,
 
     case duc: DeviceUserClaimRequest =>
       val s = sender
-
-      DeviceManager.infoByHwId(duc.hwDeviceId).map {
-        case Some(device) =>
-          logger.debug(s"found device information $device to claim device with hwDeviceId ${duc.hwDeviceId}.")
-          val userId = duc.userId
-          if (device.owners.isEmpty || device.owners.contains(userId)) {
-            if (device.owners.isEmpty) {
-              logger.info(s"updating device with userId $userId as new owner.")
-              DeviceManager.update(device.copy(owners = Set(userId)))
-            } else {
-              logger.info(s"user with id $userId is already owner of device $device")
-            }
-            s ! DeviceUserClaim(
-              hwDeviceId = duc.hwDeviceId,
-              deviceId = device.deviceId,
-              userId = userId
+      claimDevice(duc)
+        .map(duc => s ! duc)
+        .recover {
+          case error: ClaimDeviceError =>
+            logger.error("claiming device failed", error)
+            s ! JsonErrorResponse(
+              errorType = "DeviceClaimError",
+              errorMessage = error.msg
             )
-          } else {
-            val errorMsg = s"device ${duc.hwDeviceId} already claimed by ${device.owners} user(s) and not by $userId"
-            logger.error(s"error claiming device $errorMsg")
-            s ! JsonErrorResponse(errorType = "DeviceClaimError", errorMessage = errorMsg)
-          }
-
-        case None =>
-          logger.error(s"couldn't find device information to claim device with hwDeviceId ${duc.hwDeviceId}")
-          s ! JsonErrorResponse(
-            errorType = "DeviceClaimError",
-            errorMessage = s"device ${duc.hwDeviceId} does not exist"
-          )
-      }
+        }
   }
+
+  /**
+    * Method to parse productionDate from deviceProperties.
+    */
+  private def parseProductionDate(device: Device): Future[Option[DateTime]] = {
+    val dateOpt =
+      device
+        .deviceProperties
+        .flatMap(_.findField {
+          case JField("testTimestamp", _) => true
+          case _ => false
+        })
+        .map(_._2.extract[String])
+        .flatMap(dateString => Try(DateTime.parse(dateString)).toOption)
+    Future.successful(dateOpt)
+  }
+
+
+  private def claimDevice(duc: DeviceUserClaimRequest): EitherT[Future, ClaimDeviceError, DeviceUserClaim] = {
+
+    for {
+      device <- EitherT.fromOptionF(DeviceManager.infoByHwId(duc.hwDeviceId),
+        ClaimDeviceError(s"device wasn't found by hwDevice ${duc.hwDeviceId}"))
+      parsedProductionDate <- EitherT.fromOptionF(parseProductionDate(device),
+        ClaimDeviceError(s"couldn't parse field deviceProperties.testTimestamp to valid production date"))
+      _ <- EitherT.fromOptionF(updateOwner(duc, device),
+        ClaimDeviceError(s"device ${duc.hwDeviceId} already claimed by ${device.owners} user(s)"))
+    } yield {
+      DeviceUserClaim(
+        duc.hwDeviceId,
+        device.deviceId,
+        duc.userId,
+        parsedProductionDate
+      )
+    }
+  }
+
+  private def updateOwner(duc: DeviceUserClaimRequest, device: Device): Future[Option[Device]] = {
+    val userId = duc.userId
+    if (device.owners.isEmpty) {
+      logger.info(s"updating device with userId $userId as new owner.")
+      DeviceManager.update(device.copy(owners = Set(userId)))
+    } else if (device.owners.contains(userId)) {
+      logger.info(s"user with id $userId is already owner of device $device")
+      Future.successful(Some(device))
+    } else Future.successful(None)
+  }
+
 
   override def unhandled(message: Any): Unit = {
     context.sender ! JsonErrorResponse(
@@ -220,3 +256,6 @@ object DeviceApiActor {
     Config.akkaNumberOfFrontendWorkers)
     .props(Props(new DeviceApiActor()))
 }
+
+
+case class ClaimDeviceError(msg: String)
