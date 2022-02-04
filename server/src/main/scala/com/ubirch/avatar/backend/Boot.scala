@@ -1,7 +1,6 @@
 package com.ubirch.avatar.backend
 
 import java.util.concurrent.TimeUnit
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.{Http, HttpExt}
@@ -14,9 +13,8 @@ import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.server.util.ServerKeys
-import com.ubirch.util.elasticsearch.EsSimpleClient
+import com.ubirch.util.elasticsearch.{EsBulkClient, EsSimpleClient}
 import com.ubirch.util.mongo.connection.MongoUtil
-import org.elasticsearch.client.RestHighLevelClient
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -53,7 +51,6 @@ object Boot extends App
   val publicKey = ServerKeys.pubKeyB64
   logger.info(s"publicKey=$publicKey")
 
-  implicit val esClient: RestHighLevelClient = EsSimpleClient.getCurrentEsClient
   try {
     createElasticsearchMappings()
   }
@@ -108,13 +105,15 @@ object Boot extends App
 
           case Success(_) =>
             system.terminate()
-            esClient.close()
+            EsBulkClient.closeConnection()
+            EsSimpleClient.closeConnection()
             mongo.close()
 
           case Failure(f) =>
             logger.error("shutdown failed", f)
             system.terminate()
-            esClient.close()
+            EsBulkClient.closeConnection()
+            EsSimpleClient.closeConnection()
             mongo.close()
 
         }
