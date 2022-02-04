@@ -178,7 +178,7 @@ lazy val depServer = Seq(
   ubirchRestAkkaHttp,
   ubirchResponse,
   ubirchOidcUtils,
-
+  catsCore,
   //testing
   scalatest % "test"
 
@@ -264,6 +264,7 @@ val akkaHttpV = "10.1.3"
 val akkaStreamKafkaV = "1.1.0"
 val json4sV = "3.6.0"
 val camelV = "2.23.1"
+val catsV = "2.0.0"
 val scalaTestV = "3.0.5"
 val spireV = "0.13.0"
 val logbackV = "1.2.3"
@@ -312,6 +313,10 @@ val akkaCamel = Seq(
   "org.apache.camel" % "camel-mqtt" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
+
+// https://mvnrepository.com/artifact/org.typelevel/cats-core
+val catsCore = "org.typelevel" %% "cats-core" % catsV
+
 
 val jodaTime = "joda-time" % "joda-time" % "2.10"
 val jodaConvert = "org.joda" % "joda-convert" % "2.1.1"
