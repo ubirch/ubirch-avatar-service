@@ -18,9 +18,8 @@ import com.ubirch.util.json.JsonFormats
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.joda.time.DateTime
-import org.json4s.{DefaultFormats, Formats}
+import org.json4s.Formats
 import org.json4s.JsonAST.JField
-import org.json4s.ext.{JavaTypesSerializers, JodaTimeSerializers}
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -43,9 +42,9 @@ case class AllDevicesResult(devices: Seq[Device])
 
 case class AllStubsResult(stubs: Seq[DeviceInfo])
 
-class DeviceApiActor(implicit mongo: MongoUtil,
-                     httpClient: HttpExt,
-                     materializer: Materializer) extends Actor with StrictLogging {
+private class DeviceApiActor(implicit mongo: MongoUtil,
+                             httpClient: HttpExt,
+                             materializer: Materializer) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
   implicit val formats: Formats = JsonFormats.default
@@ -71,7 +70,7 @@ class DeviceApiActor(implicit mongo: MongoUtil,
         .map(duc => s ! duc)
         .recover {
           case error: ClaimDeviceError =>
-            logger.error("claiming device failed", error)
+            logger.error(s"claiming device failed ${error.msg}")
             s ! JsonErrorResponse(
               errorType = "DeviceClaimError",
               errorMessage = error.msg
