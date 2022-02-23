@@ -29,7 +29,9 @@ val commonSettings = Seq(
     Resolver.sonatypeRepo("releases"),
     Resolver.sonatypeRepo("snapshots"),
     resolverUbirchUtils,
-    resolverUbirchMvn
+    resolverUbirchMvn,
+    ubirchMvnCentralProxy,
+    ubirchRickBetonProxy
   ),
   publishMavenStyle := true,
   publishTo := Some("io.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/trackle-mvn")
@@ -176,7 +178,7 @@ lazy val depServer = Seq(
   ubirchRestAkkaHttp,
   ubirchResponse,
   ubirchOidcUtils,
-
+  catsCore,
   //testing
   scalatest % "test"
 
@@ -262,12 +264,13 @@ val akkaHttpV = "10.1.3"
 val akkaStreamKafkaV = "1.1.0"
 val json4sV = "3.6.0"
 val camelV = "2.23.1"
+val catsV = "2.0.0"
 val scalaTestV = "3.0.5"
 val spireV = "0.13.0"
 val logbackV = "1.2.3"
 val logstashEncV = "5.0"
 val slf4jV = "1.7.25"
-val log4jV = "2.13.0"
+val log4jV = "2.15.0"
 val scalaLogV = "3.9.0"
 val scalaLogSLF4JV = "2.1.2"
 
@@ -310,6 +313,10 @@ val akkaCamel = Seq(
   "org.apache.camel" % "camel-mqtt" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
+
+// https://mvnrepository.com/artifact/org.typelevel/cats-core
+val catsCore = "org.typelevel" %% "cats-core" % catsV
+
 
 val jodaTime = "joda-time" % "joda-time" % "2.10"
 val jodaConvert = "org.joda" % "joda-convert" % "2.1.1"
@@ -354,7 +361,7 @@ val ubirchCamelUtils = ubirchUtilG %% "ubirch-camel-utils" % "0.1.1" excludeAll 
 val ubirchConfig = ubirchUtilG %% "ubirch-config-utils" % "0.2.4" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "ubirch-crypto-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.6-SNAPSHOT" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.9-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
 val ubirchOidcUtils = ubirchUtilG %% "ubirch-oidc-utils" % "0.8.15" excludeAll (excludedLoggers: _*)
@@ -379,6 +386,8 @@ lazy val resolverTypesafeReleases = "Typesafe Releases" at "http://repo.typesafe
 lazy val resolverVelvia = "velvia maven" at "http://dl.bintray.com/velvia/maven"
 lazy val resolverUbirchUtils = "ubirch.utils.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/ubirch-utils-mvn"
 lazy val resolverUbirchMvn = "ubirch.mvn.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/mvn-public"
+lazy val ubirchMvnCentralProxy = "mvn.central.proxy" at "https://ubirch.mycloudrepo.io/repositories/mvn-central-proxy"
+lazy val ubirchRickBetonProxy = "mvn.rick.beton.proxy" at "https://ubirch.mycloudrepo.io/repositories/ubirch-mvn-rick-beton-proxy"
 
 /*
  * MISC
