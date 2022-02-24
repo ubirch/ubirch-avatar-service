@@ -1,7 +1,5 @@
 package com.ubirch.avatar.backend.route
 
-import java.util.UUID
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
@@ -19,6 +17,7 @@ import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import org.joda.time.DateTime
 
+import java.util.UUID
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
@@ -30,7 +29,7 @@ import scala.util.{Failure, Success}
   */
 class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
   with CORSDirective
-  with StrictLogging {
+  with StrictLogging with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -46,6 +45,7 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
       path(history) {
         respondWithCORS {
           get {
+            logger.info(s"The endpoint GET $deviceId/data/history $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             onSuccess(queryHistory(deviceId)) { deviceData =>
               complete(deviceData)
             }
@@ -54,9 +54,10 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
 
       } ~ pathPrefix(history) {
 
-        path(IntNumber) { from =>
+        path(IntNumber) { from: Int =>
           respondWithCORS {
             get {
+              logger.info(s"The endpoint GET $deviceId/data/history?from=$from $NOT_EXPECTED_TO_BE_USED_ANYMORE")
               onSuccess(queryHistory(deviceId, Some(from))) { deviceData =>
                 complete(deviceData)
               }
@@ -67,6 +68,8 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
 
           respondWithCORS {
             get {
+              logger.info(s"The endpoint GET $deviceId/data/history?from=$from&size=$size $NOT_EXPECTED_TO_BE_USED_ANYMORE")
+
               onSuccess(queryHistory(deviceId, Some(from), Some(size))) { deviceData =>
                 complete(deviceData)
               }
@@ -79,6 +82,8 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
           path(from / Segment / to / Segment) { (fromString, toString) =>
             // TODO automated tests
             respondWithCORS {
+              logger.info(s"The endpoint GET $deviceId/data/history/byDate/from/$fromString/to/$toString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
+
               get {
 
                 val from = DateTime.parse(fromString)
@@ -103,7 +108,7 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
             // TODO automated tests
             respondWithCORS {
               get {
-
+                logger.info(s"The endpoint GET $deviceId/data/history/byDate/before/$beforeString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
                 val before = DateTime.parse(beforeString)
                 onComplete(historyActor ? HistoryBefore(deviceId, before)) {
 
@@ -125,7 +130,7 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
             // TODO automated tests
             respondWithCORS {
               get {
-
+                logger.info(s"The endpoint GET $deviceId/data/history/byDate/after/$afterString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
                 val after = DateTime.parse(afterString)
                 onComplete(historyActor ? HistoryAfter(deviceId, after)) {
 
@@ -147,7 +152,7 @@ class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
             // TODO automated tests
             respondWithCORS {
               get {
-
+                logger.info(s"The endpoint GET $deviceId/data/history/byDate/day/$dayString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
                 val day = DateTime.parse(dayString)
                 onComplete(historyActor ? HistoryByDay(deviceId, day)) {
 

@@ -14,7 +14,6 @@ import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
-import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -29,20 +28,20 @@ import scala.util.{Failure, Success}
   */
 class DeviceUpdateJsonRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
-  with CORSDirective
-  with StrictLogging  {
+    with CORSDirective
+    with StrictLogging
+    with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
 
   private val validatorActor = system.actorSelection(ActorNames.MSG_VALIDATOR_PATH)
 
-  private val oidcDirective = new OidcDirective()
-
   val route: Route = {
     path(update / json) {
       post {
         entity(as[DeviceDataRaw]) { ddr =>
+          logger.info(s"Endpoint POST /update/json with ddr $ddr $NOT_EXPECTED_TO_BE_USED_ANYMORE")
           onComplete(validatorActor ? ddr) {
             case Success(resp) =>
               resp match {

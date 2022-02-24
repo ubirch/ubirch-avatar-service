@@ -26,7 +26,8 @@ import scala.language.postfixOps
 class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
     with Directives
-    with StrictLogging {
+    with StrictLogging
+    with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -42,7 +43,9 @@ class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
         post {
 
           post {
+
             entity(as[DeviceDataRaw]) { sdm =>
+              logger.info(s"Endpoint POST /update/bulk with sdm $sdm $NOT_EXPECTED_TO_BE_USED_ANYMORE")
 
               validatorActor ! sdm
 

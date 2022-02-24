@@ -1,7 +1,5 @@
 package com.ubirch.avatar.backend.route
 
-import java.util.UUID
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
@@ -22,6 +20,7 @@ import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
+import java.util.UUID
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
@@ -34,7 +33,7 @@ import scala.util.{Failure, Success}
 class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends ResponseUtil
     with CORSDirective
-    with StrictLogging {
+    with StrictLogging with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -50,23 +49,27 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
         oidcDirective.oidcToken2UserContext { userContext =>
 
           get {
+            //Still being used 24.2.2022
             logger.info(s"GET .../device/$deviceId")
             getDeviceInfo(deviceId)
 
           } ~ post {
+            //Not being used 24.2.2022
             // TODO the given deviceId from the url path is being ignored and this duplicated `POST device` --> can we delete this code?
             entity(as[Device]) { device =>
-              logger.info(s"POST .../device/id for device: $device")
+              logger.info(s"Endpoint POST .../device/id for device: $device $NOT_EXPECTED_TO_BE_USED_ANYMORE")
               postDevice(device, AvatarSession(userContext))
             }
           } ~ put {
+            //Is being used 24.02.2022, probably to update EOL flag.
             // TODO suggestion: move this to `PUT /device` since otherwise we need additional logic to check that the given deviceId matches the one provided in the json
             entity(as[Device]) { device =>
               logger.info(s"PUT .../device/id for device: $device")
               updateDevice(deviceId, device)
             }
           } ~ delete {
-            logger.info(s"DELETE .../device/id with id: $deviceId")
+            //Not being used 24.2.2022, as the related TrackleService's Delete User endpoint is not being used at the moment. Should become disabled.
+            logger.info(s"Endpoint DELETE .../device/id with id: $deviceId $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             deleteDevice(deviceId)
           }
         }

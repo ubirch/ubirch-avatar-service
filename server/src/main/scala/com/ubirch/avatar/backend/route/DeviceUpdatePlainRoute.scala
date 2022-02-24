@@ -28,7 +28,8 @@ import scala.util.{Failure, Success}
   */
 class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends MyJsonProtocol
-    with StrictLogging {
+    with StrictLogging
+    with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -43,6 +44,7 @@ class DeviceUpdatePlainRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mat
         reqMetrics.start
         post {
           entity(as[String]) { ddrString =>
+            logger.info(s"Endpoint POST /update with ddr $ddrString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             Json4sUtil.string2JValue(ddrString) match {
               case Some(ddrJson) =>
                 ddrJson.extractOpt[DeviceDataRaw] match {
