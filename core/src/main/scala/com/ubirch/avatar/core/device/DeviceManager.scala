@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.device
 
-import java.util.UUID
-
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
@@ -16,6 +14,7 @@ import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
 import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JValue
 
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -129,7 +128,8 @@ object DeviceManager
     }
   }
 
-  def create(device: db.device.Device): Future[Option[db.device.Device]] = {
+  def create(device: db.device.Device,
+             waitingForRefresh: Boolean = false): Future[Option[db.device.Device]] = {
 
     val deviceToStore = device.copy(hwDeviceId = device.hwDeviceId.toLowerCase)
 
@@ -141,7 +141,8 @@ object DeviceManager
       created <- createWithChecks(
         existingId = existingId,
         existingHwDeviceId = existingHwDeviceId,
-        deviceToStore
+        deviceToStore,
+        waitingForRefresh = waitingForRefresh
       )
 
     } yield created
@@ -273,7 +274,8 @@ object DeviceManager
 
   private def createWithChecks(existingId: Option[Device],
                                existingHwDeviceId: Option[Device],
-                               deviceToStore: Device
+                               deviceToStore: Device,
+                               waitingForRefresh: Boolean = false
                               ): Future[Option[Device]] = {
 
     if (existingId.isDefined) {
@@ -295,7 +297,8 @@ object DeviceManager
           EsSimpleClient.storeDoc(
             docIndex = esIndex,
             docIdOpt = Some(deviceToStore.deviceId),
-            doc = devJval
+            doc = devJval,
+            waitingForRefresh = waitingForRefresh
           ).map {
             case true => devJval.extractOpt[Device]
             case false => None

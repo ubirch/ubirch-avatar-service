@@ -119,8 +119,14 @@ if they don't exist.
 
 ## Automated Tests
 
-TODO
+To run the tests, first run the docker-compose file in local-test-setup/run-unit-tests and then start the tests.
 
+```bash
+cd local-test-setup/run-unit-tests
+docker-compose up 
+cd ../..
+sbt test
+```
 
 ## Import Trackle Data
 

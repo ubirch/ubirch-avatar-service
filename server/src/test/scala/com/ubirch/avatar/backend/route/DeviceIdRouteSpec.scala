@@ -1,5 +1,7 @@
 package com.ubirch.avatar.backend.route
 
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
@@ -7,12 +9,8 @@ import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
-
-import org.scalatest.{BeforeAndAfterAll, Matchers}
-
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+import org.scalatest.{BeforeAndAfterAll, Matchers}
 
 /**
   * author: cvandrei
@@ -23,10 +21,13 @@ class DeviceIdRouteSpec extends RouteSpec
   with BeforeAndAfterAll
   with ResponseUtil {
 
-  private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.pathDevice}/:deviceId") {
+  //Ignored, because it's only being used by Trackle's deviceStats reparation request, which shouldn't be used
+  // at the moment and will get removed soon.
+  ignore(s"GET ${RouteConstants.pathDevice}/:deviceId") {
 
+    val mainRoute = new MainRoute
+    val routes = mainRoute.myRoute
     scenario("without deviceId") {
       Get(RouteConstants.pathDeviceWithId("")) ~> routes ~> check {
         handled shouldEqual false
@@ -69,8 +70,11 @@ class DeviceIdRouteSpec extends RouteSpec
 
   }
 
-  feature(s"PUT ${RouteConstants.pathDevice}/:deviceId") {
+  //Ignored, because it's only being used by the TrackleService when updating EOL flag in device config; this shall become refactored soon.
+  ignore(s"PUT ${RouteConstants.pathDevice}/:deviceId") {
 
+    val mainRoute = new MainRoute
+    val routes = mainRoute.myRoute
     scenario("without deviceId") {
       Put(RouteConstants.pathDeviceWithId("")) ~> routes ~> check {
         handled shouldEqual false
@@ -111,8 +115,10 @@ class DeviceIdRouteSpec extends RouteSpec
 
   }
 
-  feature(s"DELETE ${RouteConstants.pathDevice}/:deviceId") {
-
+  //Ignored, because it's only being used by User Delete endpoint in TrackleService that is not being used at the moment.
+  ignore(s"DELETE ${RouteConstants.pathDevice}/:deviceId") {
+    val mainRoute = new MainRoute
+    val routes = mainRoute.myRoute
     scenario("without deviceId") {
       Delete(RouteConstants.pathDeviceWithId("")) ~> routes ~> check {
         handled shouldEqual false

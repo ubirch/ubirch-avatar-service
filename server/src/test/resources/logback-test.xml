@@ -1,0 +1,33 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%date{ISO8601} %highlight(%-5level) [logger: %-60logger{60}] -- %-120msg -- [Ex: %ex{short}]
+                [thread: %thread]%n</pattern>-->
+            <withJasi>true</withJasi>
+        </encoder>
+    </appender>
+
+    <appender name="JSONSTDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timeZone>UTC</timeZone>
+            <jsonFactoryDecorator class="net.logstash.logback.decorate.CharacterEscapesJsonFactoryDecorator">
+                <includeStandardAsciiEscapesForJSON>true</includeStandardAsciiEscapesForJSON>
+            </jsonFactoryDecorator>
+        </encoder>
+    </appender>
+
+    <appender name="JSONSTDOUT2" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timeZone>UTC</timeZone>
+        </encoder>
+    </appender>
+
+
+    <root level="OFF">
+        <!--<appender-ref ref="JSONSTDOUT"/>-->
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

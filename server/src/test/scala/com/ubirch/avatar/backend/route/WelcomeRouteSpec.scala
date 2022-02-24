@@ -1,10 +1,10 @@
 package com.ubirch.avatar.backend.route
 
-import com.ubirch.avatar.test.base.RouteSpec
-import com.ubirch.util.model.JsonResponse
-
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
+import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.test.base.RouteSpec
+import com.ubirch.util.model.JsonResponse
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
@@ -13,7 +13,8 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
   */
 class WelcomeRouteSpec extends RouteSpec {
 
-  private val routes = (new MainRoute).myRoute
+  private val mainRoute = new MainRoute
+  private val routes = mainRoute.myRoute
 
   feature(s"call health/welcome page") {
 
@@ -21,8 +22,9 @@ class WelcomeRouteSpec extends RouteSpec {
       Get() ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
-        responseAs[JsonResponse] shouldEqual JsonResponse(message = "Welcome to the ubirchAvatarService")
-        verifyCORSHeader(false)
+        val goInfo = s"${Config.goPipelineName} / ${Config.goPipelineLabel} / ${Config.goPipelineRevision}"
+        responseAs[JsonResponse] shouldEqual JsonResponse(message = s"Welcome to the ubirchAvatarService ( $goInfo )")
+        verifyCORSHeader(exist = false)
       }
     }
 
@@ -33,5 +35,6 @@ class WelcomeRouteSpec extends RouteSpec {
     }
 
   }
+
 
 }

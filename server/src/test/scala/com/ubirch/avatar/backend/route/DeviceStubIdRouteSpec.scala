@@ -1,14 +1,13 @@
 package com.ubirch.avatar.backend.route
 
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.test.base.RouteSpec
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
-
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
@@ -18,10 +17,10 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 class DeviceStubIdRouteSpec extends RouteSpec
   with ResponseUtil {
 
-  private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.pathDevice}") {
-
+  //route is not being used anymore; only by sleepingPeriod/<id> route in trackle service that is not being used anymore
+  ignore(s"GET ${RouteConstants.pathDevice}") {
+    val routes = (new MainRoute).myRoute
     scenario("without deviceId") {
       Get(RouteConstants.pathDeviceStubWithId("")) ~> routes ~> check {
         handled shouldEqual false

@@ -1,15 +1,14 @@
 package com.ubirch.avatar.backend.route
 
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.test.base.{ElasticsearchSpec, RouteSpec}
 import com.ubirch.avatar.test.tools.DeviceTypeTestUtil
 import com.ubirch.avatar.util.model.DeviceTypeUtil
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.model.JsonErrorResponse
-
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 /**
@@ -19,10 +18,10 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 class DeviceTypeRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
-  private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.pathDeviceType}") {
-
+  //deviceTypeIndex index is not being used anymore
+  ignore(s"GET ${RouteConstants.pathDeviceType}") {
+    val routes = (new MainRoute).myRoute
     scenario("index does not exist --> empty response") {
       deleteIndices()
       runTypeGetProducesEmptyResponse()
@@ -54,8 +53,9 @@ class DeviceTypeRouteSpec extends RouteSpec
 
   }
 
-  feature(s"POST ${RouteConstants.pathDeviceType}") {
-
+  //deviceTypeIndex index is not being used anymore
+  ignore(s"POST ${RouteConstants.pathDeviceType}") {
+    val routes = (new MainRoute).myRoute
     scenario("index does not exist --> create is successful") {
       deleteIndices()
       runTypePostCreatesRecord()
@@ -88,8 +88,9 @@ class DeviceTypeRouteSpec extends RouteSpec
 
   }
 
-  feature(s"PUT ${RouteConstants.pathDeviceType}") {
-
+  //deviceTypeIndex index is not being used anymore
+  ignore(s"PUT ${RouteConstants.pathDeviceType}") {
+    val routes = (new MainRoute).myRoute
     scenario("index does not exist --> update fails") {
       deleteIndices()
       runTypePutFails()
@@ -122,8 +123,9 @@ class DeviceTypeRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.pathDeviceTypeInit}") {
-
+  //deviceTypeIndex index is not being used anymore
+  ignore(s"GET ${RouteConstants.pathDeviceTypeInit}") {
+    val routes = (new MainRoute).myRoute
     scenario("index does not exist --> default deviceTypes are created") {
       deleteIndices()
       runTypeInitCreatesRecords()
@@ -156,7 +158,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   }
 
   private def runTypeGetProducesEmptyResponse() = {
-
+    val routes = (new MainRoute).myRoute
     // test
     Get(RouteConstants.pathDeviceType) ~> Route.seal(routes) ~> check {
 
@@ -173,7 +175,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   }
 
   private def runTypePostCreatesRecord() = {
-
+    val routes = (new MainRoute).myRoute
     // (continue) prepare
     val deviceType = DeviceTypeUtil.defaultDeviceType()
 
@@ -193,7 +195,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   }
 
   private def runTypePutFails() = {
-
+    val routes = (new MainRoute).myRoute
     // (continue) prepare
     val deviceType = DeviceTypeUtil.defaultDeviceType()
 
@@ -213,7 +215,7 @@ class DeviceTypeRouteSpec extends RouteSpec
   }
 
   private def runTypeInitCreatesRecords() = {
-
+    val routes = (new MainRoute).myRoute
     // test
     Get(RouteConstants.pathDeviceTypeInit) ~> Route.seal(routes) ~> check {
 
