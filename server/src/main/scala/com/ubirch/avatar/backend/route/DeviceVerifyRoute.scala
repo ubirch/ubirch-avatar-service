@@ -5,8 +5,6 @@
   */
 package com.ubirch.avatar.backend.route
 
-import java.util.Base64
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
@@ -24,6 +22,7 @@ import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import org.apache.commons.codec.binary.Hex
 
+import java.util.Base64
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -34,7 +33,8 @@ import scala.util.{Failure, Success}
   */
 class DeviceVerifyRoute(implicit system: ActorSystem) extends ResponseUtil
   with CORSDirective
-  with StrictLogging {
+  with StrictLogging
+  with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -45,6 +45,7 @@ class DeviceVerifyRoute(implicit system: ActorSystem) extends ResponseUtil
     path(verify / Segment) { valueHash =>
       respondWithCORS {
         get {
+          logger.info(s"Endpoint GET /verify/valueHash with valueHash $valueHash $NOT_EXPECTED_TO_BE_USED_ANYMORE")
           onComplete(DeviceDataRawManager.loadByValueHash(valueHash)) {
             case Success(Some(deviceDataRaw)) =>
               onComplete(validatorActor ? deviceDataRaw) {

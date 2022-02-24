@@ -1,11 +1,10 @@
 package com.ubirch.avatar.backend.route
 
-import java.util.UUID
-
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
+import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.AvatarState
@@ -16,6 +15,7 @@ import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
+import java.util.UUID
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
@@ -24,7 +24,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   */
 class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
-    with CORSDirective {
+    with CORSDirective with StrictLogging with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
@@ -35,7 +35,9 @@ class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
     path(JavaUUID / state) { deviceId =>
       respondWithCORS {
         oidcDirective.oidcToken2UserContext { userContext =>
+
           get {
+            logger.info(s"Endpoint GET /<deviceId>/state by user ${userContext.userId} $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             onSuccess(queryState(deviceId)) {
               case None =>
                 complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))

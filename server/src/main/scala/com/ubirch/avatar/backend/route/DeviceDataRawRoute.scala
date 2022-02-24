@@ -17,7 +17,6 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.concurrent.ExecutionContextExecutor
-import scala.util.{Failure, Success}
 
 /**
   * author: cvandrei
@@ -29,11 +28,6 @@ class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materialize
 
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-
-  private val reprocessingActor = system.actorOf(DeviceRawDataReprocessingActor.props, ActorNames.REPROCESSING)
-
-  private val oidcDirective = new OidcDirective()
-
   val route: Route = {
 
     // TODO authentication
@@ -66,26 +60,26 @@ class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materialize
         }
       }
     } ~ path(data / transferDates / Segment) { deviceId =>
-      oidcDirective.oidcToken2UserContext { _ =>
+      oidcDirective.oidcToken2UserContext { userContext =>
         get {
-
-          logger.info(s"GET /data/transferDates/$deviceId")
+          logger.error(s"Disabled endpoint GET /data/transferDates/$deviceId was called by ${userContext.userId}")
           respondWithCORS {
-            onComplete(DeviceDataRawManager.getTransferDates(deviceId)) {
-
-              case Success(dates: Set[DateTime]) =>
-                logger.info(s"the following unique transferDates will be returned: $dates")
-                complete(dates)
-
-
-              case Failure(t) =>
-                complete(requestErrorResponse("GetDataTransferDatesError",
-                  s"failed retrieve dates of data transfers for heDeviceId: $deviceId due to: $t"))
-            }
+            complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage =
+              "this endpoint has been disabled together with TrackleService's endpoint /device/statistics/create"))
+            //            onComplete(DeviceDataRawManager.getTransferDates(deviceId)) {
+            //              case Success(dates: Set[DateTime]) =>
+            //                logger.info(s"the following unique transferDates will be returned: $dates")
+            //                complete(dates)
+            //              case Failure(t) =>
+            //                complete(requestErrorResponse("GetDataTransferDatesError",
+            //                  s"failed retrieve dates of data transfers for heDeviceId: $deviceId due to: $t"))
+            //            }
           }
         }
       }
     }
   }
+  private val reprocessingActor = system.actorOf(DeviceRawDataReprocessingActor.props, ActorNames.REPROCESSING)
+  private val oidcDirective = new OidcDirective()
 
 }

@@ -25,8 +25,9 @@ import scala.util.{Failure, Success}
   * since: 2016-09-21
   */
 class DeviceStubIdRoute(implicit httpClient: HttpExt, materializer: Materializer, system:ActorSystem) extends ResponseUtil
-    with CORSDirective
-    with StrictLogging {
+  with CORSDirective
+  with StrictLogging
+  with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -39,6 +40,8 @@ class DeviceStubIdRoute(implicit httpClient: HttpExt, materializer: Materializer
       respondWithCORS {
         oidcDirective.oidcToken2UserContext { userContext =>
           get {
+            //Not being used 24.02.2022
+            logger.info(s"Endpoint GET /stub/<deviceId> $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             onComplete(DeviceManager.stub(deviceId)) {
               case Success(resp) =>
                 resp match {
@@ -51,7 +54,6 @@ class DeviceStubIdRoute(implicit httpClient: HttpExt, materializer: Materializer
                 logger.error("device creation failed", t)
                 complete(serverErrorResponse(errorType = "DeviceStubError", errorMessage = t.getMessage))
             }
-
           }
         }
       }

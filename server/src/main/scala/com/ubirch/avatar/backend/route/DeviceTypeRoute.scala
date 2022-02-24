@@ -21,7 +21,8 @@ import scala.util.{Failure, Success}
   */
 class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, system:ActorSystem) extends ResponseUtil
   with CORSDirective
-  with StrictLogging {
+  with StrictLogging
+  with RouteAnalyzingByLogsSupport {
 
   private val oidcDirective = new OidcDirective()
 
@@ -32,6 +33,7 @@ class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, 
 
         get {
           oidcDirective.oidcToken2UserContext { userContext =>
+            logger.info(s"Endpoint GET /deviceType by user ${userContext.userId} $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             onComplete(DeviceTypeManager.all()) {
 
               case Success(res) =>
@@ -46,13 +48,12 @@ class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, 
 
         } ~ post {
           entity(as[DeviceType]) { postDeviceType =>
+            logger.info(s"Endpoint POST /deviceType with $postDeviceType $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             onComplete(DeviceTypeManager.create(postDeviceType)) {
-
               case Success(resp) => resp match {
                 case Some(deviceType) => complete(deviceType)
                 case None => complete(requestErrorResponse("CreateError", s"another deviceType with key=${postDeviceType.key} already exists or otherwise something else on the server went wrong"))
               }
-
               case Failure(t) =>
                 logger.error(s"deviceType creation failed: deviceType=$postDeviceType", t)
                 complete(serverErrorResponse(errorType = "CreateError", errorMessage = t.getMessage))
@@ -61,17 +62,16 @@ class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, 
 
         } ~ put {
           entity(as[DeviceType]) { postDeviceType =>
-            onComplete(DeviceTypeManager.update(postDeviceType)) {
+            logger.info(s"Endpoint PUT /deviceType with $postDeviceType $NOT_EXPECTED_TO_BE_USED_ANYMORE")
 
+            onComplete(DeviceTypeManager.update(postDeviceType)) {
               case Success(resp) => resp match {
                 case Some(deviceType) => complete(deviceType)
                 case None => complete(requestErrorResponse("UpdateError", s"no deviceType with key=${postDeviceType.key} exists or otherwise something else on the server went wrong"))
               }
-
               case Failure(t) =>
                 logger.error(s"deviceType update failed: deviceType=$postDeviceType", t)
                 complete(serverErrorResponse(errorType = "UpdateError", errorMessage = t.getMessage))
-
             }
           }
 
@@ -81,6 +81,7 @@ class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, 
       respondWithCORS {
         oidcDirective.oidcToken2UserContext { userContext =>
           get {
+            logger.info(s"Endpoint GET /deviceType/init by user ${userContext.userId} $NOT_EXPECTED_TO_BE_USED_ANYMORE")
             onComplete(DeviceTypeManager.init()) {
 
               case Success(resp) => complete(resp)

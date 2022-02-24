@@ -30,7 +30,8 @@ import scala.util.{Failure, Success}
 class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends ResponseUtil
     with CORSDirective
-    with StrictLogging {
+    with StrictLogging
+    with RouteAnalyzingByLogsSupport {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -44,13 +45,14 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
       oidcDirective.oidcToken2UserContext { userContext =>
 
         get {
+          //Being used 24.02.2022 by EOL update endpoint in Trackle Service. Could become disabled, when that will be refactored.
           logger.info(s"GET /device by userContext: $userContext")
           onComplete(deviceApiActor ? AllDevices(session = AvatarSession(userContext = userContext))) {
 
             case Success(resp) =>
               resp match {
                 case devices: AllDevicesResult =>
-                  logger.debug(s"returning ${devices.devices}")
+                  logger.debug(s"returning devices with deviceIds ${devices.devices.map(_.deviceId)}")
                   complete(StatusCodes.OK -> devices.devices)
                 case _ => complete(serverErrorResponse(errorType = "QueryError", errorMessage = "DeviceRoute.post failed with unhandled message"))
               }
@@ -64,7 +66,8 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
         } ~ post {
 
           entity(as[Device]) { device =>
-            logger.info(s"POST /device with device: $device")
+            //Not being used 24.02.2022.
+            logger.info(s"Endpoint POST /device with device: $device $NOT_EXPECTED_TO_BE_USED_ANYMORE")
 
             val avatarSession = AvatarSession(userContext)
             onComplete(deviceApiActor ? CreateDevice(session = avatarSession, device = device)) {
