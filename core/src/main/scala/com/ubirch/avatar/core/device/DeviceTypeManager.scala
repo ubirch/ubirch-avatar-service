@@ -64,7 +64,7 @@ object DeviceTypeManager extends StrictLogging {
     * @param deviceType deviceType to persist
     * @return deviceType that was just created; None if it already existed or something went wrong
     */
-  def create(deviceType: DeviceType): Future[Option[DeviceType]] = {
+  def create(deviceType: DeviceType, waitingForRefresh: Boolean = false): Future[Option[DeviceType]] = {
 
     val key = deviceType.key
     Json4sUtil.any2jvalue(deviceType) match {
@@ -72,13 +72,14 @@ object DeviceTypeManager extends StrictLogging {
       case Some(doc) =>
         getByKey(key) flatMap {
 
-          case Some(dbRecord) => Future(None)
+          case Some(_) => Future(None)
 
           case None =>
             EsSimpleClient.storeDoc(
               docIndex = index,
               docIdOpt = Some(key),
-              doc = doc
+              doc = doc,
+              waitingForRefresh = waitingForRefresh
             ).map {
               case true => doc.extractOpt[DeviceType]
               case false => None
@@ -142,19 +143,17 @@ object DeviceTypeManager extends StrictLogging {
     */
   def init(): Future[Set[DeviceType]] = {
     logger.debug("init DeviceTypes")
-    all() map { allTypes =>
+    all().map { allTypes =>
 
-      allTypes.isEmpty match {
-
-        case true =>
-          val defaultTypes = DeviceTypeUtil.defaultDeviceTypes
-          defaultTypes foreach create
-          defaultTypes
-
-        case false => allTypes
-
-      }
+      if (allTypes.isEmpty) {
+        val defaultTypes = DeviceTypeUtil.defaultDeviceTypes
+        defaultTypes.foreach(create(_))
+        defaultTypes
+      } else allTypes
 
     }
+
   }
+
 }
+

@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.device
 
-import java.util.UUID
-
 import com.ubirch.avatar.core.test.model.DummyDeviceHistory
 import com.ubirch.avatar.core.test.util.DeviceHistoryTestUtil
 import com.ubirch.avatar.model.rest.device.DeviceHistory
@@ -10,6 +8,7 @@ import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{DateTime, DateTimeZone}
 
+import java.util.UUID
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
@@ -22,7 +21,8 @@ class DeviceHistoryManagerSpec
   extends ElasticsearchSpec
     with MyJsonProtocol {
 
-  feature("store()") {
+  //Ignoring tests, as deviceHistoryIndex is not being used anymore.
+  ignore("store()") {
 
     scenario("messageId does not exist before") {
 
@@ -34,7 +34,7 @@ class DeviceHistoryManagerSpec
       Thread.sleep(1500)
 
       // verify
-      val deviceHistoryList = Await.result(DeviceHistoryManager.history(response.deviceId), 1 seconds)
+      val deviceHistoryList = Await.result(DeviceHistoryManager.history(response.deviceId), 2 seconds)
       deviceHistoryList.size should be(1)
 
       deviceHistoryList.head should be(response)
@@ -67,7 +67,8 @@ class DeviceHistoryManagerSpec
 
   }
 
-  feature("history()") {
+  //Ignoring tests, as deviceHistoryIndex is not being used anymore.
+  ignore("history()") {
 
     scenario("deviceId empty") {
       an[IllegalArgumentException] should be thrownBy Await.result(DeviceHistoryManager.history(""), 1 seconds)
@@ -93,11 +94,11 @@ class DeviceHistoryManagerSpec
     }
 
     scenario("3 records exist: from = -1; size > 3") {
-      testWithInvalidFromOrSize(elementCount = 3, from = -1, size = 4)
+      testWithInvalidFromOrSize(from = -1, size = 4)
     }
 
     scenario("3 records exist: from = 0; size = -1") {
-      testWithInvalidFromOrSize(elementCount = 3, from = 0, size = -1)
+      testWithInvalidFromOrSize(from = 0, size = -1)
     }
 
     scenario("3 records exist: from = 0; size = 0") {
@@ -175,7 +176,8 @@ class DeviceHistoryManagerSpec
 
   }
 
-  feature("byDate()") {
+  //Ignoring tests, as deviceHistoryIndex is not being used anymore.
+  ignore("byDate()") {
 
     scenario("deviceId does not exist; index does not exist") {
       deleteIndices()
@@ -287,7 +289,8 @@ class DeviceHistoryManagerSpec
 
   }
 
-  feature("before()") {
+  //Ignoring tests, as deviceHistoryIndex is not being used anymore.
+  ignore("before()") {
 
     scenario("deviceId does not exist; index does not exist") {
       deleteIndices()
@@ -364,7 +367,8 @@ class DeviceHistoryManagerSpec
 
   }
 
-  feature("after()") {
+  //Ignoring tests, as deviceHistoryIndex is not being used anymore.
+  ignore("after()") {
 
     scenario("deviceId does not exist; index does not exist") {
       deleteIndices()
@@ -439,7 +443,8 @@ class DeviceHistoryManagerSpec
 
   }
 
-  feature("byDay()") {
+  //Ignoring tests, as deviceHistoryIndex is not being used anymore.
+  ignore("byDay()") {
 
     scenario("deviceId does not exist; index does not exist") {
       deleteIndices()
@@ -597,7 +602,7 @@ class DeviceHistoryManagerSpec
 
   }
 
-  private def testWithInvalidFromOrSize(elementCount: Int, from: Int, size: Int) = {
+  private def testWithInvalidFromOrSize(from: Int, size: Int, elementCount: Int = 3) = {
 
     // prepare
     val dataSeries: Seq[DeviceHistory] = DeviceHistoryTestUtil.storeSeries(elementCount)

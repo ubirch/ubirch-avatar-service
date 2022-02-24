@@ -62,12 +62,11 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
             welcome.route
           } ~ deepCheck.route ~
             backEndInfo.route
-
-
         }
       }
     } ~ pathSingleSlash {
       welcome.route
     }
   }
+
 }

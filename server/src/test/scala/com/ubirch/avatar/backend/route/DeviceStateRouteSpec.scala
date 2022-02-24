@@ -10,7 +10,6 @@ import com.ubirch.avatar.util.server.RouteConstants
 class DeviceStateRouteSpec extends RouteSpec
   with ElasticsearchSpec {
 
-  private val routes = (new MainRoute).myRoute
 
   feature(s"GET ${RouteConstants.pathDeviceState(":deviceId")}") {
 

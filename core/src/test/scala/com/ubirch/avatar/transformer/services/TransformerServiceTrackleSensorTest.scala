@@ -62,7 +62,8 @@ class TransformerServiceTrackleSensorTest extends FeatureSpec
 
   lazy val payload: TrackleSensorPayload = ddrTrackleSensor.p.extract[TrackleSensorPayload]
 
-  feature("transform services for envSensor") {
+  //Ignoring test, because TransformerService.transform is only being used in test classes.
+  ignore("transform services for envSensor") {
     scenario("convert incoming data") {
 
       val trd = TransformerService.transform(

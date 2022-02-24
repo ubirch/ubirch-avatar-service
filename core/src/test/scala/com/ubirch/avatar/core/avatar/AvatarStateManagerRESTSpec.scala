@@ -7,8 +7,7 @@ import com.ubirch.avatar.model.rest.device.AvatarState
 import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.native.JsonMethods._
 
 import scala.concurrent.Future
@@ -148,8 +147,8 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
         deviceId = device.deviceId,
         desired = Some(Json4sUtil.jvalue2String(desired)),
         reported = Some(Json4sUtil.jvalue2String(reported)),
-        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
-        avatarLastUpdated = Some(DateTime.now.minusHours(1))
+        deviceLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1)),
+        avatarLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1))
       )
       AvatarStateManager.create(state) flatMap {
 
@@ -200,8 +199,8 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
         deviceId = device.deviceId,
         desired = Some(Json4sUtil.jvalue2String(desiredOld)),
         reported = Some(Json4sUtil.jvalue2String(reported)),
-        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
-        avatarLastUpdated = Some(DateTime.now.minusHours(1))
+        deviceLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1)),
+        avatarLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1))
       )
       AvatarStateManager.create(state) flatMap {
 

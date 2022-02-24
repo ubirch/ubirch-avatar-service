@@ -1,5 +1,8 @@
 package com.ubirch.avatar.backend.route
 
+import akka.http.scaladsl.model.ContentTypes._
+import akka.http.scaladsl.model.StatusCodes._
+import akka.http.scaladsl.server.Route
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.history.HistoryIndexUtil
 import com.ubirch.avatar.model.rest.device.DeviceHistory
@@ -8,10 +11,6 @@ import com.ubirch.avatar.test.tools.DeviceDataProcessedTestUtil
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.uuid.UUIDUtil
-
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import scala.language.postfixOps
@@ -24,10 +23,9 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
   with ElasticsearchSpec
   with ResponseUtil {
 
-  private val routes = (new MainRoute).myRoute
 
-  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}") {
-
+  //deviceHistory index is not being used anymore
+  ignore(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}") {
     scenario("deviceId exists; elementCount < defaultPageSize") {
       testGetHistoryDeviceExists(Config.esDefaultPageSize - 1, None, None)
     }
@@ -50,7 +48,8 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from") {
+  //deviceHistory index is not being used anymore
+  ignore(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from") {
 
     scenario("deviceId exists; from < 0") {
       testGetHistoryDeviceExists(3, Some(-1), None)
@@ -90,7 +89,8 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
 
   }
 
-  feature(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from/:size") {
+  //deviceHistory index is not being used anymore
+  ignore(s"GET ${RouteConstants.pathDeviceDataHistory(":deviceId")}/:from/:size") {
 
     scenario("deviceId exists; from < 0; size < 0") {
       testGetHistoryDeviceExists(1, Some(-1), Some(-1))
@@ -207,7 +207,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
   }
 
   private def testGetHistoryDeviceExists(elementCount: Int, from: Option[Int], size: Option[Int]) = {
-
+    val routes = (new MainRoute).myRoute
     // prepare
     val dataSeries: Seq[DeviceHistory] = DeviceDataProcessedTestUtil.storeSeries(elementCount).reverse
     Thread.sleep(500)
@@ -263,6 +263,7 @@ class DeviceDataHistoryRouteSpec extends RouteSpec
                                            ): Unit = {
 
     // prepare
+    val routes = (new MainRoute).myRoute
     if (indexExists) {
       DeviceDataProcessedTestUtil.storeSeries(1)
     }

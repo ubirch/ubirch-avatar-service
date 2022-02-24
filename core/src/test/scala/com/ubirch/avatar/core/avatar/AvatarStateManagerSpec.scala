@@ -6,12 +6,11 @@ import com.ubirch.avatar.model.db.device.AvatarState
 import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.native.JsonMethods._
 
 import scala.concurrent.Future
-import scala.language.postfixOps
+import scala.language.{existentials, postfixOps}
 
 /**
   * author: cvandrei
@@ -41,9 +40,8 @@ class AvatarStateManagerSpec extends MongoSpec {
         AvatarStateManager.byDeviceId(deviceId) flatMap { result =>
 
           // verify
-          result should be(created)
+          created shouldBe result
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
-
         }
 
       }
@@ -114,7 +112,6 @@ class AvatarStateManagerSpec extends MongoSpec {
         mongoTestUtils.countAll(collection) map (_ shouldBe 0)
 
       }
-
     }
 
     scenario("record exists -> update succeeds") {
@@ -136,9 +133,7 @@ class AvatarStateManagerSpec extends MongoSpec {
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
         }
-
       }
-
     }
 
   }
@@ -230,8 +225,8 @@ class AvatarStateManagerSpec extends MongoSpec {
         deviceId = device.deviceId,
         desired = Some("""{"i":700}"""),
         reported = Some("""{"i":900}"""),
-        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
-        avatarLastUpdated = Some(DateTime.now.minusHours(1))
+        deviceLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1)),
+        avatarLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1))
       )
       AvatarStateManager.create(state) flatMap {
 
@@ -255,8 +250,7 @@ class AvatarStateManagerSpec extends MongoSpec {
                 reported = Some(Json4sUtil.jvalue2String(reported)),
                 deviceLastUpdated = updatedState.deviceLastUpdated
               )
-              updatedState should be(expected)
-
+              updatedState shouldBe expected
           }
 
       }
@@ -308,8 +302,8 @@ class AvatarStateManagerSpec extends MongoSpec {
         deviceId = device.deviceId,
         desired = Some("""{"i":700}"""),
         reported = reported,
-        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
-        avatarLastUpdated = Some(DateTime.now.minusHours(1))
+        deviceLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1)),
+        avatarLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1))
       )
       AvatarStateManager.create(state) flatMap {
 
@@ -333,8 +327,7 @@ class AvatarStateManagerSpec extends MongoSpec {
                 desired = Some(Json4sUtil.jvalue2String(desired)),
                 avatarLastUpdated = updatedState.avatarLastUpdated
               )
-              updatedState should be(expected)
-
+              updatedState shouldBe expected
           }
 
       }
@@ -355,8 +348,8 @@ class AvatarStateManagerSpec extends MongoSpec {
         deviceId = device.deviceId,
         desired = Some("""{"i":700,"foo":"bar"}"""),
         reported = reported,
-        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
-        avatarLastUpdated = Some(DateTime.now.minusHours(1))
+        deviceLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1)),
+        avatarLastUpdated = Some(DateTime.now(DateTimeZone.UTC).minusHours(1))
       )
       AvatarStateManager.create(state) flatMap {
 
@@ -380,8 +373,7 @@ class AvatarStateManagerSpec extends MongoSpec {
                 desired = Some("""{"i":1200,"foo":"bar"}"""),
                 avatarLastUpdated = updatedState.avatarLastUpdated
               )
-              updatedState should be(expected)
-
+              updatedState shouldBe expected
           }
 
       }

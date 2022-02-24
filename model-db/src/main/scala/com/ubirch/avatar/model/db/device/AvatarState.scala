@@ -1,6 +1,6 @@
 package com.ubirch.avatar.model.db.device
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 
 /**
   * author: cvandrei
@@ -17,6 +17,6 @@ case class AvatarState(deviceId: String,
                        desired: Option[String] = Some("{}"),
                        reported: Option[String] = Some("{}"),
                        currentDeviceSignature: Option[String] = None,
-                       deviceLastUpdated: Option[DateTime] = Some(DateTime.now()),
-                       avatarLastUpdated: Option[DateTime] = Some(DateTime.now())
+                       deviceLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)),
+                       avatarLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC))
                       )

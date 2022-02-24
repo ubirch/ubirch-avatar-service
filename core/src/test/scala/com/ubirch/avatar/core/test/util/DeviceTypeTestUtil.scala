@@ -27,7 +27,7 @@ object DeviceTypeTestUtil {
     )
 
     dataSeries foreach { dt =>
-      Await.result(DeviceTypeManager.create(dt), 1 second)
+      Await.result(DeviceTypeManager.create(dt, waitingForRefresh = true), 3 second)
     }
     Thread.sleep(sleep)
 

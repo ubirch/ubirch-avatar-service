@@ -1,0 +1,29 @@
+version: '3.3'
+services:
+  mongo-avatar:
+    image: mongo:4.2.18
+    container_name: mongo-avatar-run-unit
+    ports:
+      - 27017:27017
+    logging:
+      driver: none
+  redis-avatar:
+    container_name: redis-avatar-run-unit
+    image: redis:5.0.5
+    ports:
+      - 6379:6379
+    logging:
+      driver: none
+  elasticsearch-avatar:
+    container_name: elasticsearch-avatar-run-unit
+    image: elastic/elasticsearch:7.15.0
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - "cluster.name=elasticsearch"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
+    logging:
+      driver: none

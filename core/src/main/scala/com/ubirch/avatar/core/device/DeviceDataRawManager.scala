@@ -202,7 +202,6 @@ object DeviceDataRawManager
     */
   def store(data: DeviceDataRaw): Option[DeviceDataRaw] = {
 
-
     logger.debug(s"store data: $data")
     Json4sUtil.any2jvalue(data) match {
 
@@ -221,6 +220,7 @@ object DeviceDataRawManager
         logger.error(s"Couldn't store deviceDataRaw as parsing it to JValue failed: $data.")
         None
     }
+
   }
 
   /**
@@ -229,7 +229,8 @@ object DeviceDataRawManager
     * @param data a device's raw data to store
     * @return json of what we stored
     */
-  def storeOne(data: DeviceDataRaw): Future[Option[DeviceDataRaw]] = {
+  def storeOne(data: DeviceDataRaw,
+               waitingForRefresh: Boolean = false): Future[Option[DeviceDataRaw]] = {
 
 
     logger.debug(s"store data: $data")
@@ -241,7 +242,8 @@ object DeviceDataRawManager
           docIndex = index,
           doc = doc,
           docIdOpt = Some(id),
-          retry = 1
+          retry = 1,
+          waitingForRefresh
         ).map {
           case true => doc.extractOpt[DeviceDataRaw]
           case false =>

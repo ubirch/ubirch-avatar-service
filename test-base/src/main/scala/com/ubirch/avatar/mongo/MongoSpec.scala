@@ -2,7 +2,6 @@ package com.ubirch.avatar.mongo
 
 import com.ubirch.avatar.storage.MongoStorageCleanup
 import com.ubirch.util.mongo.test.MongoTestUtils
-
 import org.scalatest.{AsyncFeatureSpec, BeforeAndAfterAll, BeforeAndAfterEach, Matchers}
 
 /**
@@ -18,10 +17,7 @@ class MongoSpec extends AsyncFeatureSpec
   protected val mongoTestUtils = new MongoTestUtils()
 
   override protected def beforeEach(): Unit = {
-    dropDb()
-    createMongoConstraints()
+    cleanMongoDb()
   }
-
-  override protected def afterAll(): Unit = mongo.close()
 
 }
