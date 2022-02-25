@@ -70,7 +70,7 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
           } ~ delete {
             logger.error(s"Disabled endpoint GET /device/id with id $deviceId was called by ${userContext.userId}")
             complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage =
-              "this endpoint has been disabled together with TrackleService's endpoint /device/statistics/create"))
+              "this endpoint has been disabled together with TrackleService's endpoint DELETE /user by userContext"))
             //Disabled as the related TrackleService's Delete User endpoint is not being used at the moment.
             // deleteDevice(deviceId)
           }
