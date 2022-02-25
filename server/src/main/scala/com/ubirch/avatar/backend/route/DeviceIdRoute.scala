@@ -68,13 +68,14 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
               updateDevice(deviceId, device)
             }
           } ~ delete {
-            //Not being used 24.2.2022, as the related TrackleService's Delete User endpoint is not being used at the moment. Should become disabled.
-            logger.info(s"Endpoint DELETE .../device/id with id: $deviceId $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-            deleteDevice(deviceId)
+            logger.error(s"Disabled endpoint GET /device/id with id $deviceId was called by ${userContext.userId}")
+            complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage =
+              "this endpoint has been disabled together with TrackleService's endpoint /device/statistics/create"))
+            //Disabled as the related TrackleService's Delete User endpoint is not being used at the moment.
+            // deleteDevice(deviceId)
           }
         }
       }
-
     }
   }
 
@@ -229,9 +230,7 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
             )
 
           case Some(_) => DeviceIdResult(deviceDeleted = true)
-
         }
-
     }
 
     onComplete(result) {
