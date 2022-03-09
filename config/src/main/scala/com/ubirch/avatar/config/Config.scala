@@ -198,7 +198,22 @@ object Config extends ConfigBase {
   /*
   * Kafka
    */
-  def kafkaBoostrapServer: String = config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
+  lazy val isSecureKafkaConnection: Boolean = config.getBoolean(ConfigKeys.KAFKA_IS_SECURE_CONNECTION)
+
+  def kafkaBoostrapServer: String = if (isSecureKafkaConnection) {
+    config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVERS_SSL)
+  } else {
+    config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
+  }
+
+  def kafkaProdSecureConnectionProperties: Map[String, String] = Map(
+    "security.protocol" -> "SSL",
+    "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_LOCATION),
+    "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_PASS),
+    "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_LOCATION),
+    "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_PASS)
+  )
+
   def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
 
   def userToken: Option[String] = {

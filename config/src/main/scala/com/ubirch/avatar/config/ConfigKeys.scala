@@ -122,7 +122,14 @@ object ConfigKeys {
 
   final val kafkaPrefix = s"$prefix.kafka"
 
+  final val KAFKA_IS_SECURE_CONNECTION = s"$kafkaPrefix.secureConnection"
   final val KAFKA_PROD_BOOTSTRAP_SERVER = s"$kafkaPrefix.producer.bootstrapServers"
+  final val KAFKA_PROD_BOOTSTRAP_SERVERS_SSL = s"$kafkaPrefix.producer.bootstrapServersSecure"
+
+  final val KAFKA_PROD_TRUSTSTORE_LOCATION = s"$kafkaPrefix.producer.truststoreLocation"
+  final val KAFKA_PROD_TRUSTSTORE_PASS = s"$kafkaPrefix.producer.truststorePassword"
+  final val KAFKA_PROD_KEYSTORE_LOCATION = s"$kafkaPrefix.producer.keystoreLocation"
+  final val KAFKA_PROD_KEYSTORE_PASS = s"$kafkaPrefix.producer.keystorePassword"
 
   final val KAFKA_TRACKLE_MSGPACK_TOPIC = s"$kafkaPrefix.trackleMsgpackTopic"
 }
