@@ -50,7 +50,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
           reqMetrics.start
           post {
             entity(as[Array[Byte]]) { binData =>
-              logger.info(s"POST update/mpack")
+              logger.info(s"POST update/mpack js=$js")
               onComplete(msgPackProcessorActor ? binData) {
                 case Success(resp) =>
                   resp match {

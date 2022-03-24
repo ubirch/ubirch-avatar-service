@@ -28,7 +28,6 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
   val deviceState: DeviceStateRoute = new DeviceStateRoute {}
   val deviceDataRaw: DeviceDataRawRoute = new DeviceDataRawRoute {}
   val deviceDataHistory: DeviceDataHistoryRoute = new DeviceDataHistoryRoute {}
-  val deviceVerify: DeviceVerifyRoute = new DeviceVerifyRoute {}
   val deviceType: DeviceTypeRoute = new DeviceTypeRoute {}
   val deviceClaim: DeviceClaimRoute = new DeviceClaimRoute {}
 
@@ -44,7 +43,6 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
             deviceUpdateBulk.route ~
               deviceUpdateMsgPack.route ~
               deviceUpdatePlain.route ~
-              deviceVerify.route ~
               deviceType.route ~
               deviceStubId.route ~
               deviceStub.route ~
