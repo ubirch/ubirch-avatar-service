@@ -66,7 +66,6 @@ object RouteConstants {
   def pathDeviceDataHistory(id: String): String = s"${pathDeviceWithId(id)}/$data/$history"
 
   val pathDeviceUpdate: String = s"$pathDevice/$update"
-  val pathDeviceVerify: String = s"$pathDevice/$verify"
 
   def pathDeviceHistoryFrom(id: String, from: Int): String = s"${pathDeviceDataHistory(id)}/$from"
 

@@ -10,8 +10,8 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.util.json.Json4sUtil
 import org.apache.camel.Message
 
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
@@ -40,6 +40,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
     case (device: Device, drd: DeviceDataRaw) =>
       val s = sender()
       val drdExt = if (drd.mppay.isDefined && drd.mppay.get.length > 50000) {
+        log.error(s"ddr.mppay length was greater than 50000; this should never happen $drd")
         drd.copy(
           deviceId = Some(device.deviceId),
           mppay = None,
@@ -56,7 +57,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
               log.info(s"succeeded to publish DeviceRawData to Kafka. deviceId: ${device.deviceId}, raw message: ${drd.id}")
               s ! true
             case Failure(err) =>
-              log.error(s"failed to publish DeviceRawData to Kafka. deviceId: ${device.deviceId}, raw message: ${drd.id}, error: ${err}")
+              log.error(s"failed to publish DeviceRawData to Kafka. deviceId: ${device.deviceId}, raw message: ${drd.id}, error: $err")
               s ! false
           }
         case None =>

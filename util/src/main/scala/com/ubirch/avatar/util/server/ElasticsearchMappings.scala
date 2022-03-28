@@ -11,30 +11,6 @@ trait ElasticsearchMappings extends EsMappingTrait {
 
   val indexesAndMappings: Map[String, String] = Map(
 
-    // ubirch-device-raw-data
-    Config.esDeviceDataRawIndex ->
-      s"""{
-         |    "properties" : {
-         |      "a" : {
-         |        "type" : "keyword"
-         |      },
-         |      "id" : {
-         |        "type" : "keyword"
-         |      },
-         |      "deviceId" : {
-         |        "type" : "keyword"
-         |      },
-         |      "s" : {
-         |        "type" : "keyword"
-         |      },
-         |      "ts" : {
-         |        "type" : "date",
-         |        "format" : "strict_date_time"
-         |      }
-         |    }
-         |}""".stripMargin
-    ,
-
     // ubirch-device-history
     Config.esDeviceDataHistoryIndex ->
       s"""{

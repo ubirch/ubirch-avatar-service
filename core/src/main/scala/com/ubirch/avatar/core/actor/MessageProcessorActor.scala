@@ -1,12 +1,12 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.ask
 import akka.routing.RoundRobinPool
 import akka.util.Timeout
-import com.ubirch.avatar.config.{Config, Const}
+import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManagerREST
-import com.ubirch.avatar.core.device.{DeviceManager, DeviceStateManager}
+import com.ubirch.avatar.core.device.DeviceStateManager
 import com.ubirch.avatar.core.prometheus.Timer
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceDataRaw, DeviceStateUpdate}
@@ -30,8 +30,6 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
     with ActorLogging {
 
   private implicit val exContext: ExecutionContextExecutor = context.dispatcher
-
-  private val persistenceActor: ActorRef = context.actorOf(MessagePersistenceActor.props, ActorNames.PERSISTENCE_SVC)
 
   private val outboxManagerActor = context.actorSelection(ActorNames.DEVICE_OUTBOX_MANAGER_PATH)
 
@@ -65,38 +63,23 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
       }
 
 
-      val persistedAndForwarded = Promise[Boolean]()
+      val forwarded = Promise[Boolean]()
 
-      if (DeviceManager.checkProperty(device, Const.STOREDATA)) {
-        log.debug(s"stores data for ${device.deviceId}")
-        persistenceActor ? drdPatched map {
-          case boolean if boolean == true =>
-            // publish incoming raw data to trackle and return true or false depending on success
-            outboxManagerActor ? (device, drdPatched) map {
-              case b: Boolean => persistedAndForwarded.success(b)
-              case unknown =>
-                log.error(s"received unknown message type $unknown")
-                persistedAndForwarded.success(false)
-            }
-          case false => persistedAndForwarded.success(false)
-          case unknown =>
-            log.error(s"received unknown message type $unknown")
-            persistedAndForwarded.success(false)
-        }
-      } else {
-        log.debug(s"stores no data for ${device.deviceId}")
-        persistedAndForwarded.success(true)
+      log.debug(s"forwards data for ${device.deviceId}")
+      outboxManagerActor ? (device, drdPatched) map {
+        case b: Boolean => forwarded.success(b)
+        case unknown =>
+          log.error(s"received unknown message type $unknown")
+          forwarded.success(false)
       }
 
-      persistedAndForwarded.future.map {
+      forwarded.future.map {
         case false => s ! JsonErrorResponse(errorType = "database error",
           errorMessage = "something went wrong storing or forwarding the deviceDataRaw in database.")
         case true =>
           processPayload(device, pl, drdPatched.s).map {
             case Some(d: DeviceStateUpdate) =>
               log.debug(s"current AvatarState updated: ${device.deviceId}")
-              //              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-              //              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
               s ! d
             case None =>
               log.error(s"current AvatarStateRest not available: ${device.deviceId}")
@@ -105,12 +88,9 @@ class MessageProcessorActor(implicit mongo: MongoUtil)
           }.recover {
             case t: Throwable =>
               log.error(t, s"current AvatarStateRest not available: ${device.deviceId}")
-              //              val currentStateStr = Json4sUtil.jvalue2String(Json4sUtil.any2jvalue(d).get)
-              //              outboxManagerActor ! MessageReceiver(device.deviceId, currentStateStr, ConfigKeys.DEVICEOUTBOX)
               val d = DeviceStateManager.createNewDeviceState(AvatarState(deviceId = device.deviceId, inSync = Some(false), currentDeviceSignature = drdPatched.s))
               s ! d
           }
-
       }
   }
 
