@@ -33,7 +33,7 @@ object ReadyCheckManager extends StrictLogging {
       // direct dependencies
 
       esConnectivity <- EsSimpleClient.connectivityCheck(
-        docIndex = Config.esDeviceDataRawIndex
+        docIndex = Config.esDeviceIndex
       ).map { res =>
         DeepCheckResponseUtil.addServicePrefix("[avatar-service.elasticsearch]", res)
       }
@@ -55,7 +55,7 @@ object ReadyCheckManager extends StrictLogging {
     }).recover {
       case e =>
         logger.error("connectivityCheck", e)
-        DeepCheckResponse(false, Seq(e.getMessage))
+        DeepCheckResponse(status = false, Seq(e.getMessage))
     }
   }
 

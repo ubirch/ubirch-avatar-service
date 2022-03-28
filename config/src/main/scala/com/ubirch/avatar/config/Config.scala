@@ -104,16 +104,6 @@ object Config extends ConfigBase {
   def esDeviceType: String = config.getString(ConfigKeys.ES_DEVICE_TYPE)
 
   /**
-    * @return Elasticsearch raw device data index
-    */
-  def esDeviceDataRawIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_INDEX)
-
-  /**
-    * @return Elasticsearch raw device data type
-    */
-  def esDeviceDataRawType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_TYPE)
-
-  /**
     * @return Elasticsearch anchored raw device data (with txHash) index
     */
   def esDeviceDataRawAnchoredIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_ANCHORED_INDEX)
