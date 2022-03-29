@@ -34,9 +34,6 @@ abstract class KafkaConsumer(topicNames: Set[String], groupName: String, actorSy
     .withBootstrapServers(Config.kafkaConBootstrapServers)
     .withGroupId(groupName)
 
-  // when unit test, it should be false.
-  protected def isTrackMetrics: Boolean = true
-
   protected val committerSettings: CommitterSettings = CommitterSettings(actorSystem)
 
   protected def kafkaSource(): Source[CommittableMessage[String, String], Consumer.Control] =
@@ -122,21 +119,12 @@ abstract class KafkaConsumer(topicNames: Set[String], groupName: String, actorSy
         ))
       .mapAsync(Config.kafkaSubscribeParallel) { msg =>
         val result =
-          if (isTrackMetrics) {
             retryHandler(
               msg,
               kafkaRetryConfig.maxRetries,
               kafkaRetryConfig.backoffFactor,
               kafkaRetryConfig.minBackoff,
               kafkaRetryConfig.maxBackoff)
-          } else {
-            retryHandler(
-              msg,
-              kafkaRetryConfig.maxRetries,
-              kafkaRetryConfig.backoffFactor,
-              kafkaRetryConfig.minBackoff,
-              kafkaRetryConfig.maxBackoff)
-          }
         result.map { _ =>
           msg.committableOffset
         }

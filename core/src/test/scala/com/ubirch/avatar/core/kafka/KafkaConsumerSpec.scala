@@ -45,7 +45,6 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
   feature("retryHandler") {
     scenario("handle is success --> Success(CommittableOffset)") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
-        override protected def isTrackMetrics: Boolean = false
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
           Future.successful(())
@@ -59,7 +58,6 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
 
     scenario("InvalidDataException occurs --> Success(CommittableOffset)") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
-        override protected def isTrackMetrics: Boolean = false
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
           Future.failed(
@@ -75,7 +73,6 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
 
     scenario(s"UnexpectedException occurs --> Success(CommittableOffset) after retry with $retries count") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
-        override protected def isTrackMetrics: Boolean = false
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
           Future.failed(
@@ -91,7 +88,6 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
 
     scenario(s"RuntimeException occurs --> Success(CommittableOffset) after retry with $retries count") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
-        override protected def isTrackMetrics: Boolean = false
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
           Future.failed(
@@ -108,7 +104,6 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
 
   feature("runWithRetry") {
     class KafkaConsumerMock extends KafkaConsumer(Set(), "test", actorSystem) {
-      override def isTrackMetrics: Boolean = false
 
       val topic = "test-topic"
       val groupId = "test-group"
@@ -145,7 +140,6 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
 
   feature("messageInfoFromOffsetBatch") {
     val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
-      override protected def isTrackMetrics: Boolean = false
 
       override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
         Future.successful(())
