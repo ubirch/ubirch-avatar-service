@@ -16,7 +16,6 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.AvatarSession
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.mongo.connection.MongoUtil
-import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -37,47 +36,35 @@ class DeviceIdRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
-
-  private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
-
-  private val oidcDirective = new OidcDirective()
-
   val route: Route = {
     path(JavaUUID) { deviceId =>
 
       respondWithCORS {
-        oidcDirective.oidcToken2UserContext { userContext =>
 
-          get {
-            //Still being used 24.2.2022
-            logger.info(s"GET .../device/$deviceId")
-            getDeviceInfo(deviceId)
+        get {
+          //Not being used anymore after restructuring of EOL flag communication
+          logger.error(s"Disabled endpoint GET /device/<deviceId> with id $deviceId was called")
+          complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage = "this endpoint has been disabled"))
 
-          } ~ post {
-            //Not being used 24.2.2022
-            // TODO the given deviceId from the url path is being ignored and this duplicated `POST device` --> can we delete this code?
-            entity(as[Device]) { device =>
-              logger.info(s"Endpoint POST .../device/id for device: $device $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-              postDevice(device, AvatarSession(userContext))
-            }
-          } ~ put {
-            //Is being used 24.02.2022, probably to update EOL flag.
-            // TODO suggestion: move this to `PUT /device` since otherwise we need additional logic to check that the given deviceId matches the one provided in the json
-            entity(as[Device]) { device =>
-              logger.info(s"PUT .../device/id for device: $device")
-              updateDevice(deviceId, device)
-            }
-          } ~ delete {
-            logger.error(s"Disabled endpoint GET /device/id with id $deviceId was called by ${userContext.userId}")
-            complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage =
-              "this endpoint has been disabled together with TrackleService's endpoint DELETE /user by userContext"))
-            //Disabled as the related TrackleService's Delete User endpoint is not being used at the moment.
-            // deleteDevice(deviceId)
+        } ~ post {
+          entity(as[Device]) { device =>
+            logger.error(s"Disabled endpoint POST /device/<deviceId> with id $deviceId and device $device was called")
+            complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage = "this endpoint has been disabled"))
           }
+
+        } ~ put {
+          logger.error(s"Disabled endpoint PUT /device/id with id $deviceId was called")
+          complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage = "this endpoint has been disabled"))
+
+        } ~ delete {
+          logger.error(s"Disabled endpoint GET /device/id with id $deviceId was called")
+          complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage =
+            "this endpoint has been disabled together with TrackleService's endpoint DELETE /user by userContext"))
         }
       }
     }
   }
+  private val deviceApiActor = system.actorSelection(ActorNames.DEVICE_API_PATH)
 
   private def getDeviceInfo(deviceId: UUID) = {
 

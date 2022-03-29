@@ -8,7 +8,6 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -44,17 +43,14 @@ class DeviceDataRawRoute(implicit httpClient: HttpExt, materializer: Materialize
         }
       }
     } ~ path(data / transferDates / Segment) { deviceId =>
-      oidcDirective.oidcToken2UserContext { userContext =>
-        get {
-          logger.error(s"Disabled endpoint GET /data/transferDates/$deviceId was called by ${userContext.userId}")
-          respondWithCORS {
-            complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage =
-              "this endpoint has been disabled together with TrackleService's endpoint /device/statistics/create"))
-          }
+      get {
+        logger.error(s"Disabled endpoint GET /data/transferDates/$deviceId was called")
+        respondWithCORS {
+          complete(requestErrorResponse(errorType = "Disabled endpoint error", errorMessage =
+            "this endpoint has been disabled together with TrackleService's endpoint /device/statistics/create"))
         }
       }
     }
   }
-  private val oidcDirective = new OidcDirective()
 
 }
