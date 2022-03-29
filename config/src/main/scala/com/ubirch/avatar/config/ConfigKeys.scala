@@ -115,9 +115,23 @@ object ConfigKeys {
   // server ecc signing private key
   final val SIGNING_PRIVATE_KEY = "crypto.ecc.signingPrivateKey"
 
+  //KAFKA related configs
   final val kafkaPrefix = s"$prefix.kafka"
+  final val kafkaConPrefix: String = s"$kafkaPrefix.consumer"
 
   final val KAFKA_PROD_BOOTSTRAP_SERVER = s"$kafkaPrefix.producer.bootstrapServers"
+  final val KAFKA_CONS_BOOTSTRAP_SERVER = s"$kafkaConPrefix.bootstrapServers"
 
+  // consumer related keys
+  final val KAFKA_RETRY_MIN_BACKOFF: String = s"$kafkaConPrefix.retryMinBackoff"
+  final val KAFKA_RETRY_MAX_BACKOFF: String = s"$kafkaConPrefix.retryMaxBackoff"
+  final val KAFKA_RETRY_BACKOFF_FACTOR: String = s"$kafkaConPrefix.retryBackoffFactor"
+  final val KAFKA_RETRY_MAX_RETRIES: String = s"$kafkaConPrefix.retryMaxRetries"
+  final val KAFKA_SUBSCRIBE_PARALLEL: String = s"$kafkaConPrefix.parallel"
+  final val KAFKA_MAX_COMMIT: String = s"$kafkaConPrefix.maxCommit"
+  final val KAFKA_TRACKLE_END_OF_LIFE_GROUP = s"$kafkaConPrefix.trackleEndOfLifeGroup"
+
+  // topics
   final val KAFKA_TRACKLE_MSGPACK_TOPIC = s"$kafkaPrefix.trackleMsgpackTopic"
+  final val KAFKA_TRACKLE_END_OF_LIFE_TOPIC = s"$kafkaPrefix.trackleEndOfLifeTopic"
 }
