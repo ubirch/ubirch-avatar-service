@@ -185,14 +185,7 @@ object Config extends ConfigBase {
   def serverPrivateKey: String = config.getString(ConfigKeys.SIGNING_PRIVATE_KEY)
 
 
-  /*
-  * Kafka
-   */
-  def kafkaBoostrapServer: String = config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
-  def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
-
   def userToken: Option[String] = {
-
     val key = s"ubirchAvatarService.client.rest.userToken"
 
 
@@ -201,7 +194,36 @@ object Config extends ConfigBase {
     } else {
       None
     }
-
   }
+
+
+  /*
+  * Kafka
+   */
+  def kafkaBoostrapServer: String = config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
+
+  def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
+
+
+  def kafkaConBootstrapServers: String = config.getString(ConfigKeys.KAFKA_CONS_BOOTSTRAP_SERVER)
+
+  def kafkaEndOfLifeTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_END_OF_LIFE_TOPIC)
+
+  def kafkaEndOfLifeGroup: String = config.getString(ConfigKeys.KAFKA_TRACKLE_END_OF_LIFE_GROUP)
+
+  def kafkaRetryConfig: KafkaRetryConfig =
+    KafkaRetryConfig(
+      minBackoff = config.getInt(ConfigKeys.KAFKA_RETRY_MIN_BACKOFF),
+      maxBackoff = config.getInt(ConfigKeys.KAFKA_RETRY_MAX_BACKOFF),
+      backoffFactor = config.getDouble(ConfigKeys.KAFKA_RETRY_BACKOFF_FACTOR),
+      maxRetries = config.getInt(ConfigKeys.KAFKA_RETRY_MAX_RETRIES)
+    )
+
+  def kafkaSubscribeParallel: Int = config.getInt(ConfigKeys.KAFKA_SUBSCRIBE_PARALLEL)
+
+  def kafkaMaxCommit: Int = config.getInt(ConfigKeys.KAFKA_MAX_COMMIT)
+
+  case class KafkaRetryConfig(minBackoff: Int, maxBackoff: Int, backoffFactor: Double, maxRetries: Int)
+
 
 }

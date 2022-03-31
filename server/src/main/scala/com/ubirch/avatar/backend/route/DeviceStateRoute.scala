@@ -11,9 +11,7 @@ import com.ubirch.avatar.model.rest.device.AvatarState
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.mongo.connection.MongoUtil
-import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
-import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContextExecutor, Future}
@@ -28,23 +26,14 @@ class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  private val oidcDirective = new OidcDirective()
-
   val route: Route = {
 
     path(JavaUUID / state) { deviceId =>
       respondWithCORS {
-        oidcDirective.oidcToken2UserContext { userContext =>
 
-          get {
-            logger.info(s"Endpoint GET /<deviceId>/state by user ${userContext.userId} $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-            onSuccess(queryState(deviceId)) {
-              case None =>
-                complete(requestErrorResponse(errorType = "QueryError", errorMessage = s"deviceId not found: deviceId=$deviceId"))
-              case Some(avatarState: AvatarState) =>
-                complete(avatarState)
-            }
-          }
+        get {
+          logger.error("Disabled Endpoint GET /<deviceId>/state was called, though it shouldn't be used anymore")
+          complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
         }
       }
     }
@@ -60,6 +49,5 @@ class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
     }
   }
 
-  //  private def storeState(deviceId: UUID, state: DeviceState): Future[Option[DeviceState]] = Future(None) // TODO implementation
 
 }

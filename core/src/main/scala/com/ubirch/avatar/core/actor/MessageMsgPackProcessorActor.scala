@@ -79,13 +79,13 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
   private def processMsgPack(binData: Array[Byte]): DeviceDataRaws = {
 
     val hexVal = Hex.encodeHexString(binData)
-    log.info(s"got some msgPack data: $hexVal")
+    log.debug(s"got some msgPack data: $hexVal")
 
     val ddrs: Set[DeviceDataRaw] = MsgPacker.getMsgPackVersion(binData) match {
       case mpv if mpv.version.equals(Const.MSGP_V41) =>
         // process ubirch Protocoll
         UbMsgPacker.processUbirchprot(binData).map { ubm: UbMessage =>
-          log.debug(s"msgPack data version=${Const.MSGP_V41} $ubm")
+          log.debug(s"msgPack data version=${Const.MSGP_V41} ${ubm.hwDeviceId}")
           DeviceDataRaw(
             v = if (ubm.msgType == 83) MessageVersion.v002 else MessageVersion.v000,
             fw = ubm.firmwareVersion.getOrElse("n.a."),
@@ -106,7 +106,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
-            log.debug(s"msgPack data version=${Const.MSGP_V40} and firmwareVersion starts with v0.3.1-. $mpData")
+            log.debug(s"msgPack data version=${Const.MSGP_V40} and firmwareVersion starts with v0.3.1-. ${mpData.hwDeviceId}")
             val refId = UUIDUtil.uuid
             mpData.payloadJson.children.grouped(2000).toList.map { gr =>
               Json4sUtil.any2jvalue(gr) match {
@@ -132,7 +132,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       case mpv if mpv.version.equals(Const.MSGP_V401) && mpv.firmwareVersion.startsWith("v1.0") =>
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
-            log.debug(s"msgPack data. version=${Const.MSGP_V401} $mpData")
+            log.debug(s"msgPack data. version=${Const.MSGP_V401} ${mpData.hwDeviceId}")
             mpData.payloadJson.children.map { gr =>
               Json4sUtil.any2jvalue(gr) match {
                 case Some(p) =>
@@ -156,7 +156,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       case mpv if mpv.version.equals(Const.MSGP_V40) =>
         MsgPacker.unpackTimeseries(binData) match {
           case Some(mpData) =>
-            log.debug(s"msgPack data. version=${Const.MSGP_V40} $mpData")
+            log.debug(s"msgPack data. version=${Const.MSGP_V40} ${mpData.hwDeviceId}")
             Set(DeviceDataRaw(
               v = MessageVersion.v000,
               fw = mpData.firmwareVersion,

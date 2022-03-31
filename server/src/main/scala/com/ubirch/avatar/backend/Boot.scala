@@ -1,6 +1,5 @@
 package com.ubirch.avatar.backend
 
-import java.util.concurrent.TimeUnit
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.{Http, HttpExt}
@@ -11,11 +10,13 @@ import com.ubirch.avatar.backend.actor.util.ActorStarter
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
 import com.ubirch.avatar.core.device.DeviceTypeManager
+import com.ubirch.avatar.core.kafka.EndOfLifeConsumer
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.elasticsearch.{EsBulkClient, EsSimpleClient}
 import com.ubirch.util.mongo.connection.MongoUtil
 
+import java.util.concurrent.TimeUnit
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
@@ -65,14 +66,11 @@ object Boot extends App
   //  import io.prometheus.client.hotspot.DefaultExports
   //   start default prometheus JVM collectors
   //  DefaultExports.initialize()
+  val bindingFuture = start()
+  private val eolConsumer = new EndOfLifeConsumer(system).runWithRetry(Config.kafkaRetryConfig)
 
   DeviceTypeManager.init()
 
-  //  val camel = CamelExtension(system)
-  //  val camelContext = camel.context
-  //  val registry = camel.context.getComponent("sqs")
-
-  val bindingFuture = start()
 
   stop()
 
@@ -104,17 +102,19 @@ object Boot extends App
         bindingFuture.flatMap(_.unbind()).onComplete {
 
           case Success(_) =>
-            system.terminate()
+            logger.info("unbinding succeeded; shutting down elasticsearch, mongo and kafka clients")
             EsBulkClient.closeConnection()
             EsSimpleClient.closeConnection()
+            eolConsumer.drainAndShutdown()
             mongo.close()
+            system.terminate()
 
           case Failure(f) =>
             logger.error("shutdown failed", f)
-            system.terminate()
             EsBulkClient.closeConnection()
             EsSimpleClient.closeConnection()
             mongo.close()
+            system.terminate()
 
         }
 
