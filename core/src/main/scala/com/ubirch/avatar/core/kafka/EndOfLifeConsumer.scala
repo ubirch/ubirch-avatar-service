@@ -43,7 +43,7 @@ class EndOfLifeConsumer(actorSystem: ActorSystem)(implicit mat: Materializer, ht
 
     DeviceManager.infoByHwId(eol.hwDeviceId).map {
 
-      case None => throw UnexpectedException(s"couldn't find device to execute EOL update $eol.")
+      case None => throw InvalidDataException(s"couldn't find device to execute EOL update $eol.")
 
       case Some(device: Device) if device.deviceConfig.isEmpty =>
         throw InvalidDataException(s"EOL update not possible as device config is empty for device $device")
