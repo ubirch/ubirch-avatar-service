@@ -195,9 +195,7 @@ lazy val depCore = Seq(
   ubirchCrypto,
   ubirchMongo,
   ubirchResponse,
-  ubirchIdServiceClient,
   ubirchUserClientRest,
-  ubirchUtilRedisUtil,
   spireMath,
   msgpackScala,
   guava,
@@ -365,13 +363,11 @@ val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" ex
 val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.9-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
-val ubirchUtilRedisUtil = ubirchUtilG %% "ubirch-redis-utils" % "0.6.1"
 val ubirchResponse = ubirchUtilG %% "ubirch-response-utils" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "ubirch-rest-akka-http-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
 val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.4" excludeAll (excludedLoggers: _*)
 
 val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.6" excludeAll (excludedLoggers: _*)
-val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.6-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.5" excludeAll (excludedLoggers: _*)
 
 /*

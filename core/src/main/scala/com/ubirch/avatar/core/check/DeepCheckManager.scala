@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.stream.Materializer
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.idservice.client.IdServiceClientCached
 import com.ubirch.user.client.UserServiceClient
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
@@ -35,15 +34,6 @@ object DeepCheckManager extends StrictLogging {
 
       readyCheck <- ReadyCheckManager.connectivityCheck()
 
-      // other services
-      keyDeepCheck <- IdServiceClientCached.deepCheck().map { res =>
-        DeepCheckResponseUtil.addServicePrefix("[avatar-service.key-service]", res)
-      }.recover {
-        case e =>
-          logger.error("KeyService connectivityCheck", e)
-          DeepCheckResponse(status = false, Seq(s"key-service error: ${e.getMessage}"))
-      }
-
       userDeepCheck <- UserServiceClient.deepCheck().map { res =>
         DeepCheckResponseUtil.addServicePrefix("[avatar-service.user-service]", res)
       }.recover {
@@ -57,7 +47,6 @@ object DeepCheckManager extends StrictLogging {
       DeepCheckResponseUtil.merge(
         Seq(
           readyCheck,
-          keyDeepCheck,
           userDeepCheck
         )
       )

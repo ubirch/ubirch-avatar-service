@@ -7,13 +7,6 @@ services:
       - 27017:27017
     logging:
       driver: none
-  redis-avatar:
-    container_name: redis-avatar-run-unit
-    image: redis:5.0.5
-    ports:
-      - 6379:6379
-    logging:
-      driver: none
   elasticsearch-avatar:
     container_name: elasticsearch-avatar-run-unit
     image: elastic/elasticsearch:7.15.0
