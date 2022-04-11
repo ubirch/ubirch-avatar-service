@@ -24,7 +24,7 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
   extends ResponseUtil
     with CORSDirective
     with StrictLogging
-    with RouteAnalyzingByLogsSupport {
+     {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -41,7 +41,6 @@ class DeviceRoute(implicit httpClient: HttpExt, materializer: Materializer, syst
         } ~ post {
 
           entity(as[Device]) { device =>
-
             logger.error(s"Disabled Endpoint POST /device with device $device was called")
             complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
 

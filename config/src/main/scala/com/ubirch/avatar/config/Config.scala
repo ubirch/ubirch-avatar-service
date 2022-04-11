@@ -74,6 +74,8 @@ object Config extends ConfigBase {
 
   def enviroment: String = config.getString(ConfigKeys.ENVIROMENT)
 
+  def trackleAuthToken: String = config.getString(ConfigKeys.TRACKLE_AUTH_TOKEN)
+
   /*
    * Akka
    ************************************************************************************************/
@@ -159,25 +161,6 @@ object Config extends ConfigBase {
 
   def mongoCollectionAvatarState: String = config.getString(ConfigKeys.COLLECTION_AVATAR_STATE)
 
-  /*
-   * MQTT
-   ************************************************************************************************/
-
-  def mqttBrokerUrl: String = config.getString(ConfigKeys.MQTT_BROKER_URL)
-
-  def mqttUser: String = config.getString(ConfigKeys.MQTT_USER_KEY)
-
-  def mqttPassword: String = config.getString(ConfigKeys.MQTT_PASSWORD_KEY)
-
-  def mqttTopicDevicesBase: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_BASE)
-
-  def mqttTopicDevicesIn: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_IN)
-
-  def mqttTopicDevicesOut: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_OUT)
-
-  def mqttTopicDevicesProcessed: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_PROCESSED)
-
-  def mqttPublishProcessed: Boolean = config.getBoolean(ConfigKeys.MQTT_PUBLISH_PROCESSED)
 
   /*
   * Server ECC signing private keys

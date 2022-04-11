@@ -11,7 +11,6 @@ import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.model.JsonResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
@@ -27,7 +26,7 @@ class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   extends ResponseUtil
     with Directives
     with StrictLogging
-    with RouteAnalyzingByLogsSupport {
+     {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -45,11 +44,8 @@ class DeviceUpdateBulkRoute(implicit mongo: MongoUtil, httpClient: HttpExt, mate
           post {
 
             entity(as[DeviceDataRaw]) { sdm =>
-              logger.info(s"Endpoint POST /update/bulk with sdm $sdm $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-
-              validatorActor ! sdm
-
-              complete(JsonResponse(message = "processing started"))
+              logger.error(s"Disabled Endpoint POST /device/update/bulk with deviceDataRaw $sdm was called, though it shouldn't be used anymore")
+              complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
             }
           }
         }

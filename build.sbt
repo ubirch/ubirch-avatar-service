@@ -177,7 +177,6 @@ lazy val depServer = Seq(
   ubirchJson,
   ubirchRestAkkaHttp,
   ubirchResponse,
-  ubirchOidcUtils,
   catsCore,
   //testing
   scalatest % "test"
@@ -240,7 +239,6 @@ lazy val depUtil = Seq(
   ubirchJson,
   ubirchElasticsearchUtils,
   ubirchMongo,
-  ubirchOidcUtils,
   ubirchUUID % "test",
   scalatest % "test"
 ) ++ json4s ++ scalaLogging
@@ -314,7 +312,6 @@ val akka = Seq(
 val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
   "org.apache.camel" % "camel-paho" % camelV,
-  "org.apache.camel" % "camel-mqtt" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
@@ -368,7 +365,6 @@ val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" ex
 val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.9-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
-val ubirchOidcUtils = ubirchUtilG %% "ubirch-oidc-utils" % "0.8.15" excludeAll (excludedLoggers: _*)
 val ubirchUtilRedisUtil = ubirchUtilG %% "ubirch-redis-utils" % "0.6.1"
 val ubirchResponse = ubirchUtilG %% "ubirch-response-utils" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "ubirch-rest-akka-http-utils" % "0.4.1" excludeAll (excludedLoggers: _*)

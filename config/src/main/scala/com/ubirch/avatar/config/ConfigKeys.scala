@@ -24,6 +24,7 @@ object ConfigKeys {
   final val UDPPORT = s"$prefix.udp.port"
 
   final val ENVIROMENT = s"$prefix.enviroment"
+  final val TRACKLE_AUTH_TOKEN = s"$prefix.ubirch.trackleAuthToken"
 
   final val MESSAGEMAXAGE = s"$prefix.messages.maxage"
   final val MESSAGESIGNATURECACHE = s"$prefix.messages.signaturecache"
@@ -89,28 +90,6 @@ object ConfigKeys {
   private final val mongoCollection = s"$MONGO_PREFIX.collection"
 
   final val COLLECTION_AVATAR_STATE = s"$mongoCollection.avatarState"
-
-  /* MQTT Related Config Keys
- **********************************************************************/
-
-
-  final val mqttPrefix = s"$prefix.mqtt"
-
-  final val MQTT_BROKER_URL = s"$mqttPrefix.broker.url"
-
-  final val MQTT_USER_KEY = s"$mqttPrefix.credentials.user"
-
-  final val MQTT_PASSWORD_KEY = s"$mqttPrefix.credentials.password"
-
-  final val MQTT_QUEUES_DEVICES_BASE = s"$mqttPrefix.queues.deviceBaseTopic"
-
-  final val MQTT_QUEUES_DEVICES_IN = s"$mqttPrefix.queues.devicesTopicPartIn"
-
-  final val MQTT_QUEUES_DEVICES_OUT = s"$mqttPrefix.queues.devicesTopicPartOut"
-
-  final val MQTT_QUEUES_DEVICES_PROCESSED = s"$mqttPrefix.queues.devicesTopicPartProcessed"
-
-  final val MQTT_PUBLISH_PROCESSED = s"$mqttPrefix.publishProcessed"
 
   // server ecc signing private key
   final val SIGNING_PRIVATE_KEY = "crypto.ecc.signingPrivateKey"

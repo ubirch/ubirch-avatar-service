@@ -1,7 +1,5 @@
 package com.ubirch.avatar.model
 
-import java.util.UUID
-
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.model.DeviceUtil
@@ -12,6 +10,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._
 
+import java.util.UUID
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
@@ -92,23 +91,25 @@ object DummyDeviceDataRaw {
       s"""
          |[
          |{
-         |"t":${2000 + Random.nextInt(1500)},
-         |"p":${90000 + Random.nextInt(20000)},
-         |"h":${4000 + Random.nextInt(5500)},
-         |"la":"52.51${10000 + Random.nextInt(20000)}",
-         |"lo":"13.21${10000 + Random.nextInt(20000)}",
-         |"a":${5000 + Random.nextInt(10000)},
-         |"ts":"${ts.minusMinutes(2)}"
-         |},
-         |{
-         |"t":${2000 + Random.nextInt(1500)},
-         |"p":${90000 + Random.nextInt(20000)},
-         |"h":${4000 + Random.nextInt(5500)},
-         |"la":"52.51${10000 + Random.nextInt(20000)}",
-         |"lo":"13.21${10000 + Random.nextInt(20000)}",
-         |"a":${5000 + Random.nextInt(10000)},
-         |"ts":"${ts.minusMinutes(1)}"
-         |}
+         |              "t" : 3648,
+         |              "ts" : "2022-04-04T06:51:57.000Z"
+         |            },
+         |            {
+         |              "t" : 3648,
+         |              "ts" : "2022-04-04T06:52:57.000Z"
+         |            },
+         |            {
+         |              "t" : 3649,
+         |              "ts" : "2022-04-04T06:53:57.000Z"
+         |            },
+         |            {
+         |              "t" : 3648,
+         |              "ts" : "2022-04-04T06:54:57.000Z"
+         |            },
+         |            {
+         |              "t" : 3650,
+         |              "ts" : "2022-04-04T06:55:57.000Z"
+         | }
          |]
         """.stripMargin
     )

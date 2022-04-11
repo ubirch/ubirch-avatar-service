@@ -22,7 +22,7 @@ import scala.concurrent.{ExecutionContextExecutor, Future}
   */
 class DeviceStateRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system:ActorSystem)
   extends ResponseUtil
-    with CORSDirective with StrictLogging with RouteAnalyzingByLogsSupport {
+    with CORSDirective with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
