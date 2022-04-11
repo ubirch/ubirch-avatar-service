@@ -5,15 +5,11 @@ import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.model.rest.device.DeviceType
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.util.http.response.ResponseUtil
-import com.ubirch.util.oidc.directive.OidcDirective
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-
-import scala.util.{Failure, Success}
 
 /**
   * author: cvandrei
@@ -22,9 +18,8 @@ import scala.util.{Failure, Success}
 class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, system:ActorSystem) extends ResponseUtil
   with CORSDirective
   with StrictLogging
-  with RouteAnalyzingByLogsSupport {
+   {
 
-  private val oidcDirective = new OidcDirective()
 
   val route: Route = {
 
@@ -32,69 +27,27 @@ class DeviceTypeRoute(implicit httpClient: HttpExt, materializer: Materializer, 
       respondWithCORS {
 
         get {
-          oidcDirective.oidcToken2UserContext { userContext =>
-            logger.info(s"Endpoint GET /deviceType by user ${userContext.userId} $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-            onComplete(DeviceTypeManager.all()) {
-
-              case Success(res) =>
-                complete(res)
-
-              case Failure(t) =>
-                logger.error(s"failed to query all device types", t)
-                complete(serverErrorResponse("QueryError", errorMessage = t.getMessage))
-
-            }
-          }
-
+          logger.error("Disabled Endpoint GET /device/deviceType was called, though it shouldn't be used anymore")
+          complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
+        }
         } ~ post {
           entity(as[DeviceType]) { postDeviceType =>
-            logger.info(s"Endpoint POST /deviceType with $postDeviceType $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-            onComplete(DeviceTypeManager.create(postDeviceType)) {
-              case Success(resp) => resp match {
-                case Some(deviceType) => complete(deviceType)
-                case None => complete(requestErrorResponse("CreateError", s"another deviceType with key=${postDeviceType.key} already exists or otherwise something else on the server went wrong"))
-              }
-              case Failure(t) =>
-                logger.error(s"deviceType creation failed: deviceType=$postDeviceType", t)
-                complete(serverErrorResponse(errorType = "CreateError", errorMessage = t.getMessage))
-            }
+            logger.error(s"Disabled Endpoint POST /device/deviceType with deviceType $postDeviceType was called, though it shouldn't be used anymore")
+            complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
           }
-
         } ~ put {
           entity(as[DeviceType]) { postDeviceType =>
-            logger.info(s"Endpoint PUT /deviceType with $postDeviceType $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-
-            onComplete(DeviceTypeManager.update(postDeviceType)) {
-              case Success(resp) => resp match {
-                case Some(deviceType) => complete(deviceType)
-                case None => complete(requestErrorResponse("UpdateError", s"no deviceType with key=${postDeviceType.key} exists or otherwise something else on the server went wrong"))
-              }
-              case Failure(t) =>
-                logger.error(s"deviceType update failed: deviceType=$postDeviceType", t)
-                complete(serverErrorResponse(errorType = "UpdateError", errorMessage = t.getMessage))
-            }
+            logger.error(s"Disabled Endpoint PUT /device/deviceType with deviceType $postDeviceType was called, though it shouldn't be used anymore")
+            complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
           }
-
         }
       }
     } ~ path(RouteConstants.deviceType / RouteConstants.init) {
-      respondWithCORS {
-        oidcDirective.oidcToken2UserContext { userContext =>
-          get {
-            logger.info(s"Endpoint GET /deviceType/init by user ${userContext.userId} $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-            onComplete(DeviceTypeManager.init()) {
-
-              case Success(resp) => complete(resp)
-
-              case Failure(t) =>
-                logger.error("failed to create default deviceTypes", t)
-                complete(serverErrorResponse(errorType = "CreationError", errorMessage = t.getMessage))
-
-            }
-          }
-        }
+    respondWithCORS {
+      get {
+        logger.error("Disabled Endpoint GET /device/deviceType/init was called, though it shouldn't be used anymore")
+        complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
       }
     }
   }
-
 }

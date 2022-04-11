@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.avatar
 
-import java.util.UUID
-
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.util.json.Json4sUtil
@@ -43,16 +41,6 @@ object AvatarStateManagerREST {
 
   }
 
-  def setDesired(restDevice: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
-
-    AvatarStateManager.setDesired(restDevice, desired) map {
-
-      case None => None
-      case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
-
-    }
-
-  }
 
   def toRestModel(dbAvatarState: db.device.AvatarState): rest.device.AvatarState = {
 
@@ -70,7 +58,7 @@ object AvatarStateManagerREST {
 
     val diff = restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
     val delta: JValue = diff.changed merge diff.added match {
-      case jn if (jn.equals(JsonAST.JNothing)) =>
+      case jn if jn.equals(JsonAST.JNothing) =>
         //TODO ugly way to create an empty Json object
         Json4sUtil.string2JValue("{}").get
       case jn => jn

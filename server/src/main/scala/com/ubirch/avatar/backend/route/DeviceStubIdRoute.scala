@@ -22,7 +22,7 @@ import scala.language.postfixOps
 class DeviceStubIdRoute(implicit httpClient: HttpExt, materializer: Materializer, system:ActorSystem) extends ResponseUtil
   with CORSDirective
   with StrictLogging
-  with RouteAnalyzingByLogsSupport {
+   {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)

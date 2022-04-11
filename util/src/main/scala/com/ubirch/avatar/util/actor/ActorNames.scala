@@ -26,8 +26,6 @@ object ActorNames {
 
   final val DEVICE_OUTBOX_MANAGER_PATH: String = s"/user/$DEVICE_OUTBOX_MANAGER"
 
-  final val MQTT_CONSUMER: String = "AVS-mqtt-consumer"
-
   final val PERSISTENCE_SVC: String = "AVS-persistence-service"
 
   final val DEVICESTATEUPDATER: String = "AVS-devicestateupdate-service"
