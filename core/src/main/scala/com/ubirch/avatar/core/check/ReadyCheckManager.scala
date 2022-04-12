@@ -10,7 +10,6 @@ import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
 import com.ubirch.util.elasticsearch.EsSimpleClient
 import com.ubirch.util.mongo.connection.MongoUtil
-import com.ubirch.util.redis.RedisClientUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -40,15 +39,12 @@ object ReadyCheckManager extends StrictLogging {
 
       mongoConnectivity <- AvatarStateManager.connectivityCheck("avatar-service.mongo")
 
-      redisConnectivity <- RedisClientUtil.connectivityCheck("avatar-service.redis")
-
     } yield {
 
       DeepCheckResponseUtil.merge(
         Seq(
           esConnectivity,
-          mongoConnectivity,
-          redisConnectivity
+          mongoConnectivity
         )
       )
 

@@ -31,9 +31,7 @@ object DeepCheckManager extends StrictLogging {
     } yield {
 
       DeepCheckResponseUtil.merge(
-        Seq(
-          readyCheck
-        )
+        Seq(readyCheck)
       )
 
     }).recover {
