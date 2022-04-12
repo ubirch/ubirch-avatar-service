@@ -24,7 +24,7 @@ object ConfigKeys {
   final val UDPPORT = s"$prefix.udp.port"
 
   final val ENVIROMENT = s"$prefix.enviroment"
-  final val TRACKLE_AUTH_TOKEN = s"$prefix.ubirch.trackleAuthToken"
+  final val TRACKLE_AUTH_TOKEN = s"ubirch.trackleAuthToken"
 
   final val MESSAGEMAXAGE = s"$prefix.messages.maxage"
   final val MESSAGESIGNATURECACHE = s"$prefix.messages.signaturecache"
