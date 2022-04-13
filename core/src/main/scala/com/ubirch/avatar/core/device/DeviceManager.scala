@@ -5,7 +5,6 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.DeviceInfo
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.elasticsearch.EsSimpleClient
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
@@ -101,32 +100,7 @@ object DeviceManager
     }
   }
 
-  /**
-    * Select all device stubs in any of the given groups.
-    *
-    * @param groups select device stubs only if they're in any of these groups
-    * @return devices; empty if none found
-    */
-  def allStubs(userId: UUID, groups: Set[UUID]): Future[Seq[DeviceInfo]] = {
 
-    // TODO automated tests
-    EsSimpleClient.getDocs(
-      docIndex = esIndex,
-      query = groupsUserTermsQuery(userId, groups),
-      size = Some(Config.esLargePageSize)
-    ).recover[List[JValue]] {
-      case e =>
-        logger.error(s"error fetching devices allStubs for groups $groups", e)
-        List()
-    }.map { res =>
-      if (res.nonEmpty)
-        res.map { jv =>
-          DeviceStubManger.toDeviceInfo(device = jv.extract[Device])
-        }
-      else
-        Seq()
-    }
-  }
 
   def create(device: db.device.Device,
              waitingForRefresh: Boolean = false): Future[Option[db.device.Device]] = {
@@ -242,16 +216,6 @@ object DeviceManager
         None
     }.map {
       case Some(jval) => jval.extractOpt[Device]
-      case None => None
-    }
-
-  }
-
-  def stub(deviceId: UUID): Future[Option[DeviceInfo]] = {
-
-    // TODO automated tests
-    info(deviceId).map {
-      case Some(device) => Some(DeviceStubManger.toDeviceInfo(device = device))
       case None => None
     }
 

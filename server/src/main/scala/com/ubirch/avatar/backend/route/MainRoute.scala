@@ -18,17 +18,7 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
   val deepCheck: ServiceCheckRoute = new ServiceCheckRoute {}
   val backEndInfo: BackendInfoRoute = new BackendInfoRoute {}
 
-  val device: DeviceRoute = new DeviceRoute {}
-  val deviceUpdatePlain: DeviceUpdatePlainRoute = new DeviceUpdatePlainRoute {}
-  val deviceUpdateBulk: DeviceUpdateBulkRoute = new DeviceUpdateBulkRoute {}
   val deviceUpdateMsgPack: DeviceUpdateMsgPackRoute = new DeviceUpdateMsgPackRoute {}
-  val deviceId: DeviceIdRoute = new DeviceIdRoute {}
-  val deviceStub: DeviceStubRoute = new DeviceStubRoute {}
-  val deviceStubId: DeviceStubIdRoute = new DeviceStubIdRoute {}
-  val deviceState: DeviceStateRoute = new DeviceStateRoute {}
-  val deviceDataRaw: DeviceDataRawRoute = new DeviceDataRawRoute {}
-  val deviceDataHistory: DeviceDataHistoryRoute = new DeviceDataHistoryRoute {}
-  val deviceType: DeviceTypeRoute = new DeviceTypeRoute {}
   val deviceClaim: DeviceClaimRoute = new DeviceClaimRoute {}
 
   val forbidden: ForbiddenRoute = new ForbiddenRoute {}
@@ -40,20 +30,9 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
         pathPrefix(RouteConstants.currentVersion) {
 
           pathPrefix(RouteConstants.device) {
-            deviceUpdateBulk.route ~
               deviceUpdateMsgPack.route ~
-              deviceUpdatePlain.route ~
-              deviceType.route ~
-              deviceStubId.route ~
-              deviceStub.route ~
-              deviceState.route ~
-              deviceDataHistory.route ~
-              deviceDataRaw.route ~
-              deviceId.route ~
               deviceClaim.route
 
-          } ~ path(RouteConstants.device) {
-            device.route
           } ~ path(RouteConstants.check) {
             welcome.route
           } ~ pathEndOrSingleSlash {

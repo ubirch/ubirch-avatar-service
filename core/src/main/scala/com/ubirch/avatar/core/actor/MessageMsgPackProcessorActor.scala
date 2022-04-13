@@ -11,11 +11,9 @@ import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceDataRaws}
 import com.ubirch.avatar.model.rest.ubp.UbMessage
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.util.crypto.hash.HashUtil
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
-import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.{DateTime, DateTimeZone}
 import org.msgpack.ScalaMessagePack
@@ -50,8 +48,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
         val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(binData))
 
         (unpacker.getNextType match {
-          case ValueType.ARRAY =>
-            processMsgPack(binData)
+          case ValueType.ARRAY => processMsgPack(binData)
           case vt: ValueType => vt
         }) match {
           case ddrs: DeviceDataRaws if ddrs.ddrs.nonEmpty =>
@@ -83,7 +80,6 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 
     val ddrs: Set[DeviceDataRaw] = MsgPacker.getMsgPackVersion(binData) match {
       case mpv if mpv.version.equals(Const.MSGP_V41) =>
-        // process ubirch Protocoll
         UbMsgPacker.processUbirchprot(binData).map { ubm: UbMessage =>
           log.debug(s"msgPack data version=${Const.MSGP_V41} ${ubm.hwDeviceId}")
           DeviceDataRaw(
@@ -102,73 +98,6 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
             meta = ubm.payloads.meta,
             ts = DateTime.now(DateTimeZone.UTC)
           )
-        }
-      case mpv if mpv.version.equals(Const.MSGP_V40) && mpv.firmwareVersion.startsWith("v0.3.1-") =>
-        MsgPacker.unpackTimeseries(binData) match {
-          case Some(mpData) =>
-            log.debug(s"msgPack data version=${Const.MSGP_V40} and firmwareVersion starts with v0.3.1-. ${mpData.hwDeviceId}")
-            val refId = UUIDUtil.uuid
-            mpData.payloadJson.children.grouped(2000).toList.map { gr =>
-              Json4sUtil.any2jvalue(gr) match {
-                case Some(p) =>
-                  Some(DeviceDataRaw(
-                    v = MessageVersion.v000,
-                    fw = mpData.firmwareVersion,
-                    a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
-                    s = mpData.signature,
-                    mpraw = Some(hexVal),
-                    ps = mpData.prevMessageHash,
-                    p = p,
-                    ts = mpData.created,
-                    refId = Some(refId)
-                  ))
-                case None =>
-                  None
-              }
-            }.filter(_.isDefined).map(_.get).toSet
-          case None =>
-            Set()
-        }
-      case mpv if mpv.version.equals(Const.MSGP_V401) && mpv.firmwareVersion.startsWith("v1.0") =>
-        MsgPacker.unpackTimeseries(binData) match {
-          case Some(mpData) =>
-            log.debug(s"msgPack data. version=${Const.MSGP_V401} ${mpData.hwDeviceId}")
-            mpData.payloadJson.children.map { gr =>
-              Json4sUtil.any2jvalue(gr) match {
-                case Some(p) =>
-                  Some(DeviceDataRaw(
-                    v = MessageVersion.v000,
-                    fw = mpData.firmwareVersion,
-                    a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
-                    s = mpData.signature,
-                    mpraw = Some(hexVal),
-                    ps = mpData.prevMessageHash,
-                    p = p,
-                    ts = mpData.created
-                  ))
-                case None =>
-                  None
-              }
-            }.filter(_.isDefined).map(_.get).toSet
-          case None =>
-            Set()
-        }
-      case mpv if mpv.version.equals(Const.MSGP_V40) =>
-        MsgPacker.unpackTimeseries(binData) match {
-          case Some(mpData) =>
-            log.debug(s"msgPack data. version=${Const.MSGP_V40} ${mpData.hwDeviceId}")
-            Set(DeviceDataRaw(
-              v = MessageVersion.v000,
-              fw = mpData.firmwareVersion,
-              a = HashUtil.sha512Base64(mpData.hwDeviceId.toLowerCase),
-              s = mpData.signature,
-              mpraw = Some(hexVal),
-              ps = mpData.prevMessageHash,
-              p = mpData.payloadJson,
-              ts = mpData.created
-            ))
-          case None =>
-            Set()
         }
       case _ =>
         throw new Exception("unsupported msgpack version")

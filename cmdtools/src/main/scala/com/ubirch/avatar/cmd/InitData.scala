@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.client.AvatarServiceClient
 import com.ubirch.avatar.client.model.DeviceStateUpdate
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRawConverter
 import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
 import com.ubirch.util.json.MyJsonProtocol
@@ -32,7 +32,6 @@ object InitData
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val httpClient: HttpExt = Http()
 
-  DeviceTypeManager.init()
 
 
   val properties_BC: JValue = read[JValue](

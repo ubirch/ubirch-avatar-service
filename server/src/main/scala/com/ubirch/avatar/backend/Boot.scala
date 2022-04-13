@@ -9,7 +9,6 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor.util.ActorStarter
 import com.ubirch.avatar.backend.route.MainRoute
 import com.ubirch.avatar.config.{Config, ConfigKeys}
-import com.ubirch.avatar.core.device.DeviceTypeManager
 import com.ubirch.avatar.core.kafka.EndOfLifeConsumer
 import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
 import com.ubirch.server.util.ServerKeys
@@ -61,16 +60,8 @@ object Boot extends App
   }
   ActorStarter.init(system)
 
-  // Configure StatisticsHandler
-
-  //  import io.prometheus.client.hotspot.DefaultExports
-  //   start default prometheus JVM collectors
-  //  DefaultExports.initialize()
   val bindingFuture = start()
   private val eolConsumer = new EndOfLifeConsumer(system).runWithRetry(Config.kafkaRetryConfig)
-
-  DeviceTypeManager.init()
-
 
   stop()
 
@@ -78,14 +69,8 @@ object Boot extends App
 
     val interface = Config.httpInterface
     val port = Config.httpPort
-    val pinterface = Config.httpPrometheusInterface
-    val pport = Config.httpPrometheusPort
 
     implicit val timeout: Timeout = Timeout(5, TimeUnit.SECONDS)
-
-    //    logger.info(s"start prometheus http server on $pinterface:$pport")
-    //    import io.prometheus.client.exporter.HTTPServer
-    //    val server = new HTTPServer(pinterface, pport)
 
     logger.info(s"start http server on $interface:$port")
 

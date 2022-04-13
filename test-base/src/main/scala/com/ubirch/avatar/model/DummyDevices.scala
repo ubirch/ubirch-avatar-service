@@ -37,7 +37,7 @@ object DummyDevices {
              groups: Set[UUID] = Set(UUIDUtil.uuid),
              deviceName: String = "testHans001",
              hwDeviceId: String = UUIDUtil.uuidStr,
-             deviceTypeKey: String = Const.ENVIRONMENTSENSOR,
+             deviceTypeKey: String = Const.TRACKLESENSOR,
              deviceProperties: Option[JValue] = None
             ): Device = {
 

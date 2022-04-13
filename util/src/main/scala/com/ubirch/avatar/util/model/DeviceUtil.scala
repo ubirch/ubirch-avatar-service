@@ -1,7 +1,5 @@
 package com.ubirch.avatar.util.model
 
-import java.util.UUID
-
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.crypto.ecc.EccUtil
@@ -9,6 +7,8 @@ import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.JsonFormats
 import org.json4s._
 import org.json4s.native.Serialization._
+
+import java.util.UUID
 
 /**
   * author: derMicha
@@ -43,13 +43,13 @@ object DeviceUtil {
       hashedHwDeviceId = HashUtil.sha512Base64(device.hwDeviceId.toLowerCase),
       hwDeviceId = device.hwDeviceId.toLowerCase,
       deviceProperties = Some(device.deviceProperties.getOrElse(
-        DeviceTypeUtil.defaultProps(device.deviceTypeKey)
+        DeviceTypeUtil.defaultProps
       )),
       deviceConfig = Some(device.deviceConfig.getOrElse(
-        DeviceTypeUtil.defaultConf(device.deviceTypeKey)
+        DeviceTypeUtil.defaultConf
       )),
       tags = if (device.tags.isEmpty) {
-        DeviceTypeUtil.defaultTags(device.deviceTypeKey)
+        DeviceTypeUtil.defaultTags
       } else {
         device.tags
       }

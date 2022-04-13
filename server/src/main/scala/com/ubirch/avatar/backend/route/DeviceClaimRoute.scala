@@ -63,6 +63,7 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
 
   private def claimDevice(token: Option[String], deviceClaim: DeviceClaim): Route = {
     token match {
+
       case None =>
         val errorRsp = JsonErrorResponse(errorType = "01", errorMessage = "Authorization header is missing.")
         complete(requestErrorResponse(errorRsp, StatusCodes.Unauthorized))
