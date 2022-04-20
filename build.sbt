@@ -198,6 +198,7 @@ lazy val depCore = Seq(
   ubirchUserClientRest,
   spireMath,
   msgpackScala,
+  ubrichMsgPack,
   guava,
   scalatest % "test",
   akkaTestkit % "test"
@@ -332,6 +333,7 @@ val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 val msgpack4s = "org.velvia" %% "msgpack4s" % "0.6.0"
 val msgpackScala = "org.msgpack" %% "msgpack-scala" % "0.6.11"
+val ubrichMsgPack = "com.ubirch" % "ubirch-protocol-java" % "2.1.3-SNAPSHOT"
 val guava = "com.google.guava" % "guava" % "26.0-jre"
 
 val excludedLoggers = Seq(

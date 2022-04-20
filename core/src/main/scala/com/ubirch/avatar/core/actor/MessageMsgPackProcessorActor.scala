@@ -80,7 +80,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 
     val ddrs: Set[DeviceDataRaw] = MsgPacker.getMsgPackVersion(binData) match {
       case mpv if mpv.version.equals(Const.MSGP_V41) =>
-        UbMsgPacker.processUbirchprot(binData).map { ubm: UbMessage =>
+        UbMsgPacker.processUbirchProt(binData).map { ubm: UbMessage =>
           log.debug(s"msgPack data version=${Const.MSGP_V41} ${ubm.hwDeviceId}")
           DeviceDataRaw(
             v = if (ubm.msgType == 83) MessageVersion.v002 else MessageVersion.v000,
