@@ -96,7 +96,7 @@ object ConfigKeys {
 
   //KAFKA related configs
   final val kafkaPrefix = s"$prefix.kafka"
-  final val kafkaConPrefix: String = s"$kafkaPrefix.consumer"
+  final val kafkaConPrefix = s"$kafkaPrefix.consumer"
 
   final val KAFKA_IS_SECURE_CONNECTION = s"$kafkaPrefix.secureConnection"
   final val KAFKA_PROD_BOOTSTRAP_SERVER = s"$kafkaPrefix.producer.bootstrapServers"
@@ -108,13 +108,13 @@ object ConfigKeys {
 
   // consumer related keys
   final val KAFKA_CONS_BOOTSTRAP_SERVER = s"$kafkaConPrefix.bootstrapServers"
-  final val KAFKA_CON_BOOTSTRAP_SERVERS_SSL: String = s"$kafkaConPrefix.bootstrapServersSecure"
-  final val KAFKA_RETRY_MIN_BACKOFF: String = s"$kafkaConPrefix.retryMinBackoff"
-  final val KAFKA_RETRY_MAX_BACKOFF: String = s"$kafkaConPrefix.retryMaxBackoff"
-  final val KAFKA_RETRY_BACKOFF_FACTOR: String = s"$kafkaConPrefix.retryBackoffFactor"
-  final val KAFKA_RETRY_MAX_RETRIES: String = s"$kafkaConPrefix.retryMaxRetries"
-  final val KAFKA_SUBSCRIBE_PARALLEL: String = s"$kafkaConPrefix.parallel"
-  final val KAFKA_MAX_COMMIT: String = s"$kafkaConPrefix.maxCommit"
+  final val KAFKA_CON_BOOTSTRAP_SERVERS_SSL = s"$kafkaConPrefix.bootstrapServersSecure"
+  final val KAFKA_RETRY_MIN_BACKOFF = s"$kafkaConPrefix.retryMinBackoff"
+  final val KAFKA_RETRY_MAX_BACKOFF = s"$kafkaConPrefix.retryMaxBackoff"
+  final val KAFKA_RETRY_BACKOFF_FACTOR = s"$kafkaConPrefix.retryBackoffFactor"
+  final val KAFKA_RETRY_MAX_RETRIES = s"$kafkaConPrefix.retryMaxRetries"
+  final val KAFKA_SUBSCRIBE_PARALLEL = s"$kafkaConPrefix.parallel"
+  final val KAFKA_MAX_COMMIT = s"$kafkaConPrefix.maxCommit"
   final val KAFKA_TRACKLE_END_OF_LIFE_GROUP = s"$kafkaConPrefix.trackleEndOfLifeGroup"
   final val KAFKA_CON_TRUSTSTORE_LOCATION = s"$kafkaConPrefix.truststoreLocation"
   final val KAFKA_CON_TRUSTSTORE_PASS = s"$kafkaConPrefix.truststorePassword"
