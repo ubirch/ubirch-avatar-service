@@ -37,12 +37,6 @@ object ActorStarter extends StrictLogging {
         ActorNames.MSG_PROCESSOR
       )
 
-    val r =
-      system.actorOf(
-        ReplayFilterActor.props(),
-        ActorNames.REPLAY_FILTER
-      )
-
     val mp =
       system.actorOf(
         MessageMsgPackProcessorActor.props(),

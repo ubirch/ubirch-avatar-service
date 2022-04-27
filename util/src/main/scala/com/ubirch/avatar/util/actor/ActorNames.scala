@@ -26,8 +26,6 @@ object ActorNames {
 
   final val DEVICE_OUTBOX_MANAGER_PATH: String = s"/user/$DEVICE_OUTBOX_MANAGER"
 
-  final val MQTT_CONSUMER: String = "AVS-mqtt-consumer"
-
   final val PERSISTENCE_SVC: String = "AVS-persistence-service"
 
   final val DEVICESTATEUPDATER: String = "AVS-devicestateupdate-service"
@@ -35,10 +33,6 @@ object ActorNames {
   final val MSG_PROCESSOR: String = "AVS-message-processor"
 
   final val MSG_PROCESSOR_PATH: String = s"/user/$MSG_PROCESSOR"
-
-  final val REPLAY_FILTER: String = "AVS-replay-filter"
-
-  final val REPLAY_FILTER_PATH: String = s"/user/$REPLAY_FILTER"
 
   final val MSG_VALIDATOR: String = "AVS-message-validator"
 

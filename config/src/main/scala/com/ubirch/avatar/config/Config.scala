@@ -74,6 +74,8 @@ object Config extends ConfigBase {
 
   def enviroment: String = config.getString(ConfigKeys.ENVIROMENT)
 
+  def trackleAuthToken: String = config.getString(ConfigKeys.TRACKLE_AUTH_TOKEN)
+
   /*
    * Akka
    ************************************************************************************************/
@@ -102,16 +104,6 @@ object Config extends ConfigBase {
     * @return Elasticsearch DeviceData type
     */
   def esDeviceType: String = config.getString(ConfigKeys.ES_DEVICE_TYPE)
-
-  /**
-    * @return Elasticsearch raw device data index
-    */
-  def esDeviceDataRawIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_INDEX)
-
-  /**
-    * @return Elasticsearch raw device data type
-    */
-  def esDeviceDataRawType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_TYPE)
 
   /**
     * @return Elasticsearch anchored raw device data (with txHash) index
@@ -169,25 +161,6 @@ object Config extends ConfigBase {
 
   def mongoCollectionAvatarState: String = config.getString(ConfigKeys.COLLECTION_AVATAR_STATE)
 
-  /*
-   * MQTT
-   ************************************************************************************************/
-
-  def mqttBrokerUrl: String = config.getString(ConfigKeys.MQTT_BROKER_URL)
-
-  def mqttUser: String = config.getString(ConfigKeys.MQTT_USER_KEY)
-
-  def mqttPassword: String = config.getString(ConfigKeys.MQTT_PASSWORD_KEY)
-
-  def mqttTopicDevicesBase: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_BASE)
-
-  def mqttTopicDevicesIn: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_IN)
-
-  def mqttTopicDevicesOut: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_OUT)
-
-  def mqttTopicDevicesProcessed: String = config.getString(ConfigKeys.MQTT_QUEUES_DEVICES_PROCESSED)
-
-  def mqttPublishProcessed: Boolean = config.getBoolean(ConfigKeys.MQTT_PUBLISH_PROCESSED)
 
   /*
   * Server ECC signing private keys
@@ -206,6 +179,20 @@ object Config extends ConfigBase {
     config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
   }
 
+  def kafkaConBootstrapServers: String = if (isSecureKafkaConnection) {
+      config.getString(ConfigKeys.KAFKA_CON_BOOTSTRAP_SERVERS_SSL)
+    } else {
+      config.getString(ConfigKeys.KAFKA_CONS_BOOTSTRAP_SERVER)
+    }
+
+  def kafkaConSecureConnectionProperties: Map[String, String] = Map(
+    "security.protocol" -> "SSL",
+    "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_LOCATION),
+    "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_PASS),
+    "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_LOCATION),
+    "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_PASS)
+  )
+
   def kafkaProdSecureConnectionProperties: Map[String, String] = Map(
     "security.protocol" -> "SSL",
     "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_LOCATION),
@@ -217,7 +204,6 @@ object Config extends ConfigBase {
   def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
 
   def userToken: Option[String] = {
-
     val key = s"ubirchAvatarService.client.rest.userToken"
 
 
@@ -226,7 +212,25 @@ object Config extends ConfigBase {
     } else {
       None
     }
-
   }
+
+  def kafkaEndOfLifeTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_END_OF_LIFE_TOPIC)
+
+  def kafkaEndOfLifeGroup: String = config.getString(ConfigKeys.KAFKA_TRACKLE_END_OF_LIFE_GROUP)
+
+  def kafkaRetryConfig: KafkaRetryConfig =
+    KafkaRetryConfig(
+      minBackoff = config.getInt(ConfigKeys.KAFKA_RETRY_MIN_BACKOFF),
+      maxBackoff = config.getInt(ConfigKeys.KAFKA_RETRY_MAX_BACKOFF),
+      backoffFactor = config.getDouble(ConfigKeys.KAFKA_RETRY_BACKOFF_FACTOR),
+      maxRetries = config.getInt(ConfigKeys.KAFKA_RETRY_MAX_RETRIES)
+    )
+
+  def kafkaSubscribeParallel: Int = config.getInt(ConfigKeys.KAFKA_SUBSCRIBE_PARALLEL)
+
+  def kafkaMaxCommit: Int = config.getInt(ConfigKeys.KAFKA_MAX_COMMIT)
+
+  case class KafkaRetryConfig(minBackoff: Int, maxBackoff: Int, backoffFactor: Double, maxRetries: Int)
+
 
 }

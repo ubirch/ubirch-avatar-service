@@ -2,26 +2,21 @@ package com.ubirch.avatar.backend.route
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
-import akka.pattern.ask
 import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.actor.HistoryActor
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceHistoryManager
-import com.ubirch.avatar.model.actors._
 import com.ubirch.avatar.model.rest.device.DeviceHistory
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
-import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-import org.joda.time.DateTime
 
 import java.util.UUID
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
 
 /**
   * author: cvandrei
@@ -29,156 +24,74 @@ import scala.util.{Failure, Success}
   */
 class DeviceDataHistoryRoute(implicit system: ActorSystem) extends ResponseUtil
   with CORSDirective
-  with StrictLogging with RouteAnalyzingByLogsSupport {
+  with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
-
-  private val historyActor = system.actorOf(HistoryActor.props, ActorNames.HISTORY)
-
   val route: Route = {
 
-    // TODO authentication
 
     pathPrefix(JavaUUID / data) { deviceId =>
 
       path(history) {
         respondWithCORS {
           get {
-            logger.info(s"The endpoint GET $deviceId/data/history $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-            onSuccess(queryHistory(deviceId)) { deviceData =>
-              complete(deviceData)
-            }
+            logger.error(s"Disabled Endpoint GET device/$deviceId/data/history was called, though it shouldn't be used anymore")
+            complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
           }
         }
-
       } ~ pathPrefix(history) {
 
         path(IntNumber) { from: Int =>
           respondWithCORS {
             get {
-              logger.info(s"The endpoint GET $deviceId/data/history?from=$from $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-              onSuccess(queryHistory(deviceId, Some(from))) { deviceData =>
-                complete(deviceData)
-              }
+              logger.error(s"Disabled Endpoint GET device/$deviceId/data/history/$from was called, though it shouldn't be used anymore")
+              complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
             }
           }
-
         } ~ path(IntNumber / IntNumber) { (from, size) =>
-
           respondWithCORS {
             get {
-              logger.info(s"The endpoint GET $deviceId/data/history?from=$from&size=$size $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-
-              onSuccess(queryHistory(deviceId, Some(from), Some(size))) { deviceData =>
-                complete(deviceData)
-              }
+              logger.error(s"Disabled Endpoint GET device/$deviceId/data/history/$from/$size was called, though it shouldn't be used anymore")
+              complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
             }
-
           }
-
         } ~ pathPrefix(byDate) {
-
           path(from / Segment / to / Segment) { (fromString, toString) =>
-            // TODO automated tests
-            respondWithCORS {
-              logger.info(s"The endpoint GET $deviceId/data/history/byDate/from/$fromString/to/$toString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
+            logger.error(s"Disabled Endpoint GET device/$deviceId/data/byDate/$fromString/$toString was called, though it shouldn't be used anymore")
+            complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
 
-              get {
+          }
+        } ~ path(before / Segment) { beforeString =>
+          respondWithCORS {
+            get {
+              logger.error(s"Disabled Endpoint GET device/$deviceId/data/before/$beforeString was called, though it shouldn't be used anymore")
+              complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
 
-                val from = DateTime.parse(fromString)
-                val to = DateTime.parse(toString)
-                onComplete(historyActor ? HistoryByDate(deviceId, from, to)) {
-
-                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history by date failed"))
-
-                  case Success(resp) =>
-                    resp match {
-                      case seq: HistorySeq => complete(seq.seq)
-                      case _ =>
-                        logger.error("querying device history by date resulted in unknown message")
-                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history by date failed"))
-                    }
-
-                }
-
-              }
-            }
-          } ~ path(before / Segment) { beforeString =>
-            // TODO automated tests
-            respondWithCORS {
-              get {
-                logger.info(s"The endpoint GET $deviceId/data/history/byDate/before/$beforeString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-                val before = DateTime.parse(beforeString)
-                onComplete(historyActor ? HistoryBefore(deviceId, before)) {
-
-                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/before failed"))
-
-                  case Success(resp) =>
-                    resp match {
-                      case seq: HistorySeq => complete(seq.seq)
-                      case _ =>
-                        logger.error("querying device history byDate/before resulted in unknown message")
-                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/before failed"))
-                    }
-
-                }
-
-              }
-            }
-          } ~ path(after / Segment) { afterString =>
-            // TODO automated tests
-            respondWithCORS {
-              get {
-                logger.info(s"The endpoint GET $deviceId/data/history/byDate/after/$afterString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-                val after = DateTime.parse(afterString)
-                onComplete(historyActor ? HistoryAfter(deviceId, after)) {
-
-                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/after failed"))
-
-                  case Success(resp) =>
-                    resp match {
-                      case seq: HistorySeq => complete(seq.seq)
-                      case _ =>
-                        logger.error("querying device history/after resulted in unknown message")
-                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/after failed"))
-                    }
-
-                }
-
-              }
-            }
-          } ~ path(day / Segment) { dayString =>
-            // TODO automated tests
-            respondWithCORS {
-              get {
-                logger.info(s"The endpoint GET $deviceId/data/history/byDate/day/$dayString $NOT_EXPECTED_TO_BE_USED_ANYMORE")
-                val day = DateTime.parse(dayString)
-                onComplete(historyActor ? HistoryByDay(deviceId, day)) {
-
-                  case Failure(t) => complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/day failed"))
-
-                  case Success(resp) =>
-                    resp match {
-                      case seq: HistorySeq => complete(seq.seq)
-                      case _ =>
-                        logger.error("querying device history/day resulted in unknown message")
-                        complete(serverErrorResponse(errorType = "ServerError", errorMessage = "querying device history byDate/day failed"))
-                    }
-
-                }
-
-              }
             }
           }
+        } ~ path(after / Segment) { afterString =>
+          respondWithCORS {
+            get {
+              logger.error(s"Disabled Endpoint GET device/$deviceId/data/after/$afterString was called, though it shouldn't be used anymore")
+              complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
 
+            }
+          }
+        } ~ path(day / Segment) { dayString =>
+          respondWithCORS {
+            get {
+              logger.error(s"Disabled Endpoint GET device/$deviceId/data/day/$dayString was called, though it shouldn't be used anymore")
+              complete(requestErrorResponse("Disabled Endpoint", "this endpoint was disabled"))
+
+            }
+          }
         }
 
       }
-
     }
-
   }
+  private val historyActor = system.actorOf(HistoryActor.props, ActorNames.HISTORY)
 
   //TODO refactor this, put it into an actor
   private def queryHistory(deviceId: UUID,

@@ -12,11 +12,6 @@ Import Production Log
  
     1. ElasticSearch
     1. mongoDB
-    1. Redis
-    1. mqtt
-    1. AuthService
-    1. UserService
-    1. KeyService
     1. avatarService
 
 1. use this script: *com.ubirch.avatar.cmd.ImportProdLogs* 

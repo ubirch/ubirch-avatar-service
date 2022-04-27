@@ -177,7 +177,6 @@ lazy val depServer = Seq(
   ubirchJson,
   ubirchRestAkkaHttp,
   ubirchResponse,
-  ubirchOidcUtils,
   catsCore,
   //testing
   scalatest % "test"
@@ -196,9 +195,7 @@ lazy val depCore = Seq(
   ubirchCrypto,
   ubirchMongo,
   ubirchResponse,
-  ubirchIdServiceClient,
   ubirchUserClientRest,
-  ubirchUtilRedisUtil,
   spireMath,
   msgpackScala,
   guava,
@@ -240,7 +237,6 @@ lazy val depUtil = Seq(
   ubirchJson,
   ubirchElasticsearchUtils,
   ubirchMongo,
-  ubirchOidcUtils,
   ubirchUUID % "test",
   scalatest % "test"
 ) ++ json4s ++ scalaLogging
@@ -262,6 +258,7 @@ lazy val depTestBase = Seq(
 val akkaV = "2.5.32"
 val akkaHttpV = "10.1.15"
 val akkaStreamKafkaV = "2.0.7"
+val akkaStreamTestkitV = "2.0.7"
 val json4sV = "3.6.0"
 val camelV = "2.25.4"
 val catsV = "2.0.0"
@@ -298,6 +295,8 @@ val akkaSlf4j = akkaG %% "akka-slf4j" % akkaV
 val akkaHttp = akkaG %% "akka-http" % akkaHttpV
 val akkaCluster = akkaG %% "akka-cluster" % akkaV
 val akkaStreamKafka = akkaG %% "akka-stream-kafka" % akkaStreamKafkaV
+val akkaTestKit = akkaG %% "akka-stream-kafka-testkit" % akkaStreamTestkitV % "test"
+
 val akka = Seq(
   akkaActor,
   akkaStream,
@@ -305,12 +304,12 @@ val akka = Seq(
   akkaHttp,
   akkaCluster,
   akkaStreamKafka,
+  akkaTestKit
 )
 
 val akkaCamel = Seq(
   "org.apache.camel" % "camel-core" % camelV,
   "org.apache.camel" % "camel-paho" % camelV,
-  "org.apache.camel" % "camel-mqtt" % camelV,
   "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
 )
 
@@ -364,14 +363,11 @@ val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" ex
 val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.9-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
 val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
-val ubirchOidcUtils = ubirchUtilG %% "ubirch-oidc-utils" % "0.8.15" excludeAll (excludedLoggers: _*)
-val ubirchUtilRedisUtil = ubirchUtilG %% "ubirch-redis-utils" % "0.6.1"
 val ubirchResponse = ubirchUtilG %% "ubirch-response-utils" % "0.5.1" excludeAll (excludedLoggers: _*)
 val ubirchRestAkkaHttp = ubirchUtilG %% "ubirch-rest-akka-http-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
 val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.4" excludeAll (excludedLoggers: _*)
 
 val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.6" excludeAll (excludedLoggers: _*)
-val ubirchIdServiceClient = "com.ubirch.id" %% "ubirch-id-service-client" % "0.6.6-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.5" excludeAll (excludedLoggers: _*)
 
 /*
