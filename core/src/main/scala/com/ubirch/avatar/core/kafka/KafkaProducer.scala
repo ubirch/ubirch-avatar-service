@@ -50,9 +50,13 @@ object KafkaProducer extends StrictLogging {
    * throw exception when the initialization is failed
    */
   def create(kafkaUrl: String, topic: String, actorSystem: ActorSystem): KafkaProducer =
-    try { new KafkaProducer(kafkaUrl, topic, actorSystem) }
+    try {
+      logger.info(s"Trying to initialize kafka producer connection. IsSecureConnection: ${Config.isSecureKafkaConnection}")
+      new KafkaProducer(kafkaUrl, topic, actorSystem)
+    }
     catch { case ex: Exception =>
-      logger.error(s"Error occurred while initializing Kafka producer! ${ex.getMessage}")
+      logger.error(s"Error occurred while initializing Kafka producer! " +
+        s"Message: ${ex.getMessage} Kafka URL: $kafkaUrl Properties: ${Config.kafkaProdSecureConnectionProperties}")
       throw ex
     }
 
