@@ -30,9 +30,18 @@ abstract class KafkaConsumer(topicNames: Set[String], groupName: String, actorSy
 
   private val logger = Logger.apply(this.getClass.getName)
 
-  protected val consumerSettings: ConsumerSettings[String, String] = ConsumerSettings(actorSystem, new StringDeserializer, new StringDeserializer)
-    .withBootstrapServers(Config.kafkaConBootstrapServers)
-    .withGroupId(groupName)
+
+  protected val consumerSettings: ConsumerSettings[String, String] =
+    if (Config.isSecureKafkaConnection) {
+      ConsumerSettings(actorSystem, new StringDeserializer, new StringDeserializer)
+        .withBootstrapServers(Config.kafkaConBootstrapServers)
+        .withGroupId(groupName)
+        .withProperties(Config.kafkaConSecureConnectionProperties)
+    } else {
+      ConsumerSettings(actorSystem, new StringDeserializer, new StringDeserializer)
+        .withBootstrapServers(Config.kafkaConBootstrapServers)
+        .withGroupId(groupName)
+    }
 
   protected val committerSettings: CommitterSettings = CommitterSettings(actorSystem)
 

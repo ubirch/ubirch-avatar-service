@@ -255,12 +255,12 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-val akkaV = "2.5.21"
-val akkaHttpV = "10.1.3"
-val akkaStreamKafkaV = "1.1.0"
-val akkaStreamTestkitV = "1.1.0"
+val akkaV = "2.5.32"
+val akkaHttpV = "10.1.15"
+val akkaStreamKafkaV = "2.0.7"
+val akkaStreamTestkitV = "2.0.7"
 val json4sV = "3.6.0"
-val camelV = "2.23.1"
+val camelV = "2.25.4"
 val catsV = "2.0.0"
 val scalaTestV = "3.0.5"
 val spireV = "0.13.0"
