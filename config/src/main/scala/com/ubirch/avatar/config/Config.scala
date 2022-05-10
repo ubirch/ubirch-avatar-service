@@ -185,21 +185,25 @@ object Config extends ConfigBase {
       config.getString(ConfigKeys.KAFKA_CONS_BOOTSTRAP_SERVER)
     }
 
-  def kafkaConSecureConnectionProperties: Map[String, String] = Map(
-    "security.protocol" -> "SSL",
-    "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_LOCATION),
-    "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_PASS),
-    "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_LOCATION),
-    "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_PASS)
-  )
+  def kafkaConSecureConnectionProperties: Map[String, String] = if (isSecureKafkaConnection) {
+    Map(
+      "security.protocol" -> "SSL",
+      "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_LOCATION),
+      "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_PASS),
+      "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_LOCATION),
+      "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_PASS)
+    )
+  } else Map("" -> "")
 
-  def kafkaProdSecureConnectionProperties: Map[String, String] = Map(
-    "security.protocol" -> "SSL",
-    "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_LOCATION),
-    "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_PASS),
-    "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_LOCATION),
-    "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_PASS)
-  )
+  def kafkaProdSecureConnectionProperties: Map[String, String] = if (isSecureKafkaConnection) {
+    Map(
+      "security.protocol" -> "SSL",
+      "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_LOCATION),
+      "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_PASS),
+      "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_LOCATION),
+      "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_PASS)
+    )
+  } else Map("" -> "")
 
   def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
 
