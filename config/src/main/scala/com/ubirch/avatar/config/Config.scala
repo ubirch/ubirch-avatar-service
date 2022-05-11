@@ -171,7 +171,7 @@ object Config extends ConfigBase {
   /*
   * Kafka
    */
-  lazy val isSecureKafkaConnection: Boolean = config.getBoolean(ConfigKeys.KAFKA_IS_SECURE_CONNECTION)
+  lazy val isSecureKafkaConnection: Boolean = config.booleanWithDefault(ConfigKeys.KAFKA_IS_SECURE_CONNECTION, false)
 
   def kafkaBoostrapServer: String = if (isSecureKafkaConnection) {
     config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVERS_SSL)
@@ -186,6 +186,7 @@ object Config extends ConfigBase {
     }
 
   def kafkaConSecureConnectionProperties: Map[String, String] = Map(
+    // These values will only be evaluated if TLS is used
     "security.protocol" -> "SSL",
     "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_LOCATION),
     "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_PASS),
@@ -194,6 +195,7 @@ object Config extends ConfigBase {
   )
 
   def kafkaProdSecureConnectionProperties: Map[String, String] = Map(
+    // These values will only be evaluated if TLS is used
     "security.protocol" -> "SSL",
     "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_LOCATION),
     "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_PASS),
