@@ -150,10 +150,7 @@ object UbMsgPacker
       //create signature
       packer.flush()
       val payloadBin = out.toByteArray
-      val hashedPayload = HashUtil.sha512(payloadBin)
-      val signatureB64 = eccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey,
-        payload = hashedPayload,
-        encoding = "b64")
+      val signatureB64 = eccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
       val byteSignature = Base64.getDecoder.decode(signatureB64)
 
       //pack signature

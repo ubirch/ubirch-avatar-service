@@ -16,9 +16,9 @@ class WelcomeRouteSpec extends RouteSpec {
   private val mainRoute = new MainRoute
   private val routes = mainRoute.myRoute
 
-  feature(s"call health/welcome page") {
+  Feature(s"call health/welcome page") {
 
-    scenario("GET /") {
+    Scenario("GET /") {
       Get() ~> routes ~> check {
         status shouldEqual OK
         responseEntity.contentType should be(`application/json`)
@@ -28,7 +28,7 @@ class WelcomeRouteSpec extends RouteSpec {
       }
     }
 
-    scenario("POST /") {
+    Scenario("POST /") {
       Post() ~> routes ~> check {
         handled should be(false)
       }

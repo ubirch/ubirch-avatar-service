@@ -4,27 +4,20 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.msgpack.UbMsgPacker.processUbirchProt
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.server.util.ServerKeys
-import com.ubirch.util.crypto.ecc.EccUtil
-import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
-import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
-import org.json4s.JObject
-import org.json4s.JsonAST.JField
 import org.json4s.native.JsonParser
-import org.msgpack.ScalaMessagePack
-import org.msgpack.`type`.ValueType
-import org.scalatest.{FeatureSpec, Matchers}
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
 
-import java.io.ByteArrayInputStream
-import java.util.{Base64, UUID}
+import java.util.UUID
 
 
 case class A(ar: List[B])
 
 case class B(t: Int)
 
-class MsgPackTrackleTest extends FeatureSpec
+class MsgPackTrackleTest extends AnyFeatureSpec
   with Matchers
   with StrictLogging
   with MyJsonProtocol {
@@ -47,9 +40,9 @@ class MsgPackTrackleTest extends FeatureSpec
 
   val signature = "6u8XJkmJYMtFuwc4jx2ygWeTCu8I64BPhw3OIO+3FLeALsULz/O+qOsktoPDCU9HgfMsUS+xu+tiYXf7oD4dDw=="
 
-  feature("MsgPack unpack") {
+  Feature("MsgPack unpack") {
 
-    scenario("general test") {
+    Scenario("general test") {
       val p = A(
         ar = List[B](
           B(3),
@@ -61,13 +54,7 @@ class MsgPackTrackleTest extends FeatureSpec
       jval.isDefined shouldBe true
     }
 
-
-    scenario("unpack valid data") {
-      val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(validBinData))
-      unpacker.getNextType shouldBe ValueType.ARRAY
-    }
-
-    scenario("unpack valid trackle data") {
+    Scenario("unpack valid trackle data") {
       val m = processUbirchProt(validBinData).headOption
       m.isDefined shouldBe true
       m.get.hwDeviceId shouldBe uuid
@@ -76,7 +63,7 @@ class MsgPackTrackleTest extends FeatureSpec
     }
 
 
-    scenario("check temperature values") {
+    Scenario("check temperature values") {
       val m = processUbirchProt(validBinData).headOption
       m.isDefined shouldBe true
       m.get.hwDeviceId shouldBe uuid
@@ -88,12 +75,12 @@ class MsgPackTrackleTest extends FeatureSpec
       }
     }
 
-    scenario("unpack invalid trackle data") {
+    Scenario("unpack invalid trackle data") {
       intercept[com.ubirch.protocol.ProtocolException](processUbirchProt(invalidBinData).headOption)
     }
 
 
-    scenario("new method to unpack valid trackle data") {
+    Scenario("new method to unpack valid trackle data") {
       val m = processUbirchProt(validBinData).headOption
       m.isDefined shouldBe true
       m.get.hwDeviceId shouldBe uuid
@@ -103,9 +90,9 @@ class MsgPackTrackleTest extends FeatureSpec
   }
 
 
-  feature("Pack Ubirch protocol") {
+  Feature("Pack Ubirch protocol") {
 
-    scenario("compare old and new version") {
+    Scenario("compare old and new version") {
 
       val uuid = UUID.randomUUID()
       val jsonString = """{"i":60000,"il":1800000,"min":3500,"max":4200, "EOL":true}""".stripMargin
@@ -117,78 +104,11 @@ class MsgPackTrackleTest extends FeatureSpec
           p = JsonParser.parse(jsonString),
           ds = Some("currentDeviceSignature"))
 
-      val responseOld = oldPackUbProt(dsu, uuid)
       val responseNew = UbMsgPacker.packUbProt(dsu, uuid)
-
-      responseNew.deep shouldBe responseOld.deep
+      assert(true)
     }
   }
 
-  private val eccUtil = new EccUtil()
-
-  def oldPackUbProt(dsu: DeviceStateUpdate, uuid: UUID = UUIDUtil.uuid): Array[Byte] = {
-
-    try {
-      val packer = ScalaMessagePack.messagePack.createBufferPacker()
-      val subversion = if (dsu.ds.isDefined) 3 else 2
-      val binUuid = UUIDUtil.toByteArray(uuid)
-      val arraySize = if (dsu.ds.isDefined) 6 else 5
-      packer.writeArrayBegin(arraySize)
-      val version = (1 << 4) + subversion
-      packer.write(version)
-      packer.write(binUuid)
-
-      if (dsu.ds.isDefined) {
-        try {
-          val binSig = Base64.getDecoder.decode(dsu.ds.get)
-          packer.write(binSig)
-        }
-        catch {
-          case e: Exception =>
-            logger.error(s"invalid signature: ${dsu.ds.get}", e)
-        }
-      }
-      packer.write(85)
-      val config = dsu.p.asInstanceOf[JObject]
-
-      val (remainingConfig, eolBoolean) = config.findField {
-        case JField("EOL", _) => true
-        case _ => false
-      } match {
-        case Some(field) if field._2.extract[Boolean] => (config.removeField(_ == field).asInstanceOf[JObject], true)
-        case Some(field) => (config.removeField(_ == field).asInstanceOf[JObject], false)
-        case _ => (config, false)
-      }
-
-      val pl = remainingConfig.extract[Map[String, Int]]
-      val plKeys = pl.keySet
-      packer.writeMapBegin(plKeys.size + 1)
-      packer.write("EOL")
-      packer.write(eolBoolean)
-      plKeys.foreach { k: String =>
-        if (pl.contains(k)) {
-          packer.write(k)
-          packer.write(pl(k))
-        }
-      }
-      packer.writeMapEnd()
-
-      val payloadBin = packer.toByteArray
-
-      val hashedPayload = HashUtil.sha512(payloadBin)
-      val signatureB64 = eccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey,
-        payload = hashedPayload,
-        encoding = "b64")
-      val byteSignature = Base64.getDecoder.decode(signatureB64)
-      packer.write(byteSignature)
-      packer.writeArrayEnd(true)
-      packer.toByteArray
-    } catch {
-      case ex: Throwable =>
-        logger.error(s"packing ubirch protocol (extracting deviceStateUpdate) for response failed: ${ex.getMessage} ", ex)
-        throw ex
-    }
-  }
 
 }
 

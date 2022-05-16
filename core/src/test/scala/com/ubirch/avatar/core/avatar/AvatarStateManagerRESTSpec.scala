@@ -21,9 +21,9 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
   private val collection = Config.mongoCollectionAvatarState
   private val emptyJson = Some(parse("{}"))
 
-  feature("setReported()") {
+  Feature("setReported()") {
 
-    scenario("no AvatarState exists --> creates a new one") {
+    Scenario("no AvatarState exists --> creates a new one") {
 
       // prepare
       val deviceConfigString =
@@ -52,7 +52,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("AvatarState exists (reported and desired not empty) --> update existing one") {
+    Scenario("AvatarState exists (reported and desired not empty) --> update existing one") {
 
       // prepare
       val deviceConfigString =
@@ -103,9 +103,9 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
   }
 
 
-  feature("toRestModel()") {
+  Feature("toRestModel()") {
 
-    scenario("_desired_ and _reported_ are empty") {
+    Scenario("_desired_ and _reported_ are empty") {
 
       // prepare
       val dbState = db.device.AvatarState(
@@ -122,7 +122,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_desired_ and _reported_ have same jsons") {
+    Scenario("_desired_ and _reported_ have same jsons") {
 
       // prepare
       val desired =
@@ -147,7 +147,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_desired_ and _reported_ have same field with different values") {
+    Scenario("_desired_ and _reported_ have same field with different values") {
 
       // prepare
       val desired =
@@ -172,7 +172,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_desired_ has a field that _reported_ does not") {
+    Scenario("_desired_ has a field that _reported_ does not") {
 
       // prepare
       val desired =
@@ -197,7 +197,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_reported_ has a field that _desired_ does not") {
+    Scenario("_reported_ has a field that _desired_ does not") {
 
       // prepare
       val desired =

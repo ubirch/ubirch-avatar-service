@@ -2,7 +2,9 @@ package com.ubirch.avatar.mongo
 
 import com.ubirch.avatar.storage.MongoStorageCleanup
 import com.ubirch.util.mongo.test.MongoTestUtils
-import org.scalatest.{AsyncFeatureSpec, BeforeAndAfterAll, BeforeAndAfterEach, Matchers}
+import org.scalatest.featurespec.AsyncFeatureSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 /**
   * author: cvandrei

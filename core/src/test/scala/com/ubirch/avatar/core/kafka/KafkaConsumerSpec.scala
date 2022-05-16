@@ -7,15 +7,15 @@ import akka.kafka.ConsumerMessage.CommittableMessage
 import akka.kafka.scaladsl.Consumer
 import akka.kafka.testkit.ConsumerResultFactory
 import akka.kafka.testkit.scaladsl.ConsumerControlFactory
-import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Keep, Source}
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config.KafkaRetryConfig
 import com.ubirch.avatar.core.kafka.util.{InvalidDataException, UnexpectedException}
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.featurespec.AsyncFeatureSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Seconds, Span}
-import org.scalatest.{AsyncFeatureSpec, Matchers}
 
 import scala.collection.immutable._
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
@@ -23,7 +23,6 @@ import scala.jdk.CollectionConverters._
 
 class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLogging with Matchers {
   implicit private val actorSystem: ActorSystem = ActorSystem("KafkaConsumerSpec")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit private val scheduler: Scheduler = actorSystem.scheduler
   implicit val ec: ExecutionContextExecutor = actorSystem.dispatcher
   val topic = "test"
@@ -42,8 +41,8 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
   val initialDelay = 100
   val maxDelay = 10000
 
-  feature("retryHandler") {
-    scenario("handle is success --> Success(CommittableOffset)") {
+  Feature("retryHandler") {
+    Scenario("handle is success --> Success(CommittableOffset)") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
@@ -56,7 +55,7 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
       }
     }
 
-    scenario("InvalidDataException occurs --> Success(CommittableOffset)") {
+    Scenario("InvalidDataException occurs --> Success(CommittableOffset)") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
@@ -71,7 +70,7 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
       }
     }
 
-    scenario(s"UnexpectedException occurs --> Success(CommittableOffset) after retry with $retries count") {
+    Scenario(s"UnexpectedException occurs --> Success(CommittableOffset) after retry with $retries count") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
@@ -86,7 +85,7 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
       }
     }
 
-    scenario(s"RuntimeException occurs --> Success(CommittableOffset) after retry with $retries count") {
+    Scenario(s"RuntimeException occurs --> Success(CommittableOffset) after retry with $retries count") {
       val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
 
         override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
@@ -102,7 +101,7 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
     }
   }
 
-  feature("runWithRetry") {
+  Feature("runWithRetry") {
     class KafkaConsumerMock extends KafkaConsumer(Set(), "test", actorSystem) {
 
       val topic = "test-topic"
@@ -126,7 +125,7 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
     }
 
     val kafkaRetryConfig = KafkaRetryConfig(100, 1000, 0.2, 3)
-    scenario("consume properly") {
+    Scenario("consume properly") {
       val kafkaConsumer = new KafkaConsumerMock
 
       val c = kafkaConsumer.runWithRetry(kafkaRetryConfig)
@@ -138,14 +137,14 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
     }
   }
 
-  feature("messageInfoFromOffsetBatch") {
+  Feature("messageInfoFromOffsetBatch") {
     val kafkaConsumer = new KafkaConsumer(Set(), "test", actorSystem) {
 
       override protected def handleMessage(message: String)(implicit ec: ExecutionContext): Future[Unit] =
         Future.successful(())
     }
 
-    scenario("single commit offset info") {
+    Scenario("single commit offset info") {
       val topic = "test"
       val partition = 2
       val nextOffset = 1
@@ -157,7 +156,7 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
       assert(result == messageInfo)
     }
 
-    scenario("multi commits offset info") {
+    Scenario("multi commits offset info") {
       val topic = "test"
       val partition = 2
       val nextOffset = 1

@@ -7,7 +7,7 @@ val commonSettings = Seq(
 
   publishConfiguration := publishConfiguration.value.withOverwrite(true),
   publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true),
-  scalaVersion := "2.11.12",
+  scalaVersion := "2.13.8",
   scalacOptions ++= Seq("-feature"),
   organization := "com.ubirch.avatar",
   homepage := Some(url("http://ubirch.com")),
@@ -35,9 +35,6 @@ val commonSettings = Seq(
   ),
   publishMavenStyle := true,
   publishTo := Some("io.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/trackle-mvn")
-
-  //  https://www.scala-lang.org/2019/10/17/dependency-management.html
-  //  , conflictManager := ConflictManager.strict
 )
 
 /*
@@ -179,36 +176,29 @@ lazy val depServer = Seq(
   ubirchRestAkkaHttp,
   ubirchResponse,
   catsCore,
-  //testing
   scalatest % "test"
 
-) ++ akka ++ akkaCamel ++ prometheus ++ constructr ++ scalaLogging
+) ++ akka ++ prometheus ++ scalaLogging
 
 lazy val depConfig = Seq(
-  ubirchCamelUtils,
   ubirchConfig
 )
 
 lazy val depCore = Seq(
   ubirchDeepCheckModel,
   ubirchElasticsearchUtils,
-  ubirchCamelUtils,
   ubirchCrypto,
   ubirchCryptoNew,
   ubirchMongo,
   ubirchResponse,
   ubirchUserClientRest,
-  spireMath,
-  msgpackScala,
   ubrichMsgPack,
   guava,
   scalatest % "test",
   akkaTestkit % "test"
-) ++ akka ++ prometheus ++ akkaCamel ++ scalaLogging
+) ++ akka ++ prometheus ++ scalaLogging
 
-lazy val depClient = Seq(
-  beeClient
-) ++ scalaLogging
+lazy val depClient = Seq() ++ scalaLogging
 
 lazy val depClientRest = Seq(
   akkaHttp,
@@ -248,7 +238,6 @@ lazy val depTestBase = Seq(
   scalatest,
   ubirchMongo,
   ubirchRestAkkaHttp,
-  beeClient,
   ubirchUUID,
   ubirchCrypto
 ) ++ json4s ++ scalaLogging
@@ -258,20 +247,18 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
-val akkaV = "2.5.21"
-val akkaHttpV = "10.1.3"
-val akkaStreamKafkaV = "1.1.0"
-val akkaStreamTestkitV = "1.1.0"
-val json4sV = "3.6.0"
-val camelV = "2.23.1"
+val akkaV = "2.6.18"
+val akkaHttpV = "10.2.7"
+val akkaStreamKafkaV = "3.0.0"
+val akkaStreamTestkitV = "3.0.0"
+val json4sV = "4.0.5"
 val catsV = "2.0.0"
-val scalaTestV = "3.0.5"
-val spireV = "0.13.0"
-val logbackV = "1.2.3"
-val logstashEncV = "5.0"
-val slf4jV = "1.7.25"
-val log4jV = "2.15.0"
-val scalaLogV = "3.9.0"
+val scalaTestV = "3.2.12"
+val logbackV = "1.2.11"
+val logstashEncV = "7.1.1"
+val slf4jV = "1.7.36"
+val log4jV = "2.17.2"
+val scalaLogV = "3.9.4"
 val scalaLogSLF4JV = "2.1.2"
 
 // GROUP NAMES
@@ -310,18 +297,12 @@ val akka = Seq(
   akkaTestKit
 )
 
-val akkaCamel = Seq(
-  "org.apache.camel" % "camel-core" % camelV,
-  "org.apache.camel" % "camel-paho" % camelV,
-  "com.typesafe.akka" %% "akka-camel" % akkaV exclude("org.apache.camel", "camel-core")
-)
 
 // https://mvnrepository.com/artifact/org.typelevel/cats-core
 val catsCore = "org.typelevel" %% "cats-core" % catsV
 
-
-val jodaTime = "joda-time" % "joda-time" % "2.10"
-val jodaConvert = "org.joda" % "joda-convert" % "2.1.1"
+val jodaTime = "joda-time" % "joda-time" % "2.10.14"
+val jodaConvert = "org.joda" % "joda-convert" % "2.2.2"
 val joda = Seq(jodaTime, jodaConvert)
 
 val json4sNative = json4sG %% "json4s-native" % json4sV
@@ -329,12 +310,8 @@ val json4sExt = json4sG %% "json4s-ext" % json4sV
 val json4sJackson = "org.json4s" %% "json4s-jackson" % json4sV
 val json4s = Seq(json4sNative, json4sExt, json4sJackson)
 
-val spireMath = "org.spire-math" %% "spire" % spireV
-
-val beeClient = "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1"
 
 val msgpack4s = "org.velvia" %% "msgpack4s" % "0.6.0"
-val msgpackScala = "org.msgpack" %% "msgpack-scala" % "0.6.11"
 val ubrichMsgPack = "com.ubirch" % "ubirch-protocol-java" % "2.1.3-SNAPSHOT"
 val guava = "com.google.guava" % "guava" % "26.0-jre"
 
@@ -345,35 +322,29 @@ val excludedLoggers = Seq(
   ExclusionRule(organization = "org.apache.logging")
 )
 
-val constructr = Seq(
-  "de.heikoseeberger" %% "constructr" % "0.18.0",
-  "de.heikoseeberger" %% "constructr-coordination-etcd" % "0.18.0"
-)
 
 val prometheus = Seq(
-  "io.prometheus" % "simpleclient" % "0.3.0",
-  "io.prometheus" % "simpleclient_hotspot" % "0.3.0",
-  "io.prometheus" % "simpleclient_httpserver" % "0.3.0",
-  "io.prometheus" % "simpleclient_pushgateway" % "0.3.0",
-  "com.workday" %% "prometheus-akka" % "0.8.5",
-  "org.aspectj" % "aspectjweaver" % "1.8.10"
+  "io.prometheus" % "simpleclient" % "0.14.1",
+  "io.prometheus" % "simpleclient_hotspot" % "0.14.1",
+  "io.prometheus" % "simpleclient_httpserver" % "0.14.1",
+  "io.prometheus" % "simpleclient_pushgateway" % "0.14.1",
+  "org.aspectj" % "aspectjweaver" % "1.9.9.1"
 )
 
 //Ubirch depedencies
-val ubirchCamelUtils = ubirchUtilG %% "ubirch-camel-utils" % "0.1.1" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
-val ubirchConfig = ubirchUtilG %% "ubirch-config-utils" % "0.2.4" excludeAll (excludedLoggers: _*)
-val ubirchCrypto = ubirchUtilG %% "ubirch-crypto-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
+val ubirchConfig = ubirchUtilG %% "ubirch-config-utils" % "0.2.5" excludeAll (excludedLoggers: _*)
+val ubirchCrypto = ubirchUtilG %% "ubirch-crypto-utils" % "0.5.4" excludeAll (excludedLoggers: _*)
 val ubirchCryptoNew = "com.ubirch" % "ubirch-crypto" % "2.1.3-SNAPSHOT" excludeAll (excludedLoggers: _*)
-val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
-val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.9-SNAPSHOT" excludeAll (excludedLoggers: _*)
-val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
-val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.5" excludeAll (excludedLoggers: _*)
-val ubirchResponse = ubirchUtilG %% "ubirch-response-utils" % "0.5.1" excludeAll (excludedLoggers: _*)
-val ubirchRestAkkaHttp = ubirchUtilG %% "ubirch-rest-akka-http-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
-val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.4" excludeAll (excludedLoggers: _*)
+val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.2" excludeAll (excludedLoggers: _*)
+val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.9" excludeAll (excludedLoggers: _*)
+val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
+val ubirchMongo = ubirchUtilG %% "ubirch-mongo-utils" % "0.9.6" excludeAll (excludedLoggers: _*)
+val ubirchResponse = ubirchUtilG %% "ubirch-response-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
+val ubirchRestAkkaHttp = ubirchUtilG %% "ubirch-rest-akka-http-utils" % "0.4.3" excludeAll (excludedLoggers: _*)
+val ubirchUUID = ubirchUtilG %% "ubirch-uuid-utils" % "0.1.5" excludeAll (excludedLoggers: _*)
 
-val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.6.6" excludeAll (excludedLoggers: _*)
-val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.5" excludeAll (excludedLoggers: _*)
+val ubirchAvatarServiceClient = "com.ubirch.avatar" %% "ubirch-avatar-service-client" % "0.7.0" excludeAll (excludedLoggers: _*)
+val ubirchUserClientRest = "com.ubirch.user" %% "ubirch-user-service-client" % "1.0.7" excludeAll (excludedLoggers: _*)
 
 /*
  * RESOLVER
@@ -399,8 +370,6 @@ lazy val snapshotRepository = Resolver.sonatypeRepo("snapshots")
 lazy val mergeStrategy = Seq(
   assemblyMergeStrategy in assembly := {
     case PathList("org", "joda", "time", xs@_*) => MergeStrategy.first
-    //case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
-    //case m if m.toLowerCase.matches("meta-inf.*\\.sf$") => MergeStrategy.discard
     case m if m.toLowerCase.endsWith("application.conf") => MergeStrategy.concat
     case m if m.toLowerCase.endsWith("application.dev.conf") => MergeStrategy.first
     case m if m.toLowerCase.endsWith("application.base.conf") => MergeStrategy.first
