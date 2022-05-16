@@ -17,10 +17,11 @@ import org.json4s.JObject
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
 import org.json4s.jackson.JsonMethods._
-import org.msgpack.ScalaMessagePack
+import org.msgpack.core.MessagePack
 
+import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
-import java.util.Base64
+import java.util.{Base64, UUID}
 
 object UbMsgPacker
   extends StrictLogging
@@ -28,7 +29,7 @@ object UbMsgPacker
 
   private final val SIGPARTLEN: Int = 67
   private val eccUtil = new EccUtil()
-
+  private val config = new MessagePack.PackerConfig().withStr8FormatSupport(false)
 
   def processUbirchProt(binData: Array[Byte]): Set[UbMessage] = {
 
@@ -102,67 +103,64 @@ object UbMsgPacker
         }
     )
 
-
-  def packUbProt(dsu: DeviceStateUpdate): Array[Byte] = {
-
+  def packUbProt(dsu: DeviceStateUpdate, uuid: UUID = UUIDUtil.uuid): Array[Byte] = {
     try {
-      val packer = ScalaMessagePack.messagePack.createBufferPacker()
+      val out = new ByteArrayOutputStream(255)
+      val packer = config.newPacker(out)
+      packer.packArrayHeader(6)
 
-      val subversion = if (dsu.ds.isDefined) 3 else 2
+      //pack version 1.3
+      packer.packInt((1 << 4) + 3)
 
-      val uuid = UUIDUtil.uuid
+      //pack uuid
       val binUuid = UUIDUtil.toByteArray(uuid)
+      packer.packRawStringHeader(binUuid.length)
+      packer.writePayload(binUuid)
 
-      val arraySize = if (dsu.ds.isDefined)
-        6
-      else
-        5
-      packer.writeArrayBegin(arraySize)
-      packer.write((1 << 4) + subversion)
-      packer.write(binUuid)
-      if (dsu.ds.isDefined) {
-        try {
-          //        val binSig = Hex.decodeHex(dsu.ds.get)
-          val binSig = Base64.getDecoder.decode(dsu.ds.get)
-          packer.write(binSig)
-        }
-        catch {
-          case e: Exception =>
-            logger.error(s"invalid signature: ${dsu.ds.get}", e)
-        }
-      }
-      packer.write(85)
-      val config = dsu.p.asInstanceOf[JObject]
+      //pack prev signature
+      val binPrevSignature = Base64.getDecoder.decode(dsu.ds.get)
+      packer.packRawStringHeader(binPrevSignature.length)
+      packer.writePayload(binPrevSignature)
 
-      val (remainingConfig, eolBoolean) = config.findField {
+      //pack hint
+      packer.packInt(85)
+
+      //pack config = payload
+      val deviceConfig = dsu.p.asInstanceOf[JObject]
+      val (remainingConfig, eolBoolean) = deviceConfig.findField {
         case JField("EOL", _) => true
         case _ => false
       } match {
-        case Some(field) if field._2.extract[Boolean] => (config.removeField(_ == field).asInstanceOf[JObject], true)
-        case Some(field) => (config.removeField(_ == field).asInstanceOf[JObject], false)
-        case _ => (config, false)
+        case Some(field) if field._2.extract[Boolean] => (deviceConfig.removeField(_ == field).asInstanceOf[JObject], true)
+        case Some(field) => (deviceConfig.removeField(_ == field).asInstanceOf[JObject], false)
+        case _ => (deviceConfig, false)
       }
-
       val pl = remainingConfig.extract[Map[String, Int]]
       val plKeys = pl.keySet
-      packer.writeMapBegin(plKeys.size + 1)
-      packer.write("EOL")
-      packer.write(eolBoolean)
+      packer.packMapHeader(plKeys.size + 1)
+      packer.packString("EOL")
+      packer.packBoolean(eolBoolean)
       plKeys.foreach { k: String =>
         if (pl.contains(k)) {
-          packer.write(k)
-          packer.write(pl(k))
+          packer.packString(k)
+          packer.packInt(pl(k))
         }
       }
-      packer.writeMapEnd()
 
-      val payloadBin = packer.toByteArray
+      //create signature
+      packer.flush()
+      val payloadBin = out.toByteArray
+      val hashedPayload = HashUtil.sha512(payloadBin)
+      val signatureB64 = eccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey,
+        payload = hashedPayload,
+        encoding = "b64")
+      val byteSignature = Base64.getDecoder.decode(signatureB64)
 
-
-      val signatureB64 = eccUtil.signPayloadSha512(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
-      packer.write(Base64.getDecoder.decode(signatureB64))
-      packer.writeArrayEnd(true)
-      packer.toByteArray
+      //pack signature
+      packer.packRawStringHeader(byteSignature.length)
+      packer.writePayload(byteSignature)
+      packer.close()
+      out.toByteArray
     } catch {
       case ex: Throwable =>
         logger.error(s"packing ubirch protocol (extracting deviceStateUpdate) for response failed: ${ex.getMessage} ", ex)

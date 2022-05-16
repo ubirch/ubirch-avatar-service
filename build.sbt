@@ -81,7 +81,8 @@ lazy val server = project
     resolvers ++= Seq(
       resolverSeebergerJson,
       resolverTypesafeReleases,
-      resolverVelvia
+      resolverVelvia,
+      snapshotRepository
     ),
     mainClass in(Compile, run) := Some("com.ubirch.avatar.backend.Boot"),
     resourceGenerators in Compile += Def.task {
@@ -193,6 +194,7 @@ lazy val depCore = Seq(
   ubirchElasticsearchUtils,
   ubirchCamelUtils,
   ubirchCrypto,
+  ubirchCryptoNew,
   ubirchMongo,
   ubirchResponse,
   ubirchUserClientRest,
@@ -361,6 +363,7 @@ val prometheus = Seq(
 val ubirchCamelUtils = ubirchUtilG %% "ubirch-camel-utils" % "0.1.1" excludeAll (excludedLoggers: _*) // TODO migrate to 1.0.0
 val ubirchConfig = ubirchUtilG %% "ubirch-config-utils" % "0.2.4" excludeAll (excludedLoggers: _*)
 val ubirchCrypto = ubirchUtilG %% "ubirch-crypto-utils" % "0.5.3" excludeAll (excludedLoggers: _*)
+val ubirchCryptoNew = "com.ubirch" % "ubirch-crypto" % "2.1.3-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchDeepCheckModel = ubirchUtilG %% "ubirch-deep-check-utils" % "0.4.1" excludeAll (excludedLoggers: _*)
 val ubirchElasticsearchUtils = ubirchUtilG %% "ubirch-elasticsearch-utils" % "0.2.9-SNAPSHOT" excludeAll (excludedLoggers: _*)
 val ubirchJson = ubirchUtilG %% "ubirch-json-utils" % "0.5.2" excludeAll (excludedLoggers: _*)
@@ -386,6 +389,8 @@ lazy val resolverUbirchUtils = "ubirch.utils.cloudrepo" at "https://ubirch.myclo
 lazy val resolverUbirchMvn = "ubirch.mvn.cloudrepo" at "https://ubirch.mycloudrepo.io/repositories/mvn-public"
 lazy val ubirchMvnCentralProxy = "mvn.central.proxy" at "https://ubirch.mycloudrepo.io/repositories/mvn-central-proxy"
 lazy val ubirchRickBetonProxy = "mvn.rick.beton.proxy" at "https://ubirch.mycloudrepo.io/repositories/ubirch-mvn-rick-beton-proxy"
+lazy val snapshotRepository = Resolver.sonatypeRepo("snapshots")
+
 
 /*
  * MISC
