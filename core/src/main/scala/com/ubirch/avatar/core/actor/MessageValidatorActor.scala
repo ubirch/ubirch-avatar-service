@@ -28,12 +28,10 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
 
   override def receive: Receive = {
 
+
     case drd: DeviceDataRaw if drd.v == MessageVersion.v000 =>
-      //This seems to be the Trackle default message version
       val s = sender()
-
       log.debug(s"received message with version ${drd.v}")
-
       DeviceCoreUtil.validateSimpleMessage(hashedHwDeviceId = drd.a).map {
         case Some(dev) =>
           processorActor tell((drd, dev), sender = s)
@@ -59,8 +57,6 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
   private def logAndCreateErrorResponse(msg: String, errType: String, deviceId: Option[String], hashedHwDeviceId: Option[String]): JsonErrorResponse = {
     log.error(msg)
     val jer = JsonErrorResponse(errorType = errType, errorMessage = msg)
-    //    if (deviceId.isDefined)
-    //      outboxManagerActor ! MessageReceiver(deviceId.get, jer.toJsonString, ConfigKeys.DEVICEOUTBOX)
     jer
   }
 

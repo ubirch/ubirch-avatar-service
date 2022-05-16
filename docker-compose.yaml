@@ -1,36 +1,60 @@
-version: '2'
+version: '3.3'
 services:
-  elasticsearch:
-    image: elasticsearch:2.4.2
+  mongo-avatar-test:
+    image: mongo:4.2.18
+    container_name: mongo-avatar-test
     ports:
-    - "9200:9200"
-    - "9300:9300"
+      - 27017:27017
+    logging:
+      driver: none
+  elasticsearch-avatar-test:
+    container_name: elasticsearch-avatar-test
+    image: elastic/elasticsearch:7.15.0
+    ports:
+      - 9200:9200
+      - 9300:9300
     environment:
-    - CLUSTER_NAME=ubirch-es
-  kibana:
-    image: kibana:4
-    ports:
-      - "5601:5601"
-    links:
-      - elasticsearch
+      - "cluster.name=elasticsearch"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
+    logging:
+      driver: none
+
+  avatar-test:
+    container_name: avatar-test
+    user: $USER_ID:$GID
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - elasticsearch-avatar-test
+    volumes:
+      - .:/home/sbt-user/build
+      - /home/go/.sbt-with-cr/:/home/sbt-user/.sbt:rw
+      - /home/go/sbt-repo:/home/sbt-user/sbt-repo
+    command: >
+      /bin/bash -c " \
+        echo $HOME && \
+        cd /home/sbt-user/build && \
+        env && \
+        mvn -q clean test scoverage:report -B -s /home/sbt-user/.m2/settings.xml"
+    environment:
+      - ES_HOST=elasticsearch-trackle-test
+      - MONGO_HOST=mongo-trackle-test
+      - sun.net.maxDatagramSockets=1024
+      - MAVEN_OPTS=-Dmaven.repo.local=/home/mvn-user/maven-repo
+      - JAVA_OPTS="-XX:MaxMetaspaceSize=512m"
+      - MAVEN_OPTS=-Dsettings.security=/home/mvn-user/.m2/settings-security.xml
   avatar:
     image: ubirch-avatar-service:latest
     ports:
-     - "8080:8080"
+      - "8080:8080"
     links:
-     - elasticsearch
+      - elasticsearch
     environment:
-     - AWS_ACCESS_KEY_ID
-     - AWS_SECRET_ACCESS_KEY
-     - ES_HOST=elasticsearch
-     - ES_PORT_HTTP=9200
-     - ES_PORT_TCP=9300
-     - SQS_UBIRCH_TRANSFORMER_INBOX=2017-02-23-test1-inbox
-     - SQS_UBIRCH_TRANSFORMER_OUTBOX=2017-02-23-test1-outbox
-     - CLUSTER_NAME=ubirch-es
-     - UBIRCH_NOTARYSERVICE_URL=localhost
-     - MQTT_URL
+      - ES_HOST=elasticsearch
+      - ES_PORT_HTTP=9200
+      - ES_PORT_TCP=9300
      - ENVID=testing
-     - MQTT_PASSWORD
-     - MQTT_USER
      - DEBUG=true

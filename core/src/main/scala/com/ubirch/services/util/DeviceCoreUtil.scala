@@ -4,8 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.util.crypto.ecc.EccUtil
-import com.ubirch.util.crypto.hash.HashUtil
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.json.MyJsonProtocol
 import org.json4s._
 import org.json4s.native.Serialization._
 
@@ -19,16 +18,6 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
 
   private val eccUtil = new EccUtil()
 
-  /**
-    * @deprecated this code is legacy and will be deleted asap
-    */
-  def createSimpleSignature(payload: JValue, hwDeviceId: String): String = {
-
-    val payloadString = Json4sUtil.jvalue2String(payload)
-    val concatenated = s"$hwDeviceId$payloadString"
-
-    HashUtil.sha512Base64(concatenated)
-  }
 
   def validateSimpleMessage(hashedHwDeviceId: String): Future[Option[Device]] = {
     logger.info(s"validateSimpleMessage: device id=$hashedHwDeviceId")

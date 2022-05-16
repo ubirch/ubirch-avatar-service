@@ -10,7 +10,7 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceInfo, DeviceUserClaim, DeviceUserClaimRequest}
+import com.ubirch.avatar.model.rest.device.{DeviceUserClaim, DeviceUserClaimRequest}
 import com.ubirch.util.json.JsonFormats
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -24,13 +24,6 @@ import scala.util.Try
 /**
   * Created by derMicha on 30/10/16.
   */
-case class CreateResult(error: Option[JsonErrorResponse] = None,
-                        device: Option[Device] = None
-                       )
-
-case class AllDevicesResult(devices: Seq[Device])
-
-case class AllStubsResult(stubs: Seq[DeviceInfo])
 
 private class DeviceApiActor(implicit mongo: MongoUtil,
                              httpClient: HttpExt,
