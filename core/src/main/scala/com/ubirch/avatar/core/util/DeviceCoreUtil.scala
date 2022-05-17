@@ -1,4 +1,4 @@
-package com.ubirch.services.util
+package com.ubirch.avatar.core.util
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.device.DeviceManager

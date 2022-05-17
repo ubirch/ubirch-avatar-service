@@ -1,10 +1,10 @@
 package com.ubirch.avatar.util.model
 
 import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.core.util.DeviceCoreUtil
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.server.util.ServerKeys
-import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
 import org.json4s.native.Serialization.read

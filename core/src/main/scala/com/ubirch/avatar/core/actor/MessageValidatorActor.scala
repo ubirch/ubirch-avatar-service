@@ -5,10 +5,10 @@ import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
 import com.ubirch.avatar.config.Config
+import com.ubirch.avatar.core.util.DeviceCoreUtil
 import com.ubirch.avatar.model.rest.MessageVersion
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.avatar.util.actor.ActorNames
-import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
 
@@ -33,8 +33,8 @@ class MessageValidatorActor(implicit mongo: MongoUtil, httpClient: HttpExt, mate
       val s = sender()
       log.debug(s"received message with version ${drd.v}")
       DeviceCoreUtil.validateSimpleMessage(hashedHwDeviceId = drd.a).map {
-        case Some(dev) =>
-          processorActor tell((drd, dev), sender = s)
+        case Some(device) =>
+          processorActor tell((drd, device), sender = s)
         case None =>
           s ! logAndCreateErrorResponse(errType = "ValidationError", msg = s"invalid hwDeviceId: ${drd.a}", deviceId = None, hashedHwDeviceId = Some(drd.a))
       }.recover {

@@ -252,14 +252,16 @@ val akkaHttpV = "10.2.7"
 val akkaStreamKafkaV = "3.0.0"
 val akkaStreamTestkitV = "3.0.0"
 val json4sV = "4.0.5"
-val catsV = "2.0.0"
+val catsV = "2.7.0"
 val scalaTestV = "3.2.12"
 val logbackV = "1.2.11"
 val logstashEncV = "7.1.1"
+val prometheusV = "0.15.0"
 val slf4jV = "1.7.36"
 val log4jV = "2.17.2"
 val scalaLogV = "3.9.4"
 val scalaLogSLF4JV = "2.1.2"
+
 
 // GROUP NAMES
 val akkaG = "com.typesafe.akka"
@@ -323,11 +325,12 @@ val excludedLoggers = Seq(
 )
 
 
+
 val prometheus = Seq(
-  "io.prometheus" % "simpleclient" % "0.14.1",
-  "io.prometheus" % "simpleclient_hotspot" % "0.14.1",
-  "io.prometheus" % "simpleclient_httpserver" % "0.14.1",
-  "io.prometheus" % "simpleclient_pushgateway" % "0.14.1",
+  "io.prometheus" % "simpleclient" % prometheusV,
+  "io.prometheus" % "simpleclient_hotspot" % prometheusV,
+  "io.prometheus" % "simpleclient_httpserver" % prometheusV,
+  "io.prometheus" % "simpleclient_pushgateway" % prometheusV,
   "org.aspectj" % "aspectjweaver" % "1.9.9.1"
 )
 
