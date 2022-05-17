@@ -247,6 +247,7 @@ lazy val depTestBase = Seq(
  ********************************************************/
 
 // VERSIONS
+
 val akkaV = "2.6.18"
 val akkaHttpV = "10.2.7"
 val akkaStreamKafkaV = "3.0.0"

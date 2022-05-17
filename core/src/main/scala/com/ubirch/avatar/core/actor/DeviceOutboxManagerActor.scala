@@ -37,16 +37,7 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
     case (device: Device, drd: DeviceDataRaw) =>
       val s = sender()
-      val drdExt = if (drd.mppay.isDefined && drd.mppay.get.length > 50000) {
-        log.error(s"ddr.mppay length was greater than 50000; this should never happen $drd")
-        drd.copy(
-          deviceId = Some(device.deviceId),
-          mppay = None,
-          mpraw = None
-        )
-      }
-      else
-        drd.copy(deviceId = Some(device.deviceId))
+      val drdExt = drd.copy(deviceId = Some(device.deviceId))
 
       Json4sUtil.any2String(drdExt) match {
         case Some(drdStr) =>

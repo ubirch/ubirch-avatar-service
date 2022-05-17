@@ -168,6 +168,41 @@ object Config extends ConfigBase {
   def serverPrivateKey: String = config.getString(ConfigKeys.SIGNING_PRIVATE_KEY)
 
 
+  /*
+  * Kafka
+   */
+  lazy val isSecureKafkaConnection: Boolean = config.getBoolean(ConfigKeys.KAFKA_IS_SECURE_CONNECTION)
+
+  def kafkaBoostrapServer: String = if (isSecureKafkaConnection) {
+    config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVERS_SSL)
+  } else {
+    config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
+  }
+
+  def kafkaConBootstrapServers: String = if (isSecureKafkaConnection) {
+      config.getString(ConfigKeys.KAFKA_CON_BOOTSTRAP_SERVERS_SSL)
+    } else {
+      config.getString(ConfigKeys.KAFKA_CONS_BOOTSTRAP_SERVER)
+    }
+
+  def kafkaConSecureConnectionProperties: Map[String, String] = Map(
+    "security.protocol" -> "SSL",
+    "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_LOCATION),
+    "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_CON_TRUSTSTORE_PASS),
+    "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_LOCATION),
+    "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_CON_KEYSTORE_PASS)
+  )
+
+  def kafkaProdSecureConnectionProperties: Map[String, String] = Map(
+    "security.protocol" -> "SSL",
+    "ssl.truststore.location" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_LOCATION),
+    "ssl.truststore.password" -> config.getString(ConfigKeys.KAFKA_PROD_TRUSTSTORE_PASS),
+    "ssl.keystore.location" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_LOCATION),
+    "ssl.keystore.password" -> config.getString(ConfigKeys.KAFKA_PROD_KEYSTORE_PASS)
+  )
+
+  def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
+
   def userToken: Option[String] = {
     val key = s"ubirchAvatarService.client.rest.userToken"
 
@@ -178,17 +213,6 @@ object Config extends ConfigBase {
       None
     }
   }
-
-
-  /*
-  * Kafka
-   */
-  def kafkaBoostrapServer: String = config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
-
-  def kafkaTrackelMsgpackTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_MSGPACK_TOPIC)
-
-
-  def kafkaConBootstrapServers: String = config.getString(ConfigKeys.KAFKA_CONS_BOOTSTRAP_SERVER)
 
   def kafkaEndOfLifeTopic: String = config.getString(ConfigKeys.KAFKA_TRACKLE_END_OF_LIFE_TOPIC)
 
