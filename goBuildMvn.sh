@@ -13,7 +13,7 @@ if [ "$EXECUTE_TESTS" = true ]; then
   export USER_NAME=$(whoami) #UID is a readonly variable
   export DOCKER_GROUP=$(cut -d: -f3 < <(getent group docker))
   echo 'Tests are going to be executed! Set EXECUTE_TESTS to false, if no test execution is required.'
-  docker-compose up --exit-code-from mvn-test --force-recreate
+  docker-compose up --exit-code-from avatar-test --force-recreate
   if [ $? -ne 0 ]; then
     echo "Test execution failed"
     exit 1
