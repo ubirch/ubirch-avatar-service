@@ -10,7 +10,7 @@ import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.prometheus.ReqMetrics
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.msgpack.UbMsgPacker
+import com.ubirch.avatar.core.msgpack.MsgPackPacker
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
@@ -45,7 +45,7 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
   val route: Route = {
 
     path(update / mpack) {
-      parameters('js ? false) { js: Boolean =>
+      parameters(Symbol("js") ? false) { js: Boolean =>
         pathEnd {
           reqMetrics.start
           post {
@@ -60,9 +60,13 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
                       if (js)
                         complete(StatusCodes.Accepted -> Json4sUtil.any2String(dsu))
                       else {
-                        val ubPack = UbMsgPacker.packUbProt(dsu)
-                        logger.debug(s"returning Accepted for POST update/mpack (hex) : ${Hex.encodeHexString(ubPack)}")
-                        complete(StatusCodes.Accepted -> ubPack)
+                        MsgPackPacker.packUbProt(dsu) match {
+                          case Right(ubPack) =>
+                            logger.debug(s"returning Accepted for POST update/mpack (hex) : ${Hex.encodeHexString(ubPack)}")
+                            complete(StatusCodes.Accepted -> ubPack)
+                          case Left(_) =>
+                            complete(StatusCodes.InternalServerError -> "something went wrong when processing response")
+                        }
                       }
                     case jr: JsonResponse =>
                       reqMetrics.incError()

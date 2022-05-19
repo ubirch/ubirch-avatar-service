@@ -1,14 +1,12 @@
 package com.ubirch.avatar.core.actor
 
 import akka.actor.{Actor, ActorLogging, Props, Terminated}
-import akka.camel.CamelMessage
 import akka.util.Timeout
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.kafka.KafkaProducer
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.model.rest.device.DeviceDataRaw
 import com.ubirch.util.json.Json4sUtil
-import org.apache.camel.Message
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
@@ -62,10 +60,6 @@ class DeviceOutboxManagerActor extends Actor with ActorLogging {
 
   override def unhandled(message: Any): Unit = {
     message match {
-      case _: Message =>
-      //log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
-      case _: CamelMessage =>
-      //log.error(s"received unknown message body: ${message.asInstanceOf[Message].getBody.toString}")
       case _ => log.error(s"${message.getClass.toString}")
     }
   }

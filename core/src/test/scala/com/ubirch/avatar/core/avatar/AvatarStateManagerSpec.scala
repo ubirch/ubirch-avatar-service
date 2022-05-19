@@ -20,14 +20,14 @@ class AvatarStateManagerSpec extends MongoSpec {
 
   private val collection = Config.mongoCollectionAvatarState
 
-  feature("byDeviceId()") {
+  Feature("byDeviceId()") {
 
-    scenario("deviceId does not exist") {
+    Scenario("deviceId does not exist") {
       AvatarStateManager.byDeviceId(UUIDUtil.uuidStr) map (_ should be(None))
       mongoTestUtils.countAll(collection) map (_ shouldBe 0)
     }
 
-    scenario("deviceId exists") {
+    Scenario("deviceId exists") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -50,9 +50,9 @@ class AvatarStateManagerSpec extends MongoSpec {
 
   }
 
-  feature("create") {
+  Feature("create") {
 
-    scenario("create is successful") {
+    Scenario("create is successful") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -70,7 +70,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
     }
 
-    scenario("record with same deviceId exists -> create fails") {
+    Scenario("record with same deviceId exists -> create fails") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -95,9 +95,9 @@ class AvatarStateManagerSpec extends MongoSpec {
 
   }
 
-  feature("update()") {
+  Feature("update()") {
 
-    scenario("record does not -> update fails") {
+    Scenario("record does not -> update fails") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -114,7 +114,7 @@ class AvatarStateManagerSpec extends MongoSpec {
       }
     }
 
-    scenario("record exists -> update succeeds") {
+    Scenario("record exists -> update succeeds") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -138,9 +138,9 @@ class AvatarStateManagerSpec extends MongoSpec {
 
   }
 
-  feature("upsert()") {
+  Feature("upsert()") {
 
-    scenario("record does not exist -> upsert succeeds") {
+    Scenario("record does not exist -> upsert succeeds") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -158,7 +158,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
     }
 
-    scenario("record exists -> upsert succeeds") {
+    Scenario("record exists -> upsert succeeds") {
 
       // prepare
       val device = DummyDevices.minimalDevice()
@@ -185,9 +185,9 @@ class AvatarStateManagerSpec extends MongoSpec {
 
   }
 
-  feature("setReported()") {
+  Feature("setReported()") {
 
-    scenario("no AvatarState exists --> creates a new one") {
+    Scenario("no AvatarState exists --> creates a new one") {
 
       // prepare
       val deviceConfigString = """{"i":600}"""
@@ -213,7 +213,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
     }
 
-    scenario("AvatarState exists (reported and desired not empty) --> update existing one") {
+    Scenario("AvatarState exists (reported and desired not empty) --> update existing one") {
 
       // prepare
       val deviceConfigString = """{"i":600}"""
@@ -259,9 +259,9 @@ class AvatarStateManagerSpec extends MongoSpec {
 
   }
 
-  feature("setDesired()") {
+  Feature("setDesired()") {
 
-    scenario("no AvatarState exists --> creates a new one") {
+    Scenario("no AvatarState exists --> creates a new one") {
 
       // prepare
       val deviceConfigString =
@@ -288,7 +288,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
     }
 
-    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field and adds a new one) --> update existing one") {
+    Scenario("AvatarState exists (reported and desired not empty; desired updates an existing field and adds a new one) --> update existing one") {
 
       // prepare
       val deviceConfigString =
@@ -334,7 +334,7 @@ class AvatarStateManagerSpec extends MongoSpec {
 
     }
 
-    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field but doesn't remove an existing one) --> update existing one") {
+    Scenario("AvatarState exists (reported and desired not empty; desired updates an existing field but doesn't remove an existing one) --> update existing one") {
 
       // prepare
       val deviceConfigString =

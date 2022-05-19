@@ -1,8 +1,9 @@
 package com.ubirch.avatar.test.base
 
 import com.ubirch.avatar.storage.ESStorageCleanup
-
-import org.scalatest.{AsyncFeatureSpec, BeforeAndAfterAll, BeforeAndAfterEach, Matchers}
+import org.scalatest.featurespec.AsyncFeatureSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 /**
   * author: cvandrei

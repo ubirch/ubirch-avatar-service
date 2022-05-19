@@ -17,9 +17,9 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
-  feature("create()") {
+  Feature("create()") {
 
-    scenario("index does not exist; empty database --> succeed to create device") {
+    Scenario("index does not exist; empty database --> succeed to create device") {
 
       // prepare
       deleteIndices()
@@ -39,7 +39,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
       }
     }
 
-    scenario("index exists; hwDeviceId (lower case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
+    Scenario("index exists; hwDeviceId (lower case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
 
       // prepare
       val hwDeviceId = UUIDUtil.uuidStr.toLowerCase
@@ -63,7 +63,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; hwDeviceId (upper case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
+    Scenario("index exists; hwDeviceId (upper case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
 
       // prepare
       val hwDeviceId = UUIDUtil.uuidStr.toUpperCase
@@ -87,7 +87,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; hwDeviceId exists --> fails to create device") {
+    Scenario("index exists; hwDeviceId exists --> fails to create device") {
 
       // prepare
       val device = DummyDevices.device()
@@ -111,7 +111,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; deviceId exists --> fails to create device") {
+    Scenario("index exists; deviceId exists --> fails to create device") {
 
       // prepare
       val device = DummyDevices.device()
@@ -137,30 +137,30 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
   }
 
-  feature("update()") {
+  Feature("update()") {
 
-    scenario("index does not exist; empty database --> update fails") {
+    Scenario("index does not exist; empty database --> update fails") {
 
       // prepare
       deleteIndices()
       val device = DummyDevices.device()
 
       // test && verify
-      DeviceManager.update(device) map(_ should be(None))
+      DeviceManager.update(device) map (_ should be(None))
 
     }
 
-    scenario("index exists; empty database --> update fails") {
+    Scenario("index exists; empty database --> update fails") {
 
       // prepare
       val device = DummyDevices.device()
 
       // test && verify
-      DeviceManager.update(device) map(_ should be(None))
+      DeviceManager.update(device) map (_ should be(None))
 
     }
 
-    scenario("index exists; device exists; no changes --> update succeeds") {
+    Scenario("index exists; device exists; no changes --> update succeeds") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
@@ -183,7 +183,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; changing the deviceId --> update fails") {
+    Scenario("index exists; device exists; changing the deviceId --> update fails") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
@@ -201,7 +201,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; update to a new hwDeviceId (lower case)--> update fails") {
+    Scenario("index exists; device exists; update to a new hwDeviceId (lower case)--> update fails") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
@@ -219,7 +219,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; update to a new hwDeviceId (upper case)--> update fails") {
+    Scenario("index exists; device exists; update to a new hwDeviceId (upper case)--> update fails") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
@@ -237,7 +237,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; update to same hwDeviceId (upper case)--> update fails") {
+    Scenario("index exists; device exists; update to same hwDeviceId (upper case)--> update fails") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
@@ -252,12 +252,12 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
           DeviceManager.update(toUpdate) map { updatedOpt =>
 
             // verify
-            updatedOpt should be('isDefined)
+            updatedOpt.isDefined shouldBe true
             val updated = updatedOpt.get
             updated should be(device.copy(updated = updated.updated))
 
             if (device.updated.isEmpty) {
-              updated.updated should be('isDefined)
+              updated.updated.isDefined shouldBe true
             } else {
               updated.updated.get.isAfter(device.updated.get) should be(true)
             }
@@ -268,7 +268,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; changing the hashedHwDeviceId--> update fails") {
+    Scenario("index exists; device exists; changing the hashedHwDeviceId--> update fails") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
@@ -287,7 +287,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; changing created--> update fails") {
+    Scenario("index exists; device exists; changing created--> update fails") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
@@ -305,7 +305,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; changing owners--> update succeeds") {
+    Scenario("index exists; device exists; changing owners--> update succeeds") {
 
       // prepare
       DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {

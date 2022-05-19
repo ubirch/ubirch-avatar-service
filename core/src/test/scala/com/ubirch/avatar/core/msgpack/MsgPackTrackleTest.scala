@@ -1,20 +1,26 @@
 package com.ubirch.avatar.core.msgpack
 
-import java.io.ByteArrayInputStream
-import java.util.UUID
-
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.core.msgpack.MsgPackPacker.{InvalidDataException, processUbirchProt}
+import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
+import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.protocol.codec.MsgPackProtocolDecoder
+import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 import org.apache.commons.codec.binary.Hex
-import org.msgpack.`type`.ValueType
-import org.msgpack.{MessageTypeException, ScalaMessagePack}
-import org.scalatest.{FeatureSpec, Matchers}
+import org.json4s.native.JsonParser
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
+
+import java.util.{Base64, UUID}
+
 
 case class A(ar: List[B])
 
 case class B(t: Int)
 
-class MsgPackTrackleTest extends FeatureSpec
+class MsgPackTrackleTest extends AnyFeatureSpec
   with Matchers
   with StrictLogging
   with MyJsonProtocol {
@@ -37,53 +43,110 @@ class MsgPackTrackleTest extends FeatureSpec
 
   val signature = "6u8XJkmJYMtFuwc4jx2ygWeTCu8I64BPhw3OIO+3FLeALsULz/O+qOsktoPDCU9HgfMsUS+xu+tiYXf7oD4dDw=="
 
-  feature("MsgPack") {
+  Feature("MsgPack unpack") {
 
-    val p = A(
-      ar = List[B](
-        B(3),
-        B(5),
-        B(7)
+    Scenario("general test") {
+      val p = A(
+        ar = List[B](
+          B(3),
+          B(5),
+          B(7)
+        )
       )
-    )
+      val jval = Json4sUtil.any2jvalue(p)
+      jval.isDefined shouldBe true
+    }
 
-    val jval = Json4sUtil.any2jvalue(p)
+    Scenario("unpack valid trackle data") {
+      val ddr = processUbirchProt(validBinData)
+      ddr.a shouldBe DeviceUtil.hashHwDeviceId(uuid)
+      ddr.s.isDefined shouldBe true
+      ddr.s.get shouldBe signature
+    }
 
-    jval.isDefined shouldBe true
-  }
 
-  scenario("unpack valid data") {
+    Scenario("check temperature values") {
+      val ddr = processUbirchProt(validBinData)
+      ddr.a shouldBe DeviceUtil.hashHwDeviceId(uuid)
+      val temperatures = ddr.p
+      temperatures.children.size shouldBe 205
+      (0 to 3) map { i =>
+        (temperatures(i) \ "ts").extract[String] shouldBe tempVals(i)._1
+        (temperatures(i) \ "t").extract[Int] shouldBe tempVals(i)._2
+      }
+    }
 
-    val unpacker = ScalaMessagePack.messagePack.createUnpacker(new ByteArrayInputStream(validBinData))
+    Scenario("unpack invalid trackle data") {
+      assertThrows[InvalidDataException](processUbirchProt(invalidBinData))
+    }
 
-    unpacker.getNextType shouldBe ValueType.ARRAY
-  }
 
-  scenario("unpack valid trackle data") {
-    val m = UbMsgPacker.processUbirchprot(validBinData).headOption
-    m.isDefined shouldBe true
-    m.get.hwDeviceId shouldBe uuid
-    m.get.signature.isDefined shouldBe true
-    m.get.signature.get shouldBe signature
-  }
-
-  scenario("check temperature values") {
-    val m = UbMsgPacker.processUbirchprot(validBinData).headOption
-    m.isDefined shouldBe true
-    m.get.hwDeviceId shouldBe uuid
-
-    val temperatures = m.get.payloads.data
-    temperatures.children.size shouldBe 206
-
-    (0 to 3) map { i =>
-      (temperatures(i) \ "ts").extract[String] shouldBe tempVals(i)._1
-      (temperatures(i) \ "t").extract[Int] shouldBe tempVals(i)._2
+    Scenario("new method to unpack valid trackle data") {
+      val ddr = processUbirchProt(validBinData)
+      ddr.a shouldBe DeviceUtil.hashHwDeviceId(uuid)
+      ddr.s.isDefined shouldBe true
+      ddr.s.get shouldBe signature
     }
   }
 
-  scenario("unpack invalid trackle data") {
-    intercept[MessageTypeException](UbMsgPacker.processUbirchprot(invalidBinData).headOption)
+
+  Feature("Pack Ubirch protocol") {
+
+    Scenario("succeeds") {
+
+      val uuid = UUID.fromString("90e29939-7535-46d9-b4c3-a90dad4ce9a6")
+      val jsonString = """{"i":60000,"EOL":true,"il":1800000,"min":3500,"max":4200}""".stripMargin
+
+      val dsu =
+        DeviceStateUpdate(
+          k = ServerKeys.pubKeyB64,
+          s = "signedPayload",
+          p = JsonParser.parse(jsonString),
+          ds = Some("currentDeviceSignature"))
+
+      val responseNew = MsgPackPacker.packUbProt(dsu, uuid)
+      responseNew.isRight shouldBe true
+      val pm = MsgPackProtocolDecoder.getDecoder.decode(responseNew.toOption.get)
+      pm.getUUID shouldBe uuid
+      pm.getChain shouldBe Base64.getDecoder.decode(dsu.ds.get)
+      pm.getVersion shouldBe 19
+      new ObjectMapper().writeValueAsString(pm.getPayload) shouldBe jsonString
+      pm.getHint shouldBe 85
+    }
+
+    Scenario("fail when no prev signature provided") {
+
+      val uuid = UUID.fromString("90e29939-7535-46d9-b4c3-a90dad4ce9a6")
+      val jsonString = """{"i":60000,"EOL":true,"il":1800000,"min":3500,"max":4200}""".stripMargin
+
+      val dsu =
+        DeviceStateUpdate(
+          k = ServerKeys.pubKeyB64,
+          s = "signedPayload",
+          p = JsonParser.parse(jsonString),
+          ds = None)
+
+      MsgPackPacker.packUbProt(dsu, uuid).isLeft shouldBe true
+    }
+
+    Scenario("fail when config contains invalid value") {
+
+      val uuid = UUID.fromString("90e29939-7535-46d9-b4c3-a90dad4ce9a6")
+      val jsonString = """{"i":60000,"EOL":true,"il":"test","min":3500,"max":4200}""".stripMargin
+
+      val dsu =
+        DeviceStateUpdate(
+          k = ServerKeys.pubKeyB64,
+          s = "signedPayload",
+          p = JsonParser.parse(jsonString),
+          ds = Some("currentDeviceSignature"))
+
+      MsgPackPacker.packUbProt(dsu, uuid).isLeft shouldBe true
+
+    }
   }
+
+
 }
 
 
