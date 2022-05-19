@@ -15,9 +15,9 @@ RUN apk update && \
     tar xzf "scala-${SCALA_VERSION}.tgz" && \
     mkdir -p "${SCALA_HOME}" && \
     rm "/tmp/scala-${SCALA_VERSION}/bin/"*.bat && \
-    rsync -a "/tmp/scala-${SCALA_VERSION}/bin" "${SCALA_HOME}" && \
-    rsync -a "/tmp/scala-${SCALA_VERSION}/lib" "${SCALA_HOME}" && \
-    rm "/tmp/scala-${SCALA_VERSION}/bin" "/tmp/scala-${SCALA_VERSION}/lib" "${SCALA_HOME}" && \
+    rm -r "${SCALA_HOME}/bin" && \
+    rm -r "${SCALA_HOME}/lib" && \
+    mv "/tmp/scala-${SCALA_VERSION}/bin" "/tmp/scala-${SCALA_VERSION}/lib" "${SCALA_HOME}" && \
     ln -s "${SCALA_HOME}/bin/"* "/usr/bin/" && \
     apk del .build-dependencies && \
     rm -rf "/tmp/"*
