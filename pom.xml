@@ -155,8 +155,8 @@
 
     <build>
 
-        <sourceDirectory>${basedir}/src/main/scala</sourceDirectory>
-        <testSourceDirectory>${basedir}/src/test/scala</testSourceDirectory>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
 
         <plugins>
 
@@ -182,7 +182,6 @@
                                 <arg>-Ywarn-dead-code</arg>
                                 <arg>-Ywarn-unused</arg> <!-- might be buggy -->
                                 <arg>-Ylog-classpath</arg>
-                                <!--                                <arg>${project.build.directory}/.scala_dependencies</arg> &lt;!&ndash; really needed? &ndash;&gt;-->
                             </args>
                         </configuration>
                     </execution>
