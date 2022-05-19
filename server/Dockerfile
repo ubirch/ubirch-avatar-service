@@ -30,7 +30,6 @@ ENTRYPOINT [ \
    -Dconfig.resource=application.docker.conf \
    -Dlogback.configurationFile=logback.docker.xml \
    -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9020 \
-   -javaagent:/usr/share/service/lib/kanela-agent-1.0.14.jar \
    $EVTL_JAVA_OPTS -jar /usr/share/service/main.jar" \
 ]
 

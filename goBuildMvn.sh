@@ -20,7 +20,7 @@ if [ "$EXECUTE_TESTS" = true ]; then
   else
     echo "Successfully finished all tests."
   fi
-  container_id=$(docker-compose ps -q mvn-test)
+  container_id=$(docker-compose ps -q avatar-test)
   docker cp ${container_id}:/home/mvn-user/build/ target/
   docker-compose down # make sure containers are stopped
 fi
