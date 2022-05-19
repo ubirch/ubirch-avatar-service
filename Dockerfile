@@ -18,7 +18,7 @@ RUN apk update && \
     rm -r "${SCALA_HOME}/bin" && \
     rm -r "${SCALA_HOME}/lib" && \
     mv "/tmp/scala-${SCALA_VERSION}/bin" "/tmp/scala-${SCALA_VERSION}/lib" "${SCALA_HOME}" && \
-    ln -s "${SCALA_HOME}/bin/"* "/usr/bin/" && \
+    ln -sf "${SCALA_HOME}/bin/"* "/usr/bin/" && \
     apk del .build-dependencies && \
     rm -rf "/tmp/"*
 
