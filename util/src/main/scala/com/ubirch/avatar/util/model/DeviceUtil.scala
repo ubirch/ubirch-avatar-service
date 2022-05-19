@@ -27,7 +27,6 @@ object DeviceUtil {
   }
 
   /**
-    *
     * @param payload as JValue
     * @return signed payloaded
     */
@@ -48,11 +47,12 @@ object DeviceUtil {
       deviceConfig = Some(device.deviceConfig.getOrElse(
         DeviceTypeUtil.defaultConf
       )),
-      tags = if (device.tags.isEmpty) {
-        DeviceTypeUtil.defaultTags
-      } else {
-        device.tags
-      }
+      tags =
+        if (device.tags.isEmpty) {
+          DeviceTypeUtil.defaultTags
+        } else {
+          device.tags
+        }
     )
 
   }

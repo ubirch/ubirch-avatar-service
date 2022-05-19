@@ -18,7 +18,6 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
 
   private val eccUtil = new EccUtil()
 
-
   def validateSimpleMessage(hashedHwDeviceId: String): Future[Option[Device]] = {
     logger.info(s"validateSimpleMessage: device id=$hashedHwDeviceId")
     DeviceManager.infoByHashedHwId(hashedHwDeviceId).map {
@@ -31,23 +30,15 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
     }
   }
 
-  def validateSignedMessageWithKey(key: String,
-                                   signature: String,
-                                   payload: JValue): Future[Boolean] = {
+  def validateSignedMessageWithKey(key: String, signature: String, payload: JValue): Future[Boolean] = {
     val binPayload = write(payload).getBytes
 
-    validateSignedMessageWithKey(key = key,
-      signature = signature,
-      payload = binPayload
-    )
+    validateSignedMessageWithKey(key = key, signature = signature, payload = binPayload)
   }
 
-  def validateSignedMessageWithKey(key: String,
-                                   signature: String,
-                                   payload: Array[Byte]): Future[Boolean] = {
+  def validateSignedMessageWithKey(key: String, signature: String, payload: Array[Byte]): Future[Boolean] = {
 
     Future(eccUtil.validateSignature(publicKey = key, signature = signature, payload = payload))
   }
-
 
 }

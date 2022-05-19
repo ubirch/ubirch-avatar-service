@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+
+    </properties>
+
+
+    <!-- parent pom -->
+    <parent>
+        <groupId>com.ubirch.avatar</groupId>
+        <artifactId>ubirch-avatar-service</artifactId>
+        <version>0.6.6-SNAPSHOT</version>
+    </parent>
+
+    <!-- basic info -->
+    <artifactId>test-base</artifactId>
+    <name>${project.artifactId}</name>
+    <description>test base</description>
+    <packaging>jar</packaging>
+
+
+    <dependencies>
+
+        <!-- AVATAR -->
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>config</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>model-db</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>util</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>model-rest</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <!-- UBIRCH -->
+
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-mongo-utils_${scala.compat.version}</artifactId>
+            <version>${mongo-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-crypto-utils_${scala.compat.version}</artifactId>
+            <version>${crypto-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-rest-akka-http-utils_${scala.compat.version}</artifactId>
+            <version>${rest-akka-http-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-uuid-utils_${scala.compat.version}</artifactId>
+            <version>${uuid-utils.version}</version>
+        </dependency>
+
+        <!-- EXTERNAL -->
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-native_${scala.compat.version}</artifactId>
+            <version>${json4s.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logback-encoder.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.scala-logging</groupId>
+            <artifactId>scala-logging_${scala.compat.version}</artifactId>
+            <version>${scala-logging.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.compat.version}</artifactId>
+            <version>${scalatest.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

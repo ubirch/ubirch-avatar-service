@@ -1,6 +1,6 @@
 package com.ubirch.avatar.model.db.device
 
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 
 /**
   * author: cvandrei
@@ -13,10 +13,10 @@ import org.joda.time.{DateTime, DateTimeZone}
   * @param deviceLastUpdated      most recent update of _reported_
   * @param avatarLastUpdated      most recent update of _desired_
   */
-case class AvatarState(deviceId: String,
-                       desired: Option[String] = Some("{}"),
-                       reported: Option[String] = Some("{}"),
-                       currentDeviceSignature: Option[String] = None,
-                       deviceLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)),
-                       avatarLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC))
-                      )
+case class AvatarState(
+  deviceId: String,
+  desired: Option[String] = Some("{}"),
+  reported: Option[String] = Some("{}"),
+  currentDeviceSignature: Option[String] = None,
+  deviceLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)),
+  avatarLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)))

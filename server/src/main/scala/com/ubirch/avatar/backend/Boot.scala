@@ -25,10 +25,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-20
   */
-object Boot extends App
-  with ElasticsearchMappings
-  with MongoConstraints
-  with StrictLogging {
+object Boot extends App with ElasticsearchMappings with MongoConstraints with StrictLogging {
 
   implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -39,8 +36,7 @@ object Boot extends App
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
   try {
     prepareMongoConstraints()
-  }
-  catch {
+  } catch {
     case e: Exception =>
       logger.error("mongo startup bug", e)
   }
@@ -53,8 +49,7 @@ object Boot extends App
 
   try {
     createElasticsearchMappings()
-  }
-  catch {
+  } catch {
     case e: Exception =>
       logger.error("es startup bug", e)
   }

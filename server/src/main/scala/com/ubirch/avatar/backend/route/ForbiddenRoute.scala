@@ -13,9 +13,7 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-09-21
   */
-trait ForbiddenRoute extends ResponseUtil
-  with CORSDirective
-  with StrictLogging {
+trait ForbiddenRoute extends ResponseUtil with CORSDirective with StrictLogging {
 
   val route: Route = respondWithCORS {
     get {

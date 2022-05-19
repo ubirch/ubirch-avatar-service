@@ -4,10 +4,10 @@ import akka.actor.ActorSystem
 import akka.kafka.ProducerSettings
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
-import org.apache.kafka.clients.producer.{Callback, Producer, ProducerRecord, RecordMetadata}
+import org.apache.kafka.clients.producer.{ Callback, Producer, ProducerRecord, RecordMetadata }
 import org.apache.kafka.common.serialization.StringSerializer
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.{ ExecutionContext, Future, Promise }
 import scala.util.control.NonFatal
 
 class KafkaProducer(kafkaUrl: String, topic: String, actorSystem: ActorSystem) {
@@ -28,12 +28,15 @@ class KafkaProducer(kafkaUrl: String, topic: String, actorSystem: ActorSystem) {
     val record = new ProducerRecord[String, String](topic, message)
     val promise = Promise[RecordMetadata]()
     try {
-      producer.send(record, new Callback {
+      producer.send(
+        record,
+        new Callback {
           override def onCompletion(metadata: RecordMetadata, exception: Exception): Unit = {
-            if(exception == null) promise.success(metadata)
+            if (exception == null) promise.success(metadata)
             else promise.failure(exception)
           }
-        })
+        }
+      )
     } catch {
       case NonFatal(e) => promise.failure(e)
     }
@@ -47,17 +50,17 @@ class KafkaProducer(kafkaUrl: String, topic: String, actorSystem: ActorSystem) {
 
 object KafkaProducer extends StrictLogging {
   /**
-   * throw exception when the initialization is failed
-   */
+    * throw exception when the initialization is failed
+    */
   def create(kafkaUrl: String, topic: String, actorSystem: ActorSystem): KafkaProducer =
     try {
       logger.info(s"Trying to initialize kafka producer connection." +
         s"IsSecureConnection: ${Config.isSecureKafkaConnection} Kafka URL: $kafkaUrl")
       new KafkaProducer(kafkaUrl, topic, actorSystem)
-    }
-    catch { case ex: Exception =>
-      logger.error(s"Error occurred while initializing Kafka producer! ${ex.getMessage}")
-      throw ex
+    } catch {
+      case ex: Exception =>
+        logger.error(s"Error occurred while initializing Kafka producer! ${ex.getMessage}")
+        throw ex
     }
 
 }

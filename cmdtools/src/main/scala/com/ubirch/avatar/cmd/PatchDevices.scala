@@ -13,11 +13,12 @@ import com.ubirch.util.uuid.UUIDUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
-object PatchDevices extends App
-  with ElasticsearchMappings
-  with MongoConstraints
-  with MyJsonProtocol
-  with StrictLogging {
+object PatchDevices
+  extends App
+    with ElasticsearchMappings
+    with MongoConstraints
+    with MyJsonProtocol
+    with StrictLogging {
 
   implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -37,7 +38,6 @@ object PatchDevices extends App
     //    DeviceManager.all(adminGroup) map {
     DeviceManager.all() map {
       devices =>
-
         devices.foreach { device =>
           val patchedDev = device.copy(
             pubRawQueues = Some(

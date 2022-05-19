@@ -23,24 +23,24 @@ object AvatarStateManagerREST {
     // TODO automated tests
     AvatarStateManager.byDeviceId(deviceId) map {
 
-      case None => None
+      case None                                       => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
 
     }
 
   }
 
-  def setReported(restDevice: Device, reported: JValue, signature: Option[String] = None)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
+  def setReported(restDevice: Device, reported: JValue, signature: Option[String] = None)(implicit
+  mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
     AvatarStateManager.setReported(restDevice, reported, signature) map {
 
-      case None => None
+      case None                                       => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
 
     }
 
   }
-
 
   def toRestModel(dbAvatarState: db.device.AvatarState): rest.device.AvatarState = {
 
@@ -56,7 +56,8 @@ object AvatarStateManagerREST {
       avatarLastUpdated = dbAvatarState.avatarLastUpdated
     )
 
-    val diff = restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
+    val diff =
+      restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
     val delta: JValue = diff.changed merge diff.added match {
       case jn if jn.equals(JsonAST.JNothing) =>
         //TODO ugly way to create an empty Json object
@@ -71,7 +72,7 @@ object AvatarStateManagerREST {
   private def stringToJson(s: Option[String]): Option[JValue] = {
 
     s match {
-      case None => None
+      case None                     => None
       case Some(jsonString: String) => Some(parse(jsonString))
     }
 

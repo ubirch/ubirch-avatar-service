@@ -14,7 +14,6 @@ import org.joda.time.format.DateTimeFormat
   */
 object KeypairGen extends App with StrictLogging {
 
-
   private val eccUtil = new EccUtil()
   val envs = List(
     "master",
@@ -53,7 +52,6 @@ object KeypairGen extends App with StrictLogging {
     writeBinData(s"${basePath}/${nowStr}_${env}${prkBaseFilename}.b64", prvKey64.getBytes)
     writeBinData(s"${basePath}/${nowStr}_${env}${pbkBaseFilename}.b64", pubKey64.getBytes)
   }
-
 
   def writeBinData(filename: String, binData: Array[Byte]): Unit = {
     val fos: FileOutputStream = new FileOutputStream(new File(filename))

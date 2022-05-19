@@ -7,10 +7,10 @@ import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.elasticsearch.EsSimpleClient
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.json.{ Json4sUtil, MyJsonProtocol }
 import com.ubirch.util.mongo.connection.MongoUtil
-import org.elasticsearch.index.query.{QueryBuilder, QueryBuilders}
-import org.joda.time.{DateTime, DateTimeZone}
+import org.elasticsearch.index.query.{ QueryBuilder, QueryBuilders }
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.json4s.JValue
 
 import java.util.UUID
@@ -21,12 +21,11 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2016-09-23
   */
-object DeviceManager
-  extends MyJsonProtocol
-    with StrictLogging {
+object DeviceManager extends MyJsonProtocol with StrictLogging {
 
   private val esIndex = Config.esDeviceIndex
   private val esType = Config.esDeviceType
+
   /**
     * Select all devices in any of the given groups.
     *
@@ -80,7 +79,6 @@ object DeviceManager
     }
   }
 
-
   def all(): Future[Seq[Device]] = {
     // TODO automated tests
     EsSimpleClient.getDocs(
@@ -100,10 +98,7 @@ object DeviceManager
     }
   }
 
-
-
-  def create(device: db.device.Device,
-             waitingForRefresh: Boolean = false): Future[Option[db.device.Device]] = {
+  def create(device: db.device.Device, waitingForRefresh: Boolean = false): Future[Option[db.device.Device]] = {
 
     val deviceToStore = device.copy(hwDeviceId = device.hwDeviceId.toLowerCase)
 
@@ -144,7 +139,7 @@ object DeviceManager
       docId = device.deviceId
     ).map {
       case true => Some(device)
-      case _ => None
+      case _    => None
     }.recover {
       case ex =>
         logger.error(s"error deleting device $device", ex)
@@ -162,10 +157,9 @@ object DeviceManager
       docIndex = esIndex,
       query = Some(query)
     ).map { doc =>
-
       doc.headOption match {
         case Some(jval) => jval.extractOpt[Device]
-        case None => None
+        case None       => None
       }
     }.recover {
       case e =>
@@ -200,7 +194,6 @@ object DeviceManager
     }
   }
 
-
   // TODO automated tests
   def info(deviceId: UUID): Future[Option[Device]] = info(deviceId.toString)
 
@@ -216,7 +209,7 @@ object DeviceManager
         None
     }.map {
       case Some(jval) => jval.extractOpt[Device]
-      case None => None
+      case None       => None
     }
 
   }
@@ -227,8 +220,7 @@ object DeviceManager
     Some(QueryBuilders.boolQuery()
       .should(QueryBuilders.termsQuery("groups", groupsAsString: _*))
       .should(QueryBuilders.termsQuery("owners", userIdAsString: _*))
-      .minimumShouldMatch(1)
-    )
+      .minimumShouldMatch(1))
   }
 
   private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {
@@ -236,11 +228,11 @@ object DeviceManager
     Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
   }
 
-  private def createWithChecks(existingId: Option[Device],
-                               existingHwDeviceId: Option[Device],
-                               deviceToStore: Device,
-                               waitingForRefresh: Boolean = false
-                              ): Future[Option[Device]] = {
+  private def createWithChecks(
+    existingId: Option[Device],
+    existingHwDeviceId: Option[Device],
+    deviceToStore: Device,
+    waitingForRefresh: Boolean = false): Future[Option[Device]] = {
 
     if (existingId.isDefined) {
 
@@ -264,7 +256,7 @@ object DeviceManager
             doc = devJval,
             waitingForRefresh = waitingForRefresh
           ).map {
-            case true => devJval.extractOpt[Device]
+            case true  => devJval.extractOpt[Device]
             case false => None
           }.recover {
             case ex =>
@@ -279,10 +271,10 @@ object DeviceManager
 
   }
 
-  private def updateWithChecks(existingIdOpt: Option[Device],
-                               existingHardwareIdOpt: Option[Device],
-                               device: Device
-                              )(implicit mongo: MongoUtil): Future[Option[Device]] = {
+  private def updateWithChecks(
+    existingIdOpt: Option[Device],
+    existingHardwareIdOpt: Option[Device],
+    device: Device)(implicit mongo: MongoUtil): Future[Option[Device]] = {
 
     if (existingIdOpt.isEmpty) {
 
@@ -295,14 +287,14 @@ object DeviceManager
       Future(None)
 
     } else if (existingIdOpt.get.deviceId == existingHardwareIdOpt.get.deviceId &&
-      existingIdOpt.get.hwDeviceId == existingHardwareIdOpt.get.hwDeviceId
-    ) {
+      existingIdOpt.get.hwDeviceId == existingHardwareIdOpt.get.hwDeviceId) {
 
       if (existingIdOpt.get.hashedHwDeviceId != device.hashedHwDeviceId) {
         logger.error(s"someone tried to change the hashedHwDeviceId: deviceId=${device.deviceId}, hwDeviceId=${device.hashedHwDeviceId}")
         Future(None)
       } else if (existingIdOpt.get.created != device.created) {
-        logger.error(s"someone tried to change the created field: deviceId=${device.deviceId}, created=${device.hashedHwDeviceId}")
+        logger.error(
+          s"someone tried to change the created field: deviceId=${device.deviceId}, created=${device.hashedHwDeviceId}")
         Future(None)
       } else {
 
@@ -316,13 +308,12 @@ object DeviceManager
         Json4sUtil.any2jvalue(toUpdate) match {
 
           case Some(devJval) =>
-
             val dev = EsSimpleClient.storeDoc(
               docIndex = esIndex,
               docIdOpt = Some(toUpdate.deviceId),
               doc = devJval
             ).map {
-              case true => devJval.extractOpt[Device]
+              case true  => devJval.extractOpt[Device]
               case false => None
             }.recover {
               case ex =>
@@ -344,7 +335,8 @@ object DeviceManager
 
     } else {
 
-      logger.error(s"someone tried to change a device's (hardware) id to: deviceId=${device.deviceId}, hwDeviceId=${device.hwDeviceId}")
+      logger.error(
+        s"someone tried to change a device's (hardware) id to: deviceId=${device.deviceId}, hwDeviceId=${device.hwDeviceId}")
       Future(None)
 
     }
@@ -367,8 +359,7 @@ object DeviceManager
           else
             false
       }
-    }
-    else
+    } else
       false
   }
 }

@@ -70,11 +70,9 @@ object ConfigKeys {
   final val ES_DEVICE_STATE_INDEX = s"$esDeviceStatePrefix.index"
   final val ES_DEVICE_STATE_TYPE = s"$esDeviceStatePrefix.type"
 
-
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
   final val ES_LARGE_PAGE_SIZE = s"$esPrefix.largePageSize"
-
 
   // Global Message Queue Stuff
   final val INTERNOUTBOX = "intern-outbox"
@@ -87,7 +85,7 @@ object ConfigKeys {
 
   final val MONGO_PREFIX = s"$prefix.mongo"
 
-  private final val mongoCollection = s"$MONGO_PREFIX.collection"
+  final private val mongoCollection = s"$MONGO_PREFIX.collection"
 
   final val COLLECTION_AVATAR_STATE = s"$mongoCollection.avatarState"
 

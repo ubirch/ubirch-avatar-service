@@ -12,11 +12,12 @@ import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
-object PatchTrackleDevices extends App
-  with ElasticsearchMappings
-  with MongoConstraints
-  with MyJsonProtocol
-  with StrictLogging {
+object PatchTrackleDevices
+  extends App
+    with ElasticsearchMappings
+    with MongoConstraints
+    with MyJsonProtocol
+    with StrictLogging {
 
   implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()

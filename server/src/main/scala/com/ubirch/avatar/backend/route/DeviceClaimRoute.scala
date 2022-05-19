@@ -31,10 +31,7 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceClaimRoute(implicit mongo: MongoUtil,
-                       httpClient: HttpExt,
-                       materializer: Materializer,
-                       system: ActorSystem)
+class DeviceClaimRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends ResponseUtil
     with CORSDirective
     with StrictLogging {
@@ -60,7 +57,6 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
     }
   }
 
-
   private def claimDevice(token: Option[String], deviceClaim: DeviceClaim): Route = {
     token match {
 
@@ -72,10 +68,11 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
         val errorRsp = JsonErrorResponse(errorType = "01", errorMessage = "Authorization header value is wrong.")
         complete(requestErrorResponse(errorRsp, StatusCodes.Unauthorized))
 
-
       case Some(_) =>
         logger.info(s"PUT .../device/claim for $deviceClaim")
-        onComplete(deviceApiActor ? DeviceUserClaimRequest(hwDeviceId = deviceClaim.hwDeviceId, userId = deviceClaim.userId)) {
+        onComplete(deviceApiActor ? DeviceUserClaimRequest(
+          hwDeviceId = deviceClaim.hwDeviceId,
+          userId = deviceClaim.userId)) {
 
           case Success(resp) =>
             resp match {
@@ -84,12 +81,16 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
               case jre: JsonErrorResponse =>
                 complete(HttpStatus.SC_BAD_REQUEST -> jre)
               case _ =>
-                complete(HttpStatus.SC_INTERNAL_SERVER_ERROR -> requestErrorResponse(errorType = "DeviceClaimError", errorMessage = s"could not claim device ${deviceClaim.hwDeviceId} for user ${deviceClaim.userId}"))
+                complete(HttpStatus.SC_INTERNAL_SERVER_ERROR -> requestErrorResponse(
+                  errorType = "DeviceClaimError",
+                  errorMessage = s"could not claim device ${deviceClaim.hwDeviceId} for user ${deviceClaim.userId}"))
             }
 
           case Failure(t) =>
             logger.error("fetching device failed", t)
-            complete(HttpStatus.SC_INTERNAL_SERVER_ERROR -> serverErrorResponse(errorType = "DeviceClaimError", errorMessage = t.getMessage))
+            complete(HttpStatus.SC_INTERNAL_SERVER_ERROR -> serverErrorResponse(
+              errorType = "DeviceClaimError",
+              errorMessage = t.getMessage))
         }
     }
   }
@@ -98,6 +99,5 @@ class DeviceClaimRoute(implicit mongo: MongoUtil,
     authHeader.collect {
       case Authorization(OAuth2BearerToken(token)) => token
     }
-
 
 }

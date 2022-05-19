@@ -7,11 +7,7 @@ import com.ubirch.avatar.storage.{ESStorageCleanup, MongoStorageCleanup}
   * author: derMicha
   * since: 12/12/16
   */
-object ClearDb
-  extends App
-    with StrictLogging
-    with ESStorageCleanup
-    with MongoStorageCleanup {
+object ClearDb extends App with StrictLogging with ESStorageCleanup with MongoStorageCleanup {
 
   logger.info("reset avatar service db: Elasticsearch")
   cleanElasticsearch()

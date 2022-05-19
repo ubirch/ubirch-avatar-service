@@ -57,7 +57,6 @@ object Config extends ConfigBase {
 
   def prometheusEnabled: Boolean = config.getBoolean(ConfigKeys.PENABLED)
 
-
   /**
     * The interface the server runs on.
     *
@@ -151,8 +150,8 @@ object Config extends ConfigBase {
   def esDefaultPageSize: Int = config.getInt(ConfigKeys.ES_DEFAULT_PAGE_SIZE)
 
   /**
-   * @return ElasticSearch size of large pages in regards to pagination
-   */
+    * @return ElasticSearch size of large pages in regards to pagination
+    */
   def esLargePageSize: Int = config.getInt(ConfigKeys.ES_LARGE_PAGE_SIZE)
 
   /*
@@ -161,25 +160,25 @@ object Config extends ConfigBase {
 
   def mongoCollectionAvatarState: String = config.getString(ConfigKeys.COLLECTION_AVATAR_STATE)
 
-
   /*
-  * Server ECC signing private keys
+   * Server ECC signing private keys
    */
   def serverPrivateKey: String = config.getString(ConfigKeys.SIGNING_PRIVATE_KEY)
 
-
   /*
-  * Kafka
+   * Kafka
    */
   lazy val isSecureKafkaConnection: Boolean = config.getBoolean(ConfigKeys.KAFKA_IS_SECURE_CONNECTION)
 
-  def kafkaBoostrapServer: String = if (isSecureKafkaConnection) {
-    config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVERS_SSL)
-  } else {
-    config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
-  }
+  def kafkaBoostrapServer: String =
+    if (isSecureKafkaConnection) {
+      config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVERS_SSL)
+    } else {
+      config.getString(ConfigKeys.KAFKA_PROD_BOOTSTRAP_SERVER)
+    }
 
-  def kafkaConBootstrapServers: String = if (isSecureKafkaConnection) {
+  def kafkaConBootstrapServers: String =
+    if (isSecureKafkaConnection) {
       config.getString(ConfigKeys.KAFKA_CON_BOOTSTRAP_SERVERS_SSL)
     } else {
       config.getString(ConfigKeys.KAFKA_CONS_BOOTSTRAP_SERVER)
@@ -206,7 +205,6 @@ object Config extends ConfigBase {
   def userToken: Option[String] = {
     val key = s"ubirchAvatarService.client.rest.userToken"
 
-
     if (config.hasPath(key)) {
       Some(config.getString(key))
     } else {
@@ -231,6 +229,5 @@ object Config extends ConfigBase {
   def kafkaMaxCommit: Int = config.getInt(ConfigKeys.KAFKA_MAX_COMMIT)
 
   case class KafkaRetryConfig(minBackoff: Int, maxBackoff: Int, backoffFactor: Double, maxRetries: Int)
-
 
 }

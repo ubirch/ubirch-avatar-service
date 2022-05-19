@@ -7,7 +7,7 @@ import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 
 /**
   * author: cvandrei
@@ -32,14 +32,14 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to create device")
 
         case Some(created) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           created should be(expected)
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(None))
       }
     }
 
-    Scenario("index exists; hwDeviceId (lower case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
+    Scenario(
+      "index exists; hwDeviceId (lower case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
 
       // prepare
       val hwDeviceId = UUIDUtil.uuidStr.toLowerCase
@@ -52,7 +52,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to create device")
 
         case Some(created) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           created should be(expected)
 
@@ -63,7 +62,8 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    Scenario("index exists; hwDeviceId (upper case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
+    Scenario(
+      "index exists; hwDeviceId (upper case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
 
       // prepare
       val hwDeviceId = UUIDUtil.uuidStr.toUpperCase
@@ -76,7 +76,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to create device")
 
         case Some(created) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device).copy(hwDeviceId = hwDeviceId.toLowerCase)
           created should be(expected)
 
@@ -97,7 +96,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to create device during preparation")
 
         case Some(prepared) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           prepared should be(expected)
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
@@ -105,7 +103,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
           val deviceToCreate = device.copy(deviceId = UUIDUtil.uuidStr)
 
           // test && verify
-          DeviceManager.create(deviceToCreate) map(_ should be(None))
+          DeviceManager.create(deviceToCreate) map (_ should be(None))
 
       }
 
@@ -121,7 +119,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to create device during preparation")
 
         case Some(prepared) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           prepared should be(expected)
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
@@ -129,7 +126,7 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
           val deviceToCreate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toLowerCase)
 
           // test && verify
-          DeviceManager.create(deviceToCreate) map(_ should be(None))
+          DeviceManager.create(deviceToCreate) map (_ should be(None))
 
       }
 
@@ -168,10 +165,8 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           // test
           DeviceManager.update(device) flatMap { updated =>
-
             // verify
             Thread.sleep(2000)
             val expected = DeviceUtil.deviceWithDefaults(device)
@@ -191,7 +186,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           val toUpdate = device.copy(deviceId = UUIDUtil.uuidStr)
 
           // test && verify
@@ -209,7 +203,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           val toUpdate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toLowerCase)
 
           // test && verify
@@ -227,7 +220,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           val toUpdate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toUpperCase)
 
           // test && verify
@@ -245,12 +237,10 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           val toUpdate = device.copy(hwDeviceId = device.hwDeviceId.toUpperCase)
 
           // test
           DeviceManager.update(toUpdate) map { updatedOpt =>
-
             // verify
             updatedOpt.isDefined shouldBe true
             val updated = updatedOpt.get
@@ -276,7 +266,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           val newHashedHwId = HashUtil.sha512Base64(UUIDUtil.uuidStr.toLowerCase())
           val toUpdate = device.copy(hashedHwDeviceId = newHashedHwId)
 
@@ -295,7 +284,6 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           val toUpdate = device.copy(created = DateTime.now(DateTimeZone.UTC).plusYears(10))
 
           // test && verify
@@ -313,12 +301,10 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           val toUpdate = device.copy(owners = device.owners + UUIDUtil.uuid)
 
           // test && verify
           DeviceManager.update(toUpdate) flatMap { updated =>
-
             Thread.sleep(2000)
             val expected = DeviceUtil.deviceWithDefaults(toUpdate)
             updated should be(Some(expected))

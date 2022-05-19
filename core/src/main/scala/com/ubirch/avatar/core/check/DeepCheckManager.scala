@@ -21,8 +21,11 @@ object DeepCheckManager extends StrictLogging {
     *
     * @return deep check response with _status:OK_ if ok; otherwise with _status:NOK_
     */
-  def connectivityCheck()(implicit _system: ActorSystem, httpClient: HttpExt, materializer: Materializer, mongo: MongoUtil): Future[DeepCheckResponse] = {
-
+  def connectivityCheck()(
+    implicit _system: ActorSystem,
+    httpClient: HttpExt,
+    materializer: Materializer,
+    mongo: MongoUtil): Future[DeepCheckResponse] = {
 
     (for {
 

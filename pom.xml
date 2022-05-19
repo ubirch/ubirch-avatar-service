@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2018 ubirch GmbH
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- parent pom -->
+    <groupId>com.ubirch.avatar</groupId>
+    <artifactId>ubirch-avatar-service</artifactId>
+    <version>0.6.6-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <name>Ubirch Avatar Service [${project.version}]</name>
+    <url>https://ubirch.com/</url>
+
+    <scm>
+        <url>https://github.com/ubirch/ubirch-avatar-service</url>
+    </scm>
+
+    <organization>
+        <name>ubirch GmbH</name>
+        <url>https://ubirch.com/</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Michael Merz</name>
+            <email>michael.merz@ubirch.com</email>
+            <organization>ubirch GmbH</organization>
+            <organizationUrl>https://ubirch.com/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Matthias Jugel</name>
+            <email>matthias.jugel@ubirch.com</email>
+            <organization>ubirch GmbH</organization>
+            <organizationUrl>https://ubirch.com/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Lotta Rüger</name>
+            <email>lotta.rueger@ubirch.com</email>
+            <organization>ubirch GmbH</organization>
+            <organizationUrl>https://ubirch.com/</organizationUrl>
+        </developer>
+    </developers>
+
+    <!-- sub modules -->
+    <modules>
+        <module>cmdtools</module>
+        <module>config</module>
+        <module>core</module>
+        <module>model-db</module>
+        <module>model-rest</module>
+        <module>server</module>
+        <module>test-base</module>
+        <module>test-tools</module>
+        <module>util</module>
+    </modules>
+
+
+    <properties>
+
+        <!-- build version -->
+        <timestamp>${maven.build.timestamp}</timestamp>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <build.number>${timestamp}-dev</build.number>
+
+        <!-- general properties -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <encoding>UTF-8</encoding>
+
+        <!-- versions -->
+        <scala.major.version>2.13</scala.major.version>
+        <scala.version>2.13.8</scala.version>
+        <scala.compat.version>2.13</scala.compat.version>
+        <scalatest.version>3.2.12</scalatest.version>
+
+        <!-- avatar versions -->
+        <avatar-parent.version>${project.version}</avatar-parent.version>
+        <ubirch-avatar-client.version>0.7.0</ubirch-avatar-client.version>
+
+        <!-- ubirch versions -->
+        <config-utils.version>0.2.5</config-utils.version>
+        <crypto-utils.version>0.5.4</crypto-utils.version>
+        <deep-check-utils.version>0.4.2</deep-check-utils.version>
+        <elasticsearch-utils.version>0.2.9</elasticsearch-utils.version>
+        <json-utils.version>0.5.3</json-utils.version>
+        <mongo-utils.version>0.9.6</mongo-utils.version>
+        <response-utils.version>0.5.2</response-utils.version>
+        <rest-akka-http-utils.version>0.4.3</rest-akka-http-utils.version>
+        <ubirch-crypto.version>2.1.3-SNAPSHOT</ubirch-crypto.version>
+        <user-service-client.version>1.0.7</user-service-client.version>
+        <uuid-utils.version>0.1.5</uuid-utils.version>
+
+
+        <!-- external versions -->
+        <akka.version>2.6.18</akka.version>
+        <akka-http.version>10.2.7</akka-http.version>
+        <akka-stream-kafka.version>3.0.0</akka-stream-kafka.version>
+        <json4s.version>4.0.5</json4s.version>
+        <cats-core.version>2.7.0</cats-core.version>
+        <guava.version>26.0-jre</guava.version>
+        <prometheus.version>0.15.0</prometheus.version>
+        <aspectjweaver.version>1.9.9.1</aspectjweaver.version>
+        <joda-time.version>2.10.14</joda-time.version>
+        <joda-convert.version>2.2.2</joda-convert.version>
+
+        <!-- logging versions -->
+        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <log4j-core.version>2.17.2</log4j-core.version>
+        <logback-classic.version>1.2.11</logback-classic.version>
+        <logback-encoder.version>7.1.1</logback-encoder.version>
+        <scala-logging.version>3.9.4</scala-logging.version>
+
+
+        <!-- plugins -->
+        <maven-scalafmt.version>1.0.4</maven-scalafmt.version>
+        <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
+        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
+        <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <org.codehaus.mojo.exec-maven-plugin.version>3.0.0</org.codehaus.mojo.exec-maven-plugin.version>
+        <scala-maven-plugin.version>4.5.6</scala-maven-plugin.version>
+        <scalatest-maven-plugin.version>2.0.2</scalatest-maven-plugin.version>
+        <scoverage.plugin.version>1.3.0</scoverage.plugin.version>
+
+    </properties>
+
+
+    <build>
+
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
+
+        <plugins>
+
+            <plugin>
+                <!-- see http://davidb.github.com/scala-maven-plugin -->
+                <!-- for building scala with maven -->
+
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>${scala-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <!-- is explicitly shown by scalac compiler if set -->
+                            <!--https://www.threatstack.com/blog/useful-scalac-options-for-better-scala-development-part-1-->
+                            <args>
+                                <arg>-deprecation</arg>
+                                <arg>-unchecked</arg>
+                                <arg>-Ywarn-dead-code</arg>
+                                <arg>-Ywarn-unused</arg> <!-- might be buggy -->
+                                <arg>-Ylog-classpath</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- code formatting -->
+            <plugin>
+                <groupId>org.antipathy</groupId>
+                <!-- The scala binary here doesn't need to match the project version -->
+                <artifactId>mvn-scalafmt_${scala.compat.version}</artifactId>
+                <!-- This represents the desired version of the plugin, whould be in the form:
+                     (major).(minor).(commitepoch).(commithash), which can be found here:
+                     https://github.com/simonjpegg/mvn_scalafmt/releases
+                     e.g. <version>1.0.1589620826.41b214a</version>
+                     Note: The SCALA version is OMITTED from this value
+                -->
+                <version>${maven-scalafmt.version}</version>
+                <configuration>
+                    <configLocation>https://raw.githubusercontent.com/ubirch/ubirch-scalafmt-rules/main/.scalafmt.conf
+                    </configLocation> <!-- path to config -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.ubirch.avatar.backend.Boot</mainClass>
+                            <useUniqueVersions>false</useUniqueVersions>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!--  for mvn deploy to work, disable the default deploy plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.scoverage</groupId>
+                <artifactId>scoverage-maven-plugin</artifactId>
+                <version>${scoverage.plugin.version}</version>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                    <scalacPluginVersion>1.4.0</scalacPluginVersion>
+                    <aggregate>true</aggregate>
+                    <!-- other parameters -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>ossrh-release</id>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>ubirch.utils</id>
+            <url>https://ubirch.mycloudrepo.io/public/repositories/ubirch-utils-mvn</url>
+        </repository>
+        <repository>
+            <id>ubirch.mvn</id>
+            <url>https://ubirch.mycloudrepo.io/public/repositories/mvn-public</url>
+        </repository>
+        <repository>
+            <id>ubirch.trackle</id>
+            <url>https://ubirch.mycloudrepo.io/repositories/trackle-mvn</url>
+        </repository>
+        <repository>
+            <id>elasticsearch-releases</id>
+            <url>https://artifacts.elastic.co/maven</url>
+        </repository>
+        <repository>
+            <id>jcenter</id>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>ubirch.trackle</id>
+            <name>Ubirch Public Cloud Repo Repository</name>
+            <url>https://ubirch.mycloudrepo.io/repositories/trackle-mvn</url>
+        </repository>
+    </distributionManagement>
+
+</project>
+
+
