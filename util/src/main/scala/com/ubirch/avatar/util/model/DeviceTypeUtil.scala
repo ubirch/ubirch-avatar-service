@@ -1,7 +1,7 @@
 package com.ubirch.avatar.util.model
 
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.model.rest.device.{DeviceType, DeviceTypeDefaults, DeviceTypeName}
+import com.ubirch.avatar.model.rest.device.{ DeviceType, DeviceTypeDefaults, DeviceTypeName }
 import com.ubirch.util.json.Json4sUtil
 import org.json4s.JValue
 
@@ -12,7 +12,6 @@ import org.json4s.JValue
 object DeviceTypeUtil {
 
   val defaultKey = "defaultDeviceType"
-
 
   def defaultDeviceType(deviceType: String = defaultKey): DeviceType = {
     DeviceType(
@@ -32,7 +31,6 @@ object DeviceTypeUtil {
   val defaultTranslation: DeviceTypeName = DeviceTypeName("trackle", "trackle Sensor")
 
   val defaultIcon: String = "ion-radio-waves"
-
 
   val defaultProps: JValue = {
 

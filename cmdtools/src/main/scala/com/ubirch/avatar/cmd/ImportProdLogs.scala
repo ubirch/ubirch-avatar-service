@@ -19,9 +19,7 @@ import scala.concurrent.ExecutionContextExecutor
 import scala.io.Source
 import scala.util.{Failure, Success}
 
-object ImportProdLogs
-  extends App
-    with StrictLogging {
+object ImportProdLogs extends App with StrictLogging {
 
   val conf = ConfigFactory.load()
 
@@ -46,7 +44,8 @@ object ImportProdLogs
 
   val prodLogs = conf.getStringList("importProdLogs.prodLogs").asScala.toSet[String]
 
-  val defaultGroups = conf.getStringList("importProdLogs.devcieAdminGroup").asScala.toSet[String].map(us => UUIDUtil.fromString(us))
+  val defaultGroups =
+    conf.getStringList("importProdLogs.devcieAdminGroup").asScala.toSet[String].map(us => UUIDUtil.fromString(us))
 
   val deleteExistingDevices = conf.getBoolean("importProdLogs.deleteExistingDevices")
   val createMissingDevices = conf.getBoolean("importProdLogs.createMissingDevices")
@@ -79,15 +78,16 @@ object ImportProdLogs
         val sep = if (fn.endsWith(".tsv")) "\t" else ","
         val rowData = row.split(sep)
 
-        val hwDeviceId = if (rowData.size >= hwDeviceIdUUIDOffset + 1)
-          rowData(hwDeviceIdUUIDOffset).toLowerCase
-        else {
-          val rawHwDid = rowData(hwDeviceIdOffset).toLowerCase
-          if (rawHwDid.length == 32 && isValidHex(rawHwDid))
-            s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
-          else
-            rawHwDid
-        }
+        val hwDeviceId =
+          if (rowData.size >= hwDeviceIdUUIDOffset + 1)
+            rowData(hwDeviceIdUUIDOffset).toLowerCase
+          else {
+            val rawHwDid = rowData(hwDeviceIdOffset).toLowerCase
+            if (rawHwDid.length == 32 && isValidHex(rawHwDid))
+              s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
+            else
+              rawHwDid
+          }
 
         val di = DeviceInfo(
           deviceType = rowData(deviceTypeOffset),
@@ -99,7 +99,8 @@ object ImportProdLogs
           orderNr = rowData(orderNrOffset),
           tester = rowData(testerOffset)
         )
-        logger.info(s"deviceInfo: ${di.hwDeviceId} / type: ${di.deviceType} / exists: ${di.testResult} / testResult: ${rowData(testResultOffset)}")
+        logger.info(
+          s"deviceInfo: ${di.hwDeviceId} / type: ${di.deviceType} / exists: ${di.testResult} / testResult: ${rowData(testResultOffset)}")
         val dtype = Const.TRACKLESENSOR
         DeviceManager.infoByHwId(di.hwDeviceId).onComplete {
           case Success(devOpt) =>
@@ -167,8 +168,7 @@ object ImportProdLogs
                       logger.error(s"failed: ${t.getMessage}")
 
                   }
-                }
-                else
+                } else
                   logger.debug(s"device not created: ${di.hwDeviceId}")
             }
           case Failure(t) =>
@@ -176,12 +176,10 @@ object ImportProdLogs
         }
       }
     }
-  }
-  catch {
+  } catch {
     case e: Exception =>
       logger.error("something kapuuuth:", e)
   }
-
 
   private def shutdown(sleep: Int): Unit = {
     Thread.sleep(sleep)

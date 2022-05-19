@@ -16,11 +16,11 @@ import java.util.UUID
   */
 object DummyDevices {
 
-  def minimalDevice(deviceId: String = UUIDUtil.uuidStr,
-                    owners: Set[UUID] = Set.empty,
-                    groups: Set[UUID] = Set.empty,
-                    hwDeviceId: String = UUIDUtil.uuidStr
-                   ): Device = {
+  def minimalDevice(
+    deviceId: String = UUIDUtil.uuidStr,
+    owners: Set[UUID] = Set.empty,
+    groups: Set[UUID] = Set.empty,
+    hwDeviceId: String = UUIDUtil.uuidStr): Device = {
 
     Device(
       deviceId = deviceId,
@@ -32,14 +32,14 @@ object DummyDevices {
 
   }
 
-  def device(deviceId: String = UUIDUtil.uuidStr,
-             owners: Set[UUID] = Set(UUIDUtil.uuid),
-             groups: Set[UUID] = Set(UUIDUtil.uuid),
-             deviceName: String = "testHans001",
-             hwDeviceId: String = UUIDUtil.uuidStr,
-             deviceTypeKey: String = Const.TRACKLESENSOR,
-             deviceProperties: Option[JValue] = None
-            ): Device = {
+  def device(
+    deviceId: String = UUIDUtil.uuidStr,
+    owners: Set[UUID] = Set(UUIDUtil.uuid),
+    groups: Set[UUID] = Set(UUIDUtil.uuid),
+    deviceName: String = "testHans001",
+    hwDeviceId: String = UUIDUtil.uuidStr,
+    deviceTypeKey: String = Const.TRACKLESENSOR,
+    deviceProperties: Option[JValue] = None): Device = {
 
     Device(
       deviceId = deviceId,

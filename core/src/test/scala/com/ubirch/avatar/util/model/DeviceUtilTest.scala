@@ -18,10 +18,7 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 18/01/17.
   */
-class DeviceUtilTest extends AnyFeatureSpec
-  with Matchers
-  with StrictLogging
-  with MyJsonProtocol {
+class DeviceUtilTest extends AnyFeatureSpec with Matchers with StrictLogging with MyJsonProtocol {
 
   val device: Device = DummyDevices.device1
 

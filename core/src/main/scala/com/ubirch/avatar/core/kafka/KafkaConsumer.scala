@@ -1,17 +1,16 @@
 package com.ubirch.avatar.core.kafka
 
-
 import akka.Done
-import akka.actor.{ActorSystem, Scheduler}
+import akka.actor.{ ActorSystem, Scheduler }
 import akka.event.Logging
 import akka.event.slf4j.Logger
-import akka.kafka.ConsumerMessage.{CommittableMessage, CommittableOffsetBatch}
+import akka.kafka.ConsumerMessage.{ CommittableMessage, CommittableOffsetBatch }
 import akka.kafka.scaladsl.Consumer.DrainingControl
-import akka.kafka.scaladsl.{Committer, Consumer}
-import akka.kafka.{CommitterSettings, ConsumerSettings, Subscriptions}
+import akka.kafka.scaladsl.{ Committer, Consumer }
+import akka.kafka.{ CommitterSettings, ConsumerSettings, Subscriptions }
 import akka.pattern.after
-import akka.stream.scaladsl.{Keep, Source}
-import akka.stream.{ActorAttributes, Attributes, Materializer, Supervision}
+import akka.stream.scaladsl.{ Keep, Source }
+import akka.stream.{ ActorAttributes, Attributes, Materializer, Supervision }
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.config.Config.KafkaRetryConfig
 import com.ubirch.avatar.core.kafka.util.InvalidDataException
@@ -20,7 +19,7 @@ import org.apache.kafka.clients.consumer.CommitFailedException
 import org.apache.kafka.common.serialization.StringDeserializer
 
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 abstract class KafkaConsumer(topicNames: Set[String], groupName: String, actorSystem: ActorSystem)(
   implicit mat: Materializer)
@@ -29,7 +28,6 @@ abstract class KafkaConsumer(topicNames: Set[String], groupName: String, actorSy
   implicit val scheduler: Scheduler = actorSystem.scheduler
 
   private val logger = Logger.apply(this.getClass.getName)
-
 
   protected val consumerSettings: ConsumerSettings[String, String] =
     if (Config.isSecureKafkaConnection) {
@@ -63,11 +61,11 @@ abstract class KafkaConsumer(topicNames: Set[String], groupName: String, actorSy
     * When an unexpected exception occurs in this function, this process is proceeded again with exponential backoff up to maxRetries.
     */
   private[kafka] def retryHandler(
-                                   message: CommittableMessage[String, String],
-                                   maxRetries: Int,
-                                   backoffFactor: Double,
-                                   initialBackoff: Int,
-                                   maxBackoff: Int)(implicit ec: ExecutionContext, s: Scheduler): Future[Unit] = {
+    message: CommittableMessage[String, String],
+    maxRetries: Int,
+    backoffFactor: Double,
+    initialBackoff: Int,
+    maxBackoff: Int)(implicit ec: ExecutionContext, s: Scheduler): Future[Unit] = {
     val messageInfo =
       s"topic: ${message.record.topic}, group: $groupName, partition: ${message.committableOffset.partitionOffset.key}, offset: ${message.committableOffset.partitionOffset.offset}"
 
@@ -128,12 +126,12 @@ abstract class KafkaConsumer(topicNames: Set[String], groupName: String, actorSy
         ))
       .mapAsync(Config.kafkaSubscribeParallel) { msg =>
         val result =
-            retryHandler(
-              msg,
-              kafkaRetryConfig.maxRetries,
-              kafkaRetryConfig.backoffFactor,
-              kafkaRetryConfig.minBackoff,
-              kafkaRetryConfig.maxBackoff)
+          retryHandler(
+            msg,
+            kafkaRetryConfig.maxRetries,
+            kafkaRetryConfig.backoffFactor,
+            kafkaRetryConfig.minBackoff,
+            kafkaRetryConfig.maxBackoff)
         result.map { _ =>
           msg.committableOffset
         }

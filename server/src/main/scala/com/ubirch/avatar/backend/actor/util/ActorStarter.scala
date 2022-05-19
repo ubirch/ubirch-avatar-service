@@ -11,7 +11,10 @@ import com.ubirch.util.mongo.connection.MongoUtil
 
 object ActorStarter extends StrictLogging {
 
-  def init(system: ActorSystem)(implicit mongoUtil: MongoUtil, httpClient: HttpExt, materializer: Materializer): Unit = {
+  def init(system: ActorSystem)(
+    implicit mongoUtil: MongoUtil,
+    httpClient: HttpExt,
+    materializer: Materializer): Unit = {
 
     system.actorOf(
       DeviceApiActor.props,

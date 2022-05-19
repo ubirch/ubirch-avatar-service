@@ -25,15 +25,14 @@ import scala.util.Try
   * Created by derMicha on 30/10/16.
   */
 
-private class DeviceApiActor(implicit mongo: MongoUtil,
-                             httpClient: HttpExt,
-                             materializer: Materializer) extends Actor with StrictLogging {
+private class DeviceApiActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
+  extends Actor
+    with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
   implicit val formats: Formats = JsonFormats.default
 
   override def receive: Receive = {
-
 
     case duc: DeviceUserClaimRequest =>
       val s = sender
@@ -65,15 +64,17 @@ private class DeviceApiActor(implicit mongo: MongoUtil,
     Future.successful(dateOpt)
   }
 
-
   private def claimDevice(duc: DeviceUserClaimRequest): EitherT[Future, ClaimDeviceError, DeviceUserClaim] = {
 
     for {
-      device <- EitherT.fromOptionF(DeviceManager.infoByHwId(duc.hwDeviceId),
+      device <- EitherT.fromOptionF(
+        DeviceManager.infoByHwId(duc.hwDeviceId),
         ClaimDeviceError(s"device wasn't found by hwDevice ${duc.hwDeviceId}"))
-      parsedProductionDate <- EitherT.fromOptionF(parseProductionDate(device),
+      parsedProductionDate <- EitherT.fromOptionF(
+        parseProductionDate(device),
         ClaimDeviceError(s"couldn't parse field deviceProperties.testTimestamp to valid production date"))
-      _ <- EitherT.fromOptionF(updateOwner(duc, device),
+      _ <- EitherT.fromOptionF(
+        updateOwner(duc, device),
         ClaimDeviceError(s"device ${duc.hwDeviceId} already claimed by ${device.owners} user(s)"))
     } yield {
       DeviceUserClaim(
@@ -96,23 +97,18 @@ private class DeviceApiActor(implicit mongo: MongoUtil,
     } else Future.successful(None)
   }
 
-
   override def unhandled(message: Any): Unit = {
     context.sender ! JsonErrorResponse(
       errorType = "InternalError",
       errorMessage = s"received unknown message: ${message.toString}")
   }
 
-
 }
 
 object DeviceApiActor {
-  def props()(implicit mongo: MongoUtil,
-              httpClient: HttpExt,
-              materializer: Materializer): Props = new RoundRobinPool(
+  def props()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer): Props = new RoundRobinPool(
     Config.akkaNumberOfFrontendWorkers)
     .props(Props(new DeviceApiActor()))
 }
-
 
 case class ClaimDeviceError(msg: String)

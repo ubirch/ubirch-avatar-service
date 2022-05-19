@@ -39,7 +39,6 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
         case None => Future(fail("failed to create avatar state"))
 
         case Some(state: AvatarState) =>
-
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
           state.deviceId should be(device.deviceId)
@@ -73,7 +72,6 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
         case None => fail("failed to create existing avatar state")
 
         case Some(existingState: db.device.AvatarState) =>
-
           existingState should be(state)
 
           // test
@@ -83,7 +81,6 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
             case None => Future(fail("failed to update avatar state"))
 
             case Some(state: AvatarState) =>
-
               mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
               val expectedDesiredAndDelta = Some(parse(existingState.desired.get))
@@ -101,7 +98,6 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
     }
 
   }
-
 
   Feature("toRestModel()") {
 

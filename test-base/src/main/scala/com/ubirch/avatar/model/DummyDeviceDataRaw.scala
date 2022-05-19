@@ -6,7 +6,7 @@ import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.uuid.UUIDUtil
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods._
 
@@ -22,13 +22,12 @@ object DummyDeviceDataRaw {
 
   val random = new Random()
 
-  def data(messageId: UUID = UUIDUtil.uuid,
-           device: Device,
-           pubKey: String = "pretend-to-be-a-public-key",
-           timestamp: DateTime = DateTime.now,
-           hashedPubKey: String = "pretend-to-be-a-public-key"
-          )
-  : DeviceDataRaw = {
+  def data(
+    messageId: UUID = UUIDUtil.uuid,
+    device: Device,
+    pubKey: String = "pretend-to-be-a-public-key",
+    timestamp: DateTime = DateTime.now,
+    hashedPubKey: String = "pretend-to-be-a-public-key"): DeviceDataRaw = {
 
     val p = randomPayload(timestamp)
     val s = DeviceUtil.sign(p)
@@ -45,21 +44,20 @@ object DummyDeviceDataRaw {
     )
   }
 
-  def dataSeries(messageId: Option[UUID] = None,
-                 device: Device = DummyDevices.minimalDevice(),
-                 pubKey: String = "pretend-to-be-a-public-key",
-                 intervalMillis: Long = 1000 * 30, // 30s
-                 timestampOffset: Long = -1000 * 60 * 60, // -1h
-                 elementCount: Int = 5
-                )
-  : (Device, List[DeviceDataRaw]) = {
+  def dataSeries(
+    messageId: Option[UUID] = None,
+    device: Device = DummyDevices.minimalDevice(),
+    pubKey: String = "pretend-to-be-a-public-key",
+    intervalMillis: Long = 1000 * 30, // 30s
+    timestampOffset: Long = -1000 * 60 * 60, // -1h
+    elementCount: Int = 5): (Device, List[DeviceDataRaw]) = {
 
     val rawDataList: ListBuffer[DeviceDataRaw] = ListBuffer()
     val newestDateTime = DateTime.now(DateTimeZone.UTC).minus(timestampOffset)
 
     val hashedPubKey = pubKey match {
       case pk: String if pk.nonEmpty => HashUtil.sha256HexString(pk)
-      case _ => "pretend-to-be-a-public-key"
+      case _                         => "pretend-to-be-a-public-key"
     }
 
     val range = 0 until elementCount
@@ -67,16 +65,12 @@ object DummyDeviceDataRaw {
 
       val timestamp = newestDateTime.minus(i * intervalMillis)
       val msgId = messageId match {
-        case None => UUIDUtil.uuid
+        case None    => UUIDUtil.uuid
         case Some(m) => m
       }
 
-      val deviceData = data(messageId = msgId,
-        device = device,
-        pubKey = pubKey,
-        timestamp = timestamp,
-        hashedPubKey = hashedPubKey
-      )
+      val deviceData =
+        data(messageId = msgId, device = device, pubKey = pubKey, timestamp = timestamp, hashedPubKey = hashedPubKey)
 
       rawDataList.+=:(deviceData)
 

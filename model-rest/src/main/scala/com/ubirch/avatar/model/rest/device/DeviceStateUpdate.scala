@@ -22,14 +22,14 @@ import org.json4s._
   * @param ds signature of las device message
   */
 case class DeviceStateUpdate(
-                              id: UUID = UUIDUtil.uuid, // messageId
-                              v: String = MessageVersion.v002,
-                              k: String,
-                              s: String,
-                              p: JValue,
-                              ds: Option[String],
-                              ts: DateTime = DateTime.now
-                            ) {
+  id: UUID = UUIDUtil.uuid, // messageId
+  v: String = MessageVersion.v002,
+  k: String,
+  s: String,
+  p: JValue,
+  ds: Option[String],
+  ts: DateTime = DateTime.now
+) {
   override def hashCode(): Int = id.hashCode()
 
   override def equals(obj: scala.Any): Boolean = {

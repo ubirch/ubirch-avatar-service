@@ -7,11 +7,7 @@ import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
 /**
   * Created by derMicha on 18/05/17.
   */
-object TestingSchwarzbrot
-  extends App
-    with MyJsonProtocol
-    with StrictLogging {
-
+object TestingSchwarzbrot extends App with MyJsonProtocol with StrictLogging {
 
   val string =
     """

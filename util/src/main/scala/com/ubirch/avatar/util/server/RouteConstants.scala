@@ -73,12 +73,16 @@ object RouteConstants {
 
   def pathDeviceHistoryByDatePrefix(id: String): String = s"${pathDeviceDataHistory(id)}/$byDate"
 
-  def pathDeviceHistoryByDateFromTo(id: String, fromDate: String, toDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$from/$fromDate/$to/$toDate"
+  def pathDeviceHistoryByDateFromTo(id: String, fromDate: String, toDate: String): String =
+    s"${pathDeviceHistoryByDatePrefix(id)}/$from/$fromDate/$to/$toDate"
 
-  def pathDeviceHistoryByDateBefore(id: String, beforeDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$before/$beforeDate"
+  def pathDeviceHistoryByDateBefore(id: String, beforeDate: String): String =
+    s"${pathDeviceHistoryByDatePrefix(id)}/$before/$beforeDate"
 
-  def pathDeviceHistoryByDateAfter(id: String, afterDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$after/$afterDate"
+  def pathDeviceHistoryByDateAfter(id: String, afterDate: String): String =
+    s"${pathDeviceHistoryByDatePrefix(id)}/$after/$afterDate"
 
-  def pathDeviceHistoryByDateDay(id: String, dayDate: String): String = s"${pathDeviceHistoryByDatePrefix(id)}/$day/$dayDate"
+  def pathDeviceHistoryByDateDay(id: String, dayDate: String): String =
+    s"${pathDeviceHistoryByDatePrefix(id)}/$day/$dayDate"
 
 }

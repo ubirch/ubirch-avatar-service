@@ -10,10 +10,7 @@ import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 
-class BackendInfoRoute extends Directives
-  with CORSDirective
-  with ResponseUtil
-  with StrictLogging {
+class BackendInfoRoute extends Directives with CORSDirective with ResponseUtil with StrictLogging {
 
   case class BackendPubKey(
                             algorithm: String = "Ed25519",

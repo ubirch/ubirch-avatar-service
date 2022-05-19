@@ -30,7 +30,7 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
         pathPrefix(RouteConstants.currentVersion) {
 
           pathPrefix(RouteConstants.device) {
-              deviceUpdateMsgPack.route ~
+            deviceUpdateMsgPack.route ~
               deviceClaim.route
 
           } ~ path(RouteConstants.check) {

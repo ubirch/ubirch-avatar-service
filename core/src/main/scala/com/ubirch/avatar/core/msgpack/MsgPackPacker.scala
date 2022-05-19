@@ -3,17 +3,17 @@ package com.ubirch.avatar.core.msgpack
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.util.StringConstants._
 import com.ubirch.avatar.model.rest.MessageVersion
-import com.ubirch.avatar.model.rest.device.{DeviceDataRaw, DeviceStateUpdate}
+import com.ubirch.avatar.model.rest.device.{ DeviceDataRaw, DeviceStateUpdate }
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.protocol.ProtocolMessage
 import com.ubirch.protocol.codec.MsgPackProtocolDecoder
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.crypto.ecc.EccUtil
 import com.ubirch.util.crypto.hash.HashUtil
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.json.{ Json4sUtil, MyJsonProtocol }
 import com.ubirch.util.uuid.UUIDUtil
 import org.apache.commons.codec.binary.Hex
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.json4s.JObject
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL._
@@ -22,13 +22,11 @@ import org.msgpack.core.MessagePack
 
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets
-import java.util.{Base64, UUID}
+import java.util.{ Base64, UUID }
 
-object MsgPackPacker
-  extends StrictLogging
-    with MyJsonProtocol {
+object MsgPackPacker extends StrictLogging with MyJsonProtocol {
 
-  private final val SIGPARTLEN: Int = 67
+  final private val SIGPARTLEN: Int = 67
   private val eccUtil = new EccUtil()
   private val config = new MessagePack.PackerConfig().withStr8FormatSupport(false)
 
@@ -63,7 +61,6 @@ object MsgPackPacker
     }
   }
 
-
   private def parsePayLoads(decodedPM: ProtocolMessage): Payloads = {
     try {
       val p = decodedPM.getPayload
@@ -78,11 +75,11 @@ object MsgPackPacker
         config = Some(parseT84Config(fromJsonNode(p.get(4))))
       )
     } catch {
-      case ex: Throwable => logger.error(PARSING_TRACKLE_PAYLOAD_FAILED, ex)
+      case ex: Throwable =>
+        logger.error(PARSING_TRACKLE_PAYLOAD_FAILED, ex)
         throw InvalidDataException(PARSING_TRACKLE_PAYLOAD_FAILED)
     }
   }
-
 
   private def parseT84Measurements(mVal: JValue): JValue = {
     try {
@@ -157,9 +154,10 @@ object MsgPackPacker
       packer.packString("EOL")
       packer.packBoolean(eolBoolean)
       //pack integers
-      configMap.foreach { case (key, value) =>
-        packer.packString(key)
-        packer.packInt(value)
+      configMap.foreach {
+        case (key, value) =>
+          packer.packString(key)
+          packer.packInt(value)
       }
 
       //create signature
@@ -185,11 +183,12 @@ object MsgPackPacker
       val deviceConfig = dsu.p.asInstanceOf[JObject]
       val (remainingConfig, eolBoolean) = deviceConfig.findField {
         case JField("EOL", _) => true
-        case _ => false
+        case _                => false
       } match {
-        case Some(field) if field._2.extract[Boolean] => (deviceConfig.removeField(_ == field).asInstanceOf[JObject], true)
+        case Some(field) if field._2.extract[Boolean] =>
+          (deviceConfig.removeField(_ == field).asInstanceOf[JObject], true)
         case Some(field) => (deviceConfig.removeField(_ == field).asInstanceOf[JObject], false)
-        case _ => (deviceConfig, false)
+        case _           => (deviceConfig, false)
       }
       (remainingConfig.extract[Map[String, Int]], eolBoolean)
     } catch {
@@ -197,7 +196,6 @@ object MsgPackPacker
         logger.error(PARSING_DEVICE_CONFIG_FAILED, ex)
         throw InvalidDataException(PARSING_DEVICE_CONFIG_FAILED)
     }
-
 
   case class InvalidDataException(message: String) extends Exception(message)
 
@@ -209,10 +207,9 @@ object MsgPackPacker
   }
 
   case class Payloads(
-                       data: JValue,
-                       meta: Option[JValue] = None,
-                       config: Option[JValue] = None
-                     )
-
+    data: JValue,
+    meta: Option[JValue] = None,
+    config: Option[JValue] = None
+  )
 
 }

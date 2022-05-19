@@ -9,7 +9,7 @@ class ReqMetrics(metricName: String) {
 
   private val enabled = Config.prometheusEnabled
 
-  private var timer : Histogram.Timer =  null
+  private var timer: Histogram.Timer = null
 
   def inc(): Unit = if (enabled) requests.inc()
 
@@ -26,7 +26,6 @@ class ReqMetrics(metricName: String) {
     .help(s"Total failed requests: $metricName")
     //.labelNames("device_update_failed_total")
     .register()
-
 
   def start: Unit = {
     if (enabled && timer == null) {

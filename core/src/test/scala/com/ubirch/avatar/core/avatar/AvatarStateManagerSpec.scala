@@ -6,11 +6,11 @@ import com.ubirch.avatar.model.db.device.AvatarState
 import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.json4s.native.JsonMethods._
 
 import scala.concurrent.Future
-import scala.language.{existentials, postfixOps}
+import scala.language.{ existentials, postfixOps }
 
 /**
   * author: cvandrei
@@ -35,10 +35,8 @@ class AvatarStateManagerSpec extends MongoSpec {
       val avatarState = AvatarState(deviceId = deviceId)
 
       AvatarStateManager.create(avatarState) flatMap { created =>
-
         // test
         AvatarStateManager.byDeviceId(deviceId) flatMap { result =>
-
           // verify
           created shouldBe result
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
@@ -60,7 +58,6 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // test
       AvatarStateManager.create(avatarState) flatMap { result =>
-
         // verify
         result should be(Some(avatarState))
         AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(Some(avatarState)))
@@ -77,12 +74,10 @@ class AvatarStateManagerSpec extends MongoSpec {
       val avatarState = AvatarState(deviceId = device.deviceId)
 
       AvatarStateManager.create(avatarState) flatMap { prepareResult =>
-
         prepareResult should be(Some(avatarState))
 
         // test
         AvatarStateManager.create(avatarState) flatMap { result =>
-
           // verify
           result should be(None)
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
@@ -105,7 +100,6 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // test
       AvatarStateManager.update(avatarState) flatMap { result =>
-
         // verify
         result should be(None)
         AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(None))
@@ -120,13 +114,11 @@ class AvatarStateManagerSpec extends MongoSpec {
       val device = DummyDevices.minimalDevice()
       val avatarState = AvatarState(deviceId = device.deviceId)
       AvatarStateManager.create(avatarState) flatMap { createdOpt =>
-
         val created = createdOpt.get
         val forUpdate = created.copy(avatarLastUpdated = Some(created.avatarLastUpdated.get.plusDays(1)))
 
         // test
         AvatarStateManager.update(forUpdate) flatMap { result =>
-
           // verify
           result should be(Some(forUpdate))
           AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(result))
@@ -148,7 +140,6 @@ class AvatarStateManagerSpec extends MongoSpec {
 
       // test
       AvatarStateManager.upsert(avatarState) flatMap { result =>
-
         // verify
         result should be(Some(avatarState))
         AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(Some(avatarState)))
@@ -164,14 +155,12 @@ class AvatarStateManagerSpec extends MongoSpec {
       val device = DummyDevices.minimalDevice()
       val avatarState = AvatarState(deviceId = device.deviceId)
       AvatarStateManager.upsert(avatarState) flatMap { initialUpsertOpt =>
-
         val initialUpsert = initialUpsertOpt.get
         initialUpsert should be(avatarState)
         val toUpdate = initialUpsert.copy(avatarLastUpdated = Some(initialUpsert.avatarLastUpdated.get.plusDays(1)))
 
         // test
         AvatarStateManager.upsert(toUpdate) flatMap { result =>
-
           // verify
           result should be(Some(toUpdate))
           AvatarStateManager.byDeviceId(device.deviceId) map (_ should be(Some(toUpdate)))
@@ -202,7 +191,6 @@ class AvatarStateManagerSpec extends MongoSpec {
         case None => Future(fail("failed to create avatar state"))
 
         case Some(state: AvatarState) =>
-
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
           state.deviceId should be(device.deviceId)
@@ -233,7 +221,6 @@ class AvatarStateManagerSpec extends MongoSpec {
         case None => fail("failed to create existing avatar state")
 
         case Some(existingState: AvatarState) =>
-
           existingState should be(state)
 
           // test
@@ -243,7 +230,6 @@ class AvatarStateManagerSpec extends MongoSpec {
             case None => Future(fail("failed to update avatar state"))
 
             case Some(updatedState: AvatarState) =>
-
               mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
               val expected = state.copy(
@@ -277,7 +263,6 @@ class AvatarStateManagerSpec extends MongoSpec {
         case None => Future(fail("failed to create avatar state"))
 
         case Some(state: AvatarState) =>
-
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
           state.deviceId should be(device.deviceId)
@@ -310,7 +295,6 @@ class AvatarStateManagerSpec extends MongoSpec {
         case None => fail("failed to prepare test")
 
         case Some(existingState: AvatarState) =>
-
           existingState should be(state)
 
           // test
@@ -320,7 +304,6 @@ class AvatarStateManagerSpec extends MongoSpec {
             case None => Future(fail("failed to update avatar state"))
 
             case Some(updatedState: AvatarState) =>
-
               mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
               val expected = state.copy(
@@ -356,7 +339,6 @@ class AvatarStateManagerSpec extends MongoSpec {
         case None => fail("failed to prepare test")
 
         case Some(existingState: AvatarState) =>
-
           existingState should be(state)
 
           // test
@@ -366,7 +348,6 @@ class AvatarStateManagerSpec extends MongoSpec {
             case None => Future(fail("failed to update avatar state"))
 
             case Some(updatedState: AvatarState) =>
-
               mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
               val expected = state.copy(

@@ -7,8 +7,7 @@ import org.scalatest.matchers.should.Matchers
   * author: cvandrei
   * since: 2016-10-28
   */
-class HistoryIndexUtilSpec extends AnyFeatureSpec
-  with Matchers {
+class HistoryIndexUtilSpec extends AnyFeatureSpec with Matchers {
 
   Feature("calculateEndIndex()") {
 

@@ -1,6 +1,6 @@
 package com.ubirch.avatar.core.actor
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{ Actor, ActorLogging, Props }
 import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
@@ -23,10 +23,8 @@ import scala.language.postfixOps
   */
 class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
   extends Actor
-    with MyJsonProtocol
-
-
-    with ActorLogging {
+  with MyJsonProtocol
+  with ActorLogging {
 
   implicit val executionContext: ExecutionContextExecutor = context.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -50,7 +48,9 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       } catch {
         case e: Exception =>
           log.error(e, s"received invalid data")
-          sender ! JsonErrorResponse(errorType = "ValidationError", errorMessage = s"invalid dataformat ${e.getMessage}")
+          sender ! JsonErrorResponse(
+            errorType = "ValidationError",
+            errorMessage = s"invalid dataformat ${e.getMessage}")
       }
 
     case _ =>
@@ -61,8 +61,7 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
 }
 
 object MessageMsgPackProcessorActor {
-  def props()(implicit mongo: MongoUtil,
-              httpClient: HttpExt,
-              materializer: Materializer): Props = new RoundRobinPool(Config.akkaNumberOfBackendWorkers)
-    .props(Props(new MessageMsgPackProcessorActor()))
+  def props()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer): Props =
+    new RoundRobinPool(Config.akkaNumberOfBackendWorkers)
+      .props(Props(new MessageMsgPackProcessorActor()))
 }

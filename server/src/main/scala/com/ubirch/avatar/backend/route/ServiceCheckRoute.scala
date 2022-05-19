@@ -29,14 +29,21 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2017-06-08
   */
-class ServiceCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: HttpExt, materializer: Materializer) extends CORSDirective
-  with ResponseUtil
-  with StrictLogging {
+class ServiceCheckRoute(
+                         implicit mongo: MongoUtil,
+                         _system: ActorSystem,
+                         httpClient: HttpExt,
+                         materializer: Materializer)
+  extends CORSDirective
+    with ResponseUtil
+    with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = _system.dispatcher
   implicit val timeout: Timeout = Timeout(5 * Config.actorTimeout seconds)
 
-  private val serviceCheckActor = _system.actorOf(new RoundRobinPool(Config.akkaNumberOfBackendWorkers).props(Props(new ServcieCheckActor())), ActorNames.DEEP_CHECK)
+  private val serviceCheckActor = _system.actorOf(
+    new RoundRobinPool(Config.akkaNumberOfBackendWorkers).props(Props(new ServcieCheckActor())),
+    ActorNames.DEEP_CHECK)
 
   val route: Route = {
 
@@ -48,7 +55,9 @@ class ServiceCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpCli
 
             case Failure(t) =>
               logger.error(s"failed to run deepCheck: ${t.getMessage}", t)
-              complete(serverErrorResponse(errorType = "ServerError", errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
+              complete(serverErrorResponse(
+                errorType = "ServerError",
+                errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
 
             case Success(resp) =>
               resp match {
@@ -77,7 +86,9 @@ class ServiceCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpCli
 
               case Failure(t) =>
                 logger.error(s"failed to run readyCheck: ${t.getMessage}", t)
-                complete(serverErrorResponse(errorType = "ServerError", errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
+                complete(serverErrorResponse(
+                  errorType = "ServerError",
+                  errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
 
               case Success(resp) =>
                 resp match {
@@ -106,7 +117,9 @@ class ServiceCheckRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpCli
 
               case Failure(t) =>
                 logger.error(s"failed to run liveCheck: ${t.getMessage}", t)
-                complete(serverErrorResponse(errorType = "ServerError", errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
+                complete(serverErrorResponse(
+                  errorType = "ServerError",
+                  errorMessage = s"sorry, something went wrong on our end: ${t.getMessage}"))
 
               case Success(resp) =>
                 resp match {

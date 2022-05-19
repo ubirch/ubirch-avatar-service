@@ -2,20 +2,17 @@ package com.ubirch.server.util
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.util.crypto.ecc.EccUtil
-import net.i2p.crypto.eddsa.{EdDSAPrivateKey, EdDSAPublicKey}
+import net.i2p.crypto.eddsa.{ EdDSAPrivateKey, EdDSAPublicKey }
 import org.apache.commons.codec.binary.Hex
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
 
-class ServerKeysSpec extends AnyFeatureSpec
-  with Matchers
-  with StrictLogging {
+class ServerKeysSpec extends AnyFeatureSpec with Matchers with StrictLogging {
 
   val data = "Hallo Welt"
   val dataBin: Array[Byte] = data.getBytes
 
   private val eccUtil = new EccUtil()
-
 
   Feature("ServerKeys test") {
 
@@ -52,7 +49,6 @@ class ServerKeysSpec extends AnyFeatureSpec
 
       true shouldBe true
     }
-
 
     Scenario("sign data with Server Key") {
       val s = eccUtil.signPayload(ServerKeys.privKeyB64, data)

@@ -56,5 +56,5 @@ services:
       - ES_HOST=elasticsearch
       - ES_PORT_HTTP=9200
       - ES_PORT_TCP=9300
-     - ENVID=testing
-     - DEBUG=true
+      - ENVID=testing
+      - DEBUG=true

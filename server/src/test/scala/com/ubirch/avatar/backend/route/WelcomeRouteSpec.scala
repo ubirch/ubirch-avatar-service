@@ -36,5 +36,4 @@ class WelcomeRouteSpec extends RouteSpec {
 
   }
 
-
 }

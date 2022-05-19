@@ -2,11 +2,11 @@ package com.ubirch.avatar.core.device
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.rest.device.{AvatarState, DeviceStateUpdate}
+import com.ubirch.avatar.model.rest.device.{ AvatarState, DeviceStateUpdate }
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.elasticsearch.EsBulkClient
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.json.{ Json4sUtil, MyJsonProtocol }
 import com.ubirch.util.uuid.UUIDUtil
 import org.json4s._
 
@@ -46,7 +46,6 @@ object DeviceStateManager extends MyJsonProtocol with StrictLogging {
     Json4sUtil.any2jvalue(state) match {
 
       case Some(doc) =>
-
         val id = state.id.toString
         Future {
           val start = System.currentTimeMillis()

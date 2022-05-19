@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- parent pom -->
+    <parent>
+        <groupId>com.ubirch.avatar</groupId>
+        <artifactId>ubirch-avatar-service</artifactId>
+        <version>0.6.6-SNAPSHOT</version>
+    </parent>
+
+    <!-- basic info -->
+    <artifactId>core</artifactId>
+    <name>${project.artifactId}</name>
+    <description>business logic</description>
+    <packaging>jar</packaging> <!--needed ???-->
+
+
+    <dependencies>
+
+        <!-- AVATAR -->
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>config</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>model-db</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>util</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>test-base</artifactId>
+            <version>${avatar-parent.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- UBIRCH -->
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-deep-check-utils_${scala.compat.version}</artifactId>
+            <version>${deep-check-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-elasticsearch-utils_${scala.compat.version}</artifactId>
+            <version>${elasticsearch-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-crypto-utils_${scala.compat.version}</artifactId>
+            <version>${crypto-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch</groupId>
+            <artifactId>ubirch-crypto</artifactId>
+            <version>${ubirch-crypto.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-mongo-utils_${scala.compat.version}</artifactId>
+            <version>${mongo-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-response-utils_${scala.compat.version}</artifactId>
+            <version>${response-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.user</groupId>
+            <artifactId>ubirch-user-service-client_${scala.compat.version}</artifactId>
+            <version>${user-service-client.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch</groupId>
+            <artifactId>ubirch-protocol-java</artifactId>
+            <version>${ubirch-crypto.version}</version>
+        </dependency>
+
+        <!-- EXTERNAL -->
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
+            <version>${prometheus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_hotspot</artifactId>
+            <version>${prometheus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_httpserver</artifactId>
+            <version>${prometheus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient_pushgateway</artifactId>
+            <version>${prometheus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectjweaver.version}</version>
+        </dependency>
+
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logback-encoder.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.scala-logging</groupId>
+            <artifactId>scala-logging_${scala.compat.version}</artifactId>
+            <version>${scala-logging.version}</version>
+        </dependency>
+        <!-- logging end -->
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor_${scala.compat.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream_${scala.compat.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-slf4j_${scala.compat.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-http_${scala.compat.version}</artifactId>
+            <version>${akka-http.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-cluster_${scala.compat.version}</artifactId>
+            <version>${akka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream-kafka_${scala.compat.version}</artifactId>
+            <version>${akka-stream-kafka.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-stream-kafka-testkit_${scala.compat.version}</artifactId>
+            <version>${akka-stream-kafka.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-testkit_${scala.compat.version}</artifactId>
+            <version>${akka.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.compat.version}</artifactId>
+            <version>${scalatest.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

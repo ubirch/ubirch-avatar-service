@@ -17,11 +17,12 @@ import org.json4s.native.Serialization.read
 
 import scala.concurrent.ExecutionContextExecutor
 
-object CreateDevice extends App
-  with ElasticsearchMappings
-  with MongoConstraints
-  with MyJsonProtocol
-  with StrictLogging {
+object CreateDevice
+  extends App
+    with ElasticsearchMappings
+    with MongoConstraints
+    with MyJsonProtocol
+    with StrictLogging {
 
   implicit val system: ActorSystem = ActorSystem("AvatarService")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
@@ -53,7 +54,6 @@ object CreateDevice extends App
     "67b0cace1340ba04-7a834b59dffe65d3" -> Array("Teresa Bücker", "2d48ab4f-24fb-4977-8853-5d9df37825e7"),
     "71f4cc0b5aeb25c4-59951d71cb50c632" -> Array("Heinke Wolf", "03b54e51-4f20-4206-984a-4861da2fb94f")
   )
-
 
   def create = {
     devices.keySet.map { k =>

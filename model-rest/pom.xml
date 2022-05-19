@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!-- parent pom -->
+    <parent>
+        <groupId>com.ubirch.avatar</groupId>
+        <artifactId>ubirch-avatar-service</artifactId>
+        <version>0.6.6-SNAPSHOT</version>
+    </parent>
+
+    <!-- basic info -->
+    <artifactId>model-rest</artifactId>
+    <name>${project.artifactId}</name>
+    <description>rest models</description>
+    <packaging>jar</packaging> <!--needed ???-->
+
+
+    <dependencies>
+
+        <!-- AVATAR -->
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>config</artifactId>
+            <version>${avatar-parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ubirch.avatar</groupId>
+            <artifactId>ubirch-avatar-service-client_${scala.compat.version}</artifactId>
+            <version>${ubirch-avatar-client.version}</version>
+        </dependency>
+
+        <!-- UBIRCH -->
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-uuid-utils_${scala.compat.version}</artifactId>
+            <version>${uuid-utils.version}</version>
+        </dependency>
+
+        <!-- EXTERNAL -->
+        <dependency>
+            <groupId>org.json4s</groupId>
+            <artifactId>json4s-native_${scala.compat.version}</artifactId>
+            <version>${json4s.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>${joda-convert.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

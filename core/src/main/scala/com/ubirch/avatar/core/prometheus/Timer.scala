@@ -1,7 +1,7 @@
 package com.ubirch.avatar.core.prometheus
 
 import com.ubirch.avatar.config.Config
-import io.prometheus.client.{Counter, Histogram}
+import io.prometheus.client.Histogram
 
 class Timer(timerName: String) {
 
@@ -9,7 +9,7 @@ class Timer(timerName: String) {
 
   private val enabled = Config.prometheusEnabled
 
-  private var timer : Histogram.Timer =  null
+  private var timer: Histogram.Timer = null
 
   def start: Unit = {
     if (enabled && timer == null) {

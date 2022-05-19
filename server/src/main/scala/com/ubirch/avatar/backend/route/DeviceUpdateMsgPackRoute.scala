@@ -29,7 +29,11 @@ import scala.util.{Failure, Success}
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
+class DeviceUpdateMsgPackRoute()(
+  implicit mongo: MongoUtil,
+  httpClient: HttpExt,
+  materializer: Materializer,
+  system: ActorSystem)
   extends ResponseUtil
     with Directives
     with StrictLogging {
@@ -62,7 +66,8 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
                       else {
                         MsgPackPacker.packUbProt(dsu) match {
                           case Right(ubPack) =>
-                            logger.debug(s"returning Accepted for POST update/mpack (hex) : ${Hex.encodeHexString(ubPack)}")
+                            logger.debug(
+                              s"returning Accepted for POST update/mpack (hex) : ${Hex.encodeHexString(ubPack)}")
                             complete(StatusCodes.Accepted -> ubPack)
                           case Left(_) =>
                             complete(StatusCodes.InternalServerError -> "something went wrong when processing response")

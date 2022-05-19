@@ -11,13 +11,13 @@ import org.json4s.JValue
   * @param defaults default properties of a device
   */
 case class DeviceType(
-                       key: String,
-                       name: DeviceTypeName,
-                       icon: String,
-                       displayKeys: Option[Array[String]] = Some(Array.empty),
-                       transformerQueue: Option[String] = None,
-                       defaults: DeviceTypeDefaults
-                     ) {
+  key: String,
+  name: DeviceTypeName,
+  icon: String,
+  displayKeys: Option[Array[String]] = Some(Array.empty),
+  transformerQueue: Option[String] = None,
+  defaults: DeviceTypeDefaults
+) {
 
   override def hashCode(): Int = key.hashCode
 
@@ -28,7 +28,6 @@ case class DeviceType(
     o match {
 
       case deviceType: DeviceType =>
-
         if (deviceType.key == this.key)
           true
         else
@@ -42,12 +41,12 @@ case class DeviceType(
 }
 
 case class DeviceTypeName(
-                           de: String,
-                           en: String
-                         )
+  de: String,
+  en: String
+)
 
 case class DeviceTypeDefaults(
-                               properties: JValue,
-                               config: JValue,
-                               tags: Set[String]
-                             )
+  properties: JValue,
+  config: JValue,
+  tags: Set[String]
+)
