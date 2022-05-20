@@ -17,12 +17,12 @@ object ActorStarter extends StrictLogging {
     materializer: Materializer): Unit = {
 
     system.actorOf(
-      DeviceApiActor.props,
+      DeviceApiActor.props(),
       ActorNames.DEVICE_API
     )
 
     system.actorOf(
-      MessageValidatorActor.props,
+      MessageValidatorActor.props(),
       ActorNames.MSG_VALIDATOR
     )
 

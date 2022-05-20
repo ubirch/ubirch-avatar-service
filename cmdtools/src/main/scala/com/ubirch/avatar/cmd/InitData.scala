@@ -1,7 +1,7 @@
 package com.ubirch.avatar.cmd
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.{Http, HttpExt}
+import akka.http.scaladsl.{ Http, HttpExt }
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.client.AvatarServiceClient
@@ -9,7 +9,7 @@ import com.ubirch.avatar.client.model.DeviceStateUpdate
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRawConverter
-import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
+import com.ubirch.avatar.model.{ DummyDeviceDataRaw, DummyDevices }
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
 import org.json4s.native.Serialization.read
@@ -26,7 +26,6 @@ object InitData extends App with MyJsonProtocol with StrictLogging {
 
   val numberOfRawMessages = 10
   implicit val system: ActorSystem = ActorSystem("trackleService")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val httpClient: HttpExt = Http()
 
   val properties_BC: JValue = read[JValue](

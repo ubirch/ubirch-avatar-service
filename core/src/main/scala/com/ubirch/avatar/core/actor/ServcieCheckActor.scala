@@ -25,7 +25,7 @@ class ServcieCheckActor(implicit mongo: MongoUtil, httpClient: HttpExt, material
 
   override def receive: Receive = {
 
-    case req: DeepCheckRequest =>
+    case _: DeepCheckRequest =>
       val sender = context.sender()
       DeepCheckManager.connectivityCheck().onComplete {
         case Success(dcr) =>
@@ -37,7 +37,7 @@ class ServcieCheckActor(implicit mongo: MongoUtil, httpClient: HttpExt, material
           )
       }
 
-    case req: ReadyCheckRequest =>
+    case _: ReadyCheckRequest =>
       val sender = context.sender()
       ReadyCheckManager.connectivityCheck().onComplete {
         case Success(dcr) =>

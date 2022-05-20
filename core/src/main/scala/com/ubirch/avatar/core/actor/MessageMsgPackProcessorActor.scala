@@ -48,14 +48,14 @@ class MessageMsgPackProcessorActor(implicit mongo: MongoUtil, httpClient: HttpEx
       } catch {
         case e: Exception =>
           log.error(e, s"received invalid data")
-          sender ! JsonErrorResponse(
+          s ! JsonErrorResponse(
             errorType = "ValidationError",
             errorMessage = s"invalid dataformat ${e.getMessage}")
       }
 
     case _ =>
       log.error("received unknown msgPack message ")
-      sender ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "invalid input data")
+      sender() ! JsonErrorResponse(errorType = "Validation Error", errorMessage = "invalid input data")
   }
 
 }

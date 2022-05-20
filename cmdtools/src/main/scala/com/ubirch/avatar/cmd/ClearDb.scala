@@ -1,7 +1,7 @@
 package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.avatar.storage.{ESStorageCleanup, MongoStorageCleanup}
+import com.ubirch.avatar.storage.{ ESStorageCleanup, MongoStorageCleanup }
 
 /**
   * author: derMicha

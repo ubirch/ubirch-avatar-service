@@ -1,6 +1,6 @@
 package com.ubirch.avatar.cmd
 
-import java.io.{File, FileInputStream}
+import java.io.{ File, FileInputStream }
 import java.util.Base64
 
 import com.google.common.io.ByteStreams

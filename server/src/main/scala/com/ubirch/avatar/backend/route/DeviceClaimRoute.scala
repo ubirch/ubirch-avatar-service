@@ -3,14 +3,14 @@ package com.ubirch.avatar.backend.route
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.model.headers.{Authorization, OAuth2BearerToken}
+import akka.http.scaladsl.model.headers.{ Authorization, OAuth2BearerToken }
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.rest.device.{DeviceClaim, DeviceUserClaim, DeviceUserClaimRequest}
+import com.ubirch.avatar.model.rest.device.{ DeviceClaim, DeviceUserClaim, DeviceUserClaimRequest }
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
@@ -25,7 +25,7 @@ import org.json4s.Formats
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 /**
   * author: cvandrei
@@ -33,8 +33,8 @@ import scala.util.{Failure, Success}
   */
 class DeviceClaimRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
   extends ResponseUtil
-    with CORSDirective
-    with StrictLogging {
+  with CORSDirective
+  with StrictLogging {
   private val bearerToken = optionalHeaderValueByType(classOf[Authorization]).map(extractBearerToken)
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit private val formatter: Formats = JsonFormats.default
@@ -46,11 +46,12 @@ class DeviceClaimRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materiali
     path(claim) {
       respondWithCORS {
         put {
-          entity(as[DeviceClaim]) { deviceClaim => {
-            bearerToken { token =>
-              claimDevice(token, deviceClaim)
+          entity(as[DeviceClaim]) { deviceClaim =>
+            {
+              bearerToken { token =>
+                claimDevice(token, deviceClaim)
+              }
             }
-          }
           }
         }
       }

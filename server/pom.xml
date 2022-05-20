@@ -124,12 +124,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j-core.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback-classic.version}</version>
@@ -260,7 +254,7 @@
                     <repository>ubirch/${project.parent.artifactId}</repository>
                     <tag>${build.number}</tag>
                     <buildArgs>
-                        <VERSION>${parent.version}</VERSION>
+                        <VERSION>${project.parent.version}</VERSION>
                         <BUILD>${build.number}</BUILD>
                         <SERVICE_NAME>${parent.name}</SERVICE_NAME>
                         <JAR_LIBS>target/lib</JAR_LIBS>

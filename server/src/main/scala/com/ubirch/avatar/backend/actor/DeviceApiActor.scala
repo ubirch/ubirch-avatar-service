@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.actor
 
-import akka.actor.{Actor, Props}
+import akka.actor.{ Actor, Props }
 import akka.http.scaladsl.HttpExt
 import akka.routing.RoundRobinPool
 import akka.stream.Materializer
@@ -10,7 +10,7 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
-import com.ubirch.avatar.model.rest.device.{DeviceUserClaim, DeviceUserClaimRequest}
+import com.ubirch.avatar.model.rest.device.{ DeviceUserClaim, DeviceUserClaimRequest }
 import com.ubirch.util.json.JsonFormats
 import com.ubirch.util.model.JsonErrorResponse
 import com.ubirch.util.mongo.connection.MongoUtil
@@ -18,7 +18,7 @@ import org.joda.time.DateTime
 import org.json4s.Formats
 import org.json4s.JsonAST.JField
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{ ExecutionContextExecutor, Future }
 import scala.util.Try
 
 /**
@@ -27,7 +27,7 @@ import scala.util.Try
 
 private class DeviceApiActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
   extends Actor
-    with StrictLogging {
+  with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
   implicit val formats: Formats = JsonFormats.default
@@ -35,7 +35,7 @@ private class DeviceApiActor(implicit mongo: MongoUtil, httpClient: HttpExt, mat
   override def receive: Receive = {
 
     case duc: DeviceUserClaimRequest =>
-      val s = sender
+      val s = sender()
       claimDevice(duc)
         .map(duc => s ! duc)
         .recover {
@@ -57,7 +57,7 @@ private class DeviceApiActor(implicit mongo: MongoUtil, httpClient: HttpExt, mat
         .deviceProperties
         .flatMap(_.findField {
           case JField("testTimestamp", _) => true
-          case _ => false
+          case _                          => false
         })
         .map(_._2.extract[String])
         .flatMap(dateString => Try(DateTime.parse(dateString)).toOption)
@@ -98,7 +98,7 @@ private class DeviceApiActor(implicit mongo: MongoUtil, httpClient: HttpExt, mat
   }
 
   override def unhandled(message: Any): Unit = {
-    context.sender ! JsonErrorResponse(
+    context.sender() ! JsonErrorResponse(
       errorType = "InternalError",
       errorMessage = s"received unknown message: ${message.toString}")
   }

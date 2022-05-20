@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.prometheus
 
 import com.ubirch.avatar.config.Config
-import io.prometheus.client.{Counter, Histogram}
+import io.prometheus.client.{ Counter, Histogram }
 
 class ReqMetrics(metricName: String) {
 

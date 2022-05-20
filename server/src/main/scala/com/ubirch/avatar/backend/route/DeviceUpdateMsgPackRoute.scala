@@ -3,7 +3,7 @@ package com.ubirch.avatar.backend.route
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.{Directives, Route}
+import akka.http.scaladsl.server.{ Directives, Route }
 import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
@@ -16,14 +16,14 @@ import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.Json4sUtil
-import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.model.{ JsonErrorResponse, JsonResponse }
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 /**
   * author: cvandrei
@@ -35,8 +35,8 @@ class DeviceUpdateMsgPackRoute()(
   materializer: Materializer,
   system: ActorSystem)
   extends ResponseUtil
-    with Directives
-    with StrictLogging {
+  with Directives
+  with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)

@@ -6,7 +6,7 @@ import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.language.postfixOps
 
 /**

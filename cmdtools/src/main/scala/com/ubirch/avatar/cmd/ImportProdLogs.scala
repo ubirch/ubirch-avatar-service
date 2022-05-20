@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.avatar.config.{ConfigKeys, Const}
+import com.ubirch.avatar.config.{ ConfigKeys, Const }
 import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.model.DeviceTypeUtil
@@ -12,12 +12,12 @@ import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.Source
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 object ImportProdLogs extends App with StrictLogging {
 
@@ -26,19 +26,18 @@ object ImportProdLogs extends App with StrictLogging {
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
   implicit val system: ActorSystem = ActorSystem("AvatarService")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   case class DeviceInfo(
-                         deviceType: String,
-                         testTimestamp: DateTime,
-                         testResult: Boolean,
-                         hwDeviceId: String,
-                         tempSensorId: String,
-                         firmwareVersion: String,
-                         orderNr: String,
-                         tester: String
-                       )
+    deviceType: String,
+    testTimestamp: DateTime,
+    testResult: Boolean,
+    hwDeviceId: String,
+    tempSensorId: String,
+    firmwareVersion: String,
+    orderNr: String,
+    tester: String
+  )
 
   val basePath = conf.getString("importProdLogs.basePath")
 
@@ -116,9 +115,9 @@ object ImportProdLogs extends App with StrictLogging {
                       deviceProperties = Some(
                         dev.deviceProperties.get
                           merge
-                          Json4sUtil.any2jvalue(Map[String, Any](
-                            "testTimestamp" -> s"${di.testTimestamp}"
-                          )).get)
+                            Json4sUtil.any2jvalue(Map[String, Any](
+                              "testTimestamp" -> s"${di.testTimestamp}"
+                            )).get)
                     )
                     DeviceManager.update(devUpdated)
                   }
@@ -142,14 +141,14 @@ object ImportProdLogs extends App with StrictLogging {
                     deviceProperties = Some(
                       DeviceTypeUtil.defaultProps
                         merge
-                        Json4sUtil.any2jvalue(Map[String, Any](
-                          "testedFirmwareVersion" -> s"${di.firmwareVersion}",
-                          "tester" -> s"${di.tester}",
-                          "testerResult" -> di.testResult,
-                          "orderNr" -> s"${di.orderNr}",
-                          "tempSensorId" -> s"${di.tempSensorId}",
-                          "testTimestamp" -> s"${di.testTimestamp}"
-                        )).get
+                          Json4sUtil.any2jvalue(Map[String, Any](
+                            "testedFirmwareVersion" -> s"${di.firmwareVersion}",
+                            "tester" -> s"${di.tester}",
+                            "testerResult" -> di.testResult,
+                            "orderNr" -> s"${di.orderNr}",
+                            "tempSensorId" -> s"${di.tempSensorId}",
+                            "testTimestamp" -> s"${di.testTimestamp}"
+                          )).get
                     ),
                     deviceConfig = Some(
                       DeviceTypeUtil.defaultConf

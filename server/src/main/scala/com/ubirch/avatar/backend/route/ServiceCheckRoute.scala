@@ -1,6 +1,6 @@
 package com.ubirch.avatar.backend.route
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ ActorSystem, Props }
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
@@ -23,20 +23,20 @@ import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 /**
   * author: cvandrei
   * since: 2017-06-08
   */
 class ServiceCheckRoute(
-                         implicit mongo: MongoUtil,
-                         _system: ActorSystem,
-                         httpClient: HttpExt,
-                         materializer: Materializer)
+  implicit mongo: MongoUtil,
+  _system: ActorSystem,
+  httpClient: HttpExt,
+  materializer: Materializer)
   extends CORSDirective
-    with ResponseUtil
-    with StrictLogging {
+  with ResponseUtil
+  with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = _system.dispatcher
   implicit val timeout: Timeout = Timeout(5 * Config.actorTimeout seconds)

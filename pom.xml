@@ -100,7 +100,7 @@
         <scalatest.version>3.2.12</scalatest.version>
 
         <!-- avatar versions -->
-        <avatar-parent.version>${project.version}</avatar-parent.version>
+        <avatar-parent.version>${project.parent.version}</avatar-parent.version>
         <ubirch-avatar-client.version>0.7.0</ubirch-avatar-client.version>
 
         <!-- ubirch versions -->

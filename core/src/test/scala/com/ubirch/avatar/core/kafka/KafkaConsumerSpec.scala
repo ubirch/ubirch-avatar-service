@@ -1,24 +1,24 @@
 package com.ubirch.avatar.core.kafka
 
 import akka.Done
-import akka.actor.{ActorSystem, Scheduler}
+import akka.actor.{ ActorSystem, Scheduler }
 import akka.kafka.ConsumerMessage
 import akka.kafka.ConsumerMessage.CommittableMessage
 import akka.kafka.scaladsl.Consumer
 import akka.kafka.testkit.ConsumerResultFactory
 import akka.kafka.testkit.scaladsl.ConsumerControlFactory
-import akka.stream.scaladsl.{Keep, Source}
+import akka.stream.scaladsl.{ Keep, Source }
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config.KafkaRetryConfig
-import com.ubirch.avatar.core.kafka.util.{InvalidDataException, UnexpectedException}
+import com.ubirch.avatar.core.kafka.util.{ InvalidDataException, UnexpectedException }
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.featurespec.AsyncFeatureSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.time.{Seconds, Span}
+import org.scalatest.time.{ Seconds, Span }
 
 import scala.collection.immutable._
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
+import scala.concurrent.{ ExecutionContext, ExecutionContextExecutor, Future }
 import scala.jdk.CollectionConverters._
 
 class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLogging with Matchers {
@@ -120,7 +120,7 @@ class KafkaConsumerSpec extends AsyncFeatureSpec with ScalaFutures with StrictLo
         Future.successful(())
 
       override protected def kafkaSource()
-      : Source[ConsumerMessage.CommittableMessage[String, String], Consumer.Control] =
+        : Source[ConsumerMessage.CommittableMessage[String, String], Consumer.Control] =
         Source(elements).viaMat(ConsumerControlFactory.controlFlow())(Keep.right)
     }
 
