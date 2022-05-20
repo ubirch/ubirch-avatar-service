@@ -31,10 +31,7 @@ import scala.util.{ Failure, Success }
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceClaimRoute(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
-  extends ResponseUtil
-  with CORSDirective
-  with StrictLogging {
+class DeviceClaimRoute(implicit system: ActorSystem) extends ResponseUtil with CORSDirective with StrictLogging {
   private val bearerToken = optionalHeaderValueByType(classOf[Authorization]).map(extractBearerToken)
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit private val formatter: Formats = JsonFormats.default

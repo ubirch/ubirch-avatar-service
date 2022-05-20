@@ -119,7 +119,7 @@
 
         <!-- external versions -->
         <akka.version>2.6.18</akka.version>
-        <akka-http.version>10.2.7</akka-http.version>
+        <akka-http.version>10.2.6</akka-http.version>
         <akka-stream-kafka.version>3.0.0</akka-stream-kafka.version>
         <json4s.version>4.0.5</json4s.version>
         <cats-core.version>2.7.0</cats-core.version>

@@ -25,9 +25,7 @@ import scala.util.Try
   * Created by derMicha on 30/10/16.
   */
 
-private class DeviceApiActor(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer)
-  extends Actor
-  with StrictLogging {
+private class DeviceApiActor(implicit mongo: MongoUtil) extends Actor with StrictLogging {
 
   implicit protected val executionContext: ExecutionContextExecutor = context.system.dispatcher
   implicit val formats: Formats = JsonFormats.default

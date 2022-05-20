@@ -24,7 +24,6 @@ class BackendInfoRoute extends Directives with CORSDirective with ResponseUtil w
       respondWithCORS {
         get {
 
-          val goInfo = s"${Config.goPipelineName} / ${Config.goPipelineLabel} / ${Config.goPipelineRevision}"
           val pubKey = BackendPubKey(
             publicKeyHex = ServerKeys.pubKeyHex,
             publicKeyBase64 = ServerKeys.pubKeyB64
