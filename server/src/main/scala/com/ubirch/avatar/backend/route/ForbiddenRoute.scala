@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.route
 
 import akka.http.scaladsl.model.StatusCodes.Forbidden
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse}
+import akka.http.scaladsl.model.{ ContentTypes, HttpEntity, HttpResponse }
 import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.util.http.response.ResponseUtil
@@ -13,9 +13,7 @@ import scala.language.postfixOps
   * author: cvandrei
   * since: 2016-09-21
   */
-trait ForbiddenRoute extends ResponseUtil
-  with CORSDirective
-  with StrictLogging {
+trait ForbiddenRoute extends ResponseUtil with CORSDirective with StrictLogging {
 
   val route: Route = respondWithCORS {
     get {

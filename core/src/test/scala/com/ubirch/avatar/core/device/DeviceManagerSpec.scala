@@ -7,7 +7,7 @@ import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 
 /**
   * author: cvandrei
@@ -17,48 +17,44 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
   implicit val mongo: MongoUtil = new MongoUtil(ConfigKeys.MONGO_PREFIX)
 
-  feature("create()") {
+  Feature("create()") {
 
-    scenario("index does not exist; empty database --> succeed to create device") {
+    Scenario("index does not exist; empty database --> succeed to create device") {
 
       // prepare
       deleteIndices()
       val device = DummyDevices.device()
 
       // test
-      DeviceManager.create(device) flatMap {
+      DeviceManager.create(device, waitingForRefresh = true) flatMap {
 
         // verify
         case None => fail("failed to create device")
 
         case Some(created) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           created should be(expected)
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(None))
-
       }
-
     }
 
-    scenario("index exists; hwDeviceId (lower case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
+    Scenario(
+      "index exists; hwDeviceId (lower case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
 
       // prepare
       val hwDeviceId = UUIDUtil.uuidStr.toLowerCase
       val device = DummyDevices.device(hwDeviceId = hwDeviceId)
 
       // test
-      DeviceManager.create(device) flatMap {
+      DeviceManager.create(device, waitingForRefresh = true) flatMap {
 
         // verify
         case None => fail("failed to create device")
 
         case Some(created) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           created should be(expected)
 
-          Thread.sleep(2000)
           DeviceManager.info(device.deviceId) map (_ should be(Some(expected)))
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
 
@@ -66,24 +62,23 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; hwDeviceId (upper case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
+    Scenario(
+      "index exists; hwDeviceId (upper case) does not exist --> succeed to create device (w/ hwDeviceId as lower case)") {
 
       // prepare
       val hwDeviceId = UUIDUtil.uuidStr.toUpperCase
       val device = DummyDevices.device(hwDeviceId = hwDeviceId)
 
       // test
-      DeviceManager.create(device) flatMap {
+      DeviceManager.create(device, waitingForRefresh = true) flatMap {
 
         // verify
         case None => fail("failed to create device")
 
         case Some(created) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device).copy(hwDeviceId = hwDeviceId.toLowerCase)
           created should be(expected)
 
-          Thread.sleep(2000)
           DeviceManager.info(device.deviceId) map (_ should be(Some(expected)))
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
 
@@ -91,51 +86,47 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; hwDeviceId exists --> fails to create device") {
+    Scenario("index exists; hwDeviceId exists --> fails to create device") {
 
       // prepare
       val device = DummyDevices.device()
 
-      DeviceManager.create(device) flatMap {
+      DeviceManager.create(device, waitingForRefresh = true) flatMap {
 
         case None => fail("failed to create device during preparation")
 
         case Some(prepared) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           prepared should be(expected)
-          Thread.sleep(2000)
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
 
           val deviceToCreate = device.copy(deviceId = UUIDUtil.uuidStr)
 
           // test && verify
-          DeviceManager.create(deviceToCreate) map(_ should be(None))
+          DeviceManager.create(deviceToCreate) map (_ should be(None))
 
       }
 
     }
 
-    scenario("index exists; deviceId exists --> fails to create device") {
+    Scenario("index exists; deviceId exists --> fails to create device") {
 
       // prepare
       val device = DummyDevices.device()
 
-      DeviceManager.create(device) flatMap {
+      DeviceManager.create(device, waitingForRefresh = true) flatMap {
 
         case None => fail("failed to create device during preparation")
 
         case Some(prepared) =>
-
           val expected = DeviceUtil.deviceWithDefaults(device)
           prepared should be(expected)
-          Thread.sleep(2000)
           DeviceManager.infoByHwId(device.hwDeviceId) map (_ should be(Some(expected)))
 
           val deviceToCreate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toLowerCase)
 
           // test && verify
-          DeviceManager.create(deviceToCreate) map(_ should be(None))
+          DeviceManager.create(deviceToCreate) map (_ should be(None))
 
       }
 
@@ -143,41 +134,39 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
   }
 
-  feature("update()") {
+  Feature("update()") {
 
-    scenario("index does not exist; empty database --> update fails") {
+    Scenario("index does not exist; empty database --> update fails") {
 
       // prepare
       deleteIndices()
       val device = DummyDevices.device()
 
       // test && verify
-      DeviceManager.update(device) map(_ should be(None))
+      DeviceManager.update(device) map (_ should be(None))
 
     }
 
-    scenario("index exists; empty database --> update fails") {
+    Scenario("index exists; empty database --> update fails") {
 
       // prepare
       val device = DummyDevices.device()
 
       // test && verify
-      DeviceManager.update(device) map(_ should be(None))
+      DeviceManager.update(device) map (_ should be(None))
 
     }
 
-    scenario("index exists; device exists; no changes --> update succeeds") {
+    Scenario("index exists; device exists; no changes --> update succeeds") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
           // test
           DeviceManager.update(device) flatMap { updated =>
-
             // verify
             Thread.sleep(2000)
             val expected = DeviceUtil.deviceWithDefaults(device)
@@ -189,85 +178,76 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; changing the deviceId --> update fails") {
+    Scenario("index exists; device exists; changing the deviceId --> update fails") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
-          Thread.sleep(2000)
           val toUpdate = device.copy(deviceId = UUIDUtil.uuidStr)
 
           // test && verify
-          DeviceManager.update(toUpdate) map(_ should be(None))
+          DeviceManager.update(toUpdate) map (_ should be(None))
 
       }
 
     }
 
-    scenario("index exists; device exists; update to a new hwDeviceId (lower case)--> update fails") {
+    Scenario("index exists; device exists; update to a new hwDeviceId (lower case)--> update fails") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
-          Thread.sleep(2000)
           val toUpdate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toLowerCase)
 
           // test && verify
-          DeviceManager.update(toUpdate) map(_ should be(None))
+          DeviceManager.update(toUpdate) map (_ should be(None))
 
       }
 
     }
 
-    scenario("index exists; device exists; update to a new hwDeviceId (upper case)--> update fails") {
+    Scenario("index exists; device exists; update to a new hwDeviceId (upper case)--> update fails") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
-          Thread.sleep(2000)
           val toUpdate = device.copy(hwDeviceId = UUIDUtil.uuidStr.toUpperCase)
 
           // test && verify
-          DeviceManager.update(toUpdate) map(_ should be(None))
+          DeviceManager.update(toUpdate) map (_ should be(None))
 
       }
 
     }
 
-    scenario("index exists; device exists; update to same hwDeviceId (upper case)--> update fails") {
+    Scenario("index exists; device exists; update to same hwDeviceId (upper case)--> update fails") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
-          Thread.sleep(2000)
           val toUpdate = device.copy(hwDeviceId = device.hwDeviceId.toUpperCase)
 
           // test
           DeviceManager.update(toUpdate) map { updatedOpt =>
-
             // verify
-            updatedOpt should be('isDefined)
+            updatedOpt.isDefined shouldBe true
             val updated = updatedOpt.get
             updated should be(device.copy(updated = updated.updated))
 
             if (device.updated.isEmpty) {
-              updated.updated should be('isDefined)
+              updated.updated.isDefined shouldBe true
             } else {
               updated.updated.get.isAfter(device.updated.get) should be(true)
             }
@@ -278,60 +258,53 @@ class DeviceManagerSpec extends ElasticsearchSpecAsync {
 
     }
 
-    scenario("index exists; device exists; changing the hashedHwDeviceId--> update fails") {
+    Scenario("index exists; device exists; changing the hashedHwDeviceId--> update fails") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
-          Thread.sleep(2000)
           val newHashedHwId = HashUtil.sha512Base64(UUIDUtil.uuidStr.toLowerCase())
           val toUpdate = device.copy(hashedHwDeviceId = newHashedHwId)
 
           // test && verify
-          DeviceManager.update(toUpdate) map(_ should be(None))
+          DeviceManager.update(toUpdate) map (_ should be(None))
 
       }
 
     }
 
-    scenario("index exists; device exists; changing created--> update fails") {
+    Scenario("index exists; device exists; changing created--> update fails") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
-          Thread.sleep(2000)
           val toUpdate = device.copy(created = DateTime.now(DateTimeZone.UTC).plusYears(10))
 
           // test && verify
-          DeviceManager.update(toUpdate) map(_ should be(None))
+          DeviceManager.update(toUpdate) map (_ should be(None))
 
       }
 
     }
 
-    scenario("index exists; device exists; changing owners--> update succeeds") {
+    Scenario("index exists; device exists; changing owners--> update succeeds") {
 
       // prepare
-      DeviceManager.create(DummyDevices.device()) flatMap {
+      DeviceManager.create(DummyDevices.device(), waitingForRefresh = true) flatMap {
 
         case None => fail("failed to prepare device")
 
         case Some(device) =>
-
-          Thread.sleep(2000)
           val toUpdate = device.copy(owners = device.owners + UUIDUtil.uuid)
 
           // test && verify
           DeviceManager.update(toUpdate) flatMap { updated =>
-
             Thread.sleep(2000)
             val expected = DeviceUtil.deviceWithDefaults(toUpdate)
             updated should be(Some(expected))

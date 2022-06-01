@@ -10,31 +10,6 @@ import com.ubirch.util.elasticsearch.EsMappingTrait
 trait ElasticsearchMappings extends EsMappingTrait {
 
   val indexesAndMappings: Map[String, String] = Map(
-
-    // ubirch-device-raw-data
-    Config.esDeviceDataRawIndex ->
-      s"""{
-         |    "properties" : {
-         |      "a" : {
-         |        "type" : "keyword"
-         |      },
-         |      "id" : {
-         |        "type" : "keyword"
-         |      },
-         |      "deviceId" : {
-         |        "type" : "keyword"
-         |      },
-         |      "s" : {
-         |        "type" : "keyword"
-         |      },
-         |      "ts" : {
-         |        "type" : "date",
-         |        "format" : "strict_date_time"
-         |      }
-         |    }
-         |}""".stripMargin
-    ,
-
     // ubirch-device-history
     Config.esDeviceDataHistoryIndex ->
       s"""{
@@ -65,9 +40,7 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |        "type" : "geo_point"
          |      }
          |    }
-         |}""".stripMargin
-    ,
-
+         |}""".stripMargin,
     // ubirch-device-raw-data-anchored
     Config.esDeviceDataRawAnchoredIndex ->
       s"""{
@@ -86,9 +59,7 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |        "format" : "strict_date_time"
          |      }
          |    }
-         |}""".stripMargin
-    ,
-
+         |}""".stripMargin,
     // ubirch-devices
     Config.esDeviceIndex ->
       s"""{
@@ -119,9 +90,7 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |        "format" : "strict_date_time"
          |      }
          |    }
-         |}""".stripMargin
-    ,
-
+         |}""".stripMargin,
     // ubirch-device-state // TODO rename to ubirch-avatar-state-history?
     Config.esDeviceStateIndex ->
       s"""{
@@ -136,9 +105,7 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |        "type" : "keyword"
          |      }
          |    }
-         |}""".stripMargin
-    ,
-
+         |}""".stripMargin,
     // ubirch-device-type
     Config.esDeviceTypeIndex ->
       s"""{
@@ -148,7 +115,6 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |      }
          |    }
          |}""".stripMargin
-
   )
 
 }

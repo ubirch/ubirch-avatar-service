@@ -1,6 +1,6 @@
 package com.ubirch.avatar.model.rest.device
 
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 import org.json4s.JValue
 
 /**
@@ -15,14 +15,14 @@ import org.json4s.JValue
   * @param deviceLastUpdated timestamp of last reported state update
   * @param avatarLastUpdated timestamp of last desired state update
   */
-case class AvatarState(deviceId: String,
-                       inSync: Option[Boolean] = None,
-                       desired: Option[JValue] = None,
-                       reported: Option[JValue] = None,
-                       delta: Option[JValue] = None,
-                       currentDeviceSignature: Option[String] = None,
-                       // update on device
-                       deviceLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)),
-                       // update on server side
-                       avatarLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC))
-                      )
+case class AvatarState(
+  deviceId: String,
+  inSync: Option[Boolean] = None,
+  desired: Option[JValue] = None,
+  reported: Option[JValue] = None,
+  delta: Option[JValue] = None,
+  currentDeviceSignature: Option[String] = None,
+  // update on device
+  deviceLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)),
+  // update on server side
+  avatarLastUpdated: Option[DateTime] = Some(DateTime.now(DateTimeZone.UTC)))

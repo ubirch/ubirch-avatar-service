@@ -41,32 +41,32 @@ case class DeviceDataRaws(ddrs: Set[DeviceDataRaw])
   * @param refId          (optional) // TODO add description
   */
 case class DeviceDataRaw(
-                          id: UUID = UUIDUtil.uuid,
-                          v: String = MessageVersion.v003,
-                          fw: String = "n.a.",
-                          umv: Option[Int] = None,
-                          usv: Option[Int] = None,
-                          a: String,
-                          did: Option[String] = None,
-                          ts: DateTime = DateTime.now(),
-                          k: Option[String] = None,
-                          s: Option[String] = None,
-                          ps: Option[String] = None,
-                          mpraw: Option[String] = None,
-                          mppay: Option[String] = None,
-                          mppayhash: Option[String] = None,
-                          p: JValue,
-                          config: Option[JValue] = None,
-                          meta: Option[JValue] = None,
-                          deviceId: Option[String] = None,
-                          deviceName: Option[String] = None,
-                          txHash: Option[String] = None, // related bitcoin transaction hash
-                          txHashLink: Option[String] = None, // related chain explorer url
-                          txHashLinkHtml: Option[String] = None, // related chain explorer html-link
-                          deviceType: Option[String] = None,
-                          tags: Option[Set[String]] = None,
-                          refId: Option[UUID] = None
-                        ) {
+  id: UUID = UUIDUtil.uuid,
+  v: String = MessageVersion.v003,
+  fw: String = "n.a.",
+  umv: Option[Int] = None,
+  usv: Option[Int] = None,
+  a: String,
+  did: Option[String] = None,
+  ts: DateTime = DateTime.now(),
+  k: Option[String] = None,
+  s: Option[String] = None,
+  ps: Option[String] = None,
+  mpraw: Option[String] = None,
+  mppay: Option[String] = None,
+  mppayhash: Option[String] = None,
+  p: JValue,
+  config: Option[JValue] = None,
+  meta: Option[JValue] = None,
+  deviceId: Option[String] = None,
+  deviceName: Option[String] = None,
+  txHash: Option[String] = None, // related bitcoin transaction hash
+  txHashLink: Option[String] = None, // related chain explorer url
+  txHashLinkHtml: Option[String] = None, // related chain explorer html-link
+  deviceType: Option[String] = None,
+  tags: Option[Set[String]] = None,
+  refId: Option[UUID] = None
+) {
   override def hashCode(): Int = id.hashCode()
 
   override def equals(obj: scala.Any): Boolean = {
@@ -85,7 +85,8 @@ case class DeviceDataRaw(
 
 object DeviceDataRawConverter {
 
-  def toClientDeviceDataRaw(dataRaw: com.ubirch.avatar.model.rest.device.DeviceDataRaw): com.ubirch.avatar.client.model.DeviceDataRaw =
+  def toClientDeviceDataRaw(dataRaw: com.ubirch.avatar.model.rest.device.DeviceDataRaw)
+    : com.ubirch.avatar.client.model.DeviceDataRaw =
     com.ubirch.avatar.client.model.DeviceDataRaw(
       id = dataRaw.id,
       v = dataRaw.v,
@@ -115,12 +116,11 @@ object DeviceDataRawConverter {
     )
 }
 
-
 case class DeviceDataRawEnvelope(
-                                  validationState: String,
-                                  deviceMessage: DeviceDataRaw,
-                                  signature: Option[String],
-                                  timestamp: DateTime = DateTime.now()
-                                )
+  validationState: String,
+  deviceMessage: DeviceDataRaw,
+  signature: Option[String],
+  timestamp: DateTime = DateTime.now()
+)
 
 case class PayloadV3(c: JValue, p: Array[JValue])

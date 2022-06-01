@@ -7,7 +7,6 @@ import com.ubirch.avatar.model.rest.device.AvatarState
 import com.ubirch.avatar.mongo.MongoSpec
 import com.ubirch.util.json.Json4sUtil
 import com.ubirch.util.uuid.UUIDUtil
-
 import org.joda.time.DateTime
 import org.json4s.native.JsonMethods._
 
@@ -22,9 +21,9 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
   private val collection = Config.mongoCollectionAvatarState
   private val emptyJson = Some(parse("{}"))
 
-  feature("setReported()") {
+  Feature("setReported()") {
 
-    scenario("no AvatarState exists --> creates a new one") {
+    Scenario("no AvatarState exists --> creates a new one") {
 
       // prepare
       val deviceConfigString =
@@ -40,7 +39,6 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
         case None => Future(fail("failed to create avatar state"))
 
         case Some(state: AvatarState) =>
-
           mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
           state.deviceId should be(device.deviceId)
@@ -53,7 +51,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("AvatarState exists (reported and desired not empty) --> update existing one") {
+    Scenario("AvatarState exists (reported and desired not empty) --> update existing one") {
 
       // prepare
       val deviceConfigString =
@@ -74,7 +72,6 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
         case None => fail("failed to create existing avatar state")
 
         case Some(existingState: db.device.AvatarState) =>
-
           existingState should be(state)
 
           // test
@@ -84,7 +81,6 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
             case None => Future(fail("failed to update avatar state"))
 
             case Some(state: AvatarState) =>
-
               mongoTestUtils.countAll(collection) map (_ shouldBe 1)
 
               val expectedDesiredAndDelta = Some(parse(existingState.desired.get))
@@ -103,145 +99,9 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
   }
 
-  feature("setDesired()") {
+  Feature("toRestModel()") {
 
-    scenario("no AvatarState exists --> creates a new one") {
-
-      // prepare
-      val deviceConfigString =
-        """{"i":600}"""
-      val deviceConfig = Some(parse(deviceConfigString))
-      val device = Json4sUtil.any2any[Device](DummyDevices.minimalDevice().copy(deviceConfig = deviceConfig))
-      val desired = parse("""{"i":900}""")
-
-      // test
-      AvatarStateManagerREST.setDesired(device, desired) flatMap {
-
-        // verify
-        case None => Future(fail("failed to create avatar state"))
-
-        case Some(state: AvatarState) =>
-
-          mongoTestUtils.countAll(collection) map (_ shouldBe 1)
-
-          state.deviceId should be(device.deviceId)
-          state.inSync should be(Some(false))
-          state.desired should be(Some(desired))
-          state.reported should be(Some(parse("""{}""")))
-          state.delta should be(Some(desired))
-
-      }
-
-    }
-
-    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field and adds a new one) --> update existing one") {
-
-      // prepare
-      val deviceConfigString =
-        """{"i":600}"""
-      val deviceConfig = Some(parse(deviceConfigString))
-      val device = Json4sUtil.any2any[Device](DummyDevices.minimalDevice().copy(deviceConfig = deviceConfig))
-      val desired = parse("""{"i":1200,"foo":"bar"}""")
-      val reported = parse("""{"i":900}""")
-
-      val state = db.device.AvatarState(
-        deviceId = device.deviceId,
-        desired = Some(Json4sUtil.jvalue2String(desired)),
-        reported = Some(Json4sUtil.jvalue2String(reported)),
-        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
-        avatarLastUpdated = Some(DateTime.now.minusHours(1))
-      )
-      AvatarStateManager.create(state) flatMap {
-
-        case None => fail("failed to create existing avatar state")
-
-        case Some(existingState: db.device.AvatarState) =>
-
-          existingState should be(state)
-
-          // test
-          AvatarStateManagerREST.setDesired(device, desired) flatMap {
-
-            // verify
-            case None => Future(fail("failed to update avatar state"))
-
-            case Some(state: AvatarState) =>
-
-              mongoTestUtils.countAll(collection) map (_ shouldBe 1)
-
-              val expectedDesiredAndDelta = Some(desired)
-
-              state.deviceId should be(device.deviceId)
-              state.inSync should be(Some(false))
-              state.desired should be(expectedDesiredAndDelta)
-              state.reported.get should be(reported)
-              state.delta should be(expectedDesiredAndDelta)
-              state.deviceLastUpdated should be(existingState.deviceLastUpdated)
-              state.avatarLastUpdated.get.isAfter(existingState.avatarLastUpdated.get) should be(true)
-
-          }
-
-      }
-
-    }
-
-    scenario("AvatarState exists (reported and desired not empty; desired updates an existing field but doesn't remove an existing one) --> update existing one") {
-
-      // prepare
-      val deviceConfigString =
-        """{"i":600}"""
-      val deviceConfig = Some(parse(deviceConfigString))
-      val device = Json4sUtil.any2any[Device](DummyDevices.minimalDevice().copy(deviceConfig = deviceConfig))
-      val desiredOld = parse("""{"i":700,"foo":"bar"}""")
-      val desiredNew = parse("""{"i":1200}""")
-      val reported = parse("""{"i":900}""")
-
-      val state = db.device.AvatarState(
-        deviceId = device.deviceId,
-        desired = Some(Json4sUtil.jvalue2String(desiredOld)),
-        reported = Some(Json4sUtil.jvalue2String(reported)),
-        deviceLastUpdated = Some(DateTime.now.minusHours(1)),
-        avatarLastUpdated = Some(DateTime.now.minusHours(1))
-      )
-      AvatarStateManager.create(state) flatMap {
-
-        case None => fail("failed to create existing avatar state")
-
-        case Some(existingState: db.device.AvatarState) =>
-
-          existingState should be(state)
-
-          // test
-          AvatarStateManagerREST.setDesired(device, desiredNew) flatMap {
-
-            // verify
-            case None => Future(fail("failed to update avatar state"))
-
-            case Some(state: AvatarState) =>
-
-              mongoTestUtils.countAll(collection) map (_ shouldBe 1)
-
-              val expectedDesiredAndDelta = Some(parse("""{"i":1200,"foo":"bar"}"""))
-
-              state.deviceId should be(device.deviceId)
-              state.inSync should be(Some(false))
-              state.desired should be(expectedDesiredAndDelta)
-              state.reported.get should be(reported)
-              state.delta should be(expectedDesiredAndDelta)
-              state.deviceLastUpdated should be(existingState.deviceLastUpdated)
-              state.avatarLastUpdated.get.isAfter(existingState.avatarLastUpdated.get) should be(true)
-
-          }
-
-      }
-
-    }
-
-  }
-
-  feature("toRestModel()") {
-
-    scenario("_desired_ and _reported_ are empty") {
+    Scenario("_desired_ and _reported_ are empty") {
 
       // prepare
       val dbState = db.device.AvatarState(
@@ -258,7 +118,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_desired_ and _reported_ have same jsons") {
+    Scenario("_desired_ and _reported_ have same jsons") {
 
       // prepare
       val desired =
@@ -283,7 +143,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_desired_ and _reported_ have same field with different values") {
+    Scenario("_desired_ and _reported_ have same field with different values") {
 
       // prepare
       val desired =
@@ -308,7 +168,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_desired_ has a field that _reported_ does not") {
+    Scenario("_desired_ has a field that _reported_ does not") {
 
       // prepare
       val desired =
@@ -333,7 +193,7 @@ class AvatarStateManagerRESTSpec extends MongoSpec {
 
     }
 
-    scenario("_reported_ has a field that _desired_ does not") {
+    Scenario("_reported_ has a field that _desired_ does not") {
 
       // prepare
       val desired =

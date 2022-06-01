@@ -4,17 +4,16 @@ import org.joda.time.DateTime
 
 import java.util.UUID
 
-case class DeviceClaim(hwDeviceId: String)
+case class DeviceClaim(hwDeviceId: String, userId: UUID)
 
 case class DeviceUserClaimRequest(
-                                   hwDeviceId: String,
-                                   externalId: String,
-                                   userId: UUID
-                                 )
+  hwDeviceId: String,
+  userId: UUID
+)
 
 case class DeviceUserClaim(
-                            hwDeviceId: String,
-                            deviceId: String,
-                            userId: UUID,
-                            productionDate: DateTime
-                          )
+  hwDeviceId: String,
+  deviceId: String,
+  userId: UUID,
+  productionDate: DateTime
+)

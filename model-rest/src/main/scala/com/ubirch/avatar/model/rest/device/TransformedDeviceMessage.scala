@@ -21,14 +21,14 @@ import org.json4s._
   * @param timestamp                timestamp of the original DeviceDataRaw
   */
 case class TransformedDeviceMessage(
-                                     version: String = MessageVersion.v003,
-                                     messageId: UUID = UUIDUtil.uuid,
-                                     deviceId: String,
-                                     validationState: Option[String],
-                                     signature: Option[String],
-                                     simpleDeviceMessageRefId: UUID,
-                                     error: Option[String],
-                                     config: JValue,
-                                     payload: JValue,
-                                     timestamp: Option[DateTime] = None
-                                   )
+  version: String = MessageVersion.v003,
+  messageId: UUID = UUIDUtil.uuid,
+  deviceId: String,
+  validationState: Option[String],
+  signature: Option[String],
+  simpleDeviceMessageRefId: UUID,
+  error: Option[String],
+  config: JValue,
+  payload: JValue,
+  timestamp: Option[DateTime] = None
+)

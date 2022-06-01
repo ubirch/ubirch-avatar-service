@@ -2,16 +2,12 @@ package com.ubirch.avatar.cmd
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.model.rest.payload.EnvSensorRawPayload
-import com.ubirch.util.json.{Json4sUtil, MyJsonProtocol}
+import com.ubirch.util.json.{ Json4sUtil, MyJsonProtocol }
 
 /**
   * Created by derMicha on 18/05/17.
   */
-object TestingSchwarzbrot
-  extends App
-    with MyJsonProtocol
-    with StrictLogging {
-
+object TestingSchwarzbrot extends App with MyJsonProtocol with StrictLogging {
 
   val string =
     """

@@ -1,25 +1,25 @@
 package com.ubirch.avatar.cmd
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.{Http, HttpExt}
+import akka.http.scaladsl.{ Http, HttpExt }
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.avatar.config.{Config, ConfigKeys, Const}
+import com.ubirch.avatar.config.{ Config, ConfigKeys, Const }
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
+import com.ubirch.avatar.util.server.{ ElasticsearchMappings, MongoConstraints }
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.mongo.connection.MongoUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
-object PatchTrackleDevices extends App
+object PatchTrackleDevices
+  extends App
   with ElasticsearchMappings
   with MongoConstraints
   with MyJsonProtocol
   with StrictLogging {
 
   implicit val system: ActorSystem = ActorSystem("AvatarService")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   implicit val httpClient: HttpExt = Http()

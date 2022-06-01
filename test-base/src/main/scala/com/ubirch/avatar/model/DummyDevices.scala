@@ -1,7 +1,5 @@
 package com.ubirch.avatar.model
 
-import java.util.UUID
-
 import com.ubirch.avatar.config.Const
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.util.crypto.hash.HashUtil
@@ -10,36 +8,38 @@ import org.joda.time.DateTime
 import org.json4s.JValue
 import org.json4s.native.JsonMethods._
 
+import java.util.UUID
+
 /**
   * author: cvandrei
   * since: 2016-09-23
   */
 object DummyDevices {
 
-  def minimalDevice(deviceId: String = UUIDUtil.uuidStr,
-                    owners: Set[UUID] = Set.empty,
-                    groups: Set[UUID] = Set.empty,
-                    hwDeviceId: String = UUIDUtil.uuidStr
-                   ): Device = {
+  def minimalDevice(
+    deviceId: String = UUIDUtil.uuidStr,
+    owners: Set[UUID] = Set.empty,
+    groups: Set[UUID] = Set.empty,
+    hwDeviceId: String = UUIDUtil.uuidStr): Device = {
 
     Device(
       deviceId = deviceId,
       owners = owners,
       groups = groups,
       hwDeviceId = hwDeviceId,
-      hashedHwDeviceId = HashUtil.sha256HexString(hwDeviceId)
+      hashedHwDeviceId = HashUtil.sha512Base64(hwDeviceId)
     )
 
   }
 
-  def device(deviceId: String = UUIDUtil.uuidStr,
-             owners: Set[UUID] = Set(UUIDUtil.uuid),
-             groups: Set[UUID] = Set(UUIDUtil.uuid),
-             deviceName: String = "testHans001",
-             hwDeviceId: String = UUIDUtil.uuidStr,
-             deviceTypeKey: String = Const.ENVIRONMENTSENSOR,
-             deviceProperties: Option[JValue] = None
-            ): Device = {
+  def device(
+    deviceId: String = UUIDUtil.uuidStr,
+    owners: Set[UUID] = Set(UUIDUtil.uuid),
+    groups: Set[UUID] = Set(UUIDUtil.uuid),
+    deviceName: String = "testHans001",
+    hwDeviceId: String = UUIDUtil.uuidStr,
+    deviceTypeKey: String = Const.TRACKLESENSOR,
+    deviceProperties: Option[JValue] = None): Device = {
 
     Device(
       deviceId = deviceId,
@@ -68,7 +68,7 @@ object DummyDevices {
   lazy val device3Id = "0c5a19bf-194c-40ea-bf46-0416a176aedd"
   lazy val device4Id = "0c5a19bf-194c-40ea-bf46-0416a176aede"
 
-  lazy val device1 = Device(
+  lazy val device1: Device = Device(
     deviceId = device1Id,
     groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "lightsSensor",
@@ -83,7 +83,7 @@ object DummyDevices {
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
-  lazy val device2 = Device(
+  lazy val device2: Device = Device(
     deviceId = device2Id,
     groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "temperaturesSensor",
@@ -98,7 +98,7 @@ object DummyDevices {
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
-  lazy val device3 = Device(
+  lazy val device3: Device = Device(
     deviceId = device3Id,
     groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "machineSensor",
@@ -113,7 +113,7 @@ object DummyDevices {
     deviceLastUpdated = Some(DateTime.now.minusMinutes(5))
   )
 
-  lazy val device4 = Device(
+  lazy val device4: Device = Device(
     deviceId = device4Id,
     groups = Set(UUIDUtil.uuid),
     deviceTypeKey = "trackleSensor",

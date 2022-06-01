@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!-- parent pom -->
+    <parent>
+        <groupId>com.ubirch.avatar</groupId>
+        <artifactId>ubirch-avatar-service</artifactId>
+        <version>0.6.6-SNAPSHOT</version>
+    </parent>
+
+    <!-- basic info -->
+    <artifactId>config</artifactId>
+    <name>${project.artifactId}</name>
+    <description>avatar specific config and config tools</description>
+    <packaging>jar</packaging>
+
+
+    <dependencies>
+
+        <!-- UBIRCH -->
+        <dependency>
+            <groupId>com.ubirch.util</groupId>
+            <artifactId>ubirch-config-utils_${scala.compat.version}</artifactId>
+            <version>${config-utils.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

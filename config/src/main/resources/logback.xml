@@ -27,22 +27,18 @@
   </appender>
 
   <logger name="com.ubirch" level="DEBUG"/>
-  <logger name="com.ubirch.util.oidc.directive.OidcDirective" level="WARN"/>
   <logger name="com.ubirch.avatar.core.avatar.AvatarStateManage" level="INFO"/>
   <logger name="com.ubirch.avatar.backend.actor.DeviceApiActor" level="DEBUG"/>
   <logger name="com.ubirch.user.client.rest.UserServiceClientRest" level="INFO"/>
   <logger name="com.ubirch.util.mongo.connection.MongoUtil" level="INFO"/>
   <logger name="org.apache.http" level="INFO"/>
-  <logger name="org.apache.camel.component.mqtt" level="ERROR"/>
   <logger name="akka.camel.internal" level="INFO"/>
   <logger name="com.amazonaws" level="INFO"/>
   <logger name="reactivemongo.core" level="INFO"/>
-  <logger name="com.ubirch.util.oidc.directive.OidcDirective" level="INFO"/>
 
   <logger name="akka.actor" level="WARN"/>
   <logger name="akka.event" level="WARN"/>
   <logger name="reactivemongo-akka.actor" level="WARN"/>
-  <logger name="org.apache.camel.component.mqtt.MQTTEndpoint" level="WARN"/>
   <logger name="org.apache.camel" level="WARN"/>
 
   <root level="WARN">

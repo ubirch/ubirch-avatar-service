@@ -1,15 +1,15 @@
 package com.ubirch.avatar.cmd
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.{Http, HttpExt}
+import akka.http.scaladsl.{ Http, HttpExt }
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.client.AvatarServiceClient
 import com.ubirch.avatar.client.model.DeviceStateUpdate
 import com.ubirch.avatar.config.Const
-import com.ubirch.avatar.core.device.{DeviceManager, DeviceTypeManager}
+import com.ubirch.avatar.core.device.DeviceManager
 import com.ubirch.avatar.model.rest.device.DeviceDataRawConverter
-import com.ubirch.avatar.model.{DummyDeviceDataRaw, DummyDevices}
+import com.ubirch.avatar.model.{ DummyDeviceDataRaw, DummyDevices }
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
 import org.json4s.native.Serialization.read
@@ -22,18 +22,11 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 09/11/16.
   */
-object InitData
-  extends App
-    with MyJsonProtocol
-    with StrictLogging {
+object InitData extends App with MyJsonProtocol with StrictLogging {
 
   val numberOfRawMessages = 10
   implicit val system: ActorSystem = ActorSystem("trackleService")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val httpClient: HttpExt = Http()
-
-  DeviceTypeManager.init()
-
 
   val properties_BC: JValue = read[JValue](
     s"""
@@ -60,7 +53,6 @@ object InitData
 
   Await.result(DeviceManager.create(device), 5 seconds) match {
     case Some(dev) =>
-
       logger.info(s"created: $dev")
 
       Thread.sleep(5000)
@@ -82,9 +74,7 @@ object InitData
               logger.error(s"response: $jsonErrorResponse")
           }
 
-
-        }
-        catch {
+        } catch {
           case e: Exception =>
             logger.error("post failed")
         }

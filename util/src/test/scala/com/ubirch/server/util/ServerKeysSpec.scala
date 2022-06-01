@@ -2,23 +2,21 @@ package com.ubirch.server.util
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.util.crypto.ecc.EccUtil
-import net.i2p.crypto.eddsa.{EdDSAPrivateKey, EdDSAPublicKey}
+import net.i2p.crypto.eddsa.{ EdDSAPrivateKey, EdDSAPublicKey }
 import org.apache.commons.codec.binary.Hex
-import org.scalatest.{FeatureSpec, Matchers}
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
 
-class ServerKeysSpec extends FeatureSpec
-  with Matchers
-  with StrictLogging {
+class ServerKeysSpec extends AnyFeatureSpec with Matchers with StrictLogging {
 
   val data = "Hallo Welt"
   val dataBin: Array[Byte] = data.getBytes
 
   private val eccUtil = new EccUtil()
 
+  Feature("ServerKeys test") {
 
-  feature("ServerKeys test") {
-
-    scenario("sign data new keys") {
+    Scenario("sign data new keys") {
       val (puk, prk) = eccUtil.generateEccKeyPairEncoded
 
       val s = eccUtil.signPayload(prk, data)
@@ -28,7 +26,7 @@ class ServerKeysSpec extends FeatureSpec
       v shouldBe true
     }
 
-    scenario("sign data new keys (2bin)") {
+    Scenario("sign data new keys (2bin)") {
       val (puk, prk) = eccUtil.generateEccKeyPair
 
       val pukBin = EdDSAPublicKey.decode(puk.getEncoded)
@@ -52,8 +50,7 @@ class ServerKeysSpec extends FeatureSpec
       true shouldBe true
     }
 
-
-    scenario("sign data with Server Key") {
+    Scenario("sign data with Server Key") {
       val s = eccUtil.signPayload(ServerKeys.privKeyB64, data)
 
       val v = eccUtil.validateSignature(ServerKeys.pubKeyB64, signature = s, payload = data)

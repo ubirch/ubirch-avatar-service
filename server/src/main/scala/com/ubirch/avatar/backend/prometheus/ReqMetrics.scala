@@ -1,7 +1,7 @@
 package com.ubirch.avatar.backend.prometheus
 
 import com.ubirch.avatar.config.Config
-import io.prometheus.client.{Counter, Histogram}
+import io.prometheus.client.{ Counter, Histogram }
 
 class ReqMetrics(metricName: String) {
 
@@ -9,7 +9,7 @@ class ReqMetrics(metricName: String) {
 
   private val enabled = Config.prometheusEnabled
 
-  private var timer : Histogram.Timer =  null
+  private var timer: Histogram.Timer = null
 
   def inc(): Unit = if (enabled) requests.inc()
 
@@ -26,7 +26,6 @@ class ReqMetrics(metricName: String) {
     .help(s"Total failed requests: $metricName")
     //.labelNames("device_update_failed_total")
     .register()
-
 
   def start: Unit = {
     if (enabled && timer == null) {

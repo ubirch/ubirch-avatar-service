@@ -2,17 +2,17 @@ package com.ubirch.avatar.core.avatar
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.model.db.device.{AvatarState, Device}
+import com.ubirch.avatar.model.db.device.{ AvatarState, Device }
 import com.ubirch.util.deepCheck.model.DeepCheckResponse
 import com.ubirch.util.deepCheck.util.DeepCheckResponseUtil
-import com.ubirch.util.json.{Json4sUtil, JsonFormats}
+import com.ubirch.util.json.{ Json4sUtil, JsonFormats }
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.mongo.format.MongoFormats
 import org.joda.time.DateTime
 import org.json4s.jackson.JsonMethods._
 import org.json4s.native.Serialization.write
-import org.json4s.{Formats, JValue}
-import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter, Macros, document}
+import org.json4s.{ Formats, JValue }
+import reactivemongo.bson.{ document, BSONDocument, BSONDocumentReader, BSONDocumentWriter, Macros }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -21,11 +21,9 @@ import scala.concurrent.Future
   * author: cvandrei
   * since: 2017-02-24
   */
-object AvatarStateManager extends MongoFormats
-  with StrictLogging {
+object AvatarStateManager extends MongoFormats with StrictLogging {
 
-  private implicit val formats: Formats = JsonFormats.default
-
+  implicit private val formats: Formats = JsonFormats.default
 
   private val collectionName = Config.mongoCollectionAvatarState
 
@@ -61,16 +59,12 @@ object AvatarStateManager extends MongoFormats
     byDeviceId(avatarState.deviceId) flatMap {
 
       case Some(_: AvatarState) =>
-
         logger.error(s"unable to create avatarState (as it already exists) for deviceId=${avatarState.deviceId}")
         Future(None)
 
       case None =>
-
         mongo.collection(collectionName) flatMap { collection =>
-
           collection.insert[AvatarState](avatarState) map { writeResult =>
-
             if (writeResult.ok && writeResult.n == 1) {
               logger.debug(s"created new avatarState: $avatarState")
               Some(avatarState)
@@ -103,12 +97,10 @@ object AvatarStateManager extends MongoFormats
         Future(None)
 
       case Some(_: AvatarState) =>
-
         val selector = document("deviceId" -> avatarState.deviceId)
         mongo.collection(collectionName) flatMap {
 
           _.update(selector, avatarState) map { writeResult =>
-
             if (writeResult.ok) {
               logger.info(s"updated avatarState: deviceId=${avatarState.deviceId}")
               Some(avatarState)
@@ -134,26 +126,24 @@ object AvatarStateManager extends MongoFormats
   def upsert(state: AvatarState)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
     byDeviceId(state.deviceId) flatMap {
-      case None => create(state)
+      case None                 => create(state)
       case Some(_: AvatarState) => update(state)
     }
 
   }
 
-  def setReported(device: Device, reported: JValue, signature: Option[String] = None)
-                 (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
+  def setReported(device: Device, reported: JValue, signature: Option[String] = None)(implicit
+  mongo: MongoUtil): Future[Option[AvatarState]] = {
 
     val reportedString = Some(Json4sUtil.jvalue2String(reported))
     byDeviceId(device.deviceId) flatMap {
 
       case None =>
-
         val toCreate = newAvatarStateWithReported(device, reportedString, signature = signature)
         logger.debug(s"setReported() - creating new AvatarState: $toCreate")
         create(toCreate)
 
       case Some(avatarState: AvatarState) =>
-
         val toUpdate = avatarState.copy(
           reported = reportedString,
           deviceLastUpdated = Some(DateTime.now),
@@ -166,21 +156,18 @@ object AvatarStateManager extends MongoFormats
 
   }
 
-  def setDesired(device: Device, desired: JValue)
-                (implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
+  def setDesired(device: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[AvatarState]] = {
 
     val desiredString = Some(Json4sUtil.jvalue2String(desired))
     byDeviceId(device.deviceId) flatMap {
 
       case None =>
-
         val toCreate = newAvatarStateWithDesired(device, desiredString)
         create(toCreate)
 
       case Some(avatarState: AvatarState) =>
-
         val newDesired = avatarState.desired match {
-          case None => Some(desired)
+          case None                         => Some(desired)
           case Some(currentDesired: String) => Some(parse(currentDesired) merge desired)
         }
         val toUpdate = avatarState.copy(
@@ -198,21 +185,23 @@ object AvatarStateManager extends MongoFormats
     logger.debug(s"connectivityCheck($serviceName)")
     mongo.connectivityCheck[AvatarState](collectionName) map { deepCheckRes =>
       DeepCheckResponseUtil.addServicePrefix(serviceName, deepCheckRes)
-    } recover[DeepCheckResponse] {
+    } recover [DeepCheckResponse] {
       case e =>
         logger.error("", e)
-        DeepCheckResponseUtil.addServicePrefix(serviceName,
-          DeepCheckResponse(status = false, messages = Seq(s"[avatar-state] ${e.getMessage}"))
-        )
+        DeepCheckResponseUtil.addServicePrefix(
+          serviceName,
+          DeepCheckResponse(status = false, messages = Seq(s"[avatar-state] ${e.getMessage}")))
     }
   }
 
-  private def newAvatarStateWithReported(device: Device, reported: Option[String], signature: Option[String] = None): AvatarState = {
+  private def newAvatarStateWithReported(
+    device: Device,
+    reported: Option[String],
+    signature: Option[String] = None): AvatarState = {
 
     device.deviceConfig match {
 
       case None =>
-
         AvatarState(
           deviceId = device.deviceId,
           reported = reported,
@@ -220,7 +209,6 @@ object AvatarStateManager extends MongoFormats
         )
 
       case Some(deviceConfig: JValue) =>
-
         AvatarState(
           deviceId = device.deviceId,
           reported = reported,

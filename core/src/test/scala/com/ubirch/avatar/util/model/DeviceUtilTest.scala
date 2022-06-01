@@ -1,14 +1,15 @@
 package com.ubirch.avatar.util.model
 
 import com.typesafe.scalalogging.StrictLogging
+import com.ubirch.avatar.core.util.DeviceCoreUtil
 import com.ubirch.avatar.model.DummyDevices
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.server.util.ServerKeys
-import com.ubirch.services.util.DeviceCoreUtil
 import com.ubirch.util.json.MyJsonProtocol
 import org.json4s.JValue
 import org.json4s.native.Serialization.read
-import org.scalatest.{FeatureSpec, Matchers}
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -17,16 +18,13 @@ import scala.language.postfixOps
 /**
   * Created by derMicha on 18/01/17.
   */
-class DeviceUtilTest extends FeatureSpec
-  with Matchers
-  with StrictLogging
-  with MyJsonProtocol {
+class DeviceUtilTest extends AnyFeatureSpec with Matchers with StrictLogging with MyJsonProtocol {
 
   val device: Device = DummyDevices.device1
 
-  feature("DeviceUtil") {
+  Feature("DeviceUtil") {
 
-    scenario("sign message") {
+    Scenario("sign message") {
 
       val payload = read[JValue](
         """[{"t":2630,"p":1014,"h":2783,"a":2587090,"la":"52.481083","lo":"13.3643","ba":100,"lp":1,"e":0,"aq":111,"aqr":121,"ts":"2004-1-1/0:0:32"},{"t":2630,"p":1014,"h":2783,"a":2587090,"la":"52.481083","lo":"13.3643","ba":100,"lp":2,"e":0,"aq":111,"aqr":121,"ts":"2004-01-01 00:00:33"}]"""
@@ -42,7 +40,7 @@ class DeviceUtilTest extends FeatureSpec
       checkedD shouldBe true
     }
 
-    scenario("sign empty message") {
+    Scenario("sign empty message") {
 
       val payload = read[JValue]("")
 

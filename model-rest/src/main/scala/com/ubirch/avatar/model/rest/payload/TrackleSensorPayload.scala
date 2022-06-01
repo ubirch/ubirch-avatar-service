@@ -3,7 +3,7 @@ package com.ubirch.avatar.model.rest.payload
 import java.util.UUID
 
 import com.ubirch.util.uuid.UUIDUtil
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 
 /**
   * Created by derMicha on 01/02/17.
@@ -16,11 +16,11 @@ import org.joda.time.{DateTime, DateTimeZone}
   * @param ts Timestamp of measurement
   */
 final case class TrackleSensorPayload(
-                                       cy: Long = 0,
-                                       t: Int,
-                                       er: Int = 0,
-                                       ts: DateTime = DateTime.now(DateTimeZone.UTC)
-                                     )
+  cy: Long = 0,
+  t: Int,
+  er: Int = 0,
+  ts: DateTime = DateTime.now(DateTimeZone.UTC)
+)
 
 /**
   * @param mid measurementid
@@ -30,10 +30,10 @@ final case class TrackleSensorPayload(
   * @param er  error code
   */
 final case class TrackleSensorMeasurement(
-                                           mid: UUID = UUIDUtil.uuid,
-                                           pid: Option[UUID] = None,
-                                           did: String,
-                                           ts: DateTime = DateTime.now(DateTimeZone.UTC),
-                                           te: BigDecimal,
-                                           er: Int = 0
-                                         )
+  mid: UUID = UUIDUtil.uuid,
+  pid: Option[UUID] = None,
+  did: String,
+  ts: DateTime = DateTime.now(DateTimeZone.UTC),
+  te: BigDecimal,
+  er: Int = 0
+)

@@ -1,7 +1,5 @@
 package com.ubirch.avatar.core.avatar
 
-import java.util.UUID
-
 import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.util.json.Json4sUtil
@@ -25,29 +23,19 @@ object AvatarStateManagerREST {
     // TODO automated tests
     AvatarStateManager.byDeviceId(deviceId) map {
 
-      case None => None
+      case None                                       => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
 
     }
 
   }
 
-  def setReported(restDevice: Device, reported: JValue, signature: Option[String] = None)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
+  def setReported(restDevice: Device, reported: JValue, signature: Option[String] = None)(implicit
+  mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
 
     AvatarStateManager.setReported(restDevice, reported, signature) map {
 
-      case None => None
-      case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
-
-    }
-
-  }
-
-  def setDesired(restDevice: Device, desired: JValue)(implicit mongo: MongoUtil): Future[Option[rest.device.AvatarState]] = {
-
-    AvatarStateManager.setDesired(restDevice, desired) map {
-
-      case None => None
+      case None                                       => None
       case Some(dbAvatarState: db.device.AvatarState) => Some(toRestModel(dbAvatarState))
 
     }
@@ -68,9 +56,10 @@ object AvatarStateManagerREST {
       avatarLastUpdated = dbAvatarState.avatarLastUpdated
     )
 
-    val diff = restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
+    val diff =
+      restAvatarStatePrelim.reported.getOrElse(emptyJson) diff restAvatarStatePrelim.desired.getOrElse(emptyJson)
     val delta: JValue = diff.changed merge diff.added match {
-      case jn if (jn.equals(JsonAST.JNothing)) =>
+      case jn if jn.equals(JsonAST.JNothing) =>
         //TODO ugly way to create an empty Json object
         Json4sUtil.string2JValue("{}").get
       case jn => jn
@@ -83,7 +72,7 @@ object AvatarStateManagerREST {
   private def stringToJson(s: Option[String]): Option[JValue] = {
 
     s match {
-      case None => None
+      case None                     => None
       case Some(jsonString: String) => Some(parse(jsonString))
     }
 

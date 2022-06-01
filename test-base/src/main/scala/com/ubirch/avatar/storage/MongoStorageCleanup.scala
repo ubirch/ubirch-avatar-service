@@ -4,9 +4,9 @@ import com.ubirch.avatar.config.ConfigKeys
 import com.ubirch.avatar.util.server.MongoConstraints
 import com.ubirch.util.mongo.connection.MongoUtil
 
-import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import scala.concurrent.{ Await, Future }
 import scala.language.postfixOps
 
 /**
@@ -19,16 +19,11 @@ trait MongoStorageCleanup extends MongoConstraints {
 
   final def mongoClose(): Unit = mongo.close()
 
-  def dropDb(): Unit = {
-    Await.result(mongo.db map(_.drop), 60 seconds)
-    Thread.sleep(100)
-    logger.info("dropped mongo database")
-  }
-
-  def cleanMongoDb(): Unit = {
-    dropDb()
+  final def cleanMongoDb(): Unit = {
+    val r = Future.sequence(collections.map(c => mongo.collection(c).flatMap(_.drop(failIfNotFound = false))))
+    Await.result(r, 30.seconds)
     createMongoConstraints()
-    Thread.sleep(1000)
+    logger.info(s"dropped mongo documents")
   }
 
 }

@@ -1,26 +1,26 @@
 package com.ubirch.avatar.cmd
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.{Http, HttpExt}
+import akka.http.scaladsl.{ Http, HttpExt }
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.avatar.config.{Config, ConfigKeys}
+import com.ubirch.avatar.config.{ Config, ConfigKeys }
 import com.ubirch.avatar.core.device.DeviceManager
-import com.ubirch.avatar.util.server.{ElasticsearchMappings, MongoConstraints}
+import com.ubirch.avatar.util.server.{ ElasticsearchMappings, MongoConstraints }
 import com.ubirch.util.json.MyJsonProtocol
 import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
 
 import scala.concurrent.ExecutionContextExecutor
 
-object PatchDevices extends App
+object PatchDevices
+  extends App
   with ElasticsearchMappings
   with MongoConstraints
   with MyJsonProtocol
   with StrictLogging {
 
   implicit val system: ActorSystem = ActorSystem("AvatarService")
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   implicit val httpClient: HttpExt = Http()
@@ -37,7 +37,6 @@ object PatchDevices extends App
     //    DeviceManager.all(adminGroup) map {
     DeviceManager.all() map {
       devices =>
-
         devices.foreach { device =>
           val patchedDev = device.copy(
             pubRawQueues = Some(

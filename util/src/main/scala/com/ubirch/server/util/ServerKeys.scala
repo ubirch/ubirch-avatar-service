@@ -9,7 +9,7 @@ import com.ubirch.util.crypto.ecc.EccUtil
 
 object ServerKeys extends StrictLogging {
 
-  private final val KEYLEN: Int = 64
+  final private val KEYLEN: Int = 64
   private val eccUtil = new EccUtil()
 
   final val pubKeyHex: String = Config.serverPrivateKey.takeRight(KEYLEN)
@@ -17,8 +17,8 @@ object ServerKeys extends StrictLogging {
 
   final val privKeyHex: String = Config.serverPrivateKey.take(KEYLEN)
 
-  private final val pubKeyBin: Array[Byte] = CodecUtil.multiDecoder(pubKeyHex).get
-  private final val privKeyBin: Array[Byte] = CodecUtil.multiDecoder(privKeyHex).get
+  final private val pubKeyBin: Array[Byte] = CodecUtil.multiDecoder(pubKeyHex).get
+  final private val privKeyBin: Array[Byte] = CodecUtil.multiDecoder(privKeyHex).get
 
   final val publicKey = eccUtil.decodePublicKey(pubKeyBin)
 

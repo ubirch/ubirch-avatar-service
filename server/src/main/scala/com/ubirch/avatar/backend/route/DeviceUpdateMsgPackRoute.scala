@@ -3,36 +3,33 @@ package com.ubirch.avatar.backend.route
 import akka.actor.ActorSystem
 import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.server.{Directives, Route}
+import akka.http.scaladsl.server.{ Directives, Route }
 import akka.pattern.ask
 import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.backend.prometheus.ReqMetrics
 import com.ubirch.avatar.config.Config
-import com.ubirch.avatar.core.msgpack.UbMsgPacker
+import com.ubirch.avatar.core.msgpack.MsgPackPacker
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.Json4sUtil
-import com.ubirch.util.model.{JsonErrorResponse, JsonResponse}
+import com.ubirch.util.model.{ JsonErrorResponse, JsonResponse }
 import com.ubirch.util.mongo.connection.MongoUtil
 import org.apache.commons.codec.binary.Hex
 
 import scala.concurrent.ExecutionContextExecutor
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 /**
   * author: cvandrei
   * since: 2016-09-21
   */
-class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt, materializer: Materializer, system: ActorSystem)
-  extends ResponseUtil
-    with Directives
-    with StrictLogging {
+class DeviceUpdateMsgPackRoute()(implicit system: ActorSystem) extends ResponseUtil with Directives with StrictLogging {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val timeout: Timeout = Timeout(Config.actorTimeout seconds)
@@ -45,12 +42,12 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
   val route: Route = {
 
     path(update / mpack) {
-      parameters('js ? false) { js: Boolean =>
+      parameters(Symbol("js") ? false) { js: Boolean =>
         pathEnd {
           reqMetrics.start
           post {
             entity(as[Array[Byte]]) { binData =>
-              logger.info(s"POST update/mpack")
+              logger.info(s"POST update/mpack js=$js")
               onComplete(msgPackProcessorActor ? binData) {
                 case Success(resp) =>
                   resp match {
@@ -60,9 +57,14 @@ class DeviceUpdateMsgPackRoute()(implicit mongo: MongoUtil, httpClient: HttpExt,
                       if (js)
                         complete(StatusCodes.Accepted -> Json4sUtil.any2String(dsu))
                       else {
-                        val ubPack = UbMsgPacker.packUbProt(dsu)
-                        logger.debug(s"returning Accepted for POST update/mpack (hex) : ${Hex.encodeHexString(ubPack)}")
-                        complete(StatusCodes.Accepted -> ubPack)
+                        MsgPackPacker.packUbProt(dsu) match {
+                          case Right(ubPack) =>
+                            logger.debug(
+                              s"returning Accepted for POST update/mpack (hex) : ${Hex.encodeHexString(ubPack)}")
+                            complete(StatusCodes.Accepted -> ubPack)
+                          case Left(_) =>
+                            complete(StatusCodes.InternalServerError -> "something went wrong when processing response")
+                        }
                       }
                     case jr: JsonResponse =>
                       reqMetrics.incError()

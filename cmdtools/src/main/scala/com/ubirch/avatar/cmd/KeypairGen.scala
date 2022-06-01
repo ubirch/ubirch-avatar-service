@@ -1,10 +1,10 @@
 package com.ubirch.avatar.cmd
 
-import java.io.{File, FileOutputStream}
+import java.io.{ File, FileOutputStream }
 
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.util.crypto.ecc.EccUtil
-import net.i2p.crypto.eddsa.{EdDSAPrivateKey, EdDSAPublicKey}
+import net.i2p.crypto.eddsa.{ EdDSAPrivateKey, EdDSAPublicKey }
 import org.apache.commons.codec.binary.Hex
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -13,7 +13,6 @@ import org.joda.time.format.DateTimeFormat
   * Created by derMicha on 14/11/16.
   */
 object KeypairGen extends App with StrictLogging {
-
 
   private val eccUtil = new EccUtil()
   val envs = List(
@@ -53,7 +52,6 @@ object KeypairGen extends App with StrictLogging {
     writeBinData(s"${basePath}/${nowStr}_${env}${prkBaseFilename}.b64", prvKey64.getBytes)
     writeBinData(s"${basePath}/${nowStr}_${env}${pbkBaseFilename}.b64", pubKey64.getBytes)
   }
-
 
   def writeBinData(filename: String, binData: Array[Byte]): Unit = {
     val fos: FileOutputStream = new FileOutputStream(new File(filename))
