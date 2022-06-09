@@ -163,7 +163,8 @@ object MsgPackPacker extends StrictLogging with MyJsonProtocol {
       //create signature
       packer.flush()
       val payloadBin = out.toByteArray
-      val signatureB64 = eccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey, payload = payloadBin)
+      val hashedPayload = HashUtil.sha512(payloadBin)
+      val signatureB64 = eccUtil.signPayload(eddsaPrivateKey = ServerKeys.privateKey, payload = hashedPayload)
       val byteSignature = Base64.getDecoder.decode(signatureB64)
 
       //pack signature

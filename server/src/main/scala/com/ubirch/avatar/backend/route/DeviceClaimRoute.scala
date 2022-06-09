@@ -1,12 +1,10 @@
 package com.ubirch.avatar.backend.route
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.HttpExt
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.model.headers.{ Authorization, OAuth2BearerToken }
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
-import akka.stream.Materializer
 import akka.util.Timeout
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
@@ -16,7 +14,6 @@ import com.ubirch.avatar.util.server.RouteConstants._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.json.JsonFormats
 import com.ubirch.util.model.JsonErrorResponse
-import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.rest.akka.directives.CORSDirective
 import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
 import org.apache.http.HttpStatus
@@ -51,6 +48,7 @@ class DeviceClaimRoute(implicit system: ActorSystem) extends ResponseUtil with C
             }
           }
         }
+
       }
     }
   }
