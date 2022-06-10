@@ -28,3 +28,4 @@ xml-test-reports/
 **/__pycache
 **/*.pyc
 **/.DS_Store
+.scalafmt.conf
