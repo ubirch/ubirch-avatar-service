@@ -1,7 +1,6 @@
 package com.ubirch.server.util
 
 import java.util.Base64
-
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.util.crypto.codec.CodecUtil
@@ -17,8 +16,8 @@ object ServerKeys extends StrictLogging {
 
   final val privKeyHex: String = Config.serverPrivateKey.take(KEYLEN)
 
-  final private val pubKeyBin: Array[Byte] = CodecUtil.multiDecoder(pubKeyHex).get
-  final private val privKeyBin: Array[Byte] = CodecUtil.multiDecoder(privKeyHex).get
+  final val pubKeyBin: Array[Byte] = CodecUtil.multiDecoder(pubKeyHex).get
+  final val privKeyBin: Array[Byte] = CodecUtil.multiDecoder(privKeyHex).get
 
   final val publicKey = eccUtil.decodePublicKey(pubKeyBin)
 

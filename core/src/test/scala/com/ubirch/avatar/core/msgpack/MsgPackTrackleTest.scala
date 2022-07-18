@@ -5,14 +5,18 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.msgpack.MsgPackPacker.{ processUbirchProt, InvalidDataException }
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.util.model.DeviceUtil
+import com.ubirch.crypto.{ GeneratorKeyFactory, PubKey }
+import com.ubirch.crypto.utils.Curve
 import com.ubirch.protocol.codec.MsgPackProtocolDecoder
 import com.ubirch.server.util.ServerKeys
+import com.ubirch.util.crypto.hash.HashUtil
 import com.ubirch.util.json.{ Json4sUtil, MyJsonProtocol }
 import org.apache.commons.codec.binary.Hex
 import org.json4s.native.JsonParser
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
 
+import java.security.MessageDigest
 import java.util.{ Base64, UUID }
 
 case class A(ar: List[B])
@@ -86,7 +90,7 @@ class MsgPackTrackleTest extends AnyFeatureSpec with Matchers with StrictLogging
 
   Feature("Pack Ubirch protocol") {
 
-    Scenario("succeeds") {
+    Scenario("succeeds and signature can be verified") {
 
       val uuid = UUID.fromString("90e29939-7535-46d9-b4c3-a90dad4ce9a6")
       val jsonString = """{"i":60000,"EOL":true,"il":1800000,"min":3500,"max":4200}""".stripMargin
@@ -98,14 +102,23 @@ class MsgPackTrackleTest extends AnyFeatureSpec with Matchers with StrictLogging
           p = JsonParser.parse(jsonString),
           ds = Some("currentDeviceSignature"))
 
-      val responseNew = MsgPackPacker.packUbProt(dsu, uuid)
-      responseNew.isRight shouldBe true
-      val pm = MsgPackProtocolDecoder.getDecoder.decode(responseNew.toOption.get)
+      val response = MsgPackPacker.packUbProt(dsu, uuid)
+      response.isRight shouldBe true
+      val rsp = response.toOption.get
+      val pm = MsgPackProtocolDecoder.getDecoder.decode(rsp)
       pm.getUUID shouldBe uuid
       pm.getChain shouldBe Base64.getDecoder.decode(dsu.ds.get)
       pm.getVersion shouldBe 19
       new ObjectMapper().writeValueAsString(pm.getPayload) shouldBe jsonString
       pm.getHint shouldBe 85
+
+      //verify signature
+      val dataAndSignature = MsgPackProtocolDecoder.getDecoder.getDataToVerifyAndSignature(rsp)
+      val data = dataAndSignature(0)
+      val sign = dataAndSignature(1)
+      val pubKey = GeneratorKeyFactory.getPubKey(ServerKeys.pubKeyBin, Curve.Ed25519)
+      val ok = pubKey.verify(HashUtil.sha512(data), sign)
+      ok shouldBe true
     }
 
     Scenario("fail when no prev signature provided") {

@@ -3,7 +3,6 @@ package com.ubirch.avatar.backend.route
 import akka.http.scaladsl.model.StatusCodes.OK
 import akka.http.scaladsl.server.{ Directives, Route }
 import com.typesafe.scalalogging.StrictLogging
-import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.util.server.RouteConstants
 import com.ubirch.server.util.ServerKeys
 import com.ubirch.util.http.response.ResponseUtil
