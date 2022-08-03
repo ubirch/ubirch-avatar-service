@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.ubirch</groupId>
             <artifactId>ubirch-protocol-java</artifactId>
-            <version>${ubirch-crypto.version}</version>
+            <version>${ubirch-protocol-java.version}</version>
         </dependency>
 
         <!-- EXTERNAL -->

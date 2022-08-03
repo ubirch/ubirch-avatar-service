@@ -17,6 +17,10 @@
     <description>command line tools</description>
     <packaging>jar</packaging> <!--needed ???-->
 
+    <properties>
+        <com.softwaremill.sttp.client3.version>3.3.0</com.softwaremill.sttp.client3.version>
+    </properties>
+
 
     <dependencies>
 
@@ -51,6 +55,30 @@
             <artifactId>config</artifactId>
             <version>${avatar-parent.version}</version>
         </dependency>
+
+        <!-- HTTP client -->
+        <!-- https://mvnrepository.com/artifact/com.softwaremill.sttp.client/core -->
+
+        <dependency>
+            <groupId>com.softwaremill.sttp.client3</groupId>
+            <artifactId>core_${scala.compat.version}</artifactId>
+            <version>${com.softwaremill.sttp.client3.version}</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.softwaremill.sttp.client3</groupId>-->
+<!--            <artifactId>json4s_${scala.compat.version}</artifactId>-->
+<!--            <version>${com.softwaremill.sttp.client3.version}</version>-->
+<!--        </dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/com.softwaremill.sttp.client/async-http-client-backend-future -->
+        <dependency>
+            <groupId>com.softwaremill.sttp.client3</groupId>
+            <artifactId>async-http-client-backend-future_${scala.compat.version}</artifactId>
+            <version>${com.softwaremill.sttp.client3.version}</version>
+        </dependency>
+
+
 
     </dependencies>
 
