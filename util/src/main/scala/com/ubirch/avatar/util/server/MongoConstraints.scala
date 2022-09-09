@@ -11,9 +11,9 @@ import reactivemongo.api.indexes.{ Index, IndexType }
   */
 trait MongoConstraints extends MongoConstraintsBase with StrictLogging {
 
-  val constraintsToCreate: Map[String, Set[Index]] = Map(
+  val constraintsToCreate: Map[String, Set[Index.Default]] = Map(
     Config.mongoCollectionAvatarState -> Set(
-      Index(name = Some("avatarStateUniqueDeviceId"), key = Seq(("deviceId", IndexType.Ascending)), unique = true)
+      Index(key = Seq(("deviceId", IndexType.Ascending)), name = Some("avatarStateUniqueDeviceId"), unique = true)
     )
   )
 

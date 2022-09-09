@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.ubirch.util</groupId>
             <artifactId>ubirch-mongo-utils_${scala.compat.version}</artifactId>
-            <version>0.9.6</version>
+            <version>${mongo-utils.version}</version>
         </dependency>
 
         <dependency>

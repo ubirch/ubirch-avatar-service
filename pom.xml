@@ -109,7 +109,7 @@
         <deep-check-utils.version>0.4.2</deep-check-utils.version>
         <elasticsearch-utils.version>0.2.9</elasticsearch-utils.version>
         <json-utils.version>0.5.3</json-utils.version>
-        <mongo-utils.version>0.9.6</mongo-utils.version>
+        <mongo-utils.version>0.10.0</mongo-utils.version>
         <response-utils.version>0.5.2</response-utils.version>
         <rest-akka-http-utils.version>0.4.3</rest-akka-http-utils.version>
         <ubirch-crypto.version>2.1.4</ubirch-crypto.version>
@@ -283,21 +283,14 @@
             <id>jcenter</id>
             <url>https://jcenter.bintray.com</url>
         </repository>
-        <repository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.com/api/v4/projects/37429227/packages/maven</url>
-        </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.com/api/v4/projects/37429227/packages/maven</url>
+            <id>ubirch.trackle</id>
+            <name>Ubirch Public Cloud Repo Repository</name>
+            <url>https://ubirch.mycloudrepo.io/repositories/trackle-mvn</url>
         </repository>
-        <snapshotRepository>
-            <id>gitlab-maven</id>
-            <url>https://gitlab.com/api/v4/projects/37429227/packages/maven</url>
-        </snapshotRepository>
     </distributionManagement>
 
 </project>
