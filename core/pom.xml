@@ -76,6 +76,12 @@
             <groupId>com.ubirch.util</groupId>
             <artifactId>ubirch-mongo-utils_${scala.compat.version}</artifactId>
             <version>${mongo-utils.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

@@ -135,8 +135,7 @@
         <log4j-core.version>2.17.2</log4j-core.version>
         <logback-classic.version>1.2.11</logback-classic.version>
         <logback-encoder.version>7.1.1</logback-encoder.version>
-        <scala-logging.version>3.9.4</scala-logging.version>
-
+        <scala-logging.version>3.9.5</scala-logging.version>
 
         <!-- plugins -->
         <maven-scalafmt.version>1.0.4</maven-scalafmt.version>
