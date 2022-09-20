@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   mongo-avatar:
-    image: mongo:4.2.18
+    image: mongo:6.0.1
     container_name: mongo-avatar-run-unit
     ports:
       - 27017:27017
