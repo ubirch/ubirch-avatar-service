@@ -22,7 +22,7 @@
     <!-- parent pom -->
     <groupId>com.ubirch.avatar</groupId>
     <artifactId>ubirch-avatar-service</artifactId>
-    <version>0.6.6-SNAPSHOT</version>
+    <version>0.6.7</version>
     <packaging>pom</packaging>
 
     <licenses>
@@ -109,10 +109,11 @@
         <deep-check-utils.version>0.4.2</deep-check-utils.version>
         <elasticsearch-utils.version>0.2.9</elasticsearch-utils.version>
         <json-utils.version>0.5.3</json-utils.version>
-        <mongo-utils.version>0.9.6</mongo-utils.version>
+        <mongo-utils.version>0.11.0</mongo-utils.version>
         <response-utils.version>0.5.2</response-utils.version>
         <rest-akka-http-utils.version>0.4.3</rest-akka-http-utils.version>
-        <ubirch-crypto.version>2.1.3-SNAPSHOT</ubirch-crypto.version>
+        <ubirch-crypto.version>2.1.4</ubirch-crypto.version>
+        <ubirch-protocol-java.version>2.1.3-SNAPSHOT</ubirch-protocol-java.version>
         <user-service-client.version>1.0.7</user-service-client.version>
         <uuid-utils.version>0.1.5</uuid-utils.version>
 
@@ -134,8 +135,7 @@
         <log4j-core.version>2.17.2</log4j-core.version>
         <logback-classic.version>1.2.11</logback-classic.version>
         <logback-encoder.version>7.1.1</logback-encoder.version>
-        <scala-logging.version>3.9.4</scala-logging.version>
-
+        <scala-logging.version>3.9.5</scala-logging.version>
 
         <!-- plugins -->
         <maven-scalafmt.version>1.0.4</maven-scalafmt.version>

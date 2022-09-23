@@ -12,10 +12,11 @@ import org.joda.time.DateTime
 import org.json4s.jackson.JsonMethods._
 import org.json4s.native.Serialization.write
 import org.json4s.{ Formats, JValue }
-import reactivemongo.bson.{ document, BSONDocument, BSONDocumentReader, BSONDocumentWriter, Macros }
+import reactivemongo.api.bson.{ document, BSONDocumentHandler, Macros }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{ Failure, Success }
 
 /**
   * author: cvandrei
@@ -27,9 +28,7 @@ object AvatarStateManager extends MongoFormats with StrictLogging {
 
   private val collectionName = Config.mongoCollectionAvatarState
 
-  implicit protected def avatarStateWriter: BSONDocumentWriter[AvatarState] = Macros.writer[AvatarState]
-
-  implicit protected def avatarStateReader: BSONDocumentReader[AvatarState] = Macros.reader[AvatarState]
+  implicit protected def avatarStateHandler: BSONDocumentHandler[AvatarState] = Macros.handler[AvatarState]
 
   /**
     * Search an [[AvatarState]] based on the id of it's device.
@@ -43,7 +42,7 @@ object AvatarStateManager extends MongoFormats with StrictLogging {
     val selector = document("deviceId" -> deviceId)
 
     mongo.collection(collectionName) flatMap {
-      _.find[BSONDocument, AvatarState](selector).one[AvatarState]
+      _.find(selector).one[AvatarState]
     }
 
   }
@@ -64,8 +63,8 @@ object AvatarStateManager extends MongoFormats with StrictLogging {
 
       case None =>
         mongo.collection(collectionName) flatMap { collection =>
-          collection.insert[AvatarState](avatarState) map { writeResult =>
-            if (writeResult.ok && writeResult.n == 1) {
+          collection.insert.one(avatarStateToBSON(avatarState)).map { writeResult =>
+            if (writeResult.n == 1) {
               logger.debug(s"created new avatarState: $avatarState")
               Some(avatarState)
             } else {
@@ -79,6 +78,14 @@ object AvatarStateManager extends MongoFormats with StrictLogging {
 
     }
 
+  }
+
+  private def avatarStateToBSON(avatarState: AvatarState) = {
+    avatarStateHandler.writeTry(avatarState) match {
+      case Success(doc) => doc
+      case Failure(ex) =>
+        throw new IllegalArgumentException(s"failed to parse avatarState $avatarState to BSONDocument", ex)
+    }
   }
 
   /**
@@ -100,21 +107,17 @@ object AvatarStateManager extends MongoFormats with StrictLogging {
         val selector = document("deviceId" -> avatarState.deviceId)
         mongo.collection(collectionName) flatMap {
 
-          _.update(selector, avatarState) map { writeResult =>
-            if (writeResult.ok) {
+          _.update.one(selector, avatarStateToBSON(avatarState)) map { writeResult =>
+            if (writeResult.n == 1) {
               logger.info(s"updated avatarState: deviceId=${avatarState.deviceId}")
               Some(avatarState)
             } else {
               logger.error(s"failed to update avatarState: avatarState=$avatarState; writeResult=$writeResult")
               None
             }
-
           }
-
         }
-
     }
-
   }
 
   /**
@@ -215,9 +218,7 @@ object AvatarStateManager extends MongoFormats with StrictLogging {
           desired = Some(Json4sUtil.jvalue2String(deviceConfig)),
           currentDeviceSignature = signature
         )
-
     }
-
   }
 
   private def newAvatarStateWithDesired(device: Device, desired: Option[String]): AvatarState = {

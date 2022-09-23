@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.ubirch.avatar</groupId>
         <artifactId>ubirch-avatar-service</artifactId>
-        <version>0.6.6-SNAPSHOT</version>
+        <version>0.6.7</version>
     </parent>
 
     <!-- basic info -->
@@ -76,6 +76,12 @@
             <groupId>com.ubirch.util</groupId>
             <artifactId>ubirch-mongo-utils_${scala.compat.version}</artifactId>
             <version>${mongo-utils.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -93,7 +99,7 @@
         <dependency>
             <groupId>com.ubirch</groupId>
             <artifactId>ubirch-protocol-java</artifactId>
-            <version>${ubirch-crypto.version}</version>
+            <version>${ubirch-protocol-java.version}</version>
         </dependency>
 
         <!-- EXTERNAL -->
