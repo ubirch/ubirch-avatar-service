@@ -49,9 +49,6 @@ object ConfigKeys {
   // Device Index & Type
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
 
-  // DeviceHistory Index & Type
-  final val ES_DEVICE_HISTORY_INDEX = "$esPrefix.devicehistory.index"
-
   // Device State
   final val ES_DEVICE_STATE_INDEX = s"$esPrefix.devicestate.index"
 

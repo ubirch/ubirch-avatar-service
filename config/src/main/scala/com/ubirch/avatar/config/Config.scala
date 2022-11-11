@@ -100,11 +100,6 @@ object Config extends ConfigBase {
   def esDeviceIndex: String = config.getString(ConfigKeys.ES_DEVICE_INDEX)
 
   /**
-    * @return Elasticsearch device history index
-    */
-  def esDeviceDataHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
-
-  /**
     * @return Elasticsearch deviceType index
     */
   def esDeviceStateIndex: String = config.getString(ConfigKeys.ES_DEVICE_STATE_INDEX)
