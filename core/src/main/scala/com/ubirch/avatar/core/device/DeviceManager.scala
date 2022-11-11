@@ -212,7 +212,6 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
 
   }
 
-  //Todo: check, if owners query is correct!
   private def groupsUserTermsQuery(userId: UUID, groups: Set[UUID]): Option[Query] = {
     val groupTermsQ: Query = QueryUtil.buildTermsQuery("groups", groups.map(_.toString))
     val userTermsQ: Query = QueryUtil.buildTermsQuery("owners", Set(userId.toString))
