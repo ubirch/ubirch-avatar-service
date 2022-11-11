@@ -1,4 +1,4 @@
-FROM yogihardi/alpine-scala-maven
+FROM amazoncorretto:8-alpine-jdk
 
 RUN rm -r /usr/lib/mvn
 
