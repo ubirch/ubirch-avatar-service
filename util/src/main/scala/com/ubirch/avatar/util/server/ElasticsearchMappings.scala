@@ -10,32 +10,7 @@ import com.ubirch.util.elasticsearch.EsMappingTrait
   */
 trait ElasticsearchMappings extends EsMappingTrait {
 
-  /**
-    * All indices and their mappings (<b>OVERWRITE!!!</b>).
-    *
-    * A Map of indexes and optional mappings. The data is structured as follows:
-    * <code>
-    * Map(
-    * "INDEX_1_NAME" -> Map (
-    * "id" -> new KeywordProperty.Builder().build()._toProperty(),
-    * "hello" -> new KeywordProperty.Builder().build()._toProperty(),
-    * "timestamp" -> new DateProperty.Builder().format("strict_date_time").build()._toProperty()
-    * ),
-    * "INDEX_2_NAME" -> {...}
-    * )
-    * </code>
-    */
   val indexesAndMappings: Map[String, Map[String, Property]] = Map(
-    //Todo: check, if still needed
-    Config.esDeviceDataHistoryIndex -> Map(
-      "deviceId" -> keyWordProperty,
-      "messageId" -> keyWordProperty,
-      "deviceDataRawId" -> keyWordProperty,
-      "a" -> keyWordProperty,
-      "deviceName" -> keyWordProperty,
-      "timestamp" -> strictDateTimeProperty,
-      "deviceMessage.location" -> new GeoPointProperty.Builder().build()._toProperty()
-    ),
     Config.esDeviceIndex -> Map(
       "deviceId" -> keyWordProperty,
       "owners" -> keyWordProperty,
