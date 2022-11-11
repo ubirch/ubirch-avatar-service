@@ -5,7 +5,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.model.rest.device.{ AvatarState, DeviceStateUpdate }
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.server.util.ServerKeys
-import com.ubirch.util.elasticsearch.EsBulkClient
+import com.ubirch.util.elasticsearch.{ EsBulkClient, EsSimpleClient }
 import com.ubirch.util.json.{ Json4sUtil, MyJsonProtocol }
 import com.ubirch.util.uuid.UUIDUtil
 import org.json4s._
@@ -49,10 +49,10 @@ object DeviceStateManager extends MyJsonProtocol with StrictLogging {
         val id = state.id.toString
         Future {
           val start = System.currentTimeMillis()
-          EsBulkClient.storeDocBulk(
+          EsSimpleClient.storeDoc(
             docIndex = index,
-            docId = id,
-            doc = doc
+            doc = doc,
+            docIdOpt = Some(id)
           )
           logger.debug(s"DeviceStateUpdate: took ${System.currentTimeMillis() - start}ms")
         }

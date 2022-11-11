@@ -97,7 +97,7 @@
         <scala.major.version>2.13</scala.major.version>
         <scala.version>2.13.8</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
-        <scalatest.version>3.2.12</scalatest.version>
+        <scalatest.version>3.2.14</scalatest.version>
 
         <!-- avatar versions -->
         <avatar-parent.version>${project.parent.version}</avatar-parent.version>
@@ -107,7 +107,7 @@
         <config-utils.version>0.2.5</config-utils.version>
         <crypto-utils.version>0.5.4</crypto-utils.version>
         <deep-check-utils.version>0.4.2</deep-check-utils.version>
-        <elasticsearch-utils.version>0.2.9</elasticsearch-utils.version>
+        <elasticsearch-utils.version>0.3.0-SNAPSHOT</elasticsearch-utils.version>
         <json-utils.version>0.5.3</json-utils.version>
         <mongo-utils.version>0.11.0</mongo-utils.version>
         <response-utils.version>0.5.2</response-utils.version>
@@ -119,19 +119,20 @@
 
 
         <!-- external versions -->
-        <akka.version>2.6.18</akka.version>
+        <akka.version>2.7.0</akka.version>
         <akka-http.version>10.2.6</akka-http.version>
-        <akka-stream-kafka.version>3.0.0</akka-stream-kafka.version>
+        <akka-stream-kafka.version>4.0.0</akka-stream-kafka.version>
         <json4s.version>4.0.5</json4s.version>
-        <cats-core.version>2.7.0</cats-core.version>
-        <guava.version>26.0-jre</guava.version>
-        <prometheus.version>0.15.0</prometheus.version>
+        <jackson-core.version>2.14.0</jackson-core.version>
+        <cats-core.version>2.8.0</cats-core.version>
+        <guava.version>30.0-android</guava.version>
+        <prometheus.version>0.16.0</prometheus.version>
         <aspectjweaver.version>1.9.9.1</aspectjweaver.version>
         <joda-time.version>2.10.14</joda-time.version>
         <joda-convert.version>2.2.2</joda-convert.version>
 
         <!-- logging versions -->
-        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <slf4j-api.version>2.0.3</slf4j-api.version>
         <log4j-core.version>2.17.2</log4j-core.version>
         <logback-classic.version>1.2.11</logback-classic.version>
         <logback-encoder.version>7.1.1</logback-encoder.version>

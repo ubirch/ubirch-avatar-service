@@ -9,7 +9,7 @@ services:
       driver: none
   elasticsearch-avatar-test:
     container_name: elasticsearch-avatar-test
-    image: elastic/elasticsearch:7.15.0
+    image: elastic/elasticsearch:8.5.0
     expose:
       - "9200"
       - "9300"

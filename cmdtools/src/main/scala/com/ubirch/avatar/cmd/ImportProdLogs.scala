@@ -1,7 +1,6 @@
 package com.ubirch.avatar.cmd
 
 import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.{ ConfigKeys, Const }
@@ -14,7 +13,7 @@ import com.ubirch.util.mongo.connection.MongoUtil
 import com.ubirch.util.uuid.UUIDUtil
 import org.joda.time.{ DateTime, DateTimeZone }
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.ExecutionContextExecutor
 import scala.io.Source
 import scala.util.{ Failure, Success }
@@ -39,7 +38,7 @@ object ImportProdLogs extends App with StrictLogging {
     tester: String
   )
 
-  val basePath = conf.getString("importProdLogs.basePath")
+//  val basePath = conf.getString("importProdLogs.basePath")
 
   val prodLogs = conf.getStringList("importProdLogs.prodLogs").asScala.toSet[String]
 
@@ -68,113 +67,112 @@ object ImportProdLogs extends App with StrictLogging {
     val hexChars = "1234567890abcdef"
     value.toLowerCase.forall(c => hexChars.contains(c))
   }
+  val exportFile = "./cmdtools/src/main/scala/com/ubirch/avatar/cmd/exportSensoren_12-09-2022.csv"
 
-  try {
+  try { // prodLogs.foreach { fn =>
+    val deviceRows = Source.fromFile(exportFile)
+    deviceRows.getLines().toList.tail.foreach { row =>
+      val sep = "," //if (fn.endsWith(".tsv")) "\t" else ","
+      val rowData = row.split(sep)
 
-    prodLogs.foreach { fn =>
-      val deviceRows = Source.fromFile(s"$basePath/$fn").getLines().toList.tail
-      deviceRows.foreach { row =>
-        val sep = if (fn.endsWith(".tsv")) "\t" else ","
-        val rowData = row.split(sep)
+      val hwDeviceId =
+        if (rowData.size >= hwDeviceIdUUIDOffset + 1)
+          rowData(hwDeviceIdUUIDOffset).toLowerCase
+        else {
+          val rawHwDid = rowData(hwDeviceIdOffset).toLowerCase
+          if (rawHwDid.length == 32 && isValidHex(rawHwDid))
+            s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
+          else
+            rawHwDid
+        }
 
-        val hwDeviceId =
-          if (rowData.size >= hwDeviceIdUUIDOffset + 1)
-            rowData(hwDeviceIdUUIDOffset).toLowerCase
-          else {
-            val rawHwDid = rowData(hwDeviceIdOffset).toLowerCase
-            if (rawHwDid.length == 32 && isValidHex(rawHwDid))
-              s"${rawHwDid.take(16)}-${rawHwDid.takeRight(16)}"
-            else
-              rawHwDid
-          }
-
-        val di = DeviceInfo(
-          deviceType = rowData(deviceTypeOffset),
-          testTimestamp = DateTime.parse(rowData(deviceTestDatetimeOffset)).withZone(DateTimeZone.UTC),
-          testResult = !rowData(testResultOffset).toLowerCase.contains("failed"),
-          hwDeviceId = hwDeviceId,
-          tempSensorId = rowData(tempSensorIdOffset),
-          firmwareVersion = rowData(firmwareVersionOffset),
-          orderNr = rowData(orderNrOffset),
-          tester = rowData(testerOffset)
-        )
-        logger.info(
-          s"deviceInfo: ${di.hwDeviceId} / type: ${di.deviceType} / exists: ${di.testResult} / testResult: ${rowData(testResultOffset)}")
-        val dtype = Const.TRACKLESENSOR
-        DeviceManager.infoByHwId(di.hwDeviceId).onComplete {
-          case Success(devOpt) =>
-            devOpt match {
-              case Some(dev) =>
-                logger.info(s"device already exist: ${dev.hwDeviceId}")
-                if (deleteExistingDevices) {
-                  DeviceManager.delete(dev)
-                  logger.info(s"device deleted: ${dev.hwDeviceId}")
-                } else {
-                  if (dev.deviceProperties.isDefined) {
-                    val devUpdated = dev.copy(
-                      deviceProperties = Some(
-                        dev.deviceProperties.get
-                          merge
-                            Json4sUtil.any2jvalue(Map[String, Any](
-                              "testTimestamp" -> s"${di.testTimestamp}"
-                            )).get)
-                    )
-                    DeviceManager.update(devUpdated)
-                  }
-                }
-
-              case None =>
-                if (createMissingDevices && di.testResult) {
-                  val dev = Device(
-                    deviceId = UUIDUtil.uuidStr,
-                    owners = Set.empty,
-                    groups = defaultGroups,
-                    deviceTypeKey = dtype,
-                    hwDeviceId = di.hwDeviceId,
-                    hashedHwDeviceId = HashUtil.sha512Base64(di.hwDeviceId.toLowerCase()),
-                    deviceName = s"$dtype ${di.hwDeviceId}",
-                    pubQueues = Some(Set(queue1)),
-                    pubRawQueues = Some(Set(
-                      rawQueue1,
-                      rawQueue2
-                    )),
+      val di = DeviceInfo(
+        deviceType = rowData(deviceTypeOffset),
+        testTimestamp = DateTime.parse(rowData(deviceTestDatetimeOffset)).withZone(DateTimeZone.UTC),
+        testResult = !rowData(testResultOffset).toLowerCase.contains("failed"),
+        hwDeviceId = hwDeviceId,
+        tempSensorId = rowData(tempSensorIdOffset),
+        firmwareVersion = rowData(firmwareVersionOffset),
+        orderNr = rowData(orderNrOffset),
+        tester = rowData(testerOffset)
+      )
+      logger.info(
+        s"deviceInfo: ${di.hwDeviceId} / type: ${di.deviceType} / exists: ${di.testResult} / testResult: ${rowData(testResultOffset)}")
+      val dtype = Const.TRACKLESENSOR
+      DeviceManager.infoByHwId(di.hwDeviceId).onComplete {
+        case Success(devOpt) =>
+          devOpt match {
+            case Some(dev) =>
+              logger.info(s"device already exist: ${dev.hwDeviceId}")
+              if (deleteExistingDevices) {
+                DeviceManager.delete(dev)
+                logger.info(s"device deleted: ${dev.hwDeviceId}")
+              } else {
+                if (dev.deviceProperties.isDefined) {
+                  val devUpdated = dev.copy(
                     deviceProperties = Some(
-                      DeviceTypeUtil.defaultProps
+                      dev.deviceProperties.get
                         merge
                           Json4sUtil.any2jvalue(Map[String, Any](
-                            "testedFirmwareVersion" -> s"${di.firmwareVersion}",
-                            "tester" -> s"${di.tester}",
-                            "testerResult" -> di.testResult,
-                            "orderNr" -> s"${di.orderNr}",
-                            "tempSensorId" -> s"${di.tempSensorId}",
                             "testTimestamp" -> s"${di.testTimestamp}"
-                          )).get
-                    ),
-                    deviceConfig = Some(
-                      DeviceTypeUtil.defaultConf
-                    ),
-                    tags = DeviceTypeUtil.defaultTags
+                          )).get)
                   )
-                  DeviceManager.create(device = dev).onComplete {
-                    case Success(newDev) =>
-                      newDev match {
-                        case None =>
-                          logger.error("could not create device")
-                        case Some(d) =>
-                          logger.info(s"device: $d")
-                      }
-                    case Failure(t) =>
-                      logger.error(s"failed: ${t.getMessage}")
+                  DeviceManager.update(devUpdated)
+                }
+              }
 
-                  }
-                } else
-                  logger.debug(s"device not created: ${di.hwDeviceId}")
-            }
-          case Failure(t) =>
-            logger.error(s"fetch device failed: ${t.getMessage}")
-        }
+            case None =>
+              if (createMissingDevices && di.testResult) {
+                val dev = Device(
+                  deviceId = UUIDUtil.uuidStr,
+                  owners = Set.empty,
+                  groups = defaultGroups,
+                  deviceTypeKey = dtype,
+                  hwDeviceId = di.hwDeviceId,
+                  hashedHwDeviceId = HashUtil.sha512Base64(di.hwDeviceId.toLowerCase()),
+                  deviceName = s"$dtype ${di.hwDeviceId}",
+                  pubQueues = Some(Set(queue1)),
+                  pubRawQueues = Some(Set(
+                    rawQueue1,
+                    rawQueue2
+                  )),
+                  deviceProperties = Some(
+                    DeviceTypeUtil.defaultProps
+                      merge
+                        Json4sUtil.any2jvalue(Map[String, Any](
+                          "testedFirmwareVersion" -> s"${di.firmwareVersion}",
+                          "tester" -> s"${di.tester}",
+                          "testerResult" -> di.testResult,
+                          "orderNr" -> s"${di.orderNr}",
+                          "tempSensorId" -> s"${di.tempSensorId}",
+                          "testTimestamp" -> s"${di.testTimestamp}"
+                        )).get
+                  ),
+                  deviceConfig = Some(
+                    DeviceTypeUtil.defaultConf
+                  ),
+                  tags = DeviceTypeUtil.defaultTags
+                )
+                DeviceManager.create(device = dev).onComplete {
+                  case Success(newDev) =>
+                    newDev match {
+                      case None =>
+                        logger.error("could not create device")
+                      case Some(d) =>
+                        logger.info(s"device: $d")
+                    }
+                  case Failure(t) =>
+                    logger.error(s"failed: ${t.getMessage}")
+
+                }
+              } else
+                logger.debug(s"device not created: ${di.hwDeviceId}")
+          }
+        case Failure(t) =>
+          logger.error(s"fetch device failed: ${t.getMessage}")
       }
     }
+    deviceRows.close
   } catch {
     case e: Exception =>
       logger.error("something kapuuuth:", e)
