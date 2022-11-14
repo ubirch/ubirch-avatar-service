@@ -1,7 +1,6 @@
 package com.ubirch.avatar.storage
 
 import com.ubirch.avatar.util.server.ElasticsearchMappings
-import com.ubirch.util.elasticsearch.EsHighLevelClient.esClient
 
 /**
   * author: cvandrei
@@ -9,6 +8,6 @@ import com.ubirch.util.elasticsearch.EsHighLevelClient.esClient
   */
 trait ESStorageCleanup extends ElasticsearchMappings {
 
-  final def esClientClose(): Unit = esClient.close()
+  final def esClientClose(): Unit = closeConnection()
 
 }

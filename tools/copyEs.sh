@@ -4,7 +4,7 @@
 
 if [ ! -z $1 ] && [ ! -z $2 ]; then
 
-    INDICES="ubirch-devices ubirch-device-type ubirch-device-history ubirch-device-raw-data ubirch-device-raw-data-anchored ubirch-avatar-state"
+    INDICES="ubirch-devices ubirch-device-raw-data ubirch-avatar-state"
 
     SOURCE=$1:9200
     DESTINATION=$2:9200

@@ -19,7 +19,7 @@ object DeviceCoreUtil extends MyJsonProtocol with StrictLogging {
   private val eccUtil = new EccUtil()
 
   def validateSimpleMessage(hashedHwDeviceId: String): Future[Option[Device]] = {
-    logger.info(s"validateSimpleMessage: device id=$hashedHwDeviceId")
+    logger.info(s"validateSimpleMessage: hashedHwDevice id=$hashedHwDeviceId")
     DeviceManager.infoByHashedHwId(hashedHwDeviceId).map {
       case Some(device) =>
         logger.debug(s"found device with primaryKey: $hashedHwDeviceId")

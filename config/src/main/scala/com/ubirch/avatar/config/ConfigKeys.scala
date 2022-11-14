@@ -45,39 +45,16 @@ object ConfigKeys {
   // Prefixes
   final val esPrefix = s"$prefix.es"
   final val esDevicePrefix = s"$esPrefix.device"
-  final val esDeviceRawDataAnchoredPrefix = s"$esPrefix.devicerawdataAnchored"
-  final val esDeviceHistoryPrefix = s"$esPrefix.devicehistory"
-  final val esDeviceTypePrefix = s"$esPrefix.devicetype"
-  final val esDeviceStatePrefix = s"$esPrefix.devicestate"
 
   // Device Index & Type
   final val ES_DEVICE_INDEX = s"$esDevicePrefix.index"
-  final val ES_DEVICE_TYPE = s"$esDevicePrefix.type"
-
-  // anchored DeviceRawData (with txHash) Index & Type
-  final val ES_DEVICE_DATA_RAW_ANCHORED_INDEX = s"$esDeviceRawDataAnchoredPrefix.index"
-  final val ES_DEVICE_DATA_RAW_ANCHORED_TYPE = s"$esDeviceRawDataAnchoredPrefix.type"
-
-  // DeviceHistory Index & Type
-  final val ES_DEVICE_HISTORY_INDEX = s"$esDeviceHistoryPrefix.index"
-  final val ES_DEVICE_HISTORY_TYPE = s"$esDeviceHistoryPrefix.type"
-
-  // Device Type
-  final val ES_DEVICE_TYPE_INDEX = s"$esDeviceTypePrefix.index"
-  final val ES_DEVICE_TYPE_TYPE = s"$esDeviceTypePrefix.type"
 
   // Device State
-  final val ES_DEVICE_STATE_INDEX = s"$esDeviceStatePrefix.index"
-  final val ES_DEVICE_STATE_TYPE = s"$esDeviceStatePrefix.type"
+  final val ES_DEVICE_STATE_INDEX = s"$esPrefix.devicestate.index"
 
   // Misc
   final val ES_DEFAULT_PAGE_SIZE = s"$esPrefix.defaultPageSize"
   final val ES_LARGE_PAGE_SIZE = s"$esPrefix.largePageSize"
-
-  // Global Message Queue Stuff
-  final val INTERNOUTBOX = "intern-outbox"
-  final val EXTERNOUTBOX = "extern-outbox"
-  final val DEVICEOUTBOX = "device-outbox"
 
   /*
    * Mongo

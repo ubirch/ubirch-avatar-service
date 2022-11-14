@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.core.msgpack.MsgPackPacker.{ processUbirchProt, InvalidDataException }
 import com.ubirch.avatar.model.rest.device.DeviceStateUpdate
 import com.ubirch.avatar.util.model.DeviceUtil
-import com.ubirch.crypto.{ GeneratorKeyFactory, PubKey }
+import com.ubirch.crypto.GeneratorKeyFactory
 import com.ubirch.crypto.utils.Curve
 import com.ubirch.protocol.codec.MsgPackProtocolDecoder
 import com.ubirch.server.util.ServerKeys
@@ -16,7 +16,6 @@ import org.json4s.native.JsonParser
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
 
-import java.security.MessageDigest
 import java.util.{ Base64, UUID }
 
 case class A(ar: List[B])
