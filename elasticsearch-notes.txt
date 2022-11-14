@@ -35,15 +35,7 @@ curl 'localhost:9200/ubirch-device-history/reported/_search?pretty' -d '{
   ]
 }'
 
-curl 'localhost:9200/ubirch-device-type/devicetype/_search?pretty'
 curl 'localhost:9200/ubirch-device-raw-data/_mapping?pretty' > ubirch-device-type-mappings.json
-curl 'localhost:9200/ubirch-device-type/devicetype/_search?pretty' -d '{
-  "query" : {
-    "term" : {
-      "key": "defaultDeviceType"
-    }
-  }
-}'
 
 curl 'localhost:9200/ubirch-devices/_search?pretty' > ubirch-devices.json
 
