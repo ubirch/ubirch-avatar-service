@@ -13,6 +13,7 @@ import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.actor.ServcieCheckActor
 import com.ubirch.avatar.util.actor.ActorNames
 import com.ubirch.avatar.util.server.RouteConstants
+import com.ubirch.avatar.util.server.RouteConstants.readyCheck
 import com.ubirch.util.deepCheck.model._
 import com.ubirch.util.http.response.ResponseUtil
 import com.ubirch.util.model.JsonErrorResponse
@@ -78,7 +79,7 @@ class ServiceCheckRoute(
         }
       }
     } ~
-      path(RouteConstants.readyCheck) {
+      path(readyCheck) {
         respondWithCORS {
           get {
 
