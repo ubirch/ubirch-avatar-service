@@ -91,12 +91,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.ubirch.user</groupId>
-            <artifactId>ubirch-user-service-client_${scala.compat.version}</artifactId>
-            <version>${user-service-client.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.ubirch</groupId>
             <artifactId>ubirch-protocol-java</artifactId>
             <version>${ubirch-protocol-java.version}</version>
