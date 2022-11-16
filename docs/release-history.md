@@ -139,7 +139,6 @@
 * update to `com.ubirch.key:client-rest:0.2.0`
 * update to `com.ubirch.user:client-rest:0.5.0`
 * deepCheck() includes the key-service deepCheck now
-* deepCheck() includes the user-service deepCheck now
 * deepCheck() includes a MongoDB connectivity check now
 * deepCheck() includes a Redis connectivity check now
 
@@ -224,7 +223,6 @@
 * rename module _model_ to _model-rest_ and introduce module _model-db_
 * update _com.ubirch.util:rest-akka-http_ to 0.3.7
 * update _com.ubirch.util:rest-akka-http-test_ to 0.3.7
-* creating devices now stores groups as queried from user-service
 * update to Akka 2.4.18
 * update to Akka HTTP 10.0.6
 * creating a device remembers the user's groups (new field _Device.groups_)

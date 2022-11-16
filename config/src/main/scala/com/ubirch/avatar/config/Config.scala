@@ -100,49 +100,9 @@ object Config extends ConfigBase {
   def esDeviceIndex: String = config.getString(ConfigKeys.ES_DEVICE_INDEX)
 
   /**
-    * @return Elasticsearch DeviceData type
-    */
-  def esDeviceType: String = config.getString(ConfigKeys.ES_DEVICE_TYPE)
-
-  /**
-    * @return Elasticsearch anchored raw device data (with txHash) index
-    */
-  def esDeviceDataRawAnchoredIndex: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_ANCHORED_INDEX)
-
-  /**
-    * @return Elasticsearch anchored raw device data (with txHash) type
-    */
-  def esDeviceDataRawAnchoredType: String = config.getString(ConfigKeys.ES_DEVICE_DATA_RAW_ANCHORED_TYPE)
-
-  /**
-    * @return Elasticsearch device history index
-    */
-  def esDeviceDataHistoryIndex: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_INDEX)
-
-  /**
-    * @return Elasticsearch device history data type
-    */
-  def esDeviceDataHistoryType: String = config.getString(ConfigKeys.ES_DEVICE_HISTORY_TYPE)
-
-  /**
-    * @return Elasticsearch deviceType index
-    */
-  def esDeviceTypeIndex: String = config.getString(ConfigKeys.ES_DEVICE_TYPE_INDEX)
-
-  /**
-    * @return Elasticsearch deviceType type
-    */
-  def esDeviceTypeType: String = config.getString(ConfigKeys.ES_DEVICE_TYPE_TYPE)
-
-  /**
     * @return Elasticsearch deviceType index
     */
   def esDeviceStateIndex: String = config.getString(ConfigKeys.ES_DEVICE_STATE_INDEX)
-
-  /**
-    * @return Elasticsearch deviceType type
-    */
-  def esDeviceStateType: String = config.getString(ConfigKeys.ES_DEVICE_STATE_TYPE)
 
   /**
     * @return ElasticSearch default size in regards to pagination

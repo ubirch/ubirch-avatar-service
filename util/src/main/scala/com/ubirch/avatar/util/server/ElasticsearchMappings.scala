@@ -10,56 +10,6 @@ import com.ubirch.util.elasticsearch.EsMappingTrait
 trait ElasticsearchMappings extends EsMappingTrait {
 
   val indexesAndMappings: Map[String, String] = Map(
-    // ubirch-device-history
-    Config.esDeviceDataHistoryIndex ->
-      s"""{
-         |    "properties" : {
-         |      "deviceId" : {
-         |        "type" : "keyword"
-         |      },
-         |      "messageId" : {
-         |        "type" : "keyword"
-         |      },
-         |      "deviceDataRawId" : {
-         |        "type" : "keyword"
-         |      },
-         |      "id" : {
-         |        "type" : "keyword"
-         |      },
-         |      "a" : {
-         |        "type" : "keyword"
-         |      },
-         |      "deviceName" : {
-         |        "type" : "keyword"
-         |      },
-         |      "timestamp" : {
-         |        "type" : "date",
-         |        "format" : "strict_date_time"
-         |      },
-         |      "deviceMessage.location" : {
-         |        "type" : "geo_point"
-         |      }
-         |    }
-         |}""".stripMargin,
-    // ubirch-device-raw-data-anchored
-    Config.esDeviceDataRawAnchoredIndex ->
-      s"""{
-         |    "properties" : {
-         |      "a" : {
-         |        "type" : "keyword"
-         |      },
-         |      "id" : {
-         |        "type" : "keyword"
-         |      },
-         |      "deviceName" : {
-         |        "type" : "keyword"
-         |      },
-         |      "timestamp" : {
-         |        "type" : "date",
-         |        "format" : "strict_date_time"
-         |      }
-         |    }
-         |}""".stripMargin,
     // ubirch-devices
     Config.esDeviceIndex ->
       s"""{
@@ -102,15 +52,6 @@ trait ElasticsearchMappings extends EsMappingTrait {
          |        "type" : "keyword"
          |      },
          |      "s" : {
-         |        "type" : "keyword"
-         |      }
-         |    }
-         |}""".stripMargin,
-    // ubirch-device-type
-    Config.esDeviceTypeIndex ->
-      s"""{
-         |    "properties" : {
-         |      "key" : {
          |        "type" : "keyword"
          |      }
          |    }
