@@ -44,13 +44,13 @@
         <dependency>
             <groupId>com.ubirch.util</groupId>
             <artifactId>ubirch-elasticsearch-utils_${scala.compat.version}</artifactId>
-            <version>${elasticsearch-utils.version}</version>
+            <version>0.2.9</version>
         </dependency>
 
         <dependency>
             <groupId>com.ubirch.util</groupId>
             <artifactId>ubirch-crypto-utils_${scala.compat.version}</artifactId>
-            <version>${crypto-utils.version}</version>
+            <version>0.5.4</version>
         </dependency>
 
         <dependency>
@@ -68,13 +68,13 @@
         <dependency>
             <groupId>com.ubirch.util</groupId>
             <artifactId>ubirch-json-utils_${scala.compat.version}</artifactId>
-            <version>${json-utils.version}</version>
+            <version>0.5.3</version>
         </dependency>
 
         <dependency>
             <groupId>com.ubirch.util</groupId>
             <artifactId>ubirch-uuid-utils_${scala.compat.version}</artifactId>
-            <version>${uuid-utils.version}</version>
+            <version>0.1.5</version>
             <scope>test</scope>
         </dependency>
 

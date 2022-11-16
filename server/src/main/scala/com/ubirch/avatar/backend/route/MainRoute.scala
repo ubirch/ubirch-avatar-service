@@ -6,7 +6,6 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.ubirch.avatar.util.server.RouteConstants
-import com.ubirch.avatar.util.server.RouteConstants.{ apiPrefix, check, currentVersion, device, serviceName }
 import com.ubirch.util.mongo.connection.MongoUtil
 
 /**
@@ -26,15 +25,15 @@ class MainRoute(implicit mongo: MongoUtil, _system: ActorSystem, httpClient: Htt
 
   val myRoute: Route = {
 
-    pathPrefix(apiPrefix) {
-      pathPrefix(serviceName) {
-        pathPrefix(currentVersion) {
+    pathPrefix(RouteConstants.apiPrefix) {
+      pathPrefix(RouteConstants.serviceName) {
+        pathPrefix(RouteConstants.currentVersion) {
 
-          pathPrefix(device) {
+          pathPrefix(RouteConstants.device) {
             deviceUpdateMsgPack.route ~
               deviceClaim.route
 
-          } ~ path(check) {
+          } ~ path(RouteConstants.check) {
             welcome.route
           } ~ pathEndOrSingleSlash {
             welcome.route
