@@ -1,6 +1,5 @@
 package com.ubirch.avatar.core.device
 
-import co.elastic.clients.elasticsearch._types.query_dsl.{ BoolQuery, Query }
 import com.typesafe.scalalogging.StrictLogging
 import com.ubirch.avatar.config.Config
 import com.ubirch.avatar.core.avatar.AvatarStateManager
@@ -8,9 +7,9 @@ import com.ubirch.avatar.model._
 import com.ubirch.avatar.model.db.device.Device
 import com.ubirch.avatar.util.model.DeviceUtil
 import com.ubirch.util.elasticsearch.EsSimpleClient
-import com.ubirch.util.elasticsearch.util.QueryUtil
 import com.ubirch.util.json.{ Json4sUtil, MyJsonProtocol }
 import com.ubirch.util.mongo.connection.MongoUtil
+import org.elasticsearch.index.query.{ QueryBuilder, QueryBuilders }
 import org.joda.time.{ DateTime, DateTimeZone }
 import org.json4s.JValue
 
@@ -25,6 +24,7 @@ import scala.concurrent.Future
 object DeviceManager extends MyJsonProtocol with StrictLogging {
 
   private val esIndex = Config.esDeviceIndex
+  private val esType = Config.esDeviceType
 
   /**
     * Select all devices in any of the given groups.
@@ -37,9 +37,9 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     // TODO automated tests
     EsSimpleClient.getDocs(
       docIndex = esIndex,
-      query = Some(QueryUtil.buildTermsQuery("groups", groups.map(_.toString))),
-      size = Config.esLargePageSize
-    ).recover {
+      query = groupsTermsQuery(groups),
+      size = Some(Config.esLargePageSize)
+    ).recover[List[JValue]] {
       case e =>
         logger.error(s"error fetching device all for groups $groups", e)
         List()
@@ -65,8 +65,8 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     EsSimpleClient.getDocs(
       docIndex = esIndex,
       query = groupsUserTermsQuery(userId, groups),
-      size = Config.esLargePageSize
-    ).recover {
+      size = Some(Config.esLargePageSize)
+    ).recover[List[JValue]] {
       case e =>
         logger.error(s"error fetching device all for groups $groups", e)
         List()
@@ -84,8 +84,8 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     EsSimpleClient.getDocs(
       docIndex = esIndex,
       query = None,
-      size = Config.esLargePageSize
-    ).recover {
+      size = Some(Config.esLargePageSize)
+    ).recover[List[JValue]] {
       case e =>
         logger.error(s"error fetching all devices", e)
         List()
@@ -136,9 +136,11 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
     // TODO automated tests
     EsSimpleClient.deleteDoc(
       docIndex = esIndex,
-      field = "deviceId",
-      value = device.deviceId
-    ).map(_ => Some(device)).recover {
+      docId = device.deviceId
+    ).map {
+      case true => Some(device)
+      case _    => None
+    }.recover {
       case ex =>
         logger.error(s"error deleting device $device", ex)
         None
@@ -150,7 +152,7 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
 
     // TODO automated tests
     // TODO test case: hwDevice exist w/ lowercase and uppercase
-    val query = QueryUtil.buildTermQuery("hwDeviceId", hwDeviceId.toLowerCase)
+    val query = QueryBuilders.termQuery("hwDeviceId", hwDeviceId.toLowerCase)
     EsSimpleClient.getDocs(
       docIndex = esIndex,
       query = Some(query)
@@ -170,12 +172,12 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
 
     // TODO automated tests
     logger.debug(s"starting infoByHashedHwId($hashedHwDeviceId)")
-    val query = QueryUtil.buildTermQuery("hashedHwDeviceId", hashedHwDeviceId)
+    val query = QueryBuilders.termQuery("hashedHwDeviceId", hashedHwDeviceId)
     val start = System.currentTimeMillis()
     EsSimpleClient.getDocs(
       docIndex = esIndex,
       query = Some(query)
-    ).recover {
+    ).recover[List[JValue]] {
       case e =>
         logger.debug(s"query $query took ${System.currentTimeMillis() - start}ms")
         logger.error(s"error fetching device infoByHashedHwId for $hashedHwDeviceId", e)
@@ -212,14 +214,18 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
 
   }
 
-  private def groupsUserTermsQuery(userId: UUID, groups: Set[UUID]): Option[Query] = {
-    val groupTermsQ: Query = QueryUtil.buildTermsQuery("groups", groups.map(_.toString))
-    val userTermsQ: Query = QueryUtil.buildTermsQuery("owners", Set(userId.toString))
-    val queries = new java.util.ArrayList[Query]()
-    queries.add(groupTermsQ)
-    queries.add(userTermsQ)
-    val boolQuery = new BoolQuery.Builder().should(queries).minimumShouldMatch("1").build
-    Some(new Query.Builder().bool(boolQuery).build())
+  private def groupsUserTermsQuery(userId: UUID, groups: Set[UUID]): Option[QueryBuilder] = {
+    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
+    val userIdAsString: Seq[String] = Seq(userId.toString)
+    Some(QueryBuilders.boolQuery()
+      .should(QueryBuilders.termsQuery("groups", groupsAsString: _*))
+      .should(QueryBuilders.termsQuery("owners", userIdAsString: _*))
+      .minimumShouldMatch(1))
+  }
+
+  private def groupsTermsQuery(groups: Set[UUID]): Option[QueryBuilder] = {
+    val groupsAsString: Seq[String] = groups.toSeq map (_.toString)
+    Some(QueryBuilders.termsQuery("groups", groupsAsString: _*))
   }
 
   private def createWithChecks(
@@ -249,12 +255,14 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
             docIdOpt = Some(deviceToStore.deviceId),
             doc = devJval,
             waitingForRefresh = waitingForRefresh
-          ).map(_ => devJval.extractOpt[Device])
-            .recover {
-              case ex =>
-                logger.error(s"error storing document $devJval in index=$esIndex with id=${deviceToStore.deviceId}", ex)
-                None
-            }
+          ).map {
+            case true  => devJval.extractOpt[Device]
+            case false => None
+          }.recover {
+            case ex =>
+              logger.error(s"error storing document $devJval in index=$esIndex with id=${deviceToStore.deviceId}", ex)
+              None
+          }
 
         case None => Future(None)
       }
@@ -304,12 +312,14 @@ object DeviceManager extends MyJsonProtocol with StrictLogging {
               docIndex = esIndex,
               docIdOpt = Some(toUpdate.deviceId),
               doc = devJval
-            ).map(_ => devJval.extractOpt[Device])
-              .recover {
-                case ex =>
-                  logger.error(s"error storing document $devJval in index=$esIndex with id=${toUpdate.deviceId}", ex)
-                  None
-              }
+            ).map {
+              case true  => devJval.extractOpt[Device]
+              case false => None
+            }.recover {
+              case ex =>
+                logger.error(s"error storing document $devJval in index=$esIndex with id=${toUpdate.deviceId}", ex)
+                None
+            }
 
             if (device.deviceConfig.isDefined) {
               AvatarStateManager.setDesired(toUpdate, toUpdate.deviceConfig.get)

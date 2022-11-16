@@ -9,7 +9,7 @@ services:
       driver: none
   elasticsearch-avatar:
     container_name: elasticsearch-avatar-run-unit
-    image: elastic/elasticsearch:8.5.0
+    image: elastic/elasticsearch:7.15.0
     ports:
       - 9200:9200
       - 9300:9300

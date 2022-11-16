@@ -2,9 +2,13 @@ curl 'http://localhost:9200/_cat/indices?v' | grep ubirch
 
 curl 'localhost:9200/ubirch-avatar-state/_mapping/?pretty' > ubirch-avatar-state.json
 curl 'localhost:9200/ubirch-device-raw-data/_mapping/?pretty' > ubirch-device-raw-mappings.json
+curl 'localhost:9200/ubirch-device-history/_mapping/?pretty' > ubirch-device-history-mappings.json
+curl 'localhost:9200/ubirch-device-raw-data-anchored/_mapping/?pretty' > ubirch-device-raw-anchored.json
 curl 'localhost:9200/ubirch-devices/_mapping/?pretty' > ubirch-devices.json
 curl 'localhost:9200/ubirch-device-state/_mapping/?pretty' > ubirch-device-state.json
 curl 'localhost:9200/ubirch-device-type/_mapping/?pretty' > ubirch-device-type.json
+
+curl -XDELETE http://localhost:9200/ubirch-device-history
 
 curl 'localhost:9200/ubirch-device-raw-data/devicemessage/_search?pretty&size=100' > ubirch-device-raw-test.json
 
@@ -21,9 +25,25 @@ curl 'localhost:9200/ubirch-device-raw-data/devicemessage/_search?pretty' -d '{
   ]
 }'
 
+curl 'localhost:9200/ubirch-device-raw-data-anchored/devicemessage/_search?pretty' > ubirch-device-raw-data-anchored-test.json
 
+curl 'localhost:9200/ubirch-device-history/reported/_search?pretty' -d '{
+  "from": 0,
+  "size": 4,
+  "sort" : [
+    { "ts" : {"order" : "desc"}}
+  ]
+}'
 
+curl 'localhost:9200/ubirch-device-type/devicetype/_search?pretty'
 curl 'localhost:9200/ubirch-device-raw-data/_mapping?pretty' > ubirch-device-type-mappings.json
+curl 'localhost:9200/ubirch-device-type/devicetype/_search?pretty' -d '{
+  "query" : {
+    "term" : {
+      "key": "defaultDeviceType"
+    }
+  }
+}'
 
 curl 'localhost:9200/ubirch-devices/_search?pretty' > ubirch-devices.json
 
